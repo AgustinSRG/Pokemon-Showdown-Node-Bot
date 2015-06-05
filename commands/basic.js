@@ -3,17 +3,20 @@
 */
 
 function setPermission(room, perm, rank) {
-	if (Settings.settings.rooms[room]) Settings.settings.rooms[room] = {};
-	if (Settings.settings.rooms[room]['cmds']) Settings.settings.rooms[room]['cmds'] = {};
+	if (!Settings.settings.rooms) Settings.settings.rooms = {};
+	if (!Settings.settings.rooms[room]) Settings.settings.rooms[room] = {};
+	if (!Settings.settings.rooms[room]['cmds']) Settings.settings.rooms[room]['cmds'] = {};
 	Settings.settings.rooms[room]['cmds'][perm] = rank;
 	Settings.save();
 }
+
+Settings.addPermissions(['say', 'pick']);
 
 exports.commands = {
 	
 	about: 'bot',
 	bot: function (arg, by, room, cmd) {
-		var text = "I'm a **Pokemon Showdown Bot** written in JavaScript for Node. By: Ecuacion ()";
+		var text = "I'm a **Pokemon Showdown Bot** written in JavaScript for Node. By: Ecuacion (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)";
 		if (!this.isRanked('#')) {
 			this.pmReply(text);
 		} else {
@@ -36,7 +39,7 @@ exports.commands = {
 		var text = '';
 		text += '**Uptime:** ';
 		var divisors = [52, 7, 24, 60, 60];
-		var units = ['week', 'day', 'hour', 'minute', 'secong'];
+		var units = ['week', 'day', 'hour', 'minute', 'second'];
 		var buffer = [];
 		var uptime = ~~(process.uptime());
 		do {
@@ -74,38 +77,22 @@ exports.commands = {
 		choices = choices.filter(function(i) {return (toId(i) !== '')});
 		if (choices.length < 2) return this.pmReply("You must give at least 2 valid choices");
 		var choice = choices[Math.floor(Math.random() * choices.length)];
-		if (!this.can(perm) || this.roomType === 'pm') {
+		if (!this.can('pick') || this.roomType === 'pm') {
 			this.pmReply("Choice: " + choice);
 		} else {
 			this.reply("Choice: " + choice);
 		}
 	},
 	
-	seen: function(arg, by, room, con) { // this command is still a bit buggy
-		var text = (room.charAt(0) === ',' ? '' : '/pm ' + by + ', ');
-		arg = toId(arg);
-		if (!arg || arg.length > 18) return this.say(con, room, text + 'Invalid username.');
-		if (arg === toId(by)) {
-			text += 'Have you looked in the mirror lately?';
-		} else if (arg === toId(config.nick)) {
-			text += 'You might be either blind or illiterate. Might want to get that checked out.';
-		} else if (!this.chatData[arg] || !this.chatData[arg].seenAt) {
-			text += 'The user ' + arg + ' has never been seen.';
-		} else {
-			text += arg + ' was last seen ' + this.getTimeAgo(this.chatData[arg].seenAt) + ' ago' + (
-				this.chatData[arg].lastSeen ? ', ' + this.chatData[arg].lastSeen : '.');
-		}
-		this.say(con, room, text);
-	},
-	
 	seen: function (arg, by, room, cmd) {
 		var text = '';
 		arg = toId(arg);
 		if (!arg || arg.length > 18) return this.pmReply('Invalid username.');
+		if (arg === toId(Bot.status.nickName)) return this.pmReply('Right here right now.');
 		if (Settings.seen[arg]) {
 			var dSeen = Settings.seen[arg];
 			text += arg + ' was last seen ' + getTimeAgo(dSeen.time) + ' ago';
-			if (!dSeen.room) {
+			if (dSeen.room) {
 				switch (dSeen.action) {
 					case 'j':
 						text += ', joining ' + dSeen.room;
@@ -150,15 +137,15 @@ exports.commands = {
 		}
 		if (rank in {'off': 1, 'disable': 1}) {
 			setPermission(room, perm, true);
-			return this.reply("Permission " + perm + " in this room is now disabled");
+			return this.reply("Permission **" + perm + "** in this room is now disabled");
 		}
 		if (rank in {'on': 1, 'all': 1, 'enable': 1}) {
 			setPermission(room, perm, ' ');
-			return this.reply("Permission " + perm + " in this room is now avaliable for all users");
+			return this.reply("Permission **" + perm + "** in this room is now avaliable for all users");
 		}
 		if (Config.ranks.indexOf(rank) >= 0) {
 			setPermission(room, perm, rank);
-			return this.reply("Permission " + perm + " in this room is now avaliable for users with rank " + rank + " or highter");
+			return this.reply("Permission **" + perm + "** in this room is now avaliable for users with rank " + rank + " or highter");
 		} else {
 			return this.reply("Rank " + rank + " not found");
 		}

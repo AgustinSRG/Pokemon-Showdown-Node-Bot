@@ -227,10 +227,23 @@ Bot.on('disconnect', function (e) {
 
 Bot.on('chat', function (room, timeOff, by, msg) {
 	CommandParser.parse(room, by, msg);
+	Settings.reportSeen(by, room, 'c', []);
 });
 
 Bot.on('pm', function (by, msg) {
 	CommandParser.parse(',' + by, by, msg);
+});
+
+Bot.on('userjoin', function (room, by) {
+	Settings.reportSeen(by, room, 'j', []);
+});
+
+Bot.on('userleave', function (room, by) {
+	Settings.reportSeen(by, room, 'l', []);
+});
+
+Bot.on('userrename', function (room, old, by) {
+	Settings.reportSeen(old, room, 'n', [by]);
 });
 
 /* Features */
