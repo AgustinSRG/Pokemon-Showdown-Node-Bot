@@ -78,9 +78,9 @@ exports.commands = {
 		if (choices.length < 2) return this.pmReply("You must give at least 2 valid choices");
 		var choice = choices[Math.floor(Math.random() * choices.length)];
 		if (!this.can('pick') || this.roomType === 'pm') {
-			this.pmReply("Choice: " + choice);
+			this.pmReply(stripCommands(choice));
 		} else {
-			this.reply("Choice: " + choice);
+			this.reply(stripCommands(choice));
 		}
 	},
 	
@@ -88,7 +88,8 @@ exports.commands = {
 		var text = '';
 		arg = toId(arg);
 		if (!arg || arg.length > 18) return this.pmReply('Invalid username.');
-		if (arg === toId(Bot.status.nickName)) return this.pmReply('Right here right now.');
+		if (arg === toId(Bot.status.nickName)) return this.pmReply('You might be either blind or illiterate. Might want to get that checked out.');
+		if (arg = toId(by)) return this.pmReply('Have you looked in the mirror lately?');
 		if (Settings.seen[arg]) {
 			var dSeen = Settings.seen[arg];
 			text += arg + ' was last seen ' + getTimeAgo(dSeen.time) + ' ago';
@@ -109,7 +110,7 @@ exports.commands = {
 				}
 			}
 		} else {
-			text += 'The user ' + arg + ' has never been seen, at least since the last bot reset';
+			text += 'The user ' + arg + ' has never been seen, at least since the last bot reset.';
 		}
 		this.pmReply(text);
 	},

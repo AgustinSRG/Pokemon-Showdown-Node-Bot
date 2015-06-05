@@ -112,6 +112,7 @@ function botAfterConnect () {
 		cmds.push(Config.initCmds[i]);
 	}
 	Bot.send(cmds, 2000);
+	DataDownloader.download();
 }
 
 var opts = {
@@ -144,7 +145,6 @@ Bot.on('connect', function (con) {
 			error("Feature Crash: " + f + " | " + sys.inspect(e));
 		}
 	}
-	DataDownloader.download();
 });
 
 Bot.on('formats', function (formats) {
