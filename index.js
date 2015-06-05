@@ -75,7 +75,6 @@ featureList.forEach(function (feature) {
 });
 
 global.reloadFeatures = function () {
-	info("Reloading features");
 	var featureList = fs.readdirSync('./features/');
 	var errs = [];
 	featureList.forEach(function (feature) {
@@ -85,14 +84,9 @@ global.reloadFeatures = function () {
 				var f = require('./features/' + feature + '/index.js');
 				if (f.id) {
 					Features[f.id] = f;
-					ok("New feature: " + f.id + ' | ' + f.desc);
-				} else {
-					error("Failed to load feature: " + './features/' + feature);
-					errs.push(feature);
 				}
 			} catch (e) {
 				errlog(e.stack);
-				error("Failed to load feature: " + './features/' + feature);
 				errs.push(feature);
 			}
 		}
@@ -220,7 +214,7 @@ Bot.on('rename', function (name, named) {
 });
 
 Bot.on('disconnect', function (e) {
-	error('Disconnected from server');
+	info('Disconnected from server');
 });
 
 /* Commands */
