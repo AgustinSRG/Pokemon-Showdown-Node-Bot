@@ -242,8 +242,7 @@ Bot.on('userrename', function (room, old, by) {
 
 /* Features */
 
-Bot.on('line', function (room, message, isIntro) {
-	var spl = message.substr(1).split('|');
+Bot.on('line', function (room, message, isIntro, spl) {
 	for (var f in Features) {
 		try {
 			Features[f].parse(room, message, isIntro, spl);
