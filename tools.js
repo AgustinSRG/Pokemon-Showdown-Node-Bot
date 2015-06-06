@@ -125,3 +125,24 @@ global.uncacheTree = function(root) {
 		uncache = newuncache;
 	} while (uncache.length > 0);
 };
+
+global.uploadToHastebin = function(toUpload, callback) {
+	var self = this;
+		var reqOpts = {
+		hostname: "hastebin.com",
+		method: "POST",
+		path: '/documents'
+	};
+	var req = require('http').request(reqOpts, function(res) {
+		res.on('data', function(chunk) {
+			try {
+				var linkStr = "hastebin.com/raw/" + JSON.parse(chunk.toString())['key'];
+				if (typeof callback === "function") callback(true, linkStr);
+			} catch (e) {
+				if (typeof callback === "function") callback(false, e);
+			}
+		});
+	});
+	req.write(toUpload);
+	req.end();
+};
