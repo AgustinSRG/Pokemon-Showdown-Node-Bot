@@ -28,7 +28,7 @@ $ npm install
 
 Now, to start the bot use `node index.js`
 
-To configure the bot, copy config-example.js to config.js and edit that file. You can specify bot login credentials among other things. If you don't specifi credentials, the bot will log in a randon username started by 'Bot'.
+To configure the bot, copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'.
 
 
 Commands
@@ -62,6 +62,7 @@ Also, command hace a context:
  - `this.pmReply (text)` - Replies by pm
  - `this.say (room, text)` - Say something to other room
  - `this.isRanked (rank)` - True if ranked equal or above, false if not
+ - `this.botRanked (rank)` - True if the bot has this rank or above, false if not
  - `this.isExcepted` - True if the user is excepted, false if not
  - `this.roomType` - Can be 'chat', 'battle' or 'pm'
  - `this.can (permission)` - True if user has permission, false if not

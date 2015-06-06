@@ -173,6 +173,12 @@ var parse = exports.parse = function (room, by, msg) {
 				can: function (permission) {
 					return Settings.userCan(room, by, permission);
 				},
+				botRanked: function (rank) {
+					if (!Bot.rooms[room]) return false;
+					var ident = Bot.rooms[room].users[toId(Bot.status.nickName)];
+					if (ident) return equalOrHigherRank(ident, rank);
+					return false;
+				},
 				parse: function (data) {
 					return exports.parse(room, by, data);
 				}
