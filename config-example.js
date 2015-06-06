@@ -42,7 +42,6 @@ exports.initCmds = ['|/avatar 120']; // Other commands (avatar, blockchallenges,
 
 exports.exceptions = {
 	//userid: 'rank' or userid: true for full access
-	'ecuacion': true
 };
 
 exports.ranks = ['+', '%', '@', '#', '&', '~'];
@@ -57,6 +56,10 @@ exports.defaultPermission = '%';
 
 exports.PermissionExceptions = {
 	//command: 'rank'
+	'autoban': '#',
+	'banword': '#',
+	'joinphrase': '#',
+	'say': '#'
 };
 
 /****************************************
@@ -77,8 +80,8 @@ exports.debug = {
 	cmdr: true,
 	
 	/* Low Level */
-	recv: true,
-	sent: true
+	recv: false,
+	sent: false
 };
 
 
@@ -87,3 +90,44 @@ exports.debug = {
 * commands and features
 *****************************************/
 
+/***************************
+* Moderation
+****************************/
+
+exports.moderation = {
+	
+	modException: '%', // Min rank for not receive moderation
+	
+	allowmute: true,
+	
+	modDefault: {
+		//basic mods
+		'caps': 1,
+		'stretching': 1,
+		'flooding': 1,
+		'spam': 1,
+		
+		'bannedwords': 1,
+		'inapropiate': 1,
+		
+		//specific mods
+		'spoiler': 1,
+		'youtube': 1,
+		'psservers': 1,
+		
+		//multiple infraction
+		'multiple': 1
+	},
+	
+	punishments: [
+		"warn",
+		"mute",
+		"hourmute",
+		"roomban"
+	],
+	
+	psServersExcepts: {
+		"showdown": 1,
+		"smogtours": 1
+	}
+};
