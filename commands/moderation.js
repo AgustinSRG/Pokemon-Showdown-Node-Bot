@@ -41,27 +41,26 @@ function unblacklistRegex(regex, room) {
 Settings.addPermissions(['autoban', 'banword', 'joinphrase']);
 
 exports.commands = {
-	
 	/**************************
 	* Autoban
 	***************************/
-	
+
 	blacklist: 'autoban',
 	ban: 'autoban',
 	ab: 'autoban',
-	autoban: function(arg, by, room, cmd) {
+	autoban: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " requires moderator rank (@) or highter to ban users");
-		
+
 		var added = [];
 		var illegalNick = [];
 		var alreadyAdded = [];
-		
+
 		arg = arg.split(',');
-		
+
 		if (!arg.length || (arg.length === 1 && !arg[0].trim().length)) return this.reply('You must specify at least one user to blacklist.');
-		
+
 		for (var i = 0; i < arg.length; i++) {
 			var tarUser = toId(arg[i]);
 			if (tarUser.length < 1 || tarUser.length > 18) {
@@ -75,7 +74,7 @@ exports.commands = {
 			this.reply('/roomban ' + tarUser + ', Blacklisted user');
 			added.push(tarUser);
 		}
-		
+
 		var text = '';
 		var mn = '';
 		if (added.length) {
@@ -85,26 +84,25 @@ exports.commands = {
 		}
 		if (alreadyAdded.length) text += 'User(s) "' + alreadyAdded.join('", "') + '" already present in blacklist. ';
 		if (illegalNick.length) text += 'All ' + (text.length ? 'other ' : '') + ' users had illegal nicks and were not blacklisted.';
-		if (mn.length) this.reply("/mn " + text + " | By: " + by)
+		if (mn.length) this.reply("/mn " + text + " | By: " + by);
 		this.reply(text);
 	},
-	
+
 	unblacklist: 'unautoban',
 	unban: 'unautoban',
 	unab: 'unautoban',
-	unautoban: function(arg, by, room, cmd) {
+	unautoban: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " requires moderator rank (@) or highter to ban users");
-		
-		
+
 		arg = arg.split(',');
-		
+
 		var removed = [];
 		var notRemoved = [];
-		
+
 		if (!arg.length || (arg.length === 1 && !arg[0].trim().length)) return this.reply('You must specify at least one user to unblacklist.');
-		
+
 		for (var i = 0; i < arg.length; i++) {
 			var tarUser = toId(arg[i]);
 			if (tarUser.length < 1 || tarUser.length > 18) {
@@ -127,17 +125,17 @@ exports.commands = {
 		if (notRemoved.length) text += (text.length ? 'No other ' : 'No ') + 'specified users were present in the blacklist.';
 		this.reply(text);
 	},
-	
+
 	rab: 'regexautoban',
 	regexautoban: function (arg, user, room) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " requires moderator rank (@) or highter to ban users");
-		
+
 		if (!arg) return this.say(room, 'You must specify a regular expression to (un)blacklist.');
 
 		try {
-			new RegExp(arg, 'i');
+			var testing = new RegExp(arg, 'i');
 		} catch (e) {
 			return this.say(room, e.message);
 		}
@@ -152,13 +150,13 @@ exports.commands = {
 		this.say(room, '/modnote Regular expression ' + regex + ' was added to the blacklist by user ' + user + '.');
 		this.say(room, 'Regular expression ' + regex + ' was added to the blacklist.');
 	},
-	
+
 	unrab: 'unregexautoban',
 	unregexautoban: function (arg, user, room) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " requires moderator rank (@) or highter to ban users");
-		
+
 		if (!arg) return this.say(room, 'You must specify a regular expression to (un)blacklist.');
 
 		arg = '/' + arg.replace(/\\\\/g, '\\') + '/i';
@@ -168,17 +166,17 @@ exports.commands = {
 		this.say(room, '/modnote Regular expression ' + arg + ' was removed from the blacklist user by ' + user + '.');
 		this.say(room, 'Regular expression ' + arg + ' was removed from the blacklist.');
 	},
-	
+
 	viewbans: 'viewblacklist',
 	vab: 'viewblacklist',
 	viewautobans: 'viewblacklist',
-	viewblacklist: function(arg, by, room, cmd) {
+	viewblacklist: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 
 		var text = '';
 		var nBans = 0;
-		
+
 		if (arg.length) {
 			if (Settings.settings['autoban'] && Settings.settings['autoban'][room]) {
 				var nick = toId(arg);
@@ -191,7 +189,7 @@ exports.commands = {
 				return this.pmReply('No users are blacklisted in ' + room);
 			}
 		}
-		
+
 		if (Settings.settings['autoban'] && Settings.settings['autoban'][room]) {
 			text += 'The following users are banned in ' + room + ':\n\n';
 			for (var i in Settings.settings['autoban'][room]) {
@@ -199,7 +197,7 @@ exports.commands = {
 				nBans++;
 			}
 		}
-		
+
 		if (Settings.settings['regexautoban'] && Settings.settings['regexautoban'][room]) {
 			text += '\nThe following regexes are banned in ' + room + ':\n\n';
 			for (var i in Settings.settings['regexautoban'][room]) {
@@ -207,7 +205,7 @@ exports.commands = {
 				nBans++;
 			}
 		}
-		
+
 		if (nBans) {
 			uploadToHastebin(text, function (r, linkStr) {
 				if (r) this.pmReply(linkStr);
@@ -217,11 +215,11 @@ exports.commands = {
 			this.pmReply('No users are blacklisted in ' + room);
 		}
 	},
-	
+
 	/**************************
 	* Banned words
 	***************************/
-	
+
 	banphrase: 'banword',
 	banword: function (arg, user, room) {
 		arg = arg.trim().toLowerCase();
@@ -249,7 +247,7 @@ exports.commands = {
 		Settings.save();
 		this.say(room, 'Phrase "' + arg + '" is now banned.');
 	},
-	
+
 	unbanphrase: 'unbanword',
 	unbanword: function (arg, user, room) {
 		var tarRoom;
@@ -278,7 +276,7 @@ exports.commands = {
 		Settings.save();
 		this.say(room, 'Phrase "' + arg + '" is no longer banned.');
 	},
-	
+
 	viewbannedphrases: 'viewbannedwords',
 	vbw: 'viewbannedwords',
 	viewbannedwords: function (arg, user, room) {
@@ -313,7 +311,7 @@ exports.commands = {
 			else this.pmReply("upload failure, could not upload banwords to hastebin");
 		}.bind(this));
 	},
-	
+
 	inapropiatephrase: 'inapword',
 	inapword: function (arg, user, room) {
 		arg = arg.trim().toLowerCase();
@@ -341,7 +339,7 @@ exports.commands = {
 		Settings.save();
 		this.say(room, 'Phrase "' + arg + '" is now inapropiate.');
 	},
-	
+
 	uninapropiatephrase: 'uninapword',
 	uninapword: function (arg, user, room) {
 		var tarRoom;
@@ -370,7 +368,7 @@ exports.commands = {
 		Settings.save();
 		this.say(room, 'Phrase "' + arg + '" is no longer inapropiate.');
 	},
-	
+
 	viewinapropiatephrases: 'viewinapwords',
 	viw: 'viewinapwords',
 	viewinapwords: function (arg, user, room) {
@@ -405,16 +403,16 @@ exports.commands = {
 			else this.pmReply("upload failure, could not upload inapwords to hastebin");
 		}.bind(this));
 	},
-	
+
 	/**************************
 	* Join Phrases
 	***************************/
-	
+
 	jp: 'joinphrase',
-	joinphrase: function(arg, by, room, cmd) {
+	joinphrase: function (arg, by, room, cmd) {
 		if (!this.can('joinphrase')) return;
 		if (!Settings.settings['joinphrases']) Settings.settings['joinphrases'] = {};
-		
+
 		if (this.roomType === 'chat' && toId(arg) in {'on': 1, 'enable': 1}) {
 			if (!Settings.settings['jpdisable']) Settings.settings['jpdisable'] = {};
 			if (Settings.settings['jpdisable'][room]) delete Settings.settings['jpdisable'][room];
@@ -422,31 +420,31 @@ exports.commands = {
 			Settings.save();
 			return this.reply("Join phrases are now enabled for this room");
 		}
-		
+
 		if (this.roomType === 'chat' && toId(arg) in {'off': 1, 'disable': 1}) {
 			if (!Settings.settings['jpdisable']) Settings.settings['jpdisable'] = {};
 			if (!Settings.settings['jpdisable'][room]) Settings.settings['jpdisable'][room] = 1;
-			else return this.say(con, room, "Join phrases already disabled for this room");
+			else return this.reply("Join phrases already disabled for this room");
 			Settings.save();
-			return this.say(con, room, "Join phrases are now disabled for this room");
+			return this.reply("Join phrases are now disabled for this room");
 		}
-		
+
 		var args = arg.split(",");
-		
-		if (args.length < 2) return this.reply("Usage: " + config.commandChar + cmd + " [set/delete], [user], [phrase]");
-		if (Settings.settings['jpdisable'] && Settings.settings['jpdisable'][room]) returnthis.reply("Joinphrases are disabled in this room");
-		
+
+		if (args.length < 2) return this.reply("Usage: " + Config.commandChar + cmd + " [set/delete], [user], [phrase]");
+		if (Settings.settings['jpdisable'] && Settings.settings['jpdisable'][room]) return this.reply("Joinphrases are disabled in this room");
+
 		if (toId(args[0]) !== "delete" && args.length === 2) {
 			arg = "set," + toId(args[0]) + "," + arg.substr(args[0].length + 1);
 			args = arg.split(",");
 		}
-		
+
 		arg = arg.substr(args[0].length + args[1].length + 2);
 		arg = arg.trim();
-		
+
 		var user = toId(args[1]);
 		if (!user) return false;
-		
+
 		var tarRoom;
 		if (this.roomType === 'pm') {
 			if (!this.isExcepted()) return false;
@@ -456,13 +454,13 @@ exports.commands = {
 		} else {
 			return false;
 		}
-		
+
 		switch (toId(args[0])) {
 			case 'set':
 			case 'add':
 			case 'change':
 				if (!arg || !arg.length) return false;
-				if (args.length < 3) return this.reply("Usage: " + config.commandChar + cmd + " [set/delete], [user], [phrase]");
+				if (args.length < 3) return this.reply("Usage: " + Config.commandChar + cmd + " [set/delete], [user], [phrase]");
 				if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
 				Settings.settings['joinphrases'][tarRoom][user] = stripCommands(arg);
 				Settings.save();
@@ -476,12 +474,12 @@ exports.commands = {
 				this.reply("The Join Phrase for user " + user + " has been deleted " + ((tarRoom === 'global') ? 'globally.' : 'for this room.'));
 				break;
 			default:
-				return this.reply("Usage: " + config.commandChar + cmd + " [set/delete], [user], [phrase]");
+				return this.reply("Usage: " + Config.commandChar + cmd + " [set/delete], [user], [phrase]");
 		}
 	},
-	
+
 	vjf: 'viewjoinphrases',
-	viewjoinphrases: function(arg, by, room, con) {
+	viewjoinphrases: function (arg, by, room, cmd) {
 		if (!this.can('joinphrase')) return;
 		if (!Settings.settings['joinphrases']) Settings.settings['joinphrases'] = {};
 		arg = toId(arg);
@@ -495,30 +493,30 @@ exports.commands = {
 		} else {
 			return false;
 		}
-		
+
 		if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
-		
+
 		if (arg) {
-			if (arg.length < 1 || arg.length > 18) return this.say(con, room, "Invalid username.");
+			if (arg.length < 1 || arg.length > 18) return this.reply("Invalid username.");
 			if (Settings.settings['joinphrases'][tarRoom][arg]) return this.reply(Settings.settings['joinphrases'][tarRoom][arg]);
 			else return this.reply("No Joinphrase set for " + arg + ".");
 		}
-		
+
 		var List = [];
 		for (var i in Settings.settings['joinphrases'][tarRoom]) {
 			List.push(i + " => " + Settings.settings['joinphrases'][tarRoom][i]);
 		}
 		if (!List.length) return this.reply("There are not JoinPhrases in this room.");
-		uploadToHastebin("Join Phrases set " + (room.charAt(0) === ',' ? "globally" : ("in " + room)) + ":\n\n" + List.join('\n'), function (r, link) {
-			if (r) return this.pmReply('Join phrases ' + bannedFrom + ': ' + link);
+		uploadToHastebin("Join Phrases set " + (tarRoom === 'global' ? "globally" : ("in " + room)) + ":\n\n" + List.join('\n'), function (r, link) {
+			if (r) return this.pmReply('Join phrases ' + (tarRoom === 'global' ? "globally" : ("in " + room)) + ': ' + link);
 			else this.pmReply("upload failure, could not upload joinphrases to hastebin");
 		}.bind(this));
 	},
-	
+
 	/**************************
 	* Mod Settings
 	***************************/
-	
+
 	setmod: 'mod',
 	modset: 'mod',
 	modsettings: 'mod',
@@ -543,10 +541,10 @@ exports.commands = {
 		args[1] = toId(args[1]);
 		if (args[1] !== 'on' && args[1] !== 'off') return this.reply("Usage: " + Config.commandChar + cmd + " [mod], [on/off]");
 		if (!(args[0] in modTable)) return this.reply("Valid moderations are: " + Object.keys(modTable).sort().join(", "));
-		
+
 		if (!Settings.settings['modding']) Settings.settings['modding'] = {};
 		if (!Settings.settings['modding'][room]) Settings.settings['modding'][room] = {};
-		
+
 		if (args[1] === 'on') {
 			if (Settings.settings['modding'][room][args[0]] === 1) {
 				this.reply("Moderation for **" + args[0] + "** already ON for this room");

@@ -13,7 +13,6 @@ function setPermission(room, perm, rank) {
 Settings.addPermissions(['say', 'pick']);
 
 exports.commands = {
-	
 	about: 'bot',
 	bot: function (arg, by, room, cmd) {
 		var text = "I'm a **Pokemon Showdown Bot** written in JavaScript for Node. By: Ecuacion (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)";
@@ -23,9 +22,9 @@ exports.commands = {
 			this.reply(text);
 		}
 	},
-	
+
 	bottime: 'time',
-	time: function(arg, by, room, cmd) {
+	time: function (arg, by, room, cmd) {
 		var f = new Date();
 		var text = "**Bot Time:** " + addLeftZero(f.getHours(), 2) + ":" + addLeftZero(f.getMinutes(), 2) + ":" + addLeftZero(f.getSeconds(), 2);
 		if (!this.isRanked('#')) {
@@ -34,7 +33,7 @@ exports.commands = {
 			this.reply(text);
 		}
 	},
-	
+
 	uptime: function (arg, by, room, cmd) {
 		var text = '';
 		text += '**Uptime:** ';
@@ -52,8 +51,13 @@ exports.commands = {
 		switch (buffer.length) {
 		case 5:
 			text += buffer[4] + ', ';
+			text += buffer[3] + ', ';
+			text += buffer[2] + ', ' + buffer[1] + ', and ' + buffer[0];
+			break;
 		case 4:
 			text += buffer[3] + ', ';
+			text += buffer[2] + ', ' + buffer[1] + ', and ' + buffer[0];
+			break;
 		case 3:
 			text += buffer[2] + ', ' + buffer[1] + ', and ' + buffer[0];
 			break;
@@ -70,11 +74,11 @@ exports.commands = {
 			this.reply(text);
 		}
 	},
-	
+
 	choose: 'pick',
 	pick: function (arg, by, room, cmd) {
 		var choices = arg.split(",");
-		choices = choices.filter(function(i) {return (toId(i) !== '')});
+		choices = choices.filter(function (i) {return (toId(i) !== '');});
 		if (choices.length < 2) return this.pmReply("You must give at least 2 valid choices");
 		var choice = choices[Math.floor(Math.random() * choices.length)];
 		if (!this.can('pick') || this.roomType === 'pm') {
@@ -83,13 +87,13 @@ exports.commands = {
 			this.reply(stripCommands(choice));
 		}
 	},
-	
+
 	seen: function (arg, by, room, cmd) {
 		var text = '';
 		arg = toId(arg);
 		if (!arg || arg.length > 18) return this.pmReply('Invalid username.');
 		if (arg === toId(Bot.status.nickName)) return this.pmReply('You might be either blind or illiterate. Might want to get that checked out.');
-		if (arg = toId(by)) return this.pmReply('Have you looked in the mirror lately?');
+		if (arg === toId(by)) return this.pmReply('Have you looked in the mirror lately?');
 		if (Settings.seen[arg]) {
 			var dSeen = Settings.seen[arg];
 			text += arg + ' was last seen ' + getTimeAgo(dSeen.time) + ' ago';
@@ -114,7 +118,7 @@ exports.commands = {
 		}
 		this.pmReply(text);
 	},
-	
+
 	say: function (arg, by, room, cmd) {
 		if (!arg) return;
 		if (this.roomType !== 'chat') {
@@ -124,7 +128,7 @@ exports.commands = {
 		if (!this.can('say')) return;
 		this.reply(stripCommands(arg));
 	},
-	
+
 	settings: 'set',
 	set: function (arg, by, room, cmd) {
 		if (!this.isRanked('#')) return false;

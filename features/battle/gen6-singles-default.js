@@ -29,7 +29,7 @@ module.exports = {
 		var data1 = pokedex[toId(pokemonA)];
 		if (!data1) return false;
 		for (var j = 0; j < abilities.length; j++) {
-			ability = abilities[j];
+			var ability = abilities[j];
 			for (var i in data1.abilities) {
 				if (data1.abilities[i] === ability) return true;
 			}
@@ -75,21 +75,21 @@ module.exports = {
 			if (!dataMove) continue;
 			if (dataMove.category !== 'Status') continue;
 			//discard moves
-			
+
 			/* Hazards - Foe side*/
 			if (dataMove.name === "Spikes" && data.statusData.foe.side['Spikes'] && data.statusData.foe.side['Spikes'] > 2) continue;
 			if (dataMove.name === "Toxic Spikes" && data.statusData.foe.side['Toxic Spikes'] && data.statusData.foe.side['Toxic Spikes'] > 1) continue;
 			if (dataMove.name === "Stealth Rock" && data.statusData.foe.side['Stealth Rock']) continue;
 			if (dataMove.name === "Sticky Web" && data.statusData.foe.side['Sticky Web']) continue;
-			
+
 			/* Self side */
 			if (dataMove.target === 'allySide' && data.statusData.self.side[dataMove.name]) continue;
-			
-			/* Protect and wish moves : Detect, Endure, King's Shield, Protect, Quick Guard, Spiky Shield, or Wide Guard */ 
+
+			/* Protect and wish moves : Detect, Endure, King's Shield, Protect, Quick Guard, Spiky Shield, or Wide Guard */
 			var singleTurnMoves = {"Protect": 1, "Detect": 1, "Endure": 1, "King's Shield": 1, "Quick Guard": 1, "Spiky Shield": 1, "Wide Guard": 1};
 			if ((dataMove.name in singleTurnMoves) && data.statusData.self.pokemon[0]['lastMove'] && data.statusData.self.pokemon[0]['lastMove'] in singleTurnMoves) continue;
 			if (dataMove.name === "Wish" && data.statusData.self.pokemon[0]['lastMove'] && data.statusData.self.pokemon[0]['lastMove'] === "Wish") continue;
-			
+
 			/* Inmune */
 			if (dataMove.target !== "self" && dataMove.target !== "allySide" && dataMove.target !== "foeSide") {
 				if (this.gen6_get_mux(dataMove.type, data2.types) === 0) continue;
@@ -102,22 +102,22 @@ module.exports = {
 				if (this.inmune(dataMove, pokemonB)) continue;
 				if (data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Substitute']) continue;
 			}
-			
+
 			/* Bounceable */
 			if (dataMove.flags && dataMove.flags['reflectable'] && (this.has_ability(pokemonB, ["Magic Bounce"]) || (data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Magic Bounce"))) continue;
-			
+
 			/* Hazards Removal*/
 			if (dataMove.name === "Rapid Spin" || dataMove.name === "Defog") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
 			}
-			
+
 			/* Status */
-			if((dataMove.name in {"Refresh": 1, "Heal Bell": 1, "Aromatherapy": 1}) && !data.statusData.self.pokemon[0]['status']) continue;
+			if ((dataMove.name in {"Refresh": 1, "Heal Bell": 1, "Aromatherapy": 1}) && !data.statusData.self.pokemon[0]['status']) continue;
 			if (dataMove.status && data.statusData.foe.pokemon[0]['status']) continue;
 			if ((dataMove.status === "par") && (data2.types[0] === "Electric" || (data2.types[1] && (data2.types[1] === "Electric")))) continue;
 			if ((dataMove.status === "brn") && (data2.types[0] === "Fire" || (data2.types[1] && (data2.types[1] === "Fire")))) continue;
 			if ((dataMove.status === "tox" || dataMove.status === "psn") && (data2.types[0] === "Poison" || data2.types[0] === "Steel" || (data2.types[1] && (data2.types[1] === "Poison" || data2.types[1] === "Steel")))) continue;
-			
+
 			if (dataMove.status === "slp" && data.rules && data.rules['Sleep Clause Mod']) {
 				if (data.oppTeamOffSet) {
 					var sleeped = false;
@@ -130,29 +130,29 @@ module.exports = {
 					if (sleeped) continue;
 				}
 			}
-			
+
 			/* Substitute */
 			if (dataMove.name === "Substitute" && data.statusData.self.pokemon[0]['volatiles'] && data.statusData.self.pokemon[0]['volatiles']['Substitute']) continue;
 			if (dataMove.name === "Substitute" && data.statusData.self.pokemon[0]['hp'] < 26) continue;
-			
+
 			/* Leech seed */
 			if (dataMove.name === "Leech Seed" && (data2.types[0] === "Grass" || (data2.types[1] && (data2.types[1] === "Grass")))) continue;
-			
+
 			/* Other volatiles */
 			if (dataMove.target === "self" && data.statusData.self.pokemon[0]['volatiles']) {
 				if (data.statusData.self.pokemon[0]['volatiles'][dataMove.name]) continue;
 				if (dataMove.name === "Reflect Type" && data.statusData.self.pokemon[0]['volatiles']['typechange']) continue;
 			}
-			
+
 			/* Sleep talk */
 			if (dataMove.name === "Sleep Talk" && (!data.statusData.self.pokemon[0]['status'] || data.statusData.self.pokemon[0]['status'] !== 'slp')) continue;
-			
+
 			/* Heal */
 			if (dataMove.heal || (dataMove.name in {"Rest": 1, "Synthesis": 1, "Morning Sun": 1, "Moonlight": 1})) {
-				if (data.statusData.self.pokemon[0]['hp'] > 99) continue; 
+				if (data.statusData.self.pokemon[0]['hp'] > 99) continue;
 			}
 			if (dataMove.name === "Pain Split" && data.statusData.self.pokemon[0]['hp'] >= data.statusData.foe.pokemon[0]['hp']) continue;
-			
+
 			/* Boost */
 			if (dataMove.boosts && dataMove.target === "self") {
 				if (data.statusData.self.pokemon[0]['hp'] < 75) continue; //survive
@@ -165,7 +165,7 @@ module.exports = {
 				}
 				if (!alreadyBoosted) continue;
 			}
-			
+
 			/* Weather */
 			if (dataMove.weather && data.weather) {
 				var weather = toId(data.weather);
@@ -174,12 +174,12 @@ module.exports = {
 			if (dataMove.target === 'all') {
 				if (data.fields && data.fields[dataMove.name]) continue;
 			}
-			
+
 			/* Exceptions */
 			if (dataMove.name === "Baton Pass") {
 				if (!data.statusData.self.pokemon[0]['boost']) continue;
 				var bosts = 0;
-				for (var j in data.statusData.self.pokemon[0]['boost']) 
+				for (var j in data.statusData.self.pokemon[0]['boost'])
 					if (data.statusData.self.pokemon[0]['boost'][j] && data.statusData.self.pokemon[0]['boost'][j] > 0) bosts++;
 				if (!bosts) continue;
 			}
@@ -188,14 +188,14 @@ module.exports = {
 			if (dataMove.name in {"Haze": 1, "Whirlwind": 1, "Roar": 1}) {
 				if (!data.statusData.foe.pokemon[0]['boost']) continue;
 				var bosts = 0;
-				for (var j in data.statusData.foe.pokemon[0]['boost']) 
+				for (var j in data.statusData.foe.pokemon[0]['boost'])
 					if (data.statusData.foe.pokemon[0]['boost'][j] && data.statusData.foe.pokemon[0]['boost'][j] > 0) bosts++;
 				if (!bosts) continue;
 			}
-			
+
 			/* Do not use this moves - todo list */
 			if (dataMove.name in {"Lunar Dance": 1, "Healing Wish": 1, "Assist": 1, "Nature Power": 1, "Natural Gift": 1}) continue;
-			
+
 			//push
 			moves.push(i + 1);
 		}
@@ -223,13 +223,13 @@ module.exports = {
 			//modify move
 			switch (req.active[0].baseAbility) {
 				case 'Aerilate':
-					if (dataMove.type === "Normal") dataMove.type === "Flying";
+					if (dataMove.type === "Normal") dataMove.type = "Flying";
 					break;
 				case 'Pixilate':
-					if (dataMove.type === "Normal") dataMove.type === "Fairy";
+					if (dataMove.type === "Normal") dataMove.type = "Fairy";
 					break;
 				case 'Refrigerate':
-					if (dataMove.type === "Normal") dataMove.type === "Ice";
+					if (dataMove.type === "Normal") dataMove.type = "Ice";
 					break;
 			}
 			if (dataMove.name === "Judgment") dataMove.type = data1.types[0];
@@ -237,25 +237,25 @@ module.exports = {
 			if (req.active[0].baseAbility === "Scrappy" && dataMove.type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
 			//discard moves
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
-			
+
 			if (data.statusData.self.pokemon[0]['boost']) {
 				if (dataMove.category === "Special" && data.statusData.self.pokemon[0]['boost']['spa'] && data.statusData.self.pokemon[0]['boost']['spa'] < -1) continue;
 				if (dataMove.category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] < -1) continue;
 			}
-			
+
 			if (dataMove.name === "Rapid Spin") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
 			}
-			
+
 			if (dataMove.name === "Solar Beam") {
 				var solarFlag = false;
 				if (data.weather && toId(data.weather) in {"sunnyday": 1, "desolateland": 1}) solarFlag = true;
 				if (req.side.pokemon[0].item && req.side.pokemon[0].item === "Power Herb") solarFlag = true;
 				if (!solarFlag) continue;
 			}
-			
+
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-			
+
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
 			if (this.inmune(dataMove, pokemonB) && req.active[0].baseAbility !== "Mold Breaker") continue;
@@ -293,13 +293,13 @@ module.exports = {
 			//modify move
 			switch (req.active[0].baseAbility) {
 				case 'Aerilate':
-					if (dataMove.type === "Normal") dataMove.type === "Flying";
+					if (dataMove.type === "Normal") dataMove.type = "Flying";
 					break;
 				case 'Pixilate':
-					if (dataMove.type === "Normal") dataMove.type === "Fairy";
+					if (dataMove.type === "Normal") dataMove.type = "Fairy";
 					break;
 				case 'Refrigerate':
-					if (dataMove.type === "Normal") dataMove.type === "Ice";
+					if (dataMove.type === "Normal") dataMove.type = "Ice";
 					break;
 			}
 			if (dataMove.name === "Judgment") dataMove.type = data1.types[0];
@@ -340,7 +340,7 @@ module.exports = {
 			aux = [];
 			actPoke = req.side.pokemon[i];
 			if (req.side.pokemon[i].details.indexOf(",") > -1) poke = req.side.pokemon[i].details.substr(0, req.side.pokemon[i].details.indexOf(","));
-			else poke = req.side.pokemon[i].details;																																																																
+			else poke = req.side.pokemon[i].details;
 			var dataPoke =  pokedex[toId(poke)];
 			if (!dataPoke) continue;
 			for (var j = 0; j < actPoke.moves.length; j++) {
@@ -354,7 +354,7 @@ module.exports = {
 			if (aux.length) viablePokemon.push(i + 1);
 		}
 		if (!viablePokemon.length) return 0;
-		
+
 		//random choose
 		return viablePokemon[Math.floor(Math.random() * viablePokemon.length)];
 	},
@@ -376,10 +376,9 @@ module.exports = {
 		var pokeName;
 		for (var i = 0; i < req.side.pokemon.length; i++) {
 			if (req.side.pokemon[i].condition !== '0 fnt' && !req.side.pokemon[i].active) {
-				
 				if (req.side.pokemon[i].details.indexOf(",") > -1) pokeName = req.side.pokemon[i].details.substr(0, req.side.pokemon[i].details.indexOf(","));
 				else pokeName = req.side.pokemon[i].details;
-				
+
 				absPos.push(i + 1);
 				if (!data.statusData.foe.pokemon[0].species) disaux = 1;
 				else disaux = this.gen6_getDisadvantage(pokeName, data.statusData.foe.pokemon[0].species, inverse);
@@ -388,7 +387,7 @@ module.exports = {
 					if (disAdvantage !== -1 && !this.getSideViableMoves(data, i).length) continue;
 					chosen = i + 1;
 					disAdvantage = disaux;
-				}	
+				}
 			}
 		}
 		if (chosen === -1) {
@@ -413,17 +412,17 @@ module.exports = {
 		res.poke = bestSW[Math.floor(Math.random() * bestSW.length)];
 		return res;
 	},
-	
+
 	getDecision: function (room, data, callback) {
 		if (!data) return []; // no data
 		var req = data.request;
 		if (!req) return []; //no request
-		
+
 		var trapped = false;
 		if (callback) {
 			if (callback === "trapped") trapped = true;
 		}
-		
+
 		if (req.forceSwitch) {
 			var switchInfo = this.getBestSwitch(data);
 			return [{type: 'switch', switchIn: switchInfo.poke}];
@@ -438,26 +437,26 @@ module.exports = {
 					data.request.active[0].baseAbility = dataNewMega.abilities[0];
 				}
 			}
-			
+
 			var supportMoves = this.getViableSupportMoves(data);
 			var offMoves = this.getOffMoves(data);
 			var offMaxMoves = this.getEffectiveOffMoves(data);
 			var switchInfo = this.getBestSwitch(data);
-			
+
 			if (Config.debug.debug) {
 				debug("DATA - OFFMOVES -> " + JSON.stringify(offMoves));
 				debug("DATA - MAXEOFFMOVES -> " + JSON.stringify(offMaxMoves));
 				debug("DATA - SUPPORTMOVES -> " + JSON.stringify(supportMoves));
 				debug("DATA - SWITCH -> " + JSON.stringify(switchInfo));
 			}
-			
+
 			if (!trapped && !req.active[0].trapped) {
 				if (switchInfo.must && !offMaxMoves.length) return [{type: 'switch', switchIn: switchInfo.poke}];
 				if (switchInfo.can && !offMoves.length && !supportMoves.length) return [{type: 'switch', switchIn: switchInfo.poke}];
 				if (switchInfo.can && data.statusData.self.pokemon[0]['volatiles'] && data.statusData.self.pokemon[0]['volatiles']['perish1']) return [{type: 'switch', switchIn: switchInfo.poke}];
 				if (switchInfo.should && !offMaxMoves.length && Math.floor(Math.random() * 10) <= 5) return [{type: 'switch', switchIn: switchInfo.poke}];
 			}
-			
+
 			if (offMaxMoves.length) {
 				for (var i = 0; i < offMaxMoves.length; i++)
 					moves.push(offMaxMoves[i]);
@@ -465,10 +464,10 @@ module.exports = {
 				for (var i = 0; i < offMoves.length; i++)
 					moves.push(offMoves[i]);
 			}
-			
+
 			for (var i = 0; i < supportMoves.length; i++)
 					moves.push(supportMoves[i]);
-			
+
 			if (moves.length) {
 				actualDes.move = moves[Math.floor(Math.random() * moves.length)];
 			} else {
@@ -478,7 +477,6 @@ module.exports = {
 				actualDes.move = moves[Math.floor(Math.random() * moves.length)];
 			}
 			return [{type: 'move', mega: actualDes.mega, move: actualDes.move}];
-			
 		} else if (req.teamPreview) {
 			if (data.tier && toId(data.tier) in {"battlecup1v1": 1, "1v1": 1}) {
 				debug("Using getBestLead1v1 function...");
@@ -531,13 +529,13 @@ module.exports = {
 			//modify move
 			switch (req.side.pokemon[idSide].baseAbility) {
 				case 'Aerilate':
-					if (dataMove.type === "Normal") dataMove.type === "Flying";
+					if (dataMove.type === "Normal") dataMove.type = "Flying";
 					break;
 				case 'Pixilate':
-					if (dataMove.type === "Normal") dataMove.type === "Fairy";
+					if (dataMove.type === "Normal") dataMove.type = "Fairy";
 					break;
 				case 'Refrigerate':
-					if (dataMove.type === "Normal") dataMove.type === "Ice";
+					if (dataMove.type === "Normal") dataMove.type = "Ice";
 					break;
 			}
 			if (dataMove.name === "Judgment") dataMove.type = data1.types[0];
@@ -552,7 +550,7 @@ module.exports = {
 			if (this.gen6_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
 			if (this.inmune(dataMove, pokemonB) && req.side.pokemon[idSide].baseAbility !== "Mold Breaker") continue;
-			
+
 			//push
 			moves.push(i + 1);
 		}

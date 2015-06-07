@@ -27,7 +27,7 @@ exports.parse = function (room, message, isIntro, spl) {
 					if (Features['battle'].TeamBuilder.hasTeam(tourData[room].format)) Bot.say(room, '/tour join');
 				}
 			}
-			
+
 			if (tourData[room].challenges && tourData[room].challenges.length) {
 				var team = Features['battle'].TeamBuilder.getTeam(tourData[room].format);
 				if (team) Bot.say(room, '/useteam ' + team);

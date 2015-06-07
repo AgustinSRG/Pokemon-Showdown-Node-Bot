@@ -3,22 +3,21 @@
 	battlesCount: 0,
 	data: {},
 	aiModules: {},
-	
-	
+
 	aiModList: {
 		'6gsinglesdefault': './gen6-singles-default.js'
 	},
-	
+
 	/* Config - Edit this */
 	aiConfig: {
 		/* Exceptions */
 	},
-	
+
 	aiDefaultConfig: {
 		/* Default */
 		'singles-6': '6gsinglesdefault'
 	},
-	
+
 	/* Functions */
 	init: function () {
 		for (var k in this.data) delete this.data[k];
@@ -29,16 +28,16 @@
 		}
 		return;
 	},
-	
+
 	clearData: function () {
 		for (var i in this.data)
 			delete this.data[i];
 	},
-	
+
 	send: function (room, text) {
 		Bot.send(room + "|" + text);
 	},
-	
+
 	sendDecision: function (room, decision, rqid) {
 		debug("Send Decision: ".cyan + JSON.stringify(decision));
 		var str = '/choose ';
@@ -56,12 +55,12 @@
 				if (decision[i].mega) str += ' mega';
 				if (decision[i].target) str += ' ' + decision[i].target;
 			}
-			if (i !== (decision.length -1)) str += ', ';
+			if (i !== (decision.length - 1)) str += ', ';
 		}
-		if (rqid)  str += '|' + rqid; 
+		if (rqid)  str += '|' + rqid;
 		this.send(room, str);
 	},
-	
+
 	getRandomMove: function (room) {
 		/*	Random decison: This function always returns a valid decision.
 				Decision: Random Lead, Random Move, No Switch             */
@@ -76,7 +75,7 @@
 					desSwitch.push({type: 'pass'});
 				} else {
 					var posibbles = [];
-					for (var j = 0; j < req.side.pokemon.length; j++ ) {
+					for (var j = 0; j < req.side.pokemon.length; j++) {
 						if (!switchChosen[j + 1] && req.side.pokemon[j].condition !== '0 fnt' && !req.side.pokemon[j].active) posibbles.push(j + 1);
 					}
 					var swChosen = posibbles[Math.floor(posibbles.length * Math.random())];
@@ -138,16 +137,16 @@
 		}
 		return [];
 	},
-	
+
 	makeDecision: function (room, forceRandom, callback) {
 		var decision = {};
 		if (!this.data[room]) return;
 		var rqid = 0;
 		if (this.data[room] && this.data[room].request) rqid = parseInt(this.data[room].request.rqid);
-		
+
 		//avoid duplicated decisions
 		if (!callback && this.data[room].lastMake && this.data[room].lastReq === rqid && (Date.now() - this.data[room].lastMake) < 5000) return;
-		
+
 		this.data[room].lastMake = Date.now();
 		this.data[room].lastReq = rqid;
 		if (!forceRandom) {
@@ -166,7 +165,7 @@
 					}
 				}
 			}
-			
+
 			var defaultId = this.data[room].gametype + "-" + this.data[room].gen;
 			if (this.aiDefaultConfig[defaultId] && this.aiModules[this.aiDefaultConfig[defaultId]] && this.aiModules[this.aiDefaultConfig[defaultId]].getDecision) {
 				try {
@@ -189,7 +188,7 @@
 			Bot.send([room + "|/forfeit", room + "|/leave"]); //forfeit and leave on fatal error
 		}
 	},
-	
+
 	finishBattle: function (room, win) {
 		if (win) {
 			var winmsg = Config.winmsg;
@@ -201,7 +200,7 @@
 		this.send(room, '/leave');
 		if (this.data[room]) delete this.data[room];
 	},
-	
+
 	getPokemonId: function (data) {
 		var nameDT = data.split(":");
 		var pokeId = nameDT[1];
@@ -224,8 +223,8 @@
 			sideId: sideId,
 			pokeIndex: pokeIndex
 		};
-	}, 
-	
+	},
+
 	receive: function (room, data) {
 		/* IMPORTANT !
 			This funtion gets all battle datas.
@@ -234,14 +233,14 @@
 		data = data.substr(1).trim();
 		if (data !== '') {
 			args = data.split('|');
-			for (var i=0,len=args.length; i<len; i++) args[i] = args[i].trim();
+			for (var i = 0, len = args.length; i < len; i++) args[i] = args[i].trim();
 		}
-		while (args[args.length-1] && args[args.length-1].substr(0,1) === '[') {
-			var bracketPos = args[args.length-1].indexOf(']');
+		while (args[args.length - 1] && args[args.length - 1].substr(0, 1) === '[') {
+			var bracketPos = args[args.length - 1].indexOf(']');
 			if (bracketPos <= 0) break;
 			var argstr = args.pop();
 			// default to '.' so it evaluates to boolean true
-			kwargs[argstr.substr(1,bracketPos-1)] = (argstr.substr(bracketPos+1).trim() || '.');
+			kwargs[argstr.substr(1, bracketPos - 1)] = (argstr.substr(bracketPos + 1).trim() || '.');
 		}
 		if (!this.data[room]) this.data[room] = {};
 		//send data to AI module
@@ -308,7 +307,7 @@
 								{},
 								{}
 							]
-						},
+						}
 					};
 				} else if (args[1] === 'triples') {
 					this.data[room].statusData = {
@@ -327,7 +326,7 @@
 								{},
 								{}
 							]
-						},
+						}
 					};
 				} else {
 					this.data[room].statusData = {
@@ -342,7 +341,7 @@
 							pokemon: [
 								{}
 							]
-						},
+						}
 					};
 				}
 				break;
@@ -381,6 +380,8 @@
 				break;
 			case 'turn':
 				this.data[room].turn = args[1];
+				this.makeDecision(room, false);
+				break;
 			case 'inactive':
 				this.makeDecision(room, false);
 				break;
@@ -484,7 +485,7 @@
 						poke['volatiles'] = this.data[room].statusData.self.pokemon[pokeIndex]['volatiles'];
 					}
 					this.data[room].statusData.self.pokemon[pokeIndex] = poke;
-				}				
+				}
 				break;
 			case 'detailschange':
 				if (!this.data[room].statusData) return; //no gametype (bug)
@@ -512,7 +513,6 @@
 						this.data[room].oppTeamOffSet[pokeId][i] = poke[i];
 						this.data[room].statusData.foe.pokemon[pokeIndex][i] = poke[i];
 					}
-					
 				} else {
 					for (var i in poke)
 						this.data[room].statusData.self.pokemon[pokeIndex][i] = poke[i];
@@ -563,7 +563,7 @@
 					if (!this.data[room].oppTeamOffSet) this.data[room].oppTeamOffSet = {};
 					if (!this.data[room].oppTeamOffSet[pokeId]) this.data[room].oppTeamOffSet[pokeId] = {};
 					if (!this.data[room].oppTeamOffSet[pokeId].moves) this.data[room].oppTeamOffSet[pokeId].moves = {};
-					if (!this.data[room].oppTeamOffSet[pokeId].moves[args[2]]) this.data[room].oppTeamOffSet[pokeId].moves[args[2]] = 0; 
+					if (!this.data[room].oppTeamOffSet[pokeId].moves[args[2]]) this.data[room].oppTeamOffSet[pokeId].moves[args[2]] = 0;
 					++this.data[room].oppTeamOffSet[pokeId].moves[args[2]]; //register move usage
 					this.data[room].statusData.foe.pokemon[pokeIndex].lastMove = args[2];
 					if (args[2] === 'Baton Pass') this.data[room].statusData.foe.pokemon[pokeIndex].batonPassing = true;
@@ -571,14 +571,12 @@
 					this.data[room].statusData.self.pokemon[pokeIndex].lastMove = args[2];
 					if (args[2] === 'Baton Pass') this.data[room].statusData.self.pokemon[pokeIndex].batonPassing = true;
 				}
-				
 				break;
-			
-				
+
 			/*----------------------------------
 				Run minors
 			--------------------------------------*/
-			
+
 			case '-damage':
 			case '-heal':
 			case '-sethp':
@@ -625,7 +623,7 @@
 						this.data[room].statusData.self.pokemon[ident.pokeIndex][i] = poke[i];
 				}
 				break;
-			
+
 			case '-boost':
 			case '-setboost':
 				var ident = this.getPokemonId(args[1]);
@@ -685,7 +683,7 @@
 					stats = stats.split(",");
 					var aux;
 					for (var i = 0; i < stats.length; i++) {
-						actStat = stats[i].trim();
+						var actStat = stats[i].trim();
 						aux = this.data[room].statusData[sideA].pokemon[identA.pokeIndex]['boost'][actStat];
 						this.data[room].statusData[sideA].pokemon[identA.pokeIndex]['boost'][actStat] = this.data[room].statusData[sideB].pokemon[identB.pokeIndex]['boost'][actStat];
 						this.data[room].statusData[sideB].pokemon[identB.pokeIndex]['boost'][actStat] = aux;
@@ -724,12 +722,12 @@
 				}
 				break;
 			case '-clearallboost':
-				for (var i = 0; i < this.data[room].statusData.foe.pokemon.length; i++) 
+				for (var i = 0; i < this.data[room].statusData.foe.pokemon.length; i++)
 					this.data[room].statusData.foe.pokemon[i]['boost'] = {};
-				for (var i = 0; i < this.data[room].statusData.self.pokemon.length; i++) 
+				for (var i = 0; i < this.data[room].statusData.self.pokemon.length; i++)
 					this.data[room].statusData.self.pokemon[i]['boost'] = {};
 				break;
-			
+
 			case '-status':
 				var ident = this.getPokemonId(args[1]);
 				if (this.data[room].opponent.id === ident.sideId) {
@@ -751,7 +749,7 @@
 			case '-cureteam':
 				var ident = this.getPokemonId(args[1]);
 				if (this.data[room].opponent.id === ident.sideId) {
-					for (var i in this.data[room].oppTeamOffSet) 
+					for (var i in this.data[room].oppTeamOffSet)
 						this.data[room].oppTeamOffSet[i]['status'] = false;
 					for (var i = 0; i < this.data[room].statusData.foe.pokemon.length; i++)
 						this.data[room].statusData.foe.pokemon[i]['status'] = false;
@@ -760,7 +758,7 @@
 						this.data[room].statusData.self.pokemon[i]['status'] = false;
 				}
 				break;
-			
+
 			case '-item':
 				var ident = this.getPokemonId(args[1]);
 				if (this.data[room].opponent.id === ident.sideId) {
@@ -779,7 +777,7 @@
 					this.data[room].statusData.self.pokemon[ident.pokeIndex]['item'] = false;
 				}
 				break;
-		
+
 			case '-ability':
 				var ident = this.getPokemonId(args[1]);
 				if (this.data[room].opponent.id === ident.sideId) {
@@ -798,7 +796,7 @@
 					this.data[room].statusData.self.pokemon[ident.pokeIndex]['ability'] = false;
 				}
 				break;
-			
+
 			case '-transform':
 				var identA = this.getPokemonId(args[1]);
 				var sideA = (this.data[room].opponent.id === identA.sideId) ? 'foe' : 'self';
@@ -807,7 +805,7 @@
 				this.data[room].statusData[sideA].pokemon[identA.pokeIndex] = this.data[room].statusData[sideB].pokemon[identB.pokeIndex];
 				this.data[room].statusData[sideA].pokemon[identA.pokeIndex].name = identA.pokeId;
 				break;
-			
+
 			case '-start':
 				var ident = this.getPokemonId(args[1]);
 				var side = (this.data[room].opponent.id === ident.sideId) ? 'foe' : 'self';
@@ -826,7 +824,7 @@
 				if (!this.data[room].statusData[side].pokemon[ident.pokeIndex]['volatiles']) this.data[room].statusData[side].pokemon[ident.pokeIndex]['volatiles'] = {};
 				this.data[room].statusData[side].pokemon[ident.pokeIndex]['volatiles'][volTarget] = false;
 				break;
-			
+
 			case '-sidestart':
 				var sideId = args[1].split(":")[0];
 				var hazardId = args[2].split(": ");
@@ -849,7 +847,7 @@
 					this.data[room].statusData.self.side[hazardId] = false;
 				}
 				break;
-				
+
 			case '-weather':
 				this.data[room].weather = args[1];
 				break;
@@ -866,12 +864,10 @@
 				if (fieldId[1]) fieldId = fieldId[1];
 				else fieldId = fieldId[0];
 				this.data[room].fields[fieldId] = false;
-				break;			
-			
-			/*-----------------------------------------------*/
-			case 'done':
+				break;
+
 			default:
 				return;
 		}
-	}	
+	}
 };

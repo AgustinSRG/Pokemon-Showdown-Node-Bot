@@ -5,9 +5,8 @@
 Settings.addPermissions(['searchbattle', 'jointour']);
 
 exports.commands = {
-	
 	unblockchallenges: 'blockchallenges',
-	blockchallenges: function(arg, by, room, cmd) { 
+	blockchallenges: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return;
 		if (cmd === "blockchallenges") {
 			this.say('', '/blockchallenges');
@@ -17,21 +16,20 @@ exports.commands = {
 			this.say(room, 'Challenges no longer blocked');
 		}
 	},
-	
-	move: function(arg, by, room, cmd) { 
+
+	move: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
-		
 		if (this.roomType !== 'battle') return this.reply('This command is only avaliable for battle rooms');
 		try {
 			if (!arg) Features['battle'].BattleBot.receive(room, "|forcemove|");
 			else if (arg === "random") Features['battle'].BattleBot.receive(room, "|forcemoverandom|");
 			else this.say(room, '/choose ' + arg);
 		} catch (e) {
-			this.say(con, room, 'Error: ' + sys.inspect(e));
+			this.reply('Error: ' + sys.inspect(e));
 		}
 	},
-	
-	jointours: function(arg, by, room, cmd) { 
+
+	jointours: function (arg, by, room, cmd) {
 		if (!this.can('jointour')) return false;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 		if (!Settings.settings['jointours']) Settings.settings['jointours'] = {};
@@ -47,47 +45,40 @@ exports.commands = {
 			this.reply('Mode "tour autojoin" enabled for room ' + room);
 		}
 	},
-	
+
 	sb: 'searchbattle',
-	searchbattle: function(arg, by, room, cmd) { 
+	searchbattle: function (arg, by, room, cmd) {
 		if (!this.can('searchbattle')) return false;
 		if (!arg || !arg.length) return this.reply('You must specify a format');
 		var format = toId(arg);
-		
 		if (!Formats[format] || !Formats[format].ladder) return this.reply('Format ' + format + ' is not valid for searching battle');
 		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply('I do not have teams for searching battle in format ' + format + '. Edit teams.js to add more bot teams');
-		
 		Features['battle'].LadderManager.reportsRoom = room;
 		var cmds = [];
 		var team = Features['battle'].TeamBuilder.getTeam(format);
-		
 		if (team) cmds.push('|/useteam ' + team);
 		cmds.push('|/search ' + arg);
 		Bot.send(cmds);
 	},
-	
+
 	chall: 'challenge',
-	challenge: function(arg, by, room, cmd) { 
+	challenge: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
 		var args = arg.split(",");
 		if (args.length < 2) return this.reply('Usage: ' + Config.commandChar + cmd + " [user], [format]");
-		
 		var format = toId(args[1]);
-		
 		if (!Formats[format] || !Formats[format].chall) return this.reply('Format ' + format + ' is not valid for challenging');
 		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply('I do not have teams for challenging in format ' + format + '. Edit teams.js to add more bot teams');
-		
 		var cmds = [];
 		var team = Features['battle'].TeamBuilder.getTeam(format);
-		
 		if (team) cmds.push('|/useteam ' + team);
 		cmds.push('|/challenge ' + toId(args[0]) + ", " + format);
 		Bot.send(cmds);
 	},
-	
+
 	tourjoin: 'jointour',
 	jt: 'jointour',
-	jointour: function(arg, by, room, cmd) {
+	jointour: function (arg, by, room, cmd) {
 		if (!this.can('jointour')) return false;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 		if (!Features['battle'].TourManager.tourData[room] || !Features['battle'].TourManager.tourData[room].format) return this.reply('There is not a tournament in this room');
@@ -97,13 +88,12 @@ exports.commands = {
 		if (Formats[format] && Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply('I do not have teams for joining a tornament in format ' + format + '. Edit teams.js to add more bot teams.');
 		this.reply("/tour join");
 	},
-	
-	leavetour: function(arg, by, room, cmd) {
+
+	leavetour: function (arg, by, room, cmd) {
 		if (!this.isRanked('#')) return false;
 		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
 		if (!Features['battle'].TourManager.tourData[room] || !Features['battle'].TourManager.tourData[room].format) return this.reply('There is not a tournament in this room');
 		if (!Features['battle'].TourManager.tourData[room].isJoined) return this.reply('Error: Not joined');
 		this.reply("/tour leave");
 	}
-	
 };

@@ -10,7 +10,7 @@ function canChallenge(i, nBattles) {
 
 exports.parse = function (room, message, isIntro, spl) {
 	if (spl[0] !== 'updatechallenges') return;
-	nBattles = Object.keys(Features['battle'].BattleBot.data).length;
+	var nBattles = Object.keys(Features['battle'].BattleBot.data).length;
 	try {
 		exports.challenges = JSON.parse(message.substr(18));
 	} catch (e) {return;}
@@ -18,7 +18,7 @@ exports.parse = function (room, message, isIntro, spl) {
 		for (var i in exports.challenges.challengesFrom) {
 			if (canChallenge(i, nBattles)) {
 				var format = exports.challenges.challengesFrom[i];
-				
+
 				if (!(format in Formats) || !Formats[format].chall) {
 					Bot.say('', '/reject ' + i);
 					continue;
@@ -27,7 +27,7 @@ exports.parse = function (room, message, isIntro, spl) {
 					Bot.say('', '/reject ' + i);
 					continue;
 				}
-				
+
 				var team = Features['battle'].TeamBuilder.getTeam(format);
 				if (team) {
 					Bot.say('', '/useteam ' + team);

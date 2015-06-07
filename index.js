@@ -1,18 +1,17 @@
 /*
 	Pokemon Showdown Bot, for NodeJS
-	
+
 	By: Ecuacion
 */
 
 try {
 	require('sugar');
-	
+
 	global.colors = require('colors');
 	global.sys = require('sys');
 	global.fs = require('fs');
 	global.path = require('path');
-	
-	var psClient = require('node-ps-client');
+	global.PSClient = require('node-ps-client');
 } catch (e) {
 	console.log(e.stack);
 	console.log("ERROR: missing dependencies, try 'npm install'");
@@ -32,12 +31,12 @@ if (!fs.existsSync('./config.js')) {
 	fs.writeFileSync('./config.js', fs.readFileSync('./config-example.js'));
 }
 
+global.Config = require('./config.js');
+
 global.reloadConfig = function () {
 	uncacheTree('./config.js');
-	Config = require('./config.js');
+	global.Config = require('./config.js');
 };
-
-global.Config = require('./config.js');
 
 info('Loading globals');
 
@@ -93,7 +92,7 @@ global.reloadFeatures = function () {
 		}
 	});
 	return errs;
-}
+};
 
 /* Bot creation and connection */
 
@@ -128,7 +127,7 @@ var opts = {
 
 info('Connecting to server ' + Config.server + ':' + Config.port);
 
-var Bot = global.Bot = new psClient(Config.server, Config.port, opts);
+global.Bot = new PSClient(Config.server, Config.port, opts);
 
 Bot.on('connect', function (con) {
 	ok('Connected to server ' + Config.serverid);
@@ -179,7 +178,7 @@ Bot.on('renamefailure', function (e) {
 	if (e === -1)  {
 		if (!Config.nick) {
 			debug('Login failure - generating another random nickname');
-			Bot.rename('Bot ' + generateRandomNick(10)); 
+			Bot.rename('Bot ' + generateRandomNick(10));
 		} else {
 			error('Login failure - name registered, invalid or no password given');
 			if (!Bot.status.named) {

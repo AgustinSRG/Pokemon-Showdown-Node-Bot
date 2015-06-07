@@ -5,7 +5,7 @@
 Settings.addPermissions(['info', 'wall']);
 
 exports.commands = {
-	
+
 	infowall: 'dyn',
 	dynwall: 'dyn',
 	wall: 'dyn',
@@ -39,7 +39,7 @@ exports.commands = {
 			}
 		}
 	},
-	
+
 	deletecommand: 'delcmd',
 	delcmd: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
@@ -52,7 +52,7 @@ exports.commands = {
 			this.reply('Command "' + dcmd + '" does not exists');
 		}
 	},
-	
+
 	setcommand: 'setcmd',
 	setcmd: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
@@ -60,16 +60,17 @@ exports.commands = {
 			this.reply('There is no temp string to set, use **stemp** before doing this');
 		}
 		var dcmd = toId(arg);
+		var text = '';
 		if (CommandParser.dynCommands[dcmd]) {
-			var text = 'Command "' + dcmd + '" has been successfully modified';
+			text = 'Command "' + dcmd + '" has been successfully modified';
 		} else {
-			var text = 'Command "' + dcmd + '" has been successfully created';
+			text = 'Command "' + dcmd + '" has been successfully created';
 		}
 		CommandParser.dynCommands[dcmd] = CommandParser.tempVar;
 		CommandParser.saveDinCmds();
 		this.reply(text);
 	},
-	
+
 	stemp: 'temp',
 	temp: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;

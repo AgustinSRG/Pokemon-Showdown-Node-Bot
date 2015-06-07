@@ -4,7 +4,7 @@
 
 const FLOOD_MESSAGE_NUM = 5;
 const FLOOD_PER_MSG_MIN = 500; // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
-const FLOOD_MESSAGE_TIME = 6*1000;
+const FLOOD_MESSAGE_TIME = 6 * 1000;
 const MIN_CAPS_LENGTH = 18;
 const MIN_CAPS_PROPORTION = 0.8;
 
@@ -52,7 +52,7 @@ function isBanned (room, user) {
 	if (Settings.settings['regexautoban'] && Settings.settings['regexautoban'][room]) {
 		for (var i = 0; i < Settings.settings['regexautoban'][room].length; i++) {
 			try {
-				var regexObj = new RegExp(arg, 'i');
+				var regexObj = new RegExp(i, 'i');
 				if (regexObj.test(user)) return '#range';
 			} catch (e) {}
 		}
@@ -91,46 +91,46 @@ function parseChat (room, time, by, message) {
 	if (equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
 	if (ban) Bot.say(room, '/roomban ' + by + ', Blacklisted user' + ((ban === '#range') ? ' (range)' : ''));
-	
+
 	/* Chat Logs */
-	
+
 	if (!chatLog[room]) chatLog[room] = {
 		times: [0, 0, 0, 0],
 		users: ['', '', '', ''],
 		msgs: ['', '', '', '']
 	};
-	
+
 	chatLog[room].times.push(time);
 	chatLog[room].users.push(user);
 	chatLog[room].msgs.push(message);
-	
+
 	chatLog[room].times.shift();
 	chatLog[room].users.shift();
 	chatLog[room].msgs.shift();
-	
+
 	var msg = message.trim().replace(/[ \u0000\u200B-\u200F]+/g, " "); // removes extra spaces and null characters so messages that should trigger stretching do so
-	
+
 	if (!chatData[room]) chatData[room] = {};
-	
+
 	if (!chatData[room][user]) chatData[room][user] = {times:[], lastMsgs: ['', ''], points:0, lastAction:0};
-	
+
 	chatData[room][user].lastMsgs.push(msg);
 	chatData[room][user].lastMsgs.shift();
-	
-	chatData[room][user].times.push(time)
-	
+
+	chatData[room][user].times.push(time);
+
 	/* Moderation */
-	
+
 	if (!Config.moderation.allowmute) return;
 	if (!isBotRanked(room, '%')) return; // Bot is not a driver or above
-	
+
 	var infractions = [];
 	var muteMessage = '';
 	var pointVal = 0;
 	var totalPointVal = 0;
 	var times = chatData[room][user].times;
-	
-	var modSettings = {};	
+
+	var modSettings = {};
 	var useDefault = !(Settings.settings['modding'] && Settings.settings['modding'][room]);
 	if (useDefault) {
 		modSettings = Config.moderation.modDefault;
@@ -143,19 +143,17 @@ function parseChat (room, time, by, message) {
 			}
 		}
 	}
-	
+
 	var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
 	capsMatch = capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= Math.floor(toId(msg).length * MIN_CAPS_PROPORTION));
 	var stretchMatch = msg.toLowerCase().match(/(.)\1{7,}/g);
 	var inlineSpam = stretchMatch ? false : msg.toLowerCase().match(/(..+)\1{4,}/g);
-	
-	var isFlooding = (times.length >= FLOOD_MESSAGE_NUM && (time - times[times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME
-		&& (time - times[times.length - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
-	
+	var isFlooding = (times.length >= FLOOD_MESSAGE_NUM && (time - times[times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME && (time - times[times.length - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
+
 	/*****************
 	* Spam Mod
 	******************/
-	
+
 	if (modSettings['spam'] !== 0) {
 		if (times.length >= FLOOD_MESSAGE_NUM && (time - times[times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME) {
 			var isSpamming = false;
@@ -186,7 +184,7 @@ function parseChat (room, time, by, message) {
 			}
 		}
 	}
-	
+
 	if (modSettings['spam'] !== 0 && pointVal < 3) {
 		if (times.length >= 3 && (time - times[times.length - 3]) < FLOOD_MESSAGE_TIME && msg === chatData[room][user].lastMsgs[0] && chatData[room][user].lastMsgs[0] === chatData[room][user].lastMsgs[1]) {
 			pointVal = 3;
@@ -197,14 +195,14 @@ function parseChat (room, time, by, message) {
 			} else if (msg.length > 70 || capsMatch || msg.toLowerCase().indexOf("**") > -1 || stretchMatch || inlineSpam) {
 				muteMessage = ', Automated moderation: Spamming.';
 				pointVal = 4;
-			} 
+			}
 		}
 	}
-	
+
 	/********************************************
 	* Bacic Mods (caps, stretching, flooding)
 	*********************************************/
-	
+
 	if (modSettings['caps'] !== 0 && capsMatch) {
 		infractions.push("Caps");
 		totalPointVal += 1;
@@ -213,12 +211,12 @@ function parseChat (room, time, by, message) {
 			muteMessage = ', Automated moderation: Excessive capitalization.';
 		}
 	}
-	
+
 	if (inlineSpam) {
 		infractions.push("Repeating");
 		totalPointVal += 1;
 	}
-	
+
 	if (modSettings['stretching'] !== 0 && stretchMatch) {
 		infractions.push("Stretching");
 		totalPointVal += 1;
@@ -227,7 +225,7 @@ function parseChat (room, time, by, message) {
 			muteMessage = ', Automated moderation: Stretching.';
 		}
 	}
-	
+
 	if (modSettings['flooding'] !== 0 && isFlooding) {
 		infractions.push("Flooding");
 		totalPointVal += 2;
@@ -236,11 +234,11 @@ function parseChat (room, time, by, message) {
 			muteMessage = ', Automated moderation: Flooding.';
 		}
 	}
-	
+
 	/*****************************
 	* Specific Mods
 	******************************/
-	
+
 	if (modSettings['spoiler'] !== 0 && (msg.toLowerCase().indexOf("spoiler:") > -1 || msg.toLowerCase().indexOf("spoilers:") > -1)) {
 		infractions.push("Spoiler");
 		totalPointVal += 2;
@@ -249,7 +247,7 @@ function parseChat (room, time, by, message) {
 			muteMessage = ', Automated moderation: Spoilers are not allowed in this room.';
 		}
 	}
-	
+
 	if (modSettings['youtube'] !== 0 && (msg.toLowerCase().indexOf("youtube.com/channel/") > -1 || msg.toLowerCase().indexOf("youtube.com/user/") > -1)) {
 		infractions.push("Youtube channel");
 		totalPointVal += 2;
@@ -258,7 +256,7 @@ function parseChat (room, time, by, message) {
 			muteMessage = ', Automated moderation: Youtube channels are not allowed in this room.';
 		}
 	}
-	
+
 	if (modSettings['psservers'] !== 0 && msg.toLowerCase().indexOf(".psim.us") > -1) {
 		var serverAds = getServersAds(msg);
 		for (var z = 0; z < serverAds.length; z++) {
@@ -273,28 +271,28 @@ function parseChat (room, time, by, message) {
 			}
 		}
 	}
-	
+
 	/****************************
 	* Banned Words
 	*****************************/
-	
+
 	if (modSettings['inapropiate'] !== 0) {
 		var inapropiatephraseSettings = Settings.settings['inapropiatephrases'];
 		var inapropiatePhrases = !!inapropiatephraseSettings ? (Object.keys(inapropiatephraseSettings[room] || {})).concat(Object.keys(inapropiatephraseSettings['global'] || {})) : [];
 		var msgrip = " " + msg.toLowerCase().replace(/[^a-z0-9]/g, ' ') + " ";
 		for (var i = 0; i < inapropiatePhrases.length; i++) {
 			if (msgrip.indexOf(" " + inapropiatePhrases[i] + " ") > -1) {
-					infractions.push("Inapropiate");
-					totalPointVal += 2;
-					if (pointVal < 2) {
-						pointVal = 2;
-						muteMessage = ', Automated moderation: Your message contained an inapropiate phrase';
-					}
-					break;
+				infractions.push("Inapropiate");
+				totalPointVal += 2;
+				if (pointVal < 2) {
+					pointVal = 2;
+					muteMessage = ', Automated moderation: Your message contained an inapropiate phrase';
+				}
+				break;
 			}
 		}
 	}
-	
+
 	if (modSettings['bannedwords'] !== 0) {
 		var banphraseSettings = Settings.settings['bannedphrases'];
 		var bannedPhrases = !!banphraseSettings ? (Object.keys(banphraseSettings[room] || {})).concat(Object.keys(banphraseSettings['global'] || {})) : [];
@@ -311,27 +309,27 @@ function parseChat (room, time, by, message) {
 			}
 		}
 	}
-	
+
 	/*****************************
 	* Multiple infraction
 	******************************/
-	
+
 	if (modSettings['multiple'] !== 0) {
 		if (infractions.length >= 2) {
 			pointVal = totalPointVal;
 			muteMessage = ', Multiple infraction: ' + infractions.join(", ");
 		}
 	}
-	
+
 	/* Zero Tolerance */
-	
+
 	if (pointVal > 0 && zeroTol[user] && zeroTol[user] > 4) {
 		muteMessage += ' (zero tolerance)';
 		pointVal = Config.moderation.punishments.length;
 	}
-	
+
 	/* Applying punishment */
-	
+
 	if (pointVal > 0) {
 		var cmd = 'mute';
 		pointVal += chatData[room][user].points;
@@ -341,16 +339,14 @@ function parseChat (room, time, by, message) {
 			if (!zeroTol[user]) zeroTol[user] = 0;
 			zeroTol[user]++;
 		}
-		
+
 		var cmd = Config.moderation.punishments[pointVal - 1];
-		
-		if (cmd  ==='roomban' && !isBotRanked(room, '@')) cmd = 'hourmute'; // Bot is not a moderator
-		if ((room in Config.privateRooms) && cmd === 'warn') cmd = 'mute'; // can't warn in private rooms
-		
+
+		if (cmd  === 'roomban' && !isBotRanked(room, '@')) cmd = 'hourmute'; //Bot is not a moderator
+		if ((room in Config.privateRooms) && cmd === 'warn') cmd = 'mute'; //can't warn in private rooms
+
 		Bot.say(room, '/' + cmd + ' ' + user + muteMessage);
 	}
-	
-	
 }
 
 function parseJoin (room, by) {
@@ -372,11 +368,11 @@ function parseRename (room, by, old) {
 }
 
 exports.init = function () {
-	for (var i in chatData) 
+	for (var i in chatData)
 		delete chatData[i];
-	for (var i in chatLog) 
+	for (var i in chatLog)
 		delete chatLog[i];
-		
+
 	if (cleanDataTimer) clearInterval(cleanDataTimer);
 	cleanDataTimer = setInterval(cleanData, 30 * 60 * 1000);
 };
@@ -390,21 +386,21 @@ exports.parse = function (room, message, isIntro, spl) {
 			var timeOff = Date.now();
 			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|").length));
 			break;
-		
+
 		case 'c:':
 			var by = spl[2];
 			var timeOff = parseInt(spl[1]) * 1000;
 			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|" + spl[2] + "|").length));
 			break;
-		
+
 		case 'J': case 'j':
 			parseJoin(room, spl[1]);
 			break;
-		
+
 		case 'l': case 'L':
 			parseLeave(room, spl[1]);
 			break;
-		
+
 		case 'N':
 			parseRename(room, spl[1], spl[3]);
 			break;

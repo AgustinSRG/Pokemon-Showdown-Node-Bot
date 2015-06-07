@@ -1,12 +1,12 @@
 ﻿Pokemon Showdown Bot for Node
 ====================
 
+[![Build Status](https://travis-ci.org/Ecuacion/Pokemon-Showdown-Node-Bot.svg)](https://travis-ci.org/Ecuacion/Pokemon-Showdown-Node-Bot)
 [![Dependency Status](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot.svg)](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot)
+[![devDependency Status](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot/dev-status.svg)](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot#info=devDependencies)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 This is a [Pokemon Showdown](http://nodejs.org/) bot written in JavaScript for [Node](http://nodejs.org/), based on [Pokemon Showdown Bot](https://github.com/TalkTakesTime/Pokemon-Showdown-Bot). 
-
-**NOTE**: This is currently in developing, there are still a lot of things to do
 
 This bot is based on commands and features, which are explained below. This is intended to ease bot configuration and customization, separating commands in multiple files, multiple features in different folders and merging functions in Global Objects like Bot, CommandParser or Settings.
 

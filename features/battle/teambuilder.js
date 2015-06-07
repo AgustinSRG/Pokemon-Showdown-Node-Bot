@@ -1,6 +1,6 @@
 module.exports = {
 	teams: {},
-	
+
 	loadTeamList: function (reloading) {
 		try {
 			if (reloading) uncacheTree('./teams.js');
@@ -11,7 +11,7 @@ module.exports = {
 			return false;
 		}
 	},
-	
+
 	getTeam: function (format) {
 		var formatId = toId(format);
 		var teamStuff = this.teams[formatId];
@@ -19,10 +19,10 @@ module.exports = {
 		var teamChosen = teamStuff[Math.floor(Math.random() * teamStuff.length)]; //choose team
 		var teamStr = '';
 		try {
-			if (typeof(teamChosen) === 'string') {
+			if (typeof teamChosen === 'string') {
 				//already parsed
 				teamStr = teamChosen;
-			} else if (typeof(teamChosen) === 'object') {
+			} else if (typeof teamChosen === 'object') {
 				if (teamChosen.maxPokemon && teamChosen.pokemon) {
 					//generate random team
 					var team = [];
@@ -32,7 +32,7 @@ module.exports = {
 						if (k++ >= teamChosen.maxPokemon) break;
 						team.push(pokes[i]);
 					}
-					if (config.debuglevel <= 2) debug(JSON.stringify(team));
+					if (Config.debug.debug) debug("Packed Team: " + JSON.stringify(team));
 					teamStr = this.packTeam(team);
 				} else if (teamChosen.length){
 					//parse team
@@ -50,108 +50,108 @@ module.exports = {
 			error(e.stack);
 		}
 	},
-	
+
 	hasTeam: function (format) {
 		var formatId = toId(format);
 		if (this.teams[formatId]) return true;
 		return false;
 	},
-	
+
 	/* Pack Team function - from Pokemon-Showdown-Client */
-	
+
 	packTeam: function (team) {
 		var buf = '';
 		if (!team) return '';
 
-		for (var i=0; i<team.length; i++) {
-		var set = team[i];
-		if (buf) buf += ']';
-	
-		// name
-		buf += (set.name || set.species);
+		for (var i = 0; i < team.length; i++) {
+			var set = team[i];
+			if (buf) buf += ']';
 
-		// species
-		var id = toId(set.species || set.name);
-		buf += '|' + (toId(set.name || set.species) === id ? '' : id);
+			// name
+			buf += (set.name || set.species);
 
-		// item
-		buf += '|' + toId(set.item);
+			// species
+			var id = toId(set.species || set.name);
+			buf += '|' + (toId(set.name || set.species) === id ? '' : id);
 
-		// ability
-		var template = set.species || set.name;
-		template = require('./pokedex.js').BattlePokedex[toId(template)];
-		if (!template) return '';
-		var abilities = template.abilities;
-		id = toId(set.ability);
-		if (abilities) {
-			if (abilities['0'] && id == toId(abilities['0'])) {
-				buf += '|';
-			} else if (abilities['1'] && id === toId(abilities['1'])) {
-				buf += '|1';
-			} else if (abilities['H'] && id === toId(abilities['H'])) {
-				buf += '|H';
+			// item
+			buf += '|' + toId(set.item);
+
+			// ability
+			var template = set.species || set.name;
+			template = require('./pokedex.js').BattlePokedex[toId(template)];
+			if (!template) return '';
+			var abilities = template.abilities;
+			id = toId(set.ability);
+			if (abilities) {
+				if (abilities['0'] && id === toId(abilities['0'])) {
+					buf += '|';
+				} else if (abilities['1'] && id === toId(abilities['1'])) {
+					buf += '|1';
+				} else if (abilities['H'] && id === toId(abilities['H'])) {
+					buf += '|H';
+				} else {
+					buf += '|' + id;
+				}
 			} else {
 				buf += '|' + id;
 			}
-		} else {
-			buf += '|' + id;
-		}
 
-		// moves
-		buf += '|' + set.moves.map(toId).join(',');
+			// moves
+			buf += '|' + set.moves.map(toId).join(',');
 
-		// nature
-		buf += '|' + set.nature;
+			// nature
+			buf += '|' + set.nature;
 
-		// evs
-		var evs = '|';
-		if (set.evs) {
-			evs = '|' + (set.evs['hp']||'') + ',' + (set.evs['atk']||'') + ',' + (set.evs['def']||'') + ',' + (set.evs['spa']||'') + ',' + (set.evs['spd']||'') + ',' + (set.evs['spe']||'');
-		}
-		if (evs === '|,,,,,') {
-			buf += '|';
-		} else {
-			buf += evs;
-		}
+			// evs
+			var evs = '|';
+			if (set.evs) {
+				evs = '|' + (set.evs['hp'] || '') + ',' + (set.evs['atk'] || '') + ',' + (set.evs['def'] || '') + ',' + (set.evs['spa'] || '') + ',' + (set.evs['spd'] || '') + ',' + (set.evs['spe'] || '');
+			}
+			if (evs === '|,,,,,') {
+				buf += '|';
+			} else {
+				buf += evs;
+			}
 
-		// gender
-		if (set.gender && set.gender !== template.gender) {
-			buf += '|'+set.gender;
-		} else {
-			buf += '|';
-		}
+			// gender
+			if (set.gender && set.gender !== template.gender) {
+				buf += '|' + set.gender;
+			} else {
+				buf += '|';
+			}
 
-		// ivs
-		var ivs = '|';
-		if (set.ivs) {
-			ivs = '|' + (set.ivs['hp']===31||set.ivs['hp']===undefined ? '' : set.ivs['hp']) + ',' + (set.ivs['atk']===31||set.ivs['atk']===undefined ? '' : set.ivs['atk']) + ',' + (set.ivs['def']===31||set.ivs['def']===undefined ? '' : set.ivs['def']) + ',' + (set.ivs['spa']===31||set.ivs['spa']===undefined ? '' : set.ivs['spa']) + ',' + (set.ivs['spd']===31||set.ivs['spd']===undefined ? '' : set.ivs['spd']) + ',' + (set.ivs['spe']===31||set.ivs['spe']===undefined ? '' : set.ivs['spe']);
-		}
-		if (ivs === '|,,,,,') {
-			buf += '|';
-		} else {
-			buf += ivs;
-		}
-	
-		// shiny
-		if (set.shiny) {
-			buf += '|S';
-		} else {
-			buf += '|';
-		}
+			// ivs
+			var ivs = '|';
+			if (set.ivs) {
+				ivs = '|' + (set.ivs['hp'] === 31 || set.ivs['hp'] === undefined ? '' : set.ivs['hp']) + ',' + (set.ivs['atk'] === 31 || set.ivs['atk'] === undefined ? '' : set.ivs['atk']) + ',' + (set.ivs['def'] === 31 || set.ivs['def'] === undefined ? '' : set.ivs['def']) + ',' + (set.ivs['spa'] === 31 || set.ivs['spa'] === undefined ? '' : set.ivs['spa']) + ',' + (set.ivs['spd'] === 31 || set.ivs['spd'] === undefined ? '' : set.ivs['spd']) + ',' + (set.ivs['spe'] === 31 || set.ivs['spe'] === undefined ? '' : set.ivs['spe']);
+			}
+			if (ivs === '|,,,,,') {
+				buf += '|';
+			} else {
+				buf += ivs;
+			}
 
-		// level
-		if (set.level && set.level != 100) {
-			buf += '|'+set.level;
-		} else {
-			buf += '|';
-		}
+			// shiny
+			if (set.shiny) {
+				buf += '|S';
+			} else {
+				buf += '|';
+			}
 
-		// happiness
-		if (set.happiness !== undefined && set.happiness !== 255) {
-			buf += '|'+set.happiness;
-		} else {
-			buf += '|';
-		}
+			// level
+			if (set.level && set.level !== 100) {
+				buf += '|' + set.level;
+			} else {
+				buf += '|';
+			}
+
+			// happiness
+			if (set.happiness !== undefined && set.happiness !== 255) {
+				buf += '|' + set.happiness;
+			} else {
+				buf += '|';
+			}
 		}
 
 		return buf;
