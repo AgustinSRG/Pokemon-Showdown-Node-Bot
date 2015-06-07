@@ -9,7 +9,7 @@ var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var replace = require('gulp-replace');
 var FileCache = require('cache-swap');
-var jshintStylish = require('./' + path.relative(__dirname, require('jshint-stylish')));
+var jshintStylish = require('jshint-stylish');
 
 var globals = {};
 var globalList = [
