@@ -84,6 +84,7 @@ global.reloadFeatures = function () {
 				var f = require('./features/' + feature + '/index.js');
 				if (f.id) {
 					Features[f.id] = f;
+					Features[f.id].init();
 				}
 			} catch (e) {
 				errlog(e.stack);
