@@ -56,10 +56,13 @@ exports.defaultPermission = '%';
 
 exports.PermissionExceptions = {
 	//command: 'rank'
+	'say': '#',
+	'info': '+',
+	'wall': '%',
 	'autoban': '#',
 	'banword': '#',
 	'joinphrase': '#',
-	'say': '#'
+	'searchbattle': '~'
 };
 
 /****************************************
@@ -76,8 +79,8 @@ exports.debug = {
 	monitor: true,
 	
 	/* Internal Debug */
-	debug: true,
-	cmdr: true,
+	debug: false,
+	cmdr: false,
 	
 	/* Low Level */
 	recv: false,
@@ -131,3 +134,12 @@ exports.moderation = {
 		"smogtours": 1
 	}
 };
+
+/******************
+* Battles
+*******************/
+
+exports.clientUrl = 'http://play.pokemonshowdown.com/';
+exports.aceptAll = false;
+exports.winmsg = ['GG', 'g_g'];
+exports.losemsg = ['gg', 'wp'];
