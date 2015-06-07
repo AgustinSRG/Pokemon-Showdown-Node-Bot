@@ -14,6 +14,30 @@ exports.desc = 'Automated moderation for chat rooms';
 var chatData = exports.chatData = {};
 var chatLog = exports.chatLog = {};
 var zeroTol = exports.zeroTol = {};
+var cleanDataTimer = null;
+
+var cleanData = exports.cleanData = function () {
+	for (var room in chatData) {
+		for (var user in chatData[room]) {
+			var now = Date.now();
+			if (!chatData[room][user] || !chatData[room][user].times.length) {
+				delete chatData[room][user];
+				continue;
+			}
+			if (now - chatData[room][user].times[chatData[room][user].times.length - 1] > 24 * 60 * 60 * 1000) {
+				delete chatData[room][user];
+				continue;
+			}
+			var newTimes = [];
+			for (var j = 0; j < chatData[room][user].times.length; j++) {
+				if (now - chatData[room][user].times[j] < 60 * 60 * 1000) newTimes.push(chatData[room][user].times[j]);
+			}
+			delete chatData[room][user].times;
+			chatData[room][user].times = newTimes;
+			if (chatData[room][user].points) chatData[room][user].points--;
+		}
+	}
+};
 
 function isBotRanked (room, rank) {
 	if (!Bot.rooms[room]) return false;
@@ -352,6 +376,9 @@ exports.init = function () {
 		delete chatData[i];
 	for (var i in chatLog) 
 		delete chatLog[i];
+		
+	if (cleanDataTimer) clearInterval(cleanDataTimer);
+	cleanDataTimer = setInterval(cleanData, 30 * 60 * 1000);
 };
 
 exports.parse = function (room, message, isIntro, spl) {
