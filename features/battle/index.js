@@ -34,11 +34,11 @@ exports.parse = function (room, message, isIntro, spl) {
 			LadderManager.reportBattle(room);
 			break;
 	}
-	
+
 	if (!Bot.rooms[room]) {
 		if (spl[0] !== 'init' || spl[2] !== 'battle') return;
 	} else if (Bot.rooms[room].type !== "battle") return;
-	
+
 	try {
 		BattleBot.receive(room, message);
 	} catch (e) {

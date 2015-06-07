@@ -3,7 +3,7 @@ module.exports = {
 
 	loadTeamList: function (reloading) {
 		try {
-			if (reloading) uncacheTree('./teams.js');
+			if (reloading) Tools.uncacheTree('./features/battle/teams.js');
 			this.teams = require('./teams.js').teams;
 			return true;
 		} catch (e) {

@@ -42,7 +42,7 @@ var cleanData = exports.cleanData = function () {
 function isBotRanked (room, rank) {
 	if (!Bot.rooms[room]) return false;
 	var ident = Bot.rooms[room].users[toId(Bot.status.nickName)];
-	if (ident) return equalOrHigherRank(ident, rank);
+	if (ident) return Tools.equalOrHigherRank(ident, rank);
 	return false;
 }
 
@@ -88,7 +88,7 @@ function getServersAds (text) {
 
 function parseChat (room, time, by, message) {
 	var user = toId(by);
-	if (equalOrHigherRank(by, Config.moderation.modException)) return;
+	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
 	if (ban) Bot.say(room, '/roomban ' + by + ', Blacklisted user' + ((ban === '#range') ? ' (range)' : ''));
 
@@ -352,7 +352,7 @@ function parseChat (room, time, by, message) {
 function parseJoin (room, by) {
 	var jp = getJoinPhrase(room, by);
 	if (jp) Bot.say(room, jp);
-	if (equalOrHigherRank(by, Config.moderation.modException)) return;
+	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
 	if (ban) Bot.say(room, '/roomban ' + by + ', Blacklisted user' + ((ban === '#range') ? ' (range)' : ''));
 }
@@ -362,7 +362,7 @@ function parseLeave (room, by) {
 }
 
 function parseRename (room, by, old) {
-	if (equalOrHigherRank(by, Config.moderation.modException)) return;
+	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
 	if (ban) Bot.say(room, '/roomban ' + by + ', Blacklisted user' + ((ban === '#range') ? ' (range)' : ''));
 }

@@ -74,7 +74,7 @@ exports.commands = {
 	stemp: 'temp',
 	temp: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
-		if (arg) CommandParser.tempVar = stripCommands(arg);
+		if (arg) CommandParser.tempVar = Tools.stripCommands(arg);
 		this.reply('Temp: ' + CommandParser.tempVar);
 	}
 };

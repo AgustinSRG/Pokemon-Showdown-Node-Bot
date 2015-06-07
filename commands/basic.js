@@ -26,7 +26,7 @@ exports.commands = {
 	bottime: 'time',
 	time: function (arg, by, room, cmd) {
 		var f = new Date();
-		var text = "**Bot Time:** " + addLeftZero(f.getHours(), 2) + ":" + addLeftZero(f.getMinutes(), 2) + ":" + addLeftZero(f.getSeconds(), 2);
+		var text = "**Bot Time:** " + Tools.addLeftZero(f.getHours(), 2) + ":" + Tools.addLeftZero(f.getMinutes(), 2) + ":" + Tools.addLeftZero(f.getSeconds(), 2);
 		if (!this.isRanked('#')) {
 			this.pmReply(text);
 		} else {
@@ -82,9 +82,9 @@ exports.commands = {
 		if (choices.length < 2) return this.pmReply("You must give at least 2 valid choices");
 		var choice = choices[Math.floor(Math.random() * choices.length)];
 		if (!this.can('pick') || this.roomType === 'pm') {
-			this.pmReply(stripCommands(choice));
+			this.pmReply(Tools.stripCommands(choice));
 		} else {
-			this.reply(stripCommands(choice));
+			this.reply(Tools.stripCommands(choice));
 		}
 	},
 
@@ -96,7 +96,7 @@ exports.commands = {
 		if (arg === toId(by)) return this.pmReply('Have you looked in the mirror lately?');
 		if (Settings.seen[arg]) {
 			var dSeen = Settings.seen[arg];
-			text += arg + ' was last seen ' + getTimeAgo(dSeen.time) + ' ago';
+			text += arg + ' was last seen ' + Tools.getTimeAgo(dSeen.time) + ' ago';
 			if (dSeen.room) {
 				switch (dSeen.action) {
 					case 'j':
@@ -123,10 +123,10 @@ exports.commands = {
 		if (!arg) return;
 		if (this.roomType !== 'chat') {
 			if (this.isRanked('%')) return;
-			this.reply(stripCommands(arg));
+			this.reply(Tools.stripCommands(arg));
 		}
 		if (!this.can('say')) return;
-		this.reply(stripCommands(arg));
+		this.reply(Tools.stripCommands(arg));
 	},
 
 	settings: 'set',

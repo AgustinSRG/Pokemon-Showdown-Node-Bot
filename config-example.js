@@ -3,7 +3,7 @@
 */
 
 /****************************************
-* Connection Details 
+* Connection Details
 ****************************************/
 
 exports.server = 'localhost';
@@ -74,14 +74,14 @@ exports.debug = {
 	info: true,
 	error: true,
 	ok: true,
-	
+
 	errlog: true,
 	monitor: true,
-	
+
 	/* Internal Debug */
 	debug: false,
 	cmdr: false,
-	
+
 	/* Low Level */
 	recv: false,
 	sent: false
@@ -89,7 +89,7 @@ exports.debug = {
 
 
 /****************************************
-* Configuration for specific 
+* Configuration for specific
 * commands and features
 *****************************************/
 
@@ -98,37 +98,36 @@ exports.debug = {
 ****************************/
 
 exports.moderation = {
-	
 	modException: '%', // Min rank for not receive moderation
-	
+
 	allowmute: true,
-	
+
 	modDefault: {
 		//basic mods
 		'caps': 1,
 		'stretching': 1,
 		'flooding': 1,
 		'spam': 1,
-		
+
 		'bannedwords': 1,
 		'inapropiate': 1,
-		
+
 		//specific mods
 		'spoiler': 1,
 		'youtube': 1,
 		'psservers': 1,
-		
+
 		//multiple infraction
 		'multiple': 1
 	},
-	
+
 	punishments: [
 		"warn",
 		"mute",
 		"hourmute",
 		"roomban"
 	],
-	
+
 	psServersExcepts: {
 		"showdown": 1,
 		"smogtours": 1

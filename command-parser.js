@@ -60,7 +60,7 @@ var loadCommands = exports.loadCommands = function (reloading) {
 	var errs = [];
 	fs.readdirSync('./commands').forEach(function (file) {
 		if (file.substr(-3) === '.js') {
-			if (reloading) uncacheTree('./commands/' + file);
+			if (reloading) Tools.uncacheTree('./commands/' + file);
 			try {
 				Object.merge(commands, require('./commands/' + file).commands);
 			} catch (e) {
@@ -116,10 +116,10 @@ var saveDynCmds = exports.saveDinCmds =  function () {
 /* Parser */
 
 var parse = exports.parse = function (room, by, msg) {
-	if (!equalOrHigherRank(by, true)) {
+	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
 	}
-	if (msg.substr(0, 8) === '/invite ' && equalOrHigherRank(by, '%')) {
+	if (msg.substr(0, 8) === '/invite ' && Tools.equalOrHigherRank(by, '%')) {
 		Bot.say('', '/join ' +  msg.substr(8));
 		return;
 	}
@@ -161,9 +161,9 @@ var parse = exports.parse = function (room, by, msg) {
 					Bot.say(targetRoom, data);
 				},
 				isRanked: function (rank) {
-					return equalOrHigherRank(by, rank);
+					return Tools.equalOrHigherRank(by, rank);
 				},
-				isExcepted: equalOrHigherRank(by, true),
+				isExcepted: Tools.equalOrHigherRank(by, true),
 				roomType:(room.charAt(0) === ',') ? 'pm' : Bot.rooms[room].type,
 				can: function (permission) {
 					return Settings.userCan(room, by, permission);
@@ -171,7 +171,7 @@ var parse = exports.parse = function (room, by, msg) {
 				botRanked: function (rank) {
 					if (!Bot.rooms[room]) return false;
 					var ident = Bot.rooms[room].users[toId(Bot.status.nickName)];
-					if (ident) return equalOrHigherRank(ident, rank);
+					if (ident) return Tools.equalOrHigherRank(ident, rank);
 					return false;
 				},
 				parse: function (data) {
@@ -179,7 +179,7 @@ var parse = exports.parse = function (room, by, msg) {
 				}
 			};
 			try {
-				if (!equalOrHigherRank(by, true)) {
+				if (!Tools.equalOrHigherRank(by, true)) {
 					if (resourceMonitor.countcmd(by)) return;
 				}
 				cmdr(handler + ' | arg: ' + args + ' | by: ' + by + ' | room: ' + room + ' | cmd: ' + cmd);

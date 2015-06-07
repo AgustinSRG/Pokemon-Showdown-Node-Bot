@@ -24,7 +24,7 @@ console.log((
 	'-----------------------------------------------\n'
 ).yellow);
 
-require('./tools.js');
+global.Tools = require('./tools.js');
 
 if (!fs.existsSync('./config.js')) {
 	console.log("config.js does not exist - creating one with default settings...");
@@ -34,7 +34,7 @@ if (!fs.existsSync('./config.js')) {
 global.Config = require('./config.js');
 
 global.reloadConfig = function () {
-	uncacheTree('./config.js');
+	Tools.uncacheTree('./config.js');
 	global.Config = require('./config.js');
 };
 
@@ -79,7 +79,7 @@ global.reloadFeatures = function () {
 	featureList.forEach(function (feature) {
 		if (fs.existsSync('./features/' + feature + '/index.js')) {
 			try {
-				uncacheTree('./features/' + feature + '/index.js');
+				Tools.uncacheTree('./features/' + feature + '/index.js');
 				var f = require('./features/' + feature + '/index.js');
 				if (f.id) {
 					Features[f.id] = f;
@@ -168,7 +168,7 @@ Bot.on('formats', function (formats) {
 
 Bot.on('challstr', function (challstr) {
 	if (!Config.nick) {
-		Bot.rename('Bot ' + generateRandomNick(10));
+		Bot.rename('Bot ' + Tools.generateRandomNick(10));
 	} else {
 		Bot.rename(Config.nick, Config.pass);
 	}
@@ -178,13 +178,13 @@ Bot.on('renamefailure', function (e) {
 	if (e === -1)  {
 		if (!Config.nick) {
 			debug('Login failure - generating another random nickname');
-			Bot.rename('Bot ' + generateRandomNick(10));
+			Bot.rename('Bot ' + Tools.generateRandomNick(10));
 		} else {
 			error('Login failure - name registered, invalid or no password given');
 			if (!Bot.status.named) {
 				info("Invalid nick + pass, using a random nickname");
 				Config.nick = '';
-				Bot.rename('Bot ' + generateRandomNick(10));
+				Bot.rename('Bot ' + Tools.generateRandomNick(10));
 			}
 		}
 	} else {
@@ -192,7 +192,7 @@ Bot.on('renamefailure', function (e) {
 		setTimeout(
 			function () {
 				if (!Config.nick) {
-					Bot.rename('Bot ' + generateRandomNick(10));
+					Bot.rename('Bot ' + Tools.generateRandomNick(10));
 				} else {
 					Bot.rename(Config.nick, Config.pass);
 				}

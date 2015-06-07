@@ -207,7 +207,7 @@ exports.commands = {
 		}
 
 		if (nBans) {
-			uploadToHastebin(text, function (r, linkStr) {
+			Tools.uploadToHastebin(text, function (r, linkStr) {
 				if (r) this.pmReply(linkStr);
 				else this.pmReply("upload failure, could not upload blacklist to hastebin");
 			}.bind(this));
@@ -306,7 +306,7 @@ exports.commands = {
 		var banList = Object.keys(bannedPhrases);
 		if (!banList.length) return this.say(room, text + 'No phrases are banned in this room.');
 
-		uploadToHastebin('The following phrases are banned ' + bannedFrom + ':\n\n' + banList.join('\n'), function (r, link) {
+		Tools.uploadToHastebin('The following phrases are banned ' + bannedFrom + ':\n\n' + banList.join('\n'), function (r, link) {
 			if (r) return this.say(room, text + 'Banned phrases ' + bannedFrom + ': ' + link);
 			else this.pmReply("upload failure, could not upload banwords to hastebin");
 		}.bind(this));
@@ -398,7 +398,7 @@ exports.commands = {
 		var banList = Object.keys(bannedPhrases);
 		if (!banList.length) return this.say(room, text + 'No phrases are inapropiate in this room.');
 
-		uploadToHastebin('The following phrases are inapropiate ' + bannedFrom + ':\n\n' + banList.join('\n'), function (r, link) {
+		Tools.uploadToHastebin('The following phrases are inapropiate ' + bannedFrom + ':\n\n' + banList.join('\n'), function (r, link) {
 			if (r) return this.say(room, text + 'Inapropiate phrases ' + bannedFrom + ': ' + link);
 			else this.pmReply("upload failure, could not upload inapwords to hastebin");
 		}.bind(this));
@@ -462,7 +462,7 @@ exports.commands = {
 				if (!arg || !arg.length) return false;
 				if (args.length < 3) return this.reply("Usage: " + Config.commandChar + cmd + " [set/delete], [user], [phrase]");
 				if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
-				Settings.settings['joinphrases'][tarRoom][user] = stripCommands(arg);
+				Settings.settings['joinphrases'][tarRoom][user] = Tools.stripCommands(arg);
 				Settings.save();
 				this.reply("The Join Phrase for user " + user + " has been modified " + ((tarRoom === 'global') ? 'globally.' : 'for this room.'));
 				break;
@@ -507,7 +507,7 @@ exports.commands = {
 			List.push(i + " => " + Settings.settings['joinphrases'][tarRoom][i]);
 		}
 		if (!List.length) return this.reply("There are not JoinPhrases in this room.");
-		uploadToHastebin("Join Phrases set " + (tarRoom === 'global' ? "globally" : ("in " + room)) + ":\n\n" + List.join('\n'), function (r, link) {
+		Tools.uploadToHastebin("Join Phrases set " + (tarRoom === 'global' ? "globally" : ("in " + room)) + ":\n\n" + List.join('\n'), function (r, link) {
 			if (r) return this.pmReply('Join phrases ' + (tarRoom === 'global' ? "globally" : ("in " + room)) + ': ' + link);
 			else this.pmReply("upload failure, could not upload joinphrases to hastebin");
 		}.bind(this));

@@ -52,7 +52,7 @@ exports.userCan = function (room, user, permission) {
 	} else {
 		rank = settings.rooms[room]['cmds'][permission];
 	}
-	return equalOrHigherRank(user, rank);
+	return Tools.equalOrHigherRank(user, rank);
 };
 
 var permissions = exports.permissions = {};

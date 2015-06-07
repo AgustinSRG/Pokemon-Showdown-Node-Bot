@@ -13,12 +13,10 @@ var jshintStylish = require('jshint-stylish');
 
 var globals = {};
 var globalList = [
-	'Bot', 'CommandParser', 'Config', 'DataDownloader', 'Features', 'Formats', 'Settings',
+	'Bot', 'CommandParser', 'Config', 'DataDownloader', 'Features', 'Formats', 'Settings', 'Tools',
 	'colors', 'sys', 'fs', 'path', 'PSClient',
 	'reloadConfig', 'reloadFeatures',
-	'toId', 'stripCommands', 'addLeftZero',
-	'ok', 'info', 'error', 'errlog', 'debug', 'cmdr', 'recv', 'sent', 'monitor',
-	'generateRandomNick', 'equalOrHigherRank', 'getTimeAgo', 'uncacheTree', 'uploadToHastebin'
+	'toId', 'ok', 'info', 'error', 'errlog', 'debug', 'cmdr', 'recv', 'sent', 'monitor'
 ];
 globalList.forEach(function (identifier) {globals[identifier] = false;});
 
@@ -126,7 +124,7 @@ var lintData = [
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.base
 	}, {
-		dirs: ['./config*.js'],
+		dirs: ['./config-example.js'],
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.config
 	}
