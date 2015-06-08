@@ -13,7 +13,6 @@ exports.port = 8000;
 exports.serverid = 'localhost';
 
 exports.autoReconnectDelay = 10 * 1000;
-exports.autoReloginDelay = 60 * 1000;
 exports.connectionTimeout = 2 * 60 * 1000;
 
 /****************************************
@@ -23,6 +22,8 @@ exports.connectionTimeout = 2 * 60 * 1000;
 exports.nick = '';
 
 exports.pass = null;
+
+exports.autoReloginDelay = 60 * 1000;
 
 /****************************************
 * Rooms
@@ -54,7 +55,7 @@ exports.commandChar = '.';
 
 exports.defaultPermission = '%';
 
-exports.PermissionExceptions = {
+exports.permissionExceptions = {
 	//command: 'rank'
 	'say': '#',
 	'info': '+',

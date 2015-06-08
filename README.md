@@ -6,7 +6,7 @@
 [![devDependency Status](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot/dev-status.svg)](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot#info=devDependencies)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://opensource.org/licenses/MIT)
 
-This is a [Pokemon Showdown](http://nodejs.org/) bot written in JavaScript for [Node](http://nodejs.org/), based on [Pokemon Showdown Bot](https://github.com/TalkTakesTime/Pokemon-Showdown-Bot). 
+This is a [Pokemon Showdown](https://github.com/Zarel/Pokemon-Showdown) bot written in JavaScript for [Node](http://nodejs.org/), based on [Pokemon Showdown Bot](https://github.com/TalkTakesTime/Pokemon-Showdown-Bot). 
 
 This bot is based on commands and features, which are explained below. This is intended to ease bot configuration and customization, separating commands in multiple files, multiple features in different folders and merging functions in Global Objects like Bot, CommandParser or Settings.
 
@@ -30,6 +30,39 @@ Now, to start the bot use `node index.js`
 
 To configure the bot, copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'.
 
+Configuration
+------------
+
+Once copied `config.js` from `config-example.js` you can edit config options to customize the bot.
+
+**Connection Details**
+ - `Config.server`: Server url, for example main server url is `sim.smogon.com`
+ - `Config.port`: Connection port, Pokemon Showdown default port is `8000`
+ - `Config.serverid`: Server id, main server id is `showdown` for example
+ - `Config.autoReconnectDelay`: If connection gets closed, how much time it is waiting before reconnect
+ - `Config.connectionTimeout`: If connection hang up, the time to check for reconnect
+
+**Login Details**
+ - `Config.nick`: Bot Nickname, if you don't specify a nickname, it will log in a random nickname
+ - `Config.pass`: Password, if needed
+ - `Config.autoReloginDelay`: If it can't login because of server issues, how much time it is waiting before relogin
+
+**Rooms**
+ - `Config.rooms`: Array of rooms to join after login
+ - `Config.privateRooms`: Specify which rooms are private
+ - `Config.initCmds`: Array of commands to send after login
+
+**Auth Config**
+ - `Config.exceptions`: Specify rank exceptions. Use `userid: true` for full permissions
+ - `Config.ranks`: Array of user groups ordered from lowest to highest auth
+
+**Commands Config**
+ - `Config.commandChar`: Command character. For example: `.` means `.command` usage
+ - `Config.defaultPermission`: Default permision set for `this.can` in commands permissions
+ - `Config.permissionExceptions`: Exceptions for commands permissions
+
+**Console Config**
+ - `Config.debug`: Specify which console messages are shown
 
 Commands
 ------------

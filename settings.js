@@ -48,7 +48,7 @@ exports.userCan = function (room, user, permission) {
 	var rank;
 	if (!settings.rooms || !settings.rooms[room] || !settings.rooms[room]['cmds'] || typeof settings.rooms[room]['cmds'][permission] === "undefined") {
 		rank = Config.defaultPermission;
-		if (Config.PermissionExceptions[permission]) rank = Config.PermissionExceptions[permission];
+		if (Config.permissionExceptions[permission]) rank = Config.permissionExceptions[permission];
 	} else {
 		rank = settings.rooms[room]['cmds'][permission];
 	}
