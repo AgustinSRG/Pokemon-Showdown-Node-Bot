@@ -12,7 +12,7 @@ exports.port = 8000;
 
 exports.serverid = 'localhost';
 
-exports.autoReconnectDelay = 60 * 1000;
+exports.autoReconnectDelay = 10 * 1000;
 exports.autoReloginDelay = 60 * 1000;
 exports.connectionTimeout = 2 * 60 * 1000;
 

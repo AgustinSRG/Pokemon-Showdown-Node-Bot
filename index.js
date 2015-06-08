@@ -118,8 +118,8 @@ var opts = {
 	pass: null,
 	retryLogin: false,
 	autoConnect: false,
-	autoReconnect: true,
-	autoReconnectDelay: Config.autoReconnectDelay || (60 * 1000),
+	autoReconnect: false,
+	autoReconnectDelay: 0,
 	autoJoin: [],
 	showErrors: (Config.debug ? Config.debug.debug : true),
 	debug: (Config.debug ? Config.debug.debug : true)
@@ -213,8 +213,24 @@ Bot.on('rename', function (name, named) {
 	}
 });
 
+/* Reconnect timer */
+
+var reconnectTimer = null;
+var reconnecting = false;
 Bot.on('disconnect', function (e) {
-	info('Disconnected from server');
+	if (Config.autoReconnectDelay) {
+		if (reconnecting) return;
+		reconnecting = true;
+		error('Disconnected from server, retrying in ' + (Config.autoReconnectDelay / 1000) + ' seconds');
+		reconnectTimer = setTimeout(function () {
+			reconnecting = false;
+			info('Connecting to server ' + Config.server + ':' + Config.port);
+			Bot.connect();
+		}, Config.autoReconnectDelay);
+	} else {
+		error('Disconnected from server, exiting...');
+		process.exit(0);
+	}
 });
 
 /* Commands */
