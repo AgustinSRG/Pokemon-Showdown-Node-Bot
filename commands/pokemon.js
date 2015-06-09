@@ -1,0 +1,362 @@
+
+const ALIASES_FILE = './../data/aliases.js';
+const POKEDEX_FILE = './../data/pokedex.js';
+const MOVEDEX_FILE = './../data/moves.js';
+const ABILITIES_FILE = './../data/abilities.js';
+const ITEMS_FILE = './../data/items.js';
+const LEARNSETS_FILE = './../data/learnsets-g6';
+const FORMATS_DATA_FILE = './../data/formats-data.js';
+
+Settings.addPermissions(['pokemon']);
+
+exports.commands = {
+	poke: 'randompokemon',
+	randompoke: 'randompokemon',
+	rpoke: 'randompokemon',
+	randompokemon: function (arg, by, room, cmd) {
+		var pokedex;
+		try {
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var pokeList = Object.keys(pokedex);
+		var rpoke = pokeList[Math.floor(Math.random() * pokeList.length)];
+		rpoke = pokedex[rpoke].species;
+		if (!this.can('pokemon')) return this.pmReply(rpoke);
+		if (cmd === 'poke' && this.botRanked('+')) return this.reply('!dt ' + rpoke);
+		this.reply(rpoke);
+	},
+
+	gen: function (arg, by, room, cmd) {
+		var pokedex, aliases, movedex, abilities, items;
+		try {
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			aliases = require(ALIASES_FILE).BattleAliases;
+			movedex = require(MOVEDEX_FILE).BattleMovedex;
+			abilities = require(ABILITIES_FILE).BattleAbilities;
+			items = require(ITEMS_FILE).BattleItems;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var id = toId(arg);
+		if (!id.length) return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + "You must specify a pokemon, move, item or ability");
+		if (aliases[id]) id = toId(aliases[id]);
+		var text = 'Generation of ' + id + ': ';
+		if (id === 'metronome') {
+			text += 'Move: Gen 1; Item: Gen 4';
+		} else if (pokedex[id]) {
+			if (pokedex[id].num < 0) text += 'CAP';
+			else if (pokedex[id].num <= 151) text += 'Gen 1';
+			else if (pokedex[id].num <= 251) text += 'Gen 2';
+			else if (pokedex[id].num <= 386) text += 'Gen 3';
+			else if (pokedex[id].num <= 493) text += 'Gen 4';
+			else if (pokedex[id].num <= 649) text += 'Gen 5';
+			else text += 'Gen 6';
+		} else if (movedex[id]) {
+			if (movedex[id].num <= 165) text += 'Gen 1';
+			else if (movedex[id].num <= 251) text += 'Gen 2';
+			else if (movedex[id].num <= 354) text += 'Gen 3';
+			else if (movedex[id].num <= 467) text += 'Gen 4';
+			else if (movedex[id].num <= 559) text += 'Gen 5';
+			else if (movedex[id].num <= 617) text += 'Gen 6';
+			else text += 'CAP';
+		} else if (abilities[id]) {
+			if (abilities[id].num <= 0) text += 'CAP';
+			else if (abilities[id].num <= 76) text += 'Gen 3';
+			else if (abilities[id].num <= 123) text += 'Gen 4';
+			else if (abilities[id].num <= 164) text += 'Gen 5';
+			else text += 'Gen 6';
+		} else if (items[id]) {
+			text += 'Gen ' + items[id].gen;
+		} else {
+			if (this.can('pokemon')) return this.reply('Pokemon, item, move or ability not found');
+			else return this.pmReply('Pokemon, item, move or ability not found');
+		}
+		if (this.can('pokemon')) return this.reply(text);
+		else return this.pmReply(text);
+	},
+
+	viablemoves: 'randommoves',
+	randommoves: function (arg, by, room, cmd) {
+		var aliases, formatsdata, movedex;
+		try {
+			aliases = require(ALIASES_FILE).BattleAliases;
+			formatsdata = require(FORMATS_DATA_FILE).BattleFormatsData;
+			movedex = require(MOVEDEX_FILE).BattleMovedex;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var args = arg.split(',');
+		var text = '__Random singles moves__: ';
+		var whichRandom = 'randomBattleMoves';
+		if (args[1] && toId(args[1]) in {'doubles': 1, '2': 1, 'double': 1, 'triples': 1, 'triple': 1, '3': 1}) {
+			whichRandom = "randomDoubleBattleMoves";
+			text = '__Random doubles/triples moves__: ';
+		}
+		var pokemon = toId(args[0]);
+		if (!pokemon.length) return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + "You must specify a pokemon");
+		if (aliases[pokemon]) pokemon = toId(aliases[pokemon]);
+		if (formatsdata[pokemon]) {
+			var moves = '';
+			for (var i in formatsdata[pokemon][whichRandom]) {
+				moves += ', ' + movedex[formatsdata[pokemon][whichRandom][i]].name;
+			}
+			if (moves === '') text += 'none';
+			else text += moves.substring(2);
+			return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+		} else {
+			return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + "Pokemon not found");
+		}
+	},
+
+	heavyslam: function (arg, by, room, cmd) {
+		var pokedex, aliases;
+		try {
+			aliases = require(ALIASES_FILE).BattleAliases;
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var text = '';
+		var pokemon = arg.split(',');
+		var weight0, weight1;
+		if (pokemon.length < 2) return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + 'You must specify 2 pokemon');
+		pokemon[0] = toId(pokemon[0]);
+		pokemon[1] = toId(pokemon[1]);
+		if (aliases[pokemon[0]]) pokemon[0] = toId(aliases[pokemon[0]]);
+		if (aliases[pokemon[1]]) pokemon[1] = toId(aliases[pokemon[1]]);
+		if (pokedex[pokemon[0]]) weight0 = pokedex[pokemon[0]].weightkg;
+		else return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + 'Attacker Pokemon not found');
+		if (pokedex[pokemon[1]]) weight1 = pokedex[pokemon[1]].weightkg;
+		else return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + 'Defender Pokemon not found');
+		text += "Heavy slam/Heat crash base power: ";
+		if (weight0 / weight1 <= 2) text += "40";
+		else if (weight0 / weight1 <= 3) text += "60";
+		else if (weight0 / weight1 <= 4) text += "80";
+		else if (weight0 / weight1 <= 5) text += "100";
+		else text += "120";
+		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+	},
+
+	preevo: 'prevo',
+	prevo: function (arg, by, room, cmd) {
+		var pokedex, aliases;
+		try {
+			aliases = require(ALIASES_FILE).BattleAliases;
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var text = '';
+		var pokemon = toId(arg);
+		if (aliases[pokemon]) pokemon = toId(aliases[pokemon]);
+		if (pokedex[pokemon]) {
+			if (pokedex[pokemon].prevo) {
+				text += pokedex[pokemon].prevo;
+			} else text += 'Pokemon: ' + pokemon + ' has not preevo.';
+		} else {
+			text += "Pokemon not found";
+		}
+		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+	},
+
+	priority: function (arg, by, room, cmd) {
+		var pokedex, aliases, movedex, learnsets;
+		try {
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			aliases = require(ALIASES_FILE).BattleAliases;
+			movedex = require(MOVEDEX_FILE).BattleMovedex;
+			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var text = '';
+		arg = toId(arg);
+		if (aliases[arg]) arg = toId(aliases[arg]);
+		if (pokedex[arg]) {
+			var prioritymoves = [];
+			var pokemonToCheck = [arg];
+			var i = true;
+			while (i) {
+				if (pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo) pokemonToCheck.push(pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo.toLowerCase());
+				else i = false;
+			}
+			for (var j in pokemonToCheck) {
+				if (learnsets[pokemonToCheck[j]]) {
+					for (var k in learnsets[pokemonToCheck[j]].learnset) {
+						if (movedex[k]) {
+							if (movedex[k].priority > 0 && movedex[k].basePower > 0) {
+								if (prioritymoves.indexOf(movedex[k].name) === -1) {
+									prioritymoves.push(movedex[k].name);
+								}
+							}
+						}
+					}
+				}
+			}
+			prioritymoves.sort();
+			for (var l in prioritymoves) {
+				text += prioritymoves[l];
+				if (l !== prioritymoves.length - 1) text += ', ';
+			}
+		} else {
+			text += "Pokemon not found";
+		}
+		if (text === '') text = 'No moves found.';
+		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+	},
+
+	boosting: function (arg, by, room, cmd) {
+		var pokedex, aliases, movedex, learnsets;
+		try {
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			aliases = require(ALIASES_FILE).BattleAliases;
+			movedex = require(MOVEDEX_FILE).BattleMovedex;
+			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var text = '';
+		arg = toId(arg);
+		if (aliases[arg]) arg = toId(aliases[arg]);
+		if (pokedex[arg]) {
+			var boostingmoves = [];
+			var pokemonToCheck = [arg];
+			var i = true;
+			while (i) {
+				if (pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo) pokemonToCheck.push(pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo);
+				else i = false;
+			}
+			for (var j in pokemonToCheck) {
+				if (learnsets[pokemonToCheck[j]]) {
+					for (var k in learnsets[pokemonToCheck[j]].learnset) {
+						if (movedex[k]) {
+							if ((movedex[k].boosts && movedex[k].target === 'self' && k !== 'doubleteam' && k !== 'minimize') || k === 'bellydrum') {
+								if (boostingmoves.indexOf(movedex[k].name) === -1) {
+									boostingmoves.push(movedex[k].name);
+								}
+							}
+						}
+					}
+				}
+			}
+			boostingmoves.sort();
+			for (var l in boostingmoves) {
+				text += boostingmoves[l];
+				if (l !== boostingmoves.length - 1) text += ', ';
+			}
+		} else {
+			text += "Pokemon not found";
+		}
+		if (text === '') text = 'No moves found';
+		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+	},
+
+	recovery: function (arg, by, room, cmd) {
+		var pokedex, aliases, movedex, learnsets;
+		try {
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			aliases = require(ALIASES_FILE).BattleAliases;
+			movedex = require(MOVEDEX_FILE).BattleMovedex;
+			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var text = '';
+		arg = toId(arg);
+		if (aliases[arg]) arg = toId(aliases[arg]);
+		if (pokedex[arg]) {
+			var recoverymoves = [];
+			var drainmoves = [];
+			var pokemonToCheck = [arg];
+			var i = true;
+			while (i) {
+				if (pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo) pokemonToCheck.push(pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo);
+				else i = false;
+			}
+			for (var j in pokemonToCheck) {
+				if (learnsets[pokemonToCheck[j]]) {
+					for (var k in learnsets[pokemonToCheck[j]].learnset) {
+						if (movedex[k]) {
+							if (movedex[k].heal || k === "synthesis" || k === "moonlight" || k === "morningsun" || k === "wish" || k === "swallow") {
+								if (recoverymoves.indexOf(movedex[k].name) === -1) {
+									recoverymoves.push(movedex[k].name);
+								}
+							} else if (movedex[k].drain) {
+								if (drainmoves.indexOf(movedex[k].name) === -1) {
+									drainmoves.push(movedex[k].name);
+								}
+							}
+						}
+					}
+				}
+			}
+			recoverymoves.sort();
+			for (var l in recoverymoves) {
+				text += recoverymoves[l];
+				if (l !== recoverymoves.length - 1 || drainmoves.length > 0) text += ', ';
+			}
+			if (drainmoves.length > 0) {
+				drainmoves.sort();
+				text += '__';
+				for (var k in drainmoves) {
+					text += drainmoves[k];
+					if (k !== drainmoves.length - 1) text += ', ';
+				}
+				text += '__';
+			}
+		} else {
+			text += "Pokemon not found";
+		}
+		if (text === '') text = 'No moves found.';
+		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+	},
+
+	hazards: 'hazard',
+	hazard: function (arg, by, room, cmd) {
+		var pokedex, aliases, movedex, learnsets;
+		try {
+			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			aliases = require(ALIASES_FILE).BattleAliases;
+			movedex = require(MOVEDEX_FILE).BattleMovedex;
+			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+		} catch (e) {
+			return this.pmReply("An error ocurred, try again later");
+		}
+		var text = '';
+		arg = toId(arg);
+		if (aliases[arg]) arg = toId(aliases[arg]);
+		if (pokedex[arg]) {
+			var hazards = [];
+			var pokemonToCheck = [arg];
+			var i = true;
+			while (i) {
+				if (pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo) pokemonToCheck.push(pokedex[pokemonToCheck[pokemonToCheck.length - 1]].prevo);
+				else i = false;
+			}
+			for (var j in pokemonToCheck) {
+				if (learnsets[pokemonToCheck[j]]) {
+					for (var k in learnsets[pokemonToCheck[j]].learnset) {
+						if (movedex[k]) {
+							if (k === "stealthrock" || k === "spikes" || k === "toxicspikes" || k === "stickyweb") {
+								if (hazards.indexOf(movedex[k].name) === -1) {
+									hazards.push(movedex[k].name);
+								}
+							}
+						}
+					}
+				}
+			}
+			hazards.sort();
+			for (var l in hazards) {
+				text += hazards[l];
+				if (l !== hazards.length - 1) text += ', ';
+			}
+		} else {
+			text += "Pokemon not found";
+		}
+		if (text === '') text = 'No moves found.';
+		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+	}
+};
