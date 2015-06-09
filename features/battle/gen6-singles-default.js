@@ -1,3 +1,6 @@
+const POKEDEX_FILE = './../../data/pokedex.js';
+const MOVEDEX_FILE = './../../data/moves.js';
+
 module.exports = {
 	gen6_get_mux: function (typeA, typesB, not_inmune, inverse) {
 		var mux = 1;
@@ -25,7 +28,7 @@ module.exports = {
 		return mux;
 	},
 	has_ability: function (pokemonA, abilities) {
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
 		var data1 = pokedex[toId(pokemonA)];
 		if (!data1) return false;
 		for (var j = 0; j < abilities.length; j++) {
@@ -37,7 +40,7 @@ module.exports = {
 		return false;
 	},
 	inmune: function (moveData, pokemonA) {
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
 		var data1 = pokedex[toId(pokemonA)];
 		if (moveData.type === "Ground" && this.has_ability(pokemonA, ["Levitate"])) return true;
 		if (moveData.type === "Water" && this.has_ability(pokemonA, ["Water Absorb", "Dry Skin", "Storm Drain"])) return true;
@@ -46,7 +49,7 @@ module.exports = {
 		return false;
 	},
 	gen6_getDisadvantage: function (pokemonA, pokemonB, inverse) {
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
 		var data1 = pokedex[toId(pokemonA)];
 		var data2 = pokedex[toId(pokemonB)];
 		if (!data1 || !data2) return 2;
@@ -61,8 +64,8 @@ module.exports = {
 		var pokemonA = data.statusData.self.pokemon[0].species;
 		var pokemonB = data.statusData.foe.pokemon[0].species;
 		var dataMove;
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
-		var movedex = require('./../../data/moves.js').BattleMovedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
+		var movedex = require(MOVEDEX_FILE).BattleMovedex;
 		var data1 = pokedex[toId(pokemonA)];
 		var data2 = pokedex[toId(pokemonB)];
 		if (!data1 || !data2) {
@@ -208,8 +211,8 @@ module.exports = {
 		var pokemonA = data.statusData.self.pokemon[0].species;
 		var pokemonB = data.statusData.foe.pokemon[0].species;
 		var dataMove;
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
-		var movedex = require('./../../data/moves.js').BattleMovedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
+		var movedex = require(MOVEDEX_FILE).BattleMovedex;
 		var data1 = pokedex[toId(pokemonA)];
 		var data2 = pokedex[toId(pokemonB)];
 		if (!data1 || !data2) {
@@ -273,8 +276,8 @@ module.exports = {
 		var pokemonA = data.statusData.self.pokemon[0].species;
 		var pokemonB = data.statusData.foe.pokemon[0].species;
 		var dataMove;
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
-		var movedex = require('./../../data/moves.js').BattleMovedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
+		var movedex = require(MOVEDEX_FILE).BattleMovedex;
 		var data1 = pokedex[toId(pokemonA)];
 		var data2 = pokedex[toId(pokemonB)];
 		if (!data1 || !data2) {
@@ -331,8 +334,8 @@ module.exports = {
 		if (!data) return 0; // no data
 		var req = data.request;
 		if (!req) return 0; //no request
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
-		var movedex = require('./../../data/moves.js').BattleMovedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
+		var movedex = require(MOVEDEX_FILE).BattleMovedex;
 		var viablePokemon = [];
 		var aux, poke, actPoke, dataPoke;
 		for (var i = 0; i < req.side.pokemon.length; i++) {
@@ -431,7 +434,7 @@ module.exports = {
 			var moves = [];
 			if (req.side.pokemon[0].canMegaEvo) {
 				actualDes.mega = true;
-				var dataNewMega = require('./../../data/pokedex.js').BattlePokedex[toId(data.statusData.self.pokemon[0].species + "-Mega")];
+				var dataNewMega = require(POKEDEX_FILE).BattlePokedex[toId(data.statusData.self.pokemon[0].species + "-Mega")];
 				if (dataNewMega) {
 					data.statusData.self.pokemon[0].species = data.statusData.self.pokemon[0].species + "-Mega";
 					data.request.active[0].baseAbility = dataNewMega.abilities[0];
@@ -511,8 +514,8 @@ module.exports = {
 		if (pokemonA.indexOf(",") !== -1) pokemonA = req.side.pokemon[idSide].details.substr(0, req.side.pokemon[idSide].details.indexOf(","));
 		var pokemonB = data.statusData.foe.pokemon[0].species;
 		var dataMove;
-		var pokedex = require('./../../data/pokedex.js').BattlePokedex;
-		var movedex = require('./../../data/moves.js').BattleMovedex;
+		var pokedex = require(POKEDEX_FILE).BattlePokedex;
+		var movedex = require(MOVEDEX_FILE).BattleMovedex;
 		var data1 = pokedex[toId(pokemonA)];
 		var data2 = pokedex[toId(pokemonB)];
 		if (!data1 || !data2) {
