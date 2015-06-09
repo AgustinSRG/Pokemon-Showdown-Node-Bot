@@ -142,6 +142,7 @@ Bot.on('connect', function (con) {
 });
 
 Bot.on('formats', function (formats) {
+	global.Formats = {};
 	var formatsArr = formats.split('|');
 	var commaIndex, sharpIndex, f, arg, formatData, spf, nCommas;
 	for (var i = 0; i < formatsArr.length; i++) {
