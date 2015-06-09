@@ -5,6 +5,27 @@
 Settings.addPermissions(['searchbattle', 'jointour']);
 
 exports.commands = {
+	reloadteams: function (arg, by, room, cmd) {
+		if (!this.isExcepted) return false;
+		if (Features['battle'].TeamBuilder.loadTeamList(true)) {
+			this.reply("Teams reloaded");
+		} else {
+			this.reply("An error ocurred, could not reload teams");
+		}
+	},
+
+	reloadbattle: function (arg, by, room, cmd) {
+		if (!this.isExcepted) return false;
+		try {
+			Tools.uncacheTree('./features/battle/index.js');
+			Features['battle'] = require('./../features/battle/index.js');
+			Features['battle'].init();
+			this.reply("Battle feature hotpatched");
+		} catch (e) {
+			this.reply("Error: " + sys.inspect(e));
+		}
+	},
+
 	unblockchallenges: 'blockchallenges',
 	blockchallenges: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return;
