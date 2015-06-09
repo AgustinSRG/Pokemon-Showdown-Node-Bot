@@ -129,8 +129,10 @@ info('Connecting to server ' + Config.server + ':' + Config.port);
 
 global.Bot = new PSClient(Config.server, Config.port, opts);
 
+var connected = false;
 Bot.on('connect', function (con) {
 	ok('Connected to server ' + Config.serverid);
+	connected = true;
 	for (var f in Features) {
 		try {
 			Features[f].init();
@@ -175,6 +177,7 @@ Bot.on('challstr', function (challstr) {
 	}
 });
 
+var retryingRename = false;
 Bot.on('renamefailure', function (e) {
 	if (e === -1)  {
 		if (!Config.nick) {
@@ -190,8 +193,10 @@ Bot.on('renamefailure', function (e) {
 		}
 	} else {
 		error('Login failure, retrying in ' + (Config.autoReloginDelay / 1000) + ' seconds');
+		retryingRename = true;
 		setTimeout(
 			function () {
+				retryingRename = false;
 				if (!Config.nick) {
 					Bot.rename('Bot ' + Tools.generateRandomNick(10));
 				} else {
@@ -219,6 +224,7 @@ Bot.on('rename', function (name, named) {
 var reconnectTimer = null;
 var reconnecting = false;
 Bot.on('disconnect', function (e) {
+	connected = false;
 	if (Config.autoReconnectDelay) {
 		if (reconnecting) return;
 		reconnecting = true;
@@ -294,3 +300,43 @@ Bot.on('send', function (msg) {
 });
 
 Bot.connect();
+
+/* Global Monitor */
+
+var checkSystem = function () {
+	var status = '';
+	var issue = false;
+	status += 'Connection Status: ';
+	if (connected) {
+		status += 'connected'.green;
+		status += ' | Login Status: ';
+		if (Bot.status.named) {
+			status += Bot.status.nickName.green;
+		} else if (retryingRename) {
+			status += Bot.status.nickName.yellow;
+		} else {
+			status += Bot.status.nickName.red;
+			issue = 'login';
+		}
+	} else if (reconnecting) {
+		status += 'retrying'.yellow;
+	} else {
+		issue = 'connect';
+		status += 'disconnected'.red;
+	}
+	monitor(status);
+	if (issue) {
+		switch (issue) {
+			case 'connect':
+				info("Monitor failed: Connaction issue. Reconnecting");
+				Bot.connect();
+				break;
+			case 'login':
+				info("Monitor failed: Login issue. Loging in a random username");
+				Config.nick = '';
+				Bot.rename('Bot ' + Tools.generateRandomNick(10));
+				break;
+		}
+	}
+};
+var sysChecker = setInterval(checkSystem, 60 * 60 * 1000);

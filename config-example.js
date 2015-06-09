@@ -77,7 +77,7 @@ exports.debug = {
 	ok: true,
 
 	errlog: true,
-	monitor: true,
+	monitor: false,
 
 	/* Internal Debug */
 	debug: false,
