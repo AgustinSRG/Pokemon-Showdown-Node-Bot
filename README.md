@@ -30,6 +30,8 @@ Now, to start the bot use `node index.js`
 
 To configure the bot, copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'.
 
+**NOTE:** If you don't know about `server`, `port` or `serverid` parameters you can run `node serverconfig.js` to set them.
+
 Configuration
 ------------
 
