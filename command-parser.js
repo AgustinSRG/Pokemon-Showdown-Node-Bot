@@ -157,6 +157,13 @@ var parse = exports.parse = function (room, by, msg) {
 				pmReply: function (data) {
 					Bot.pm(by, data);
 				},
+				restrictReply: function (data, perm) {
+					if (!this.can(perm)) {
+						this.pmReply(data);
+					} else {
+						this.reply(data);
+					}
+				},
 				say: function (targetRoom, data) {
 					Bot.say(targetRoom, data);
 				},

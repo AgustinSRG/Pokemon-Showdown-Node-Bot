@@ -93,6 +93,7 @@ Commands have 4 argumenents:
 Also, command hace a context:
  - `this.reply (pm)` - Replies in the same room (chat or pm)
  - `this.pmReply (text)` - Replies by pm
+ - `this.restrictReply (text, permission)` - Replies by chat if user has permission, by pm otherwise
  - `this.say (room, text)` - Say something to other room
  - `this.isRanked (rank)` - True if ranked equal or above, false if not
  - `this.botRanked (rank)` - True if the bot has this rank or above, false if not
