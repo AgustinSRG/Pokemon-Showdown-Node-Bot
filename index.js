@@ -32,10 +32,12 @@ if (!fs.existsSync('./config.js')) {
 }
 
 global.Config = require('./config.js');
+Tools.checkConfig();
 
 global.reloadConfig = function () {
 	Tools.uncacheTree('./config.js');
 	global.Config = require('./config.js');
+	Tools.checkConfig();
 };
 
 info('Loading globals');
@@ -192,18 +194,20 @@ Bot.on('renamefailure', function (e) {
 			}
 		}
 	} else {
-		error('Login failure, retrying in ' + (Config.autoReloginDelay / 1000) + ' seconds');
-		retryingRename = true;
-		setTimeout(
-			function () {
+		if (Config.autoReloginDelay) {
+			error('Login failure, retrying in ' + (Config.autoReloginDelay / 1000) + ' seconds');
+			retryingRename = true;
+			setTimeout(function () {
 				retryingRename = false;
 				if (!Config.nick) {
 					Bot.rename('Bot ' + Tools.generateRandomNick(10));
 				} else {
 					Bot.rename(Config.nick, Config.pass);
 				}
-			},
-		Config.autoReloginDelay);
+			}, Config.autoReloginDelay);
+		} else {
+			error('Login failure');
+		}
 	}
 });
 

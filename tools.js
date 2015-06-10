@@ -73,6 +73,7 @@ exports.generateRandomNick = function (numChars) {
 
 exports.equalOrHigherRank = function (userIdentity, rank) {
 	if (rank === ' ') return true;
+	if (!Config.ranks) Config.ranks = [];
 	var userId = toId(userIdentity);
 	var userRank = '';
 	if (userId in Config.exceptions) {
@@ -149,4 +150,38 @@ exports.uploadToHastebin = function (toUpload, callback) {
 	});
 	req.write(toUpload);
 	req.end();
+};
+
+exports.checkConfig = function () {
+	var issue = function (text) {
+		console.log('issue'.yellow + '\t' + text);
+	};
+	if (typeof Config.rooms !== 'object' || typeof Config.rooms.length !== 'number') {
+		issue('Config.rooms is not an array');
+		Config.rooms = [];
+	}
+	if (typeof Config.privateRooms !== 'object') {
+		issue('Config.privateRooms is not an object');
+		Config.privateRooms = {};
+	}
+	if (typeof Config.initCmds !== 'object' || typeof Config.initCmds.length !== 'number') {
+		issue('Config.initCmds is not an array');
+		Config.initCmds = [];
+	}
+	if (typeof Config.exceptions !== 'object') {
+		issue('Config.exceptions is not an object');
+		Config.exceptions = {};
+	}
+	if (typeof Config.ranks !== 'object' || typeof Config.ranks.length !== 'number') {
+		issue('Config.ranks is not an array');
+		Config.ranks = [];
+	}
+	if (typeof Config.permissionExceptions !== 'object') {
+		issue('Config.permissionExceptions is not an object');
+		Config.permissionExceptions = {};
+	}
+	if (typeof Config.debug !== 'object') {
+		issue('Config.debug is not an object');
+		Config.debug = {};
+	}
 };
