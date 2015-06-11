@@ -10,7 +10,7 @@ function setPermission(room, perm, rank) {
 	Settings.save();
 }
 
-Settings.addPermissions(['say', 'pick']);
+Settings.addPermissions(['say']);
 
 exports.commands = {
 	about: 'bot',
@@ -72,19 +72,6 @@ exports.commands = {
 			this.pmReply(text);
 		} else {
 			this.reply(text);
-		}
-	},
-
-	choose: 'pick',
-	pick: function (arg, by, room, cmd) {
-		var choices = arg.split(",");
-		choices = choices.filter(function (i) {return (toId(i) !== '');});
-		if (choices.length < 2) return this.pmReply("You must give at least 2 valid choices");
-		var choice = choices[Math.floor(Math.random() * choices.length)];
-		if (!this.can('pick') || this.roomType === 'pm') {
-			this.pmReply(Tools.stripCommands(choice));
-		} else {
-			this.reply(Tools.stripCommands(choice));
 		}
 	},
 
