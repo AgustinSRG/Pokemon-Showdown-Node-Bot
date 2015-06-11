@@ -144,3 +144,15 @@ exports.clientUrl = 'http://play.pokemonshowdown.com/';
 exports.aceptAll = false;
 exports.winmsg = ['GG', 'g_g'];
 exports.losemsg = ['gg', 'wp'];
+
+/******************
+* Tournaments
+*******************/
+
+exports.tourDefault = {
+	format: 'ou',
+	type: 'elimination',
+	maxUsers: null,
+	timeToStart: 30 * 1000,
+	autodq: 1.5
+};
