@@ -82,6 +82,19 @@ exports.commands = {
 		Bot.send(cmds);
 	},
 
+	ladderstop: 'ladderstart',
+	ladderstart: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		if (cmd === 'ladderstop') {
+			if (Features['battle'].LadderManager.stop()) this.reply(this.trad('stop'));
+			return;
+		}
+		var format = toId(arg);
+		if (!Formats[format] || !Formats[format].ladder) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));
+		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply(this.trad('e31') + ' ' + format + '. ' + this.trad('e32'));
+		if (Features['battle'].LadderManager.start(format)) this.reply(this.trad('start') + ' ' + format);
+	},
+
 	chall: 'challenge',
 	challenge: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;

@@ -165,6 +165,15 @@ exports.translations = {
 			'e31': 'I do not have teams for searching battle in format',
 			'e32': 'Edit teams.js to add more bot teams'
 		},
+		ladderstart: {
+			'stop': 'Laddering stopped',
+			'start': 'Now laddering in format',
+			'e1': 'You must specify a format',
+			'e21': 'Format',
+			'e22': 'is not valid for searching battle',
+			'e31': 'I do not have teams for searching battle in format',
+			'e32': 'Edit teams.js to add more bot teams'
+		},
 		challenge: {
 			'e11': 'Usage',
 			'e12': '[user], [format]',
