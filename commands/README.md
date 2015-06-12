@@ -34,6 +34,7 @@ Commands for developing (some of these are dangerous)
 
  - `eval` or `js` - Execute arbitrary JavaScript
  - `custom` - Send anything to the server
+ - `joinrooms [official/public/all]` - Join all rooms
  - `ignore [user]` - Bot will ignore an user
  - `unignore [user]` - Stop ignoring an user
  - `reload [commands/config/features]` - Hotpatch source files

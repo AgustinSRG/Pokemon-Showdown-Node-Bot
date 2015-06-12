@@ -25,6 +25,51 @@ exports.commands = {
 		this.say(tarRoom || room, arg);
 	},
 
+	joinallrooms: 'joinall',
+	joinrooms: 'joinall',
+	joinall: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		var target = 'all';
+		arg = toId(arg);
+		if (arg.length || cmd === 'joinrooms') {
+			if (arg === 'official') target = 'official';
+			else if (arg === 'public') target = 'public';
+			else if (arg === 'all') target = 'all';
+			else this.reply('Usage: ' + Config.commandChar + cmd + ' [official/public/all]');
+		}
+		Bot.on('queryresponse', function (data) {
+			data = data.split('|');
+			if (data[0] === 'rooms') {
+				data.splice(0, 1);
+				var str = data.join('|');
+				var cmds = [];
+				try {
+					var rooms = JSON.parse(str);
+					var offRooms = [], publicRooms = [];
+					if (rooms.official) {
+						for (var i = 0; i < rooms.official.length; i++) {
+							if (rooms.official[i].title) offRooms.push(toId(rooms.official[i].title));
+						}
+					}
+					if (rooms.chat) {
+						for (var i = 0; i < rooms.chat.length; i++) {
+							if (rooms.chat[i].title) publicRooms.push(toId(rooms.chat[i].title));
+						}
+					}
+					if (target === 'all' || target === 'official') {
+						for (var i = 0; i < offRooms.length; i++) cmds.push('|/join ' + offRooms[i]);
+					}
+					if (target === 'all' || target === 'public') {
+						for (var i = 0; i < publicRooms.length; i++) cmds.push('|/join ' + publicRooms[i]);
+					}
+				} catch (e) {}
+				Bot.send(cmds, 2000);
+				Bot.on('queryresponse', function () {return;});
+			}
+		});
+		Bot.send('|/cmd rooms');
+	},
+
 	unignore: 'ignore',
 	ignore: function (arg, by, room, cmd) {
 		if (!this.isExcepted || !arg) return false;
