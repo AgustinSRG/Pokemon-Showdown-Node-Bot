@@ -2,9 +2,13 @@
 	config.js - Configuration File
 */
 
-/****************************************
+/*
 * Connection Details
-****************************************/
+*
+* If you don't know what is the server, port or serverid
+* run 'node serverconfig.js'
+*
+*/
 
 exports.server = 'localhost';
 
@@ -15,9 +19,9 @@ exports.serverid = 'localhost';
 exports.autoReconnectDelay = 10 * 1000;
 exports.connectionTimeout = 2 * 60 * 1000;
 
-/****************************************
+/*
 * Login Details
-****************************************/
+*/
 
 exports.nick = '';
 
@@ -25,9 +29,9 @@ exports.pass = null;
 
 exports.autoReloginDelay = 60 * 1000;
 
-/****************************************
-* Rooms
-****************************************/
+/*
+* Rooms to join
+*/
 
 exports.rooms = ['lobby'];
 
@@ -37,9 +41,9 @@ exports.privateRooms = {
 
 exports.initCmds = ['|/avatar 120']; // Other commands (avatar, blockchallenges, etc)
 
-/****************************************
+/*
 * Auth configuration
-****************************************/
+*/
 
 exports.exceptions = {
 	//userid: 'rank' or userid: true for full access
@@ -47,13 +51,11 @@ exports.exceptions = {
 
 exports.ranks = ['+', '%', '@', '#', '&', '~'];
 
-/****************************************
+/*
 * Commands configuration
-****************************************/
+*/
 
 exports.commandChar = '.';
-
-exports.language = 'english';
 
 exports.defaultPermission = '%';
 
@@ -69,9 +71,15 @@ exports.permissionExceptions = {
 	'tournament': '@'
 };
 
-/****************************************
+/*
+* Language configuration
+*/
+
+exports.language = 'english';
+
+/*
 * Configuration for console messages
-*****************************************/
+*/
 
 exports.debug = {
 	/* Status Messages */
@@ -92,14 +100,14 @@ exports.debug = {
 };
 
 
-/****************************************
+/*
 * Configuration for specific
 * commands and features
-*****************************************/
+*/
 
-/***************************
+/*
 * Moderation
-****************************/
+*/
 
 exports.moderation = {
 	modException: '%', // Min rank for not receive moderation
@@ -138,18 +146,18 @@ exports.moderation = {
 	}
 };
 
-/******************
+/*
 * Battles
-*******************/
+*/
 
 exports.clientUrl = 'http://play.pokemonshowdown.com/';
 exports.aceptAll = false;
 exports.winmsg = ['GG', 'g_g'];
 exports.losemsg = ['gg', 'wp'];
 
-/******************
+/*
 * Tournaments
-*******************/
+*/
 
 exports.tourDefault = {
 	format: 'ou',
