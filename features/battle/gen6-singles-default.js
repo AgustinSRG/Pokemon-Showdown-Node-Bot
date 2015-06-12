@@ -481,7 +481,7 @@ module.exports = {
 			}
 			return [{type: 'move', mega: actualDes.mega, move: actualDes.move}];
 		} else if (req.teamPreview) {
-			if (data.tier && toId(data.tier) in {"battlecup1v1": 1, "1v1": 1}) {
+			if (data.tier && toId(data.tier).indexOf('1v1') >= 0) {
 				debug("Using getBestLead1v1 function...");
 				var lead = this.getBestLead1v1(data);
 				if (lead) {
