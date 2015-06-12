@@ -148,6 +148,9 @@ exports.uploadToHastebin = function (toUpload, callback) {
 			}
 		});
 	});
+	req.on('error', function (e) {
+		if (typeof callback === "function") callback(false, e);
+	});
 	req.write(toUpload);
 	req.end();
 };
@@ -185,3 +188,67 @@ exports.checkConfig = function () {
 		Config.debug = {};
 	}
 };
+
+var translations = exports.translations = {};
+var loadTranslations = exports.loadTranslations = function (reloading) {
+	var errs = [];
+	fs.readdirSync('./translations').forEach(function (file) {
+		if (file.substr(-3) === '.js') {
+			if (reloading) Tools.uncacheTree('./translations/' + file);
+			try {
+				translations[toId(file).substr(0, toId(file).length - 2)] = require('./translations/' + file).translations;
+			} catch (e) {
+				errlog(e.stack);
+				error("Could not import translations file: ./translations/" + file + " | " + sys.inspect(e));
+				errs.push(file);
+			}
+		}
+	});
+	return errs;
+};
+
+exports.translateCmd = function (cmd, data, lang) {
+	if (translations[lang]) {
+		if (!translations[lang]['commands'] || !translations[lang]['commands'][cmd] || !translations[lang]['commands'][cmd][data]) {
+			lang = 'english';
+			if (!translations[lang] || !translations[lang]['commands'] || !translations[lang]['commands'][cmd] || !translations[lang]['commands'][cmd][data]) {
+				return '(not found)';
+			} else {
+				return translations[lang]['commands'][cmd][data];
+			}
+		} else {
+			return translations[lang]['commands'][cmd][data];
+		}
+	} else {
+		lang = 'english';
+		if (!translations[lang] || !translations[lang]['commands'] || !translations[lang]['commands'][cmd] || !translations[lang]['commands'][cmd][data]) {
+			return '(not found)';
+		} else {
+			return translations[lang]['commands'][cmd][data];
+		}
+	}
+};
+
+exports.translateGlobal = function (glob, data, lang) {
+	if (translations[lang]) {
+		if (!translations[lang][glob] || !translations[lang][glob][data]) {
+			lang = 'english';
+			if (!translations[lang] || !translations[lang][glob] || !translations[lang][glob][data]) {
+				return '(not found)';
+			} else {
+				return translations[lang][glob][data];
+			}
+		} else {
+			return translations[lang][glob][data];
+		}
+	} else {
+		lang = 'english';
+		if (!translations[lang] || !translations[lang][glob] || !translations[lang][glob][data]) {
+			return '(not found)';
+		} else {
+			return translations[lang][glob][data];
+		}
+	}
+};
+
+loadTranslations();

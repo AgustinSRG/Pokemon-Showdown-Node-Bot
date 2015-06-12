@@ -53,6 +53,8 @@ exports.ranks = ['+', '%', '@', '#', '&', '~'];
 
 exports.commandChar = '.';
 
+exports.language = 'english';
+
 exports.defaultPermission = '%';
 
 exports.permissionExceptions = {

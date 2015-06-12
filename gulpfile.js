@@ -120,7 +120,7 @@ jscsOptions.config = util._extend(util._extend({}, jscsOptions.base), {
 
 var lintData = [
 	{
-		dirs: ['./command-parser.js', './data-downloader.js', './index.js', './settings.js', './tools.js', './commands/*.js', './features/*/*.js'],
+		dirs: ['./command-parser.js', './data-downloader.js', './index.js', './settings.js', './tools.js', './commands/*.js', './features/*/*.js', './translations/*.js'],
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.base
 	}, {

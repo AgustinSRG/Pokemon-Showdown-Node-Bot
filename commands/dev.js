@@ -67,6 +67,10 @@ exports.commands = {
 				reloadConfig();
 				this.reply('config.js reloaded');
 				break;
+			case 'translations':
+				Tools.loadTranslations(true);
+				this.reply('translations reloaded');
+				break;
 			default:
 				 this.reply('Valid arguments are: commands, features, data, config');
 		}

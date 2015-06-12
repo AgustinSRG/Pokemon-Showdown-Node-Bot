@@ -181,6 +181,11 @@ var parse = exports.parse = function (room, by, msg) {
 					if (ident) return Tools.equalOrHigherRank(ident, rank);
 					return false;
 				},
+				trad: function (data) {
+					var lang = Config.language || 'english';
+					if (this.roomType === 'chat' && Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
+					return Tools.translateCmd(handler, data, lang);
+				},
 				parse: function (data) {
 					return exports.parse(room, by, data);
 				}

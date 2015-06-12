@@ -26,7 +26,7 @@ exports.commands = {
 	bottime: 'time',
 	time: function (arg, by, room, cmd) {
 		var f = new Date();
-		var text = "**Bot Time:** " + Tools.addLeftZero(f.getHours(), 2) + ":" + Tools.addLeftZero(f.getMinutes(), 2) + ":" + Tools.addLeftZero(f.getSeconds(), 2);
+		var text = "**" + this.trad('time') + ":** " + Tools.addLeftZero(f.getHours(), 2) + ":" + Tools.addLeftZero(f.getMinutes(), 2) + ":" + Tools.addLeftZero(f.getSeconds(), 2);
 		if (!this.isRanked('#')) {
 			this.pmReply(text);
 		} else {
@@ -38,7 +38,7 @@ exports.commands = {
 		var text = '';
 		text += '**Uptime:** ';
 		var divisors = [52, 7, 24, 60, 60];
-		var units = ['week', 'day', 'hour', 'minute', 'second'];
+		var units = [this.trad('week'), this.trad('day'), this.trad('hour'), this.trad('minute'), this.trad('second')];
 		var buffer = [];
 		var uptime = ~~(process.uptime());
 		do {
@@ -52,17 +52,17 @@ exports.commands = {
 		case 5:
 			text += buffer[4] + ', ';
 			text += buffer[3] + ', ';
-			text += buffer[2] + ', ' + buffer[1] + ', and ' + buffer[0];
+			text += buffer[2] + ', ' + buffer[1] + ', ' + this.trad('and') + ' ' + buffer[0];
 			break;
 		case 4:
 			text += buffer[3] + ', ';
-			text += buffer[2] + ', ' + buffer[1] + ', and ' + buffer[0];
+			text += buffer[2] + ', ' + buffer[1] + ', ' + this.trad('and') + ' ' + buffer[0];
 			break;
 		case 3:
-			text += buffer[2] + ', ' + buffer[1] + ', and ' + buffer[0];
+			text += buffer[2] + ', ' + buffer[1] + ', ' + this.trad('and') + ' ' + buffer[0];
 			break;
 		case 2:
-			text += buffer[1] + ' and ' + buffer[0];
+			text += buffer[1] + ' ' + this.trad('and') + ' ' + buffer[0];
 			break;
 		case 1:
 			text += buffer[0];
@@ -78,30 +78,30 @@ exports.commands = {
 	seen: function (arg, by, room, cmd) {
 		var text = '';
 		arg = toId(arg);
-		if (!arg || arg.length > 18) return this.pmReply('Invalid username.');
-		if (arg === toId(Bot.status.nickName)) return this.pmReply('You might be either blind or illiterate. Might want to get that checked out.');
-		if (arg === toId(by)) return this.pmReply('Have you looked in the mirror lately?');
+		if (!arg || arg.length > 18) return this.pmReply(this.trad('inv'));
+		if (arg === toId(Bot.status.nickName)) return this.pmReply(this.trad('bot'));
+		if (arg === toId(by)) return this.pmReply(this.trad('self'));
 		if (Settings.seen[arg]) {
 			var dSeen = Settings.seen[arg];
-			text += arg + ' was last seen ' + Tools.getTimeAgo(dSeen.time) + ' ago';
+			text += arg + this.trad('s1') + Tools.getTimeAgo(dSeen.time) + this.trad('s2');
 			if (dSeen.room) {
 				switch (dSeen.action) {
 					case 'j':
-						text += ', joining ' + dSeen.room;
+						text += ', ' + this.trad('j') + ' ' + dSeen.room;
 						break;
 					case 'l':
-						text += ', leaving ' + dSeen.room;
+						text += ', ' + this.trad('l') + ' ' + dSeen.room;
 						break;
 					case 'c':
-						text += ', chatting in ' + dSeen.room;
+						text += ', ' + this.trad('c') + ' ' + dSeen.room;
 						break;
 					case 'n':
-						text += ', changing nick to ' + dSeen.args[0];
+						text += ', ' + this.trad('n') + ' ' + dSeen.args[0];
 						break;
 				}
 			}
 		} else {
-			text += 'The user ' + arg + ' has never been seen, at least since the last bot reset.';
+			text += this.trad('n1') + ' ' + arg + ' ' + this.trad('n2');
 		}
 		this.pmReply(text);
 	},
@@ -116,30 +116,43 @@ exports.commands = {
 		this.reply(Tools.stripCommands(arg));
 	},
 
+	lang: 'language',
+	language: function (arg, by, room, cmd) {
+		if (!this.isRanked('#')) return false;
+		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
+		var lang = toId(arg);
+		if (!lang.length) return this.reply(this.trad('nolang'));
+		if (!Tools.translations[lang]) return this.reply(this.trad('v') + ': ' + Object.keys(Tools.translations).join(', '));
+		if (!Settings.settings['language']) Settings.settings['language'] = {};
+		Settings.settings['language'][room] = lang;
+		Settings.save();
+		this.reply(this.trad('l'));
+	},
+
 	settings: 'set',
 	set: function (arg, by, room, cmd) {
 		if (!this.isRanked('#')) return false;
-		if (this.roomType !== 'chat') return this.reply("This command is only avaliable for chat rooms");
+		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		var args = arg.split(",");
-		if (args.length < 2) return this.reply("Usage: " + Config.commandChar + cmd + " [permission], [rank]");
+		if (args.length < 2) return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
 		var perm = toId(args[0]);
 		var rank = args[1].trim();
 		if (!(perm in Settings.permissions)) {
-			return this.reply("Permissions: " + Object.keys(Settings.permissions).sort().join(", "));
+			return this.reply(this.trad('ps') + ": " + Object.keys(Settings.permissions).sort().join(", "));
 		}
 		if (rank in {'off': 1, 'disable': 1}) {
 			setPermission(room, perm, true);
-			return this.reply("Permission **" + perm + "** in this room is now disabled");
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('d'));
 		}
 		if (rank in {'on': 1, 'all': 1, 'enable': 1}) {
 			setPermission(room, perm, ' ');
-			return this.reply("Permission **" + perm + "** in this room is now avaliable for all users");
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('a'));
 		}
 		if (Config.ranks.indexOf(rank) >= 0) {
 			setPermission(room, perm, rank);
-			return this.reply("Permission **" + perm + "** in this room is now avaliable for users with rank " + rank + " or highter");
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('r') + ' ' + rank + " " + this.trad('r2'));
 		} else {
-			return this.reply("Rank " + rank + " not found");
+			return this.reply(this.trad('not1') + " " + rank + " " + this.trad('not2'));
 		}
 	}
 };
