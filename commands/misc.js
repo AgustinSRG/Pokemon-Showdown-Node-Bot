@@ -2,7 +2,7 @@
 	Miscellaneous commands
 */
 
-Settings.addPermissions(['pick', 'randomanswer']);
+Settings.addPermissions(['pick', 'randomanswer', 'usage', 'help']);
 
 exports.commands = {
 	choose: 'pick',
@@ -27,5 +27,16 @@ exports.commands = {
 		var answers = this.trad('answers');
 		text += (answers[rand] || answers[0]);
 		this.restrictReply(text, 'randomanswer');
+	},
+
+	usagestats: 'usage',
+	usage: function (arg, user, room) {
+		this.restrictReply('http://www.smogon.com/stats/', 'usage');
+	},
+
+	guide: 'help',
+	botguide: 'help',
+	help: function (arg, user, room) {
+		this.restrictReply('https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md', 'help');
 	}
 };
