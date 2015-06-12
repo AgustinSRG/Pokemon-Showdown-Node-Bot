@@ -192,14 +192,14 @@ exports.checkConfig = function () {
 var translations = exports.translations = {};
 var loadTranslations = exports.loadTranslations = function (reloading) {
 	var errs = [];
-	fs.readdirSync('./translations').forEach(function (file) {
+	fs.readdirSync('./languages').forEach(function (file) {
 		if (file.substr(-3) === '.js') {
-			if (reloading) Tools.uncacheTree('./translations/' + file);
+			if (reloading) Tools.uncacheTree('./languages/' + file);
 			try {
-				translations[toId(file).substr(0, toId(file).length - 2)] = require('./translations/' + file).translations;
+				translations[toId(file).substr(0, toId(file).length - 2)] = require('./languages/' + file).translations;
 			} catch (e) {
 				errlog(e.stack);
-				error("Could not import translations file: ./translations/" + file + " | " + sys.inspect(e));
+				error("Could not import translations file: ./languages/" + file + " | " + sys.inspect(e));
 				errs.push(file);
 			}
 		}
