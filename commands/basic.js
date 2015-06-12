@@ -3,10 +3,9 @@
 */
 
 function setPermission(room, perm, rank) {
-	if (!Settings.settings.rooms) Settings.settings.rooms = {};
-	if (!Settings.settings.rooms[room]) Settings.settings.rooms[room] = {};
-	if (!Settings.settings.rooms[room]['cmds']) Settings.settings.rooms[room]['cmds'] = {};
-	Settings.settings.rooms[room]['cmds'][perm] = rank;
+	if (!Settings.settings.commands) Settings.settings.commands = {};
+	if (!Settings.settings.commands[room]) Settings.settings.commands[room] = {};
+	Settings.settings.commands[room][perm] = rank;
 	Settings.save();
 }
 

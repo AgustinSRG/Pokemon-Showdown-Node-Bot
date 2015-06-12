@@ -46,11 +46,11 @@ var save = exports.save =  function () {
 
 exports.userCan = function (room, user, permission) {
 	var rank;
-	if (!settings.rooms || !settings.rooms[room] || !settings.rooms[room]['cmds'] || typeof settings.rooms[room]['cmds'][permission] === "undefined") {
+	if (!settings['commands'] || !settings['commands'][room] || typeof settings['commands'][room][permission] === "undefined") {
 		rank = Config.defaultPermission;
 		if (Config.permissionExceptions[permission]) rank = Config.permissionExceptions[permission];
 	} else {
-		rank = settings.rooms[room]['cmds'][permission];
+		rank = settings['commands'][room][permission];
 	}
 	return Tools.equalOrHigherRank(user, rank);
 };
