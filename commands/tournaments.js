@@ -22,7 +22,7 @@ Settings.addPermissions(['tournament']);
 
 exports.commands = {
 	tourhelp: function (arg, by, room, cmd) {
-		this.restrictReply('Usage: ' + Config.commandChar + 'tour (format), (seconds to start or off), (minutes autodq or off), (max Users or off), (elimination or roundrobin). All arguments are optional.', 'tournament');
+		this.restrictReply('Usage: ' + Config.commandChar + this.trad('h'), 'tournament');
 	},
 
 	maketour: 'tournament',
@@ -30,8 +30,8 @@ exports.commands = {
 	tour: 'tournament',
 	tournament: function (arg, by, room, cmd) {
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
-		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " requires moderator rank (@) or highter to create tornaments");
-		if (Features['tours'].tourData[room]) return this.reply('There is already a tournament in this room');
+		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " " + this.trad('e1'));
+		if (Features['tours'].tourData[room]) return this.reply(this.trad('e2'));
 		var details = {
 			format: 'ou',
 			type: 'elimination',
@@ -45,7 +45,7 @@ exports.commands = {
 			if (args[0]) {
 				var format = toId(args[0]);
 				if (formatAliases[format]) format = toId(formatAliases[format]);
-				if (!Formats[format] || !Formats[format].chall) return this.reply('Format ' + format + ' is not valid for tournaments');
+				if (!Formats[format] || !Formats[format].chall) return this.reply(this.trad('e31') + ' ' + format + ' ' + this.trad('e32'));
 				details.format = format;
 			}
 			if (args[1]) {
@@ -53,7 +53,7 @@ exports.commands = {
 					details.timeToStart = null;
 				} else {
 					var time = parseInt(args[1]);
-					if (!time || time < 0) return this.reply('Time to start is not a valid time');
+					if (!time || time < 0) return this.reply(this.trad('e4'));
 					details.timeToStart = time;
 				}
 			}
@@ -62,7 +62,7 @@ exports.commands = {
 					details.autodq = false;
 				} else {
 					var dq = parseFloat(args[2]);
-					if (!dq || dq < 0) return this.reply('Autodq is not a valid time');
+					if (!dq || dq < 0) return this.reply(this.trad('e5'));
 					details.autodq = dq;
 				}
 			}
@@ -71,22 +71,22 @@ exports.commands = {
 					details.maxUsers = null;
 				} else {
 					var musers = parseInt(args[3]);
-					if (!musers || musers < 2) return this.reply('Max users number is not valid');
+					if (!musers || musers < 2) return this.reply(this.trad('e6'));
 					details.maxUsers = musers;
 				}
 			}
 			if (args[4]) {
 				var type = toId(args[4]);
-				if (type !== 'elimination' && type !== 'roundrobin') return this.reply('Tour type is not valid. Valid types are: elimination, roundrobin');
+				if (type !== 'elimination' && type !== 'roundrobin') return this.reply(this.trad('e7'));
 				details.type = type;
 			}
 		}
 		Features['tours'].newTour(room, details);
 		setTimeout(function () {
 			if (Features['tours'].tournaments[room] && !Features['tours'].tourData[room]) {
-				Bot.say(room, 'Error: the tournament did not start, probably because I have not permission to create tournaments or commands got changed.');
+				Bot.say(room, this.trad('notstarted'));
 				delete Features['tours'].tournaments[room];
 			}
-		}, 2500);
+		}.bind(this), 2500);
 	}
 };

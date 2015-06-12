@@ -18,7 +18,7 @@ exports.commands = {
 		try {
 			pokedex = require(POKEDEX_FILE).BattlePokedex;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var pokeList = Object.keys(pokedex);
 		var rpoke = pokeList[Math.floor(Math.random() * pokeList.length)];
@@ -37,12 +37,12 @@ exports.commands = {
 			abilities = require(ABILITIES_FILE).BattleAbilities;
 			items = require(ITEMS_FILE).BattleItems;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var id = toId(arg);
-		if (!id.length) return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + "You must specify a pokemon, move, item or ability");
+		if (!id.length) return this.restrictReply(this.trad('err2'), 'pokemon');
 		if (aliases[id]) id = toId(aliases[id]);
-		var text = 'Generation of ' + id + ': ';
+		var text = this.trad('g') + ' ' + id + ': ';
 		if (id === 'metronome') {
 			text += 'Move: Gen 1; Item: Gen 4';
 		} else if (pokedex[id]) {
@@ -70,11 +70,9 @@ exports.commands = {
 		} else if (items[id]) {
 			text += 'Gen ' + items[id].gen;
 		} else {
-			if (this.can('pokemon')) return this.reply('Pokemon, item, move or ability not found');
-			else return this.pmReply('Pokemon, item, move or ability not found');
+			this.restrictReply(this.trad('nfound'), 'pokemon');
 		}
-		if (this.can('pokemon')) return this.reply(text);
-		else return this.pmReply(text);
+		this.restrictReply(text, 'pokemon');
 	},
 
 	viablemoves: 'randommoves',
@@ -85,17 +83,17 @@ exports.commands = {
 			formatsdata = require(FORMATS_DATA_FILE).BattleFormatsData;
 			movedex = require(MOVEDEX_FILE).BattleMovedex;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var args = arg.split(',');
-		var text = '__Random singles moves__: ';
+		var text = '__' + this.trad('r') + '__: ';
 		var whichRandom = 'randomBattleMoves';
 		if (args[1] && toId(args[1]) in {'doubles': 1, '2': 1, 'double': 1, 'triples': 1, 'triple': 1, '3': 1}) {
 			whichRandom = "randomDoubleBattleMoves";
-			text = '__Random doubles/triples moves__: ';
+			text = '__' + this.trad('rd') + '__: ';
 		}
 		var pokemon = toId(args[0]);
-		if (!pokemon.length) return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + "You must specify a pokemon");
+		if (!pokemon.length) return this.restrictReply(this.trad('err2'), 'pokemon');
 		if (aliases[pokemon]) pokemon = toId(aliases[pokemon]);
 		if (formatsdata[pokemon]) {
 			var moves = '';
@@ -104,9 +102,9 @@ exports.commands = {
 			}
 			if (moves === '') text += 'none';
 			else text += moves.substring(2);
-			return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+			this.restrictReply(text, 'pokemon');
 		} else {
-			return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + "Pokemon not found");
+			return this.restrictReply(this.trad('nfound'), 'pokemon');
 		}
 	},
 
@@ -116,27 +114,27 @@ exports.commands = {
 			aliases = require(ALIASES_FILE).BattleAliases;
 			pokedex = require(POKEDEX_FILE).BattlePokedex;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var text = '';
 		var pokemon = arg.split(',');
 		var weight0, weight1;
-		if (pokemon.length < 2) return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + 'You must specify 2 pokemon');
+		if (pokemon.length < 2) return this.restrictReply(this.trad('err2'), 'pokemon');
 		pokemon[0] = toId(pokemon[0]);
 		pokemon[1] = toId(pokemon[1]);
 		if (aliases[pokemon[0]]) pokemon[0] = toId(aliases[pokemon[0]]);
 		if (aliases[pokemon[1]]) pokemon[1] = toId(aliases[pokemon[1]]);
 		if (pokedex[pokemon[0]]) weight0 = pokedex[pokemon[0]].weightkg;
-		else return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + 'Attacker Pokemon not found');
+		else return this.restrictReply(this.trad('n1'), 'pokemon');
 		if (pokedex[pokemon[1]]) weight1 = pokedex[pokemon[1]].weightkg;
-		else return this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + 'Defender Pokemon not found');
-		text += "Heavy slam/Heat crash base power: ";
+		else return this.restrictReply(this.trad('n2'), 'pokemon');
+		text += this.trad('s') + ": ";
 		if (weight0 / weight1 <= 2) text += "40";
 		else if (weight0 / weight1 <= 3) text += "60";
 		else if (weight0 / weight1 <= 4) text += "80";
 		else if (weight0 / weight1 <= 5) text += "100";
 		else text += "120";
-		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+		this.restrictReply(text, 'pokemon');
 	},
 
 	preevo: 'prevo',
@@ -146,7 +144,7 @@ exports.commands = {
 			aliases = require(ALIASES_FILE).BattleAliases;
 			pokedex = require(POKEDEX_FILE).BattlePokedex;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var text = '';
 		var pokemon = toId(arg);
@@ -154,11 +152,11 @@ exports.commands = {
 		if (pokedex[pokemon]) {
 			if (pokedex[pokemon].prevo) {
 				text += pokedex[pokemon].prevo;
-			} else text += 'Pokemon: ' + pokemon + ' has not preevo.';
+			} else text += this.trad('p1') + ' ' + pokemon + ' ' + this.trad('p2');
 		} else {
-			text += "Pokemon not found";
+			text += this.trad('nfound');
 		}
-		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+		this.restrictReply(text, 'pokemon');
 	},
 
 	priority: function (arg, by, room, cmd) {
@@ -169,7 +167,7 @@ exports.commands = {
 			movedex = require(MOVEDEX_FILE).BattleMovedex;
 			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var text = '';
 		arg = toId(arg);
@@ -201,10 +199,10 @@ exports.commands = {
 				if (l !== prioritymoves.length - 1) text += ', ';
 			}
 		} else {
-			text += "Pokemon not found";
+			text += this.trad('err2');
 		}
-		if (text === '') text = 'No moves found.';
-		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+		if (text === '') text = this.trad('err3');
+		this.restrictReply(text, 'pokemon');
 	},
 
 	boosting: function (arg, by, room, cmd) {
@@ -215,7 +213,7 @@ exports.commands = {
 			movedex = require(MOVEDEX_FILE).BattleMovedex;
 			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var text = '';
 		arg = toId(arg);
@@ -247,10 +245,10 @@ exports.commands = {
 				if (l !== boostingmoves.length - 1) text += ', ';
 			}
 		} else {
-			text += "Pokemon not found";
+			text += this.trad('err2');
 		}
-		if (text === '') text = 'No moves found';
-		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+		if (text === '') text = this.trad('err3');
+		this.restrictReply(text, 'pokemon');
 	},
 
 	recovery: function (arg, by, room, cmd) {
@@ -261,7 +259,7 @@ exports.commands = {
 			movedex = require(MOVEDEX_FILE).BattleMovedex;
 			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var text = '';
 		arg = toId(arg);
@@ -307,10 +305,10 @@ exports.commands = {
 				text += '__';
 			}
 		} else {
-			text += "Pokemon not found";
+			text += this.trad('err2');
 		}
-		if (text === '') text = 'No moves found.';
-		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+		if (text === '') text = this.trad('err3');
+		this.restrictReply(text, 'pokemon');
 	},
 
 	hazards: 'hazard',
@@ -322,7 +320,7 @@ exports.commands = {
 			movedex = require(MOVEDEX_FILE).BattleMovedex;
 			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
 		} catch (e) {
-			return this.pmReply("An error ocurred, try again later");
+			return this.pmReply(this.trad('err'));
 		}
 		var text = '';
 		arg = toId(arg);
@@ -354,9 +352,9 @@ exports.commands = {
 				if (l !== hazards.length - 1) text += ', ';
 			}
 		} else {
-			text += "Pokemon not found";
+			text += this.trad('err2');
 		}
-		if (text === '') text = 'No moves found.';
-		this.reply(((this.roomType === 'chat' && !this.can('pokemon')) ? ('/pm ' + by + ',') : '') + text);
+		if (text === '') text = this.trad('err3');
+		this.restrictReply(text, 'pokemon');
 	}
 };

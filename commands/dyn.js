@@ -15,27 +15,27 @@ exports.commands = {
 		if (!this.can(perm) || this.roomType === 'pm') {
 			if (!arg) {
 				var list = Object.keys(CommandParser.dynCommands).sort().join(", ");
-				if (!list) return this.pmReply('No commands');
-				return this.pmReply('Dynamic cmds: ' + list);
+				if (!list) return this.pmReply(this.trad('nocmds'));
+				return this.pmReply(this.trad('list') + ': ' + list);
 			}
 			var dcmd = toId(arg);
 			if (CommandParser.dynCommands[dcmd]) {
 				return this.pmReply(CommandParser.dynCommands[dcmd]);
 			} else {
-				return this.pmReply('Command "' + dcmd + '" does not exists');
+				return this.pmReply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('notexist'));
 			}
 		} else {
 			if (!arg) {
 				var list = Object.keys(CommandParser.dynCommands).sort().join(", ");
-				if (!list) return this.reply('No commands');
-				return this.reply('Dynamic cmds: ' + list);
+				if (!list) return this.reply(this.trad('nocmds'));
+				return this.reply(this.trad('list') + ': ' + list);
 			}
 			var dcmd = toId(arg);
 			if (CommandParser.dynCommands[dcmd]) {
 				if (perm === 'wall') return this.reply('/announce ' + CommandParser.dynCommands[dcmd]);
 				return this.reply(CommandParser.dynCommands[dcmd]);
 			} else {
-				return this.reply('Command "' + dcmd + '" does not exists');
+				return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('notexist'));
 			}
 		}
 	},
@@ -47,9 +47,9 @@ exports.commands = {
 		if (CommandParser.dynCommands[dcmd]) {
 			delete CommandParser.dynCommands[dcmd];
 			CommandParser.saveDinCmds();
-			this.reply('Command "' + dcmd + '" has been successfully deleted');
+			this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('d'));
 		} else {
-			this.reply('Command "' + dcmd + '" does not exists');
+			this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('n'));
 		}
 	},
 
@@ -57,14 +57,14 @@ exports.commands = {
 	setcmd: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
 		if (!CommandParser.tempVar) {
-			this.reply('There is no temp string to set, use **stemp** before doing this');
+			this.reply(this.trad('notemp'));
 		}
 		var dcmd = toId(arg);
 		var text = '';
 		if (CommandParser.dynCommands[dcmd]) {
-			text = 'Command "' + dcmd + '" has been successfully modified';
+			text = this.trad('c') + ' "' + dcmd + '" ' + this.trad('modified');
 		} else {
-			text = 'Command "' + dcmd + '" has been successfully created';
+			text = this.trad('c') + ' "' + dcmd + '" ' + this.trad('created');
 		}
 		CommandParser.dynCommands[dcmd] = CommandParser.tempVar;
 		CommandParser.saveDinCmds();
