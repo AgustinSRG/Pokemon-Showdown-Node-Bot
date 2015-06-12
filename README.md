@@ -63,6 +63,9 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
  - `Config.defaultPermission`: Default permision set for `this.can` in commands permissions
  - `Config.permissionExceptions`: Exceptions for commands permissions
 
+**Language Config**
+ - `Config.language`: Set default language
+
 **Console Config**
  - `Config.debug`: Specify which console messages are shown
 
@@ -102,6 +105,7 @@ Also, command hace a context:
  - `this.isExcepted` - True if the user is excepted, false if not
  - `this.roomType` - Can be 'chat', 'battle' or 'pm'
  - `this.can (permission)` - True if user has permission, false if not
+ - `this.trad (textId)` - Returns a text from the corresponding languages file
  - `this.parse (cmd)` - Parse a message (to call other commands)
 
 Features

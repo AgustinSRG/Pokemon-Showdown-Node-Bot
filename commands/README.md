@@ -13,6 +13,7 @@ Some commands are basic (info, command settings, etc) referring to basic feature
  - `uptime` - Time since the last bot restart
  - `seen [user]` - Latest data from an user
  - `say [text]` - Force to say something
+ - `lang [lang]` - Set the language of the room
  - `settings [cmd], [rank]` - Configure command permissions
 
 Dynamic Commands
