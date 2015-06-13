@@ -88,28 +88,32 @@ exports.equalOrHigherRank = function (userIdentity, rank) {
 	return false;
 };
 
-exports.getTimeAgo = function (time) {
+exports.getTimeAgo = function (time, lang) {
 	time = Date.now() - time;
 	time = Math.round(time / 1000); // rounds to nearest second
 	var seconds = time % 60;
 	var times = [];
-	if (seconds) times.push(String(seconds) + (seconds === 1 ? ' second' : ' seconds'));
+	var trans = function (data) {
+		if (!lang) lang = Config.language || 'english';
+		return Tools.translateGlobal('time', data, lang);
+	};
+	if (seconds) times.push(String(seconds) + ' ' + (seconds === 1 ? trans('second') : trans('seconds')));
 	var minutes, hours, days;
 	if (time >= 60) {
 		time = (time - seconds) / 60; // converts to minutes
 		minutes = time % 60;
-		if (minutes) times = [String(minutes) + (minutes === 1 ? ' minute' : ' minutes')].concat(times);
+		if (minutes) times = [String(minutes) + ' ' + (minutes === 1 ? trans('minute') : trans('minutes'))].concat(times);
 		if (time >= 60) {
 			time = (time - minutes) / 60; // converts to hours
 			hours = time % 24;
-			if (hours) times = [String(hours) + (hours === 1 ? ' hour' : ' hours')].concat(times);
+			if (hours) times = [String(hours) + ' ' + (hours === 1 ? trans('hour') : trans('hours'))].concat(times);
 			if (time >= 24) {
 				days = (time - hours) / 24; // you can probably guess this one
-				if (days) times = [String(days) + (days === 1 ? ' day' : ' days')].concat(times);
+				if (days) times = [String(days) + ' ' + (days === 1 ? trans('day') : trans('days'))].concat(times);
 			}
 		}
 	}
-	if (!times.length) times.push('0 seconds');
+	if (!times.length) times.push('0 ' + trans('seconds'));
 	return times.join(', ');
 };
 
@@ -209,19 +213,14 @@ var loadTranslations = exports.loadTranslations = function (reloading) {
 
 exports.translateCmd = function (cmd, data, lang) {
 	if (translations[lang]) {
-		if (!translations[lang]['commands'] || !translations[lang]['commands'][cmd] || !translations[lang]['commands'][cmd][data]) {
-			lang = 'english';
-			if (!translations[lang] || !translations[lang]['commands'] || !translations[lang]['commands'][cmd] || !translations[lang]['commands'][cmd][data]) {
-				return '(not found)';
-			} else {
-				return translations[lang]['commands'][cmd][data];
-			}
+		if (!translations[lang]['commands'] || !translations[lang]['commands'][cmd]) {
+			return '__(not found)__';
 		} else {
 			return translations[lang]['commands'][cmd][data];
 		}
 	} else {
 		lang = 'english';
-		if (!translations[lang] || !translations[lang]['commands'] || !translations[lang]['commands'][cmd] || !translations[lang]['commands'][cmd][data]) {
+		if (!translations[lang] || !translations[lang]['commands'] || !translations[lang]['commands'][cmd]) {
 			return '(not found)';
 		} else {
 			return translations[lang]['commands'][cmd][data];
@@ -231,9 +230,9 @@ exports.translateCmd = function (cmd, data, lang) {
 
 exports.translateGlobal = function (glob, data, lang) {
 	if (translations[lang]) {
-		if (!translations[lang][glob] || !translations[lang][glob][data]) {
+		if (!translations[lang][glob]) {
 			lang = 'english';
-			if (!translations[lang] || !translations[lang][glob] || !translations[lang][glob][data]) {
+			if (!translations[lang] || !translations[lang][glob]) {
 				return '(not found)';
 			} else {
 				return translations[lang][glob][data];
@@ -243,7 +242,7 @@ exports.translateGlobal = function (glob, data, lang) {
 		}
 	} else {
 		lang = 'english';
-		if (!translations[lang] || !translations[lang][glob] || !translations[lang][glob][data]) {
+		if (!translations[lang] || !translations[lang][glob]) {
 			return '(not found)';
 		} else {
 			return translations[lang][glob][data];

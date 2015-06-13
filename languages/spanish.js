@@ -351,6 +351,17 @@
 	* Features
 	*/
 
+	time: {
+		'second': 'segundo',
+		'seconds': 'segundos',
+		'minute': 'minuto',
+		'minutes': 'minutos',
+		'hour': 'hora',
+		'hours': 'horas',
+		'day': 'día',
+		'days': 'días'
+	},
+
 	moderation: {
 		'automod': 'Moderación Automática',
 		//mods

@@ -82,7 +82,9 @@ exports.commands = {
 		if (arg === toId(by)) return this.pmReply(this.trad('self'));
 		if (Settings.seen[arg]) {
 			var dSeen = Settings.seen[arg];
-			text += arg + this.trad('s1') + Tools.getTimeAgo(dSeen.time) + this.trad('s2');
+			var lang = Config.language || 'english';
+			if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
+			text += arg + ' ' + this.trad('s1') + ' ' + Tools.getTimeAgo(dSeen.time, lang) + ' ' + this.trad('s2');
 			if (dSeen.room) {
 				switch (dSeen.action) {
 					case 'j':
