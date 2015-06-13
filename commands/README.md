@@ -102,6 +102,8 @@ Commands for battle feature
 
 **Ladder**
  - `searchbattle [format]` - Search a battle and returns the link
+ - `ladderstart [format]` - Start laddering (checks every 10 seconds)
+ - `ladderstop` - Stop laddering
 
 Tournaments Commands
 ------------
