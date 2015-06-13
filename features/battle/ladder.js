@@ -14,9 +14,13 @@ exports.start = function (format) {
 	if (exports.laddering) return false;
 	format = toId(format);
 	var check = function () {
+		var counter = 0;
+		var maxBattles = 1;
+		if (Config.ladderNumberOfBattles && Config.ladderNumberOfBattles > 0) maxBattles = Config.ladderNumberOfBattles;
 		for (var i in Features['battle'].BattleBot.data) {
-			if (Features['battle'].BattleBot.data[i].tier && toId(Features['battle'].BattleBot.data[i].tier) === format && Features['battle'].BattleBot.data[i].rated) return;
+			if (Features['battle'].BattleBot.data[i].tier && toId(Features['battle'].BattleBot.data[i].tier) === format && Features['battle'].BattleBot.data[i].rated) counter++;
 		}
+		if (counter >= maxBattles) return;
 		var cmds = [];
 		var team = Features['battle'].TeamBuilder.getTeam(format);
 		if (team) cmds.push('|/useteam ' + team);
@@ -24,7 +28,7 @@ exports.start = function (format) {
 		Bot.send(cmds);
 	};
 	exports.laddering = true;
-	exports.ladderTimer = setInterval(check, 10 * 1000);
+	exports.ladderTimer = setInterval(check, Config.ladderCheckInterval || (10 * 1000));
 	check();
 	return true;
 };

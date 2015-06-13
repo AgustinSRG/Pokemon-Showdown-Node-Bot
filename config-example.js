@@ -151,9 +151,16 @@ exports.moderation = {
 */
 
 exports.clientUrl = 'http://play.pokemonshowdown.com/';
+
 exports.aceptAll = false;
+
 exports.winmsg = ['GG', 'g_g'];
+
 exports.losemsg = ['gg', 'wp'];
+
+exports.ladderCheckInterval = 10 * 1000;
+
+exports.ladderNumberOfBattles = 1;
 
 /*
 * Tournaments
