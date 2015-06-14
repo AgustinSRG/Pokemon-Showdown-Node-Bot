@@ -25,7 +25,7 @@ exports.connectionTimeout = 2 * 60 * 1000;
 
 exports.nick = '';
 
-exports.pass = null;
+exports.pass = '';
 
 exports.autoReloginDelay = 60 * 1000;
 
@@ -125,8 +125,8 @@ exports.moderation = {
 		'inapropiate': 1,
 
 		//specific mods
-		'spoiler': 1,
-		'youtube': 1,
+		'spoiler': 0,
+		'youtube': 0,
 		'psservers': 1,
 
 		//multiple infraction

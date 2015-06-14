@@ -97,12 +97,12 @@ function writeConfig (server, port, serverid) {
 					conf[i] = "exports.server = '" + server + "';";
 					status.server = 1;
 				} else if (conf[i].substr(0, "exports.port".length) === "exports.port") {
-					conf[i] = "exports.port = '" + port + "';";
+					conf[i] = "exports.port = " + port + ";";
 					status.port = 1;
 				}
 			}
 			if (!status.server) conf.unshift("exports.server = '" + server + "';");
-			if (!status.port) conf.unshift("exports.port = '" + port + "';");
+			if (!status.port) conf.unshift("exports.port = " + port + ";");
 			if (!status.serverid) conf.unshift("exports.serverid = '" + serverid + "';");
 			fs.writeFileSync('./config.js', conf.join('\n'));
 			console.log("Done!".green + "\t" + "successfully created default config")
