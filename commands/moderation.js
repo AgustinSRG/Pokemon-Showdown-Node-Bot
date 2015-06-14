@@ -480,7 +480,7 @@ exports.commands = {
 		}
 	},
 
-	vjf: 'viewjoinphrases',
+	vjp: 'viewjoinphrases',
 	viewjoinphrases: function (arg, by, room, cmd) {
 		if (!this.can('joinphrase')) return;
 		if (!Settings.settings['joinphrases']) Settings.settings['joinphrases'] = {};

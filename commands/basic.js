@@ -76,6 +76,7 @@ exports.commands = {
 
 	seen: function (arg, by, room, cmd) {
 		var text = '';
+		var name = arg;
 		arg = toId(arg);
 		if (!arg || arg.length > 18) return this.pmReply(this.trad('inv'));
 		if (arg === toId(Bot.status.nickName)) return this.pmReply(this.trad('bot'));
@@ -84,7 +85,7 @@ exports.commands = {
 			var dSeen = Settings.seen[arg];
 			var lang = Config.language || 'english';
 			if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
-			text += arg + ' ' + this.trad('s1') + ' ' + Tools.getTimeAgo(dSeen.time, lang) + ' ' + this.trad('s2');
+			text += name + ' ' + this.trad('s1') + ' ' + Tools.getTimeAgo(dSeen.time, lang) + (this.trad('s2') ? (' ' + this.trad('s2')) : '');
 			if (dSeen.room) {
 				switch (dSeen.action) {
 					case 'j':

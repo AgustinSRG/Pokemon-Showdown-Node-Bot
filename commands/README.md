@@ -37,7 +37,7 @@ Commands for developing (some of these are dangerous)
  - `joinrooms [official/public/all]` - Join all rooms
  - `ignore [user]` - Bot will ignore an user
  - `unignore [user]` - Stop ignoring an user
- - `reload [commands/config/features]` - Hotpatch source files
+ - `reload [commands/config/features/laguages]` - Hotpatch source files
  - `updategit` - Fast forward from git repo
  - `kill` - End the process
 

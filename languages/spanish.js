@@ -28,7 +28,7 @@
 		language: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'nolang': 'Debes especificar un idioma',
-			'v': 'Idiomas válidos son:',
+			'v': 'Idiomas válidos son',
 			'l': 'El idioma para esta sala es ahora el Español'
 		},
 		set: {
@@ -62,7 +62,7 @@
 			'notemp': 'No hay datos en temp, usa el comando **stemp** antes de hacer esto',
 			'c': 'El comando',
 			'modified': 'ha sido modificado',
-			'created': 'ha sido eliminado'
+			'created': 'ha sido creado'
 		},
 		/*
 		* Misc Commands
@@ -333,7 +333,7 @@
 		/*
 		* Tour Commands
 		*/
-		tourhelp: {'h': 'tour (formato), (segundos para iniciar o off), (minutos para el autodq o off), (máximo número de users o off), (elimination o roundrobin). Todos los argumentos son opcionales.'},
+		tourhelp: {'h': 'tour (formato), (segundos para iniciar u off), (minutos para el autodq u off), (máximo número de users u off), (elimination u roundrobin). Todos los argumentos son opcionales.'},
 		tournament: {
 			'e1': 'requiere rango de moderador (@) o superior para crear torneos',
 			'e2': 'Ya hay un torneo en esta sala',
