@@ -5,7 +5,8 @@
 	aiModules: {},
 
 	aiModList: {
-		'6gsinglesdefault': './gen6-singles-default.js'
+		'6gsinglesdefault': './gen6-singles-default.js',
+		'5gsinglesdefault': './gen5-singles-default.js'
 	},
 
 	/* Config - Edit this */
@@ -15,7 +16,9 @@
 
 	aiDefaultConfig: {
 		/* Default */
-		'singles-6': '6gsinglesdefault'
+		'singles-6': '6gsinglesdefault',
+		'singles-5': '5gsinglesdefault',
+		'singles-4': '5gsinglesdefault'
 	},
 
 	/* Functions */
