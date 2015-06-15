@@ -153,10 +153,10 @@
 		move: {'notbattle': 'Esto solo puede ser usado en batallas'},
 		jointours: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
-			'ad': 'Modo "tour autojoin" ya estaba deshabilitado para esta sala',
-			'd': 'Modo "tour autojoin" deshabilitado para esta sala',
-			'ae': 'Modo "tour autojoin" ya estaba habilitado para esta sala',
-			'e': 'Modo "tour autojoin" habilitado para esta sala'
+			'ad': 'Modo "tour autojoin" ya estaba deshabilitado para la sala',
+			'd': 'Modo "tour autojoin" deshabilitado para la sala',
+			'ae': 'Modo "tour autojoin" ya estaba habilitado para la sala',
+			'e': 'Modo "tour autojoin" habilitado para la sala'
 		},
 		searchbattle: {
 			'e1': 'Debes especificar un formato',
