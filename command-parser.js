@@ -170,6 +170,13 @@ var parse = exports.parse = function (room, by, msg) {
 				isRanked: function (rank) {
 					return Tools.equalOrHigherRank(by, rank);
 				},
+				isRoomRanked: function (targetRoom, rank) {
+					if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
+						var userIdent = Bot.rooms[targetRoom].users[toId(by)] || by;
+						return Tools.equalOrHigherRank(userIdent, '+');
+					}
+					return this.isRanked(rank);
+				},
 				isExcepted: Tools.equalOrHigherRank(by, true),
 				roomType:(room.charAt(0) === ',') ? 'pm' : Bot.rooms[room].type,
 				can: function (permission) {

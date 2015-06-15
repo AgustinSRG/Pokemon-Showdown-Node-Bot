@@ -101,6 +101,7 @@ Also, command hace a context:
  - `this.restrictReply (text, permission)` - Replies by chat if user has permission, by pm otherwise
  - `this.say (room, text)` - Say something to other room
  - `this.isRanked (rank)` - True if ranked equal or above, false if not
+ - `this.isRoomRanked (room, rank)` - True if ranked equal or above (in specified room), false if not
  - `this.botRanked (rank)` - True if the bot has this rank or above, false if not
  - `this.isExcepted` - True if the user is excepted, false if not
  - `this.roomType` - Can be 'chat', 'battle' or 'pm'
