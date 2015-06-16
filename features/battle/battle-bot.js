@@ -395,6 +395,19 @@
 				this.makeDecision(room, true, 'forced');
 				break;
 			case 'callback':
+				if (args[1] === 'cant') {
+					var ident = this.getPokemonId(args[2]);
+					var moveDisabled = args[4];
+					if (moveDisabled) {
+						try {
+							for (var k = 0; k < this.data[room].request.active[ident.pokeIndex].moves.length; k++) {
+								if (this.data[room].request.active[ident.pokeIndex].moves[k].id === moveDisabled) {
+									this.data[room].request.active[ident.pokeIndex].moves[k].disabled = true;
+								}
+							}
+						} catch (e) {}
+					}
+				}
 				this.makeDecision(room, false, args[1]);
 				break;
 			case 'win':
