@@ -105,6 +105,11 @@ Commands for battle feature
  - `ladderstart [format]` - Start laddering (checks every 10 seconds)
  - `ladderstop` - Stop laddering
 
+**Teams**
+ - `team add, [name], [format], [http://hastebin.com/raw/example]` - Add a team to Bot teams list
+ - `team delete, [name]` - Remove a team from Bot teams list
+ - `teamslist` - Upload teams list to Hastebin to view it.
+
 Tournaments Commands
 ------------
 

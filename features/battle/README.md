@@ -11,6 +11,8 @@ Bot teams
 
 You can give teams to your Bot editing the file `teams.js` adding teams in 3 different avaliable formats.
 
+**NEW:** Also you can give team to your Bot by command `team` in PS exportable format (you can get it from teambuilder) by a Hastebin link. For example using `team add, [name], [format], [http://hastebin.com/raw/example]`. This teams are stored in `./data/teams.json`
+
 **Teams.js structure**
 ```js
 exports.teams = {
