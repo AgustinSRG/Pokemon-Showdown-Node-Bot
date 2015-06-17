@@ -195,6 +195,28 @@ exports.translations = {
 			'e1': 'There is not a tournament in this room',
 			'e2': 'Error: Not joined'
 		},
+		team: {
+			'u1': 'Usage',
+			'u2': '[add/delete], [name], [format], [Exportable in Hastebin]',
+			'format': 'Format',
+			'notexists': 'does not exists',
+			'download': 'Dowloading and parsing team',
+			'team': 'Team',
+			'added': 'added sucessfully to bot teams list',
+			'err1': 'Error: Hastebin document not found',
+			'err2': 'Error: Invalid team data',
+			'err3': 'Error: There was already a team with that name, use another name or delete the other team',
+			'err4': 'Error: Failed to get data from Hastebin',
+			'removed': 'removed sucessfully from teams list'
+		},
+		teamlist: {
+			'list': 'Bot teams list',
+			'empty': 'Bot teams list is empty',
+			'id': 'Id',
+			'format': 'Format',
+			'pokemon': 'Pokemon',
+			'err': 'Error: failed to upload teams list to Hastebin'
+		},
 		/*
 		* Moderation Commands
 		*/

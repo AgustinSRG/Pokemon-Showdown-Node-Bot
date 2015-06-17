@@ -680,31 +680,31 @@ exports.commands = {
 	teams: 'team',
 	team: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
-		if (!arg) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
+		if (!arg) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
 		arg = arg.split(',');
 		var opt = toId(arg[0]);
 		switch (opt) {
 			case 'add':
 			case 'new':
-				if (arg.length < 4) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
+				if (arg.length < 4) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
 				var name = toId(arg[1]);
 				var format = toId(arg[2]);
 				var link = arg[3].trim();
-				if (!link) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
+				if (!link) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
 				if (link.substr(-1) === '/') link = link.substr(0, link.length - 1);
 				var splitedLink = link.split('/');
 				link = 'http://hastebin.com/raw/' + splitedLink[splitedLink.length - 1];
-				if (!Formats[format]) return this.reply("Format __" + format + "__ does not exists");
-				this.reply('Dowloading and parsing team... (' + link + ')');
+				if (!Formats[format]) return this.reply(this.trad('format') + " __" + format + "__ " + this.trad('notexists'));
+				this.reply(this.trad('download') + '... (' + link + ')');
 				var http = require('http');
 				http.get(link, function (res) {
 					var data = '';
 					res.on('data', function (part) {
 						data += part;
-					});
+					}.bind(this));
 					res.on('end', function (end) {
 						if (data === '{"message":"Document not found."}') {
-							Bot.say(room, "Error: Hastebin document not found");
+							Bot.say(room, this.trad('err1'));
 							return;
 						}
 						var team, packed;
@@ -713,34 +713,34 @@ exports.commands = {
 							packed = Features['battle'].TeamBuilder.packTeam(team);
 						} catch (e) {
 							errlog(e.stack);
-							Bot.say(room, "Error: Invalid team data");
+							Bot.say(room, this.trad('err2'));
 							return;
 						}
 						if (Features['battle'].TeamBuilder.addTeam(name, format, packed)) {
-							Bot.say(room, "Team __" + name + "__ added sucessfully to bot teams list");
+							Bot.say(room, this.trad('team') + " __" + name + "__ " + this.trad('added'));
 						} else {
-							Bot.say(room, "Error: There was already a team with that name, use another name or delete the other team");
+							Bot.say(room, this.trad('err3'));
 						}
-					});
+					}.bind(this));
 					res.on('error', function (end) {
-						Bot.say(room, "Error: Failed to get data from Hastebin");
-					});
-				}).on('error', function (e) {
-					Bot.say(room, "Error: Failed to get data from Hastebin");
-				});
+						Bot.say(room, this.trad('err4'));
+					}.bind(this));
+				}.bind(this)).on('error', function (e) {
+					Bot.say(room, this.trad('err4'));
+				}.bind(this));
 				break;
 			case 'delete':
 			case 'remove':
-				if (arg.length < 2) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
+				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
 				var name = toId(arg[1]);
 				if (Features['battle'].TeamBuilder.removeTeam(name)) {
-					this.reply("Team __" + name + "__ removed sucessfully from teams list");
+					this.reply(this.trad('team') + " __" + name + "__ " + this.trad('removed'));
 				} else {
-					this.reply("Team __" + name + "__ does not exists");
+					this.reply(this.trad('team') + " __" + name + "__ " + this.trad('notexists'));
 				}
 				break;
 			default:
-				return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
+				return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
 		}
 	},
 
@@ -749,17 +749,17 @@ exports.commands = {
 	teamslist: 'teamlist',
 	teamlist: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
-		var teamsStr = 'Bot teams list:\n\n';
+		var teamsStr = this.trad('list') + ':\n\n';
 		var teams = Features['battle'].TeamBuilder.dynTeams;
 		var nTeams = 0;
 		for (var i in teams) {
-			teamsStr += 'Id: ' + i + ' | Format: ' + teams[i].format + ' | Pokemon: ' + teamOverview(teams[i].packed) + '\n';
+			teamsStr += this.trad('id') + ': ' + i + ' | ' + this.trad('format') + ': ' + teams[i].format + ' | ' + this.trad('pokemon') + ': ' + teamOverview(teams[i].packed) + '\n';
 			nTeams++;
 		}
-		if (!nTeams) return this.pmReply('Bot teams list is empty');
+		if (!nTeams) return this.pmReply(this.trad('empty'));
 		Tools.uploadToHastebin(teamsStr, function (r, link) {
-			if (r) return this.pmReply('Bot teams List: ' + link);
-			else this.pmReply('Error: failed to upload teams list to Hastebin');
+			if (r) return this.pmReply(this.trad('list') + ': ' + link);
+			else this.pmReply(this.trad('err'));
 		}.bind(this));
 	}
 };

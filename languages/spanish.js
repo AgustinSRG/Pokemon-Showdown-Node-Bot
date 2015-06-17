@@ -195,6 +195,28 @@
 			'e1': 'No hay ningún torneo en esta sala',
 			'e2': 'No estaba participando en el torneo'
 		},
+		team: {
+			'u1': 'Uso correcto',
+			'u2': '[add/delete], [nombre], [formato], [Exportable en Hastebin]',
+			'format': 'El formato',
+			'notexists': 'no existe',
+			'download': 'Descargando y procesando equipo',
+			'team': 'El equipo',
+			'added': 'ha sido agregado correctamente a la lista de equipos',
+			'err1': 'Error: No se ha encontrado el documento de Hastebin',
+			'err2': 'Error: El formato encontrado no era válido',
+			'err3': 'Error: Ya existe otro equipo con el mismo nombre, use otro nombre o elimine dicho equipo',
+			'err4': 'Error: Error en la conexión con Hastebin',
+			'removed': 'ha sido eliminado correctamente de la lista de equipos'
+		},
+		teamlist: {
+			'list': 'Lista de equipos',
+			'empty': 'La lista de equipos está vacía',
+			'id': 'Id',
+			'format': 'Formato',
+			'pokemon': 'Pokemon',
+			'err': 'Error: no se ha podido subir la lista de equipos a hastebin'
+		},
 		/*
 		* Moderation Commands
 		*/
