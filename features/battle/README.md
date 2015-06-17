@@ -1,9 +1,37 @@
-Pokemon Showdown Bot - Automated Battle Feature
+﻿Pokemon Showdown Bot - Automated Battle Feature
 ====================
 
-First of all, this feature is not an artificial intelligence, is not developed to win all battles or learn and improve game playing. The objective of this feature is entertainment, just a Battle Bot like in-game characters, so its game is also random.
+First of all, this feature is not an artificial intelligence, it can't think or learn to improve  playing. The objective of this feature is basically the entertainment, just a battle bot like in-game characters for example.
 
-This feature handle with challenges, tournaments and ladder. Once in a battle, it also make random decisions discarting useless moves (with the default modules, now there is only for ORAS singles).
+This feature handle with challenges, tournaments and ladder. Once in a battle, it also make random decisions discarding useless moves (with the default modules, now only for 4ª, 5ª and 6ª gen singles).
+
+
+Battle Commands
+------------
+
+**Developing**
+ - `reloadteams` - Hotpatch teams
+ - `reloadbattle` - Hotpatch battle modules
+ - `move` - Force a custom move
+
+**Challeges**
+ - `blockchallenges` - Block Challenges
+ - `unblockchallenges` - Stop blocking challenges
+ - `challenge [user], [format]` - Send a challenge
+
+**Tournaments Joining**
+ - `jointours [on/off]` - Enable or disable tour joining
+ - `jointour` - Join a tornament
+
+**Ladder**
+ - `searchbattle [format]` - Search a battle and returns the link
+ - `ladderstart [format]` - Start laddering (checks every 10 seconds)
+ - `ladderstop` - Stop laddering
+
+**Teams**
+ - `team add, [name], [format], [http://hastebin.com/raw/example]` - Add a team to Bot teams list
+ - `team delete, [name]` - Remove a team from Bot teams list
+ - `teamslist` - Upload teams list to Hastebin to view it.
 
 
 Bot teams
@@ -11,7 +39,7 @@ Bot teams
 
 You can give teams to your Bot editing the file `teams.js` adding teams in 3 different avaliable formats.
 
-**NEW:** Also you can give team to your Bot by command `team` in PS exportable format (you can get it from teambuilder) by a Hastebin link. For example using `team add, [name], [format], [http://hastebin.com/raw/example]`. This teams are stored in `./data/teams.json`
+**NOTE:** Also you can give team to your Bot by command `team` in PS exportable format (you can get it from teambuilder) by a Hastebin link. For example using `team add, [name], [format], [http://hastebin.com/raw/example]`. This teams are stored in `./data/teams.json`
 
 **Teams.js structure**
 ```js
@@ -57,3 +85,45 @@ exports.teams = {
 	]
 }
 ```
+
+
+Battle Modules
+------------
+
+Battle modules are scripts whose function is improve battle decision, for example discarding useless moves or using the most powerfull move.
+
+You can create and use your own battle modules if you want. Battle modules only require two functions:
+
+```js
+exports.receive = function (room, message) {
+	/*
+	* room and message are strings
+	* if this function returns something, it is sent to the battle room
+	*/
+};
+
+exports.getDecision = function (room, battleData, isCallback) {
+	/*
+	* This function is called when a battle decision is required
+	* room is a string, battleData is an object with all information about the battle, 
+	* isCallback is undefined except this function is called on '|callback|' message
+	*
+	* This function must returns a decision array
+	*/
+};
+```
+
+Decision arrays have the following structure (example):
+```js
+	[
+		{type: 'move', move: 'Protect', target: 0, mega: false}, //number of decisions depends on gametype
+		{type: 'switch', switchIn: 4},
+		{type: 'team', team: '1234'}
+	]
+```
+
+There are 4 decision types that are supported by this feature:
+ - `team` - To choose your lead(s), with the arg `team` (required)
+ - `move` - to choose a move, with the args `move` (required), `target` (optional) and `mega` (optional)
+ - `switch` - to switch into another pokemon, with the arg `switchIn` (required)
+ - `pass` - to pass the turn (only avaliable in doubles/triples)
