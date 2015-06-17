@@ -680,16 +680,20 @@ exports.commands = {
 	teams: 'team',
 	team: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
-		if (!arg) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin: http://hastebin.com/raw/example]');
+		if (!arg) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
 		arg = arg.split(',');
 		var opt = toId(arg[0]);
 		switch (opt) {
 			case 'add':
 			case 'new':
-				if (arg.length < 4) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin: http://hastebin.com/raw/example]');
+				if (arg.length < 4) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
 				var name = toId(arg[1]);
 				var format = toId(arg[2]);
 				var link = arg[3].trim();
+				if (!link) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
+				if (link.substr(-1) === '/') link = link.substr(0, link.length - 1);
+				var splitedLink = link.split('/');
+				link = 'http://hastebin.com/raw/' + splitedLink[splitedLink.length - 1];
 				if (!Formats[format]) return this.reply("Format __" + format + "__ does not exists");
 				this.reply('Dowloading and parsing team... (' + link + ')');
 				var http = require('http');
@@ -727,7 +731,7 @@ exports.commands = {
 				break;
 			case 'delete':
 			case 'remove':
-				if (arg.length < 2) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin: http://hastebin.com/raw/example]');
+				if (arg.length < 2) return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
 				var name = toId(arg[1]);
 				if (Features['battle'].TeamBuilder.removeTeam(name)) {
 					this.reply("Team __" + name + "__ removed sucessfully from teams list");
@@ -736,7 +740,7 @@ exports.commands = {
 				}
 				break;
 			default:
-				return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin: http://hastebin.com/raw/example]');
+				return this.reply('Usage: ' + Config.commandChar + cmd + ' [add/delete], [name], [format], [Exportable in Hastebin]');
 		}
 	},
 
