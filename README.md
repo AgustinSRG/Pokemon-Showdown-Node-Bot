@@ -23,12 +23,13 @@ You can also download a Zip of this repo and decompress it.
 
 Then open a shell console, use `cd` to reach the directory of the bot and install dependencies:
 ```
-$ npm install
+$ npm install --production
 ```
+If you want to use `Gulp` test, install all dependencies with `npm install`
 
 Now, to start the bot use `node index.js`
 
-To configure the bot, copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'.
+To [configure your bot](#configuration), copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'.
 
 **NOTE:** If you don't know about `server`, `port` or `serverid` parameters you can run `node serverconfig.js` to set them.
 
@@ -116,7 +117,7 @@ exports.commands = {
 };
 ```
 
-Commands have 4 argumenents:
+Commands have 4 arguments:
  - **arg**: Command argument when you use for example `command [argument]`
  - **by**: User who executed the command
  - **room**: Room where the command has been executed
