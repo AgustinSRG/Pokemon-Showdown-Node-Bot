@@ -85,6 +85,16 @@ module.exports = {
 			if (dataMove.name === "Stealth Rock" && data.statusData.foe.side['Stealth Rock']) continue;
 			if (dataMove.name === "Sticky Web" && data.statusData.foe.side['Sticky Web']) continue;
 
+			if (dataMove.name in {"Spikes": 1, "Toxic Spikes": 1, "Stealth Rock": 1, "Sticky Web": 1}) {
+				var pokesF = 0;
+				var totalPokes = 6;
+				if (data.oppTeam && data.oppTeam.length) totalPokes = data.oppTeam.length;
+				for (var t in data.oppTeamOffSet) {
+					if (data.oppTeamOffSet[t].fainted) pokesF++;
+				}
+				if (totalPokes - pokesF < 2) continue;
+			}
+
 			/* Self side */
 			if (dataMove.target === 'allySide' && data.statusData.self.side[dataMove.name]) continue;
 
