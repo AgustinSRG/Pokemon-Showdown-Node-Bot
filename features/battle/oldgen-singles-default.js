@@ -2,17 +2,16 @@ const POKEDEX_FILE = './../../data/pokedex.js';
 const MOVEDEX_FILE = './../../data/moves.js';
 
 module.exports = {
-	gen5_get_mux: function (typeA, typesB, not_inmune, inverse) {
+	oldgen_get_mux: function (typeA, typesB, not_inmune, inverse) {
 		var mux = 1;
+		var typeObj;
 		for (var i = 0; i < typesB.length; i++) {
-			var typeObj = this.TypeChartGen5[typesB[i]];
-			if (!typeObj) typeObj = this.TypeChartGen6[typesB[i]];
-			if (!typeObj) continue;
-			if (typeObj.damageTaken[typeA] === 1) {
+			if (typesB[i] === 'Fairy') continue;
+			if (this.TypeChartGen6[typesB[i]].damageTaken[typeA] === 1) {
 				mux *= 2;
-			} else if (typeObj.damageTaken[typeA] === 2) {
+			} else if (this.TypeChartGen6[typesB[i]].damageTaken[typeA] === 2) {
 				mux /= 2;
-			} else if (typeObj.damageTaken[typeA] === 3) {
+			} else if (this.TypeChartGen6[typesB[i]].damageTaken[typeA] === 3) {
 				if (!not_inmune) mux = 0;
 			}
 		}
@@ -44,8 +43,8 @@ module.exports = {
 		var data1 = pokedex[toId(pokemonA)];
 		var data2 = pokedex[toId(pokemonB)];
 		if (!data1 || !data2) return 2;
-		var def = this.gen5_get_mux(data2.types[0], data1.types, inverse);
-		if (data2.types[1]) def += this.gen5_get_mux(data2.types[1], data1.types, inverse);
+		var def = this.oldgen_get_mux(data2.types[0], data1.types, inverse);
+		if (data2.types[1]) def += this.oldgen_get_mux(data2.types[1], data1.types, inverse);
 		else def += 1;
 		return def;
 	},
@@ -56,8 +55,8 @@ module.exports = {
 		if (!data1 || !data2) return 2;
 		if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
 		if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
-		var def = this.gen5_get_mux(data2.types[0], data1.types, inverse);
-		if (data2.types[1]) def += this.gen5_get_mux(data2.types[1], data1.types, inverse);
+		var def = this.oldgen_get_mux(data2.types[0], data1.types, inverse);
+		if (data2.types[1]) def += this.oldgen_get_mux(data2.types[1], data1.types, inverse);
 		else def += 1;
 		return def;
 	},
@@ -75,7 +74,7 @@ module.exports = {
 			debug("Error - NO DATA -> " + pokemonA + " / " + pokemonB);
 			return [];
 		}
-		if (parseInt(data.gen) === 4) {
+		if (parseInt(data.gen) <= 4) {
 			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
 			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
 		}
@@ -102,18 +101,18 @@ module.exports = {
 
 			/* Inmune */
 			if (dataMove.target !== "self" && dataMove.target !== "allySide" && dataMove.target !== "foeSide") {
-				if (this.gen5_get_mux(dataMove.type, data2.types) === 0) continue;
+				if (this.oldgen_get_mux(dataMove.type, data2.types) === 0) continue;
 				if (data.statusData.foe.pokemon[0]['volatiles']) {
 					if (data.statusData.foe.pokemon[0]['volatiles'][dataMove.name]) continue;
 					if (dataMove.name === "Forest's Curse" && data.statusData.foe.pokemon[0]['volatiles']['typeadd']) continue;
 				}
 				if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-				if (this.inmune(dataMove, pokemonB)) continue;
+				if (parseInt(data.gen) >= 3 && this.inmune(dataMove, pokemonB)) continue;
 				if (data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Substitute']) continue;
 			}
 
 			/* Bounceable */
-			if (dataMove.flags && dataMove.flags['reflectable'] && (this.has_ability(pokemonB, ["Magic Bounce"]) || (data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Magic Bounce"))) continue;
+			if (parseInt(data.gen) >= 3 && dataMove.flags && dataMove.flags['reflectable'] && (this.has_ability(pokemonB, ["Magic Bounce"]) || (data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Magic Bounce"))) continue;
 
 			/* Hazards Removal*/
 			if (dataMove.name === "Rapid Spin") {
@@ -224,7 +223,7 @@ module.exports = {
 			debug("Error - NO DATA -> " + pokemonA + " / " + pokemonB);
 			return [];
 		}
-		if (parseInt(data.gen) === 4) {
+		if (parseInt(data.gen) <= 4) {
 			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
 			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
 		}
@@ -251,6 +250,10 @@ module.exports = {
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
 
 			if (data.statusData.self.pokemon[0]['boost']) {
+				if (parseInt(data.gen) < 4) {
+					if (dataMove.type in {Fire: 1, Water: 1, Grass: 1, Ice: 1, Electric: 1, Dark: 1, Psychic: 1, Dragon: 1}) dataMove.category = "Special";
+					else dataMove.category = "Physical";
+				}
 				if (dataMove.category === "Special" && data.statusData.self.pokemon[0]['boost']['spa'] && data.statusData.self.pokemon[0]['boost']['spa'] < -1) continue;
 				if (dataMove.category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] < -1) continue;
 			}
@@ -270,9 +273,9 @@ module.exports = {
 
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
-			if (this.inmune(dataMove, pokemonB) && req.active[0].baseAbility !== "Mold Breaker") continue;
+			if (parseInt(data.gen) >= 3 && this.inmune(dataMove, pokemonB) && req.active[0].baseAbility !== "Mold Breaker") continue;
 			//push
-			if (this.gen5_get_mux(dataMove.type, data2.types, not_inmune, inverse) > 1 || (this.gen5_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 1 && (dataMove.type === data1.types[0] || req.active[0].baseAbility === "Protean" || (data1.types[1] && dataMove.type === data1.types[1])))) {
+			if (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) > 1 || (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 1 && (dataMove.type === data1.types[0] || req.active[0].baseAbility === "Protean" || (data1.types[1] && dataMove.type === data1.types[1])))) {
 				moves.push(i + 1);
 			}
 		}
@@ -281,7 +284,7 @@ module.exports = {
 	getOffMoves: function (data) {
 		var moves = [];
 		var req = data.request;
-		var inverse = (data.tier && toId(data.tier) === 'inversebattle') ? true : false;
+		var inverse = false;
 		var pokemonA = data.statusData.self.pokemon[0].species;
 		var pokemonB = data.statusData.foe.pokemon[0].species;
 		var dataMove;
@@ -293,7 +296,7 @@ module.exports = {
 			debug("Error - NO DATA -> " + pokemonA + " / " + pokemonB);
 			return [];
 		}
-		if (parseInt(data.gen) === 4) {
+		if (parseInt(data.gen) <= 4) {
 			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
 			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
 		}
@@ -334,9 +337,9 @@ module.exports = {
 			}
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
-			if (this.gen5_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
+			if (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
-			if (this.inmune(dataMove, pokemonB) && req.active[0].baseAbility !== "Mold Breaker") continue;
+			if (parseInt(data.gen) >= 3 && this.inmune(dataMove, pokemonB) && req.active[0].baseAbility !== "Mold Breaker") continue;
 			//push
 			moves.push(i + 1);
 		}
@@ -386,7 +389,7 @@ module.exports = {
 		if (!data.statusData.self.pokemon[0].species || !data.statusData.foe.pokemon[0].species) {
 			disAdvantage = -1;
 		} else {
-			if (parseInt(data.gen) === 4) disAdvantage = this.gen4_getDisadvantage(data.statusData.self.pokemon[0].species, data.statusData.foe.pokemon[0].species, inverse);
+			if (parseInt(data.gen) <= 4) disAdvantage = this.gen4_getDisadvantage(data.statusData.self.pokemon[0].species, data.statusData.foe.pokemon[0].species, inverse);
 			else disAdvantage = this.gen5_getDisadvantage(data.statusData.self.pokemon[0].species, data.statusData.foe.pokemon[0].species, inverse);
 		}
 		var chosen = -1;
@@ -400,7 +403,7 @@ module.exports = {
 				if (!data.statusData.foe.pokemon[0].species) {
 					disaux = 1;
 				} else {
-					if (parseInt(data.gen) === 4) disaux = this.gen4_getDisadvantage(pokeName, data.statusData.foe.pokemon[0].species, inverse);
+					if (parseInt(data.gen) <= 4) disaux = this.gen4_getDisadvantage(pokeName, data.statusData.foe.pokemon[0].species, inverse);
 					else disaux = this.gen5_getDisadvantage(pokeName, data.statusData.foe.pokemon[0].species, inverse);
 				}
 				posibbles[i + 1] = disaux;
@@ -540,7 +543,7 @@ module.exports = {
 			debug("Error - NO DATA -> " + pokemonA + " / " + pokemonB);
 			return [];
 		}
-		if (parseInt(data.gen) === 4) {
+		if (parseInt(data.gen) <= 4) {
 			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
 			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
 		}
@@ -572,9 +575,9 @@ module.exports = {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
 			}
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-			if (this.gen5_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
+			if (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
-			if (this.inmune(dataMove, pokemonB) && req.side.pokemon[idSide].baseAbility !== "Mold Breaker") continue;
+			if (parseInt(data.gen) >= 3 && this.inmune(dataMove, pokemonB) && req.side.pokemon[idSide].baseAbility !== "Mold Breaker") continue;
 
 			//push
 			moves.push(i + 1);
@@ -1103,3 +1106,10 @@ module.exports = {
 		"Fairy": null
 	}
 };
+
+for (var i in exports.TypeChartGen5) {
+	if (!exports.TypeChartGen5[i]) continue;
+	for (var j in exports.TypeChartGen5[i].damageTaken) {
+		exports.TypeChartGen6[i].damageTaken[j] = exports.TypeChartGen5[i].damageTaken[j];
+	}
+}

@@ -6,19 +6,25 @@
 
 	aiModList: {
 		'6gsinglesdefault': './gen6-singles-default.js',
-		'5gsinglesdefault': './gen5-singles-default.js'
+		'oldsinglesdefault': './oldgen-singles-default.js',
+		'1v1mod': './1v1-offense.js'
 	},
 
 	/* Config - Edit this */
 	aiConfig: {
 		/* Exceptions */
+		'challengecup1v1': '1v1mod',
+		'1v1': '1v1mod'
 	},
 
 	aiDefaultConfig: {
 		/* Default */
 		'singles-6': '6gsinglesdefault',
-		'singles-5': '5gsinglesdefault',
-		'singles-4': '5gsinglesdefault'
+		'singles-5': 'oldsinglesdefault',
+		'singles-4': 'oldsinglesdefault',
+		'singles-3': 'oldsinglesdefault',
+		'singles-2': 'oldsinglesdefault',
+		'singles-1': 'oldsinglesdefault'
 	},
 
 	/* Functions */
@@ -158,7 +164,7 @@
 				if (this.aiConfig[tier]) {
 					if (this.aiModules[this.aiConfig[tier]] && this.aiModules[this.aiConfig[tier]].getDecision) {
 						try {
-							debug("Make Decision: Using module " + this.aiConfig[tier]);
+							debug("[" + room + "] " + "Make Decision: Using module " + this.aiConfig[tier]);
 							decision = this.aiModules[this.aiConfig[tier]].getDecision(room, this.data[room], callback);
 							this.sendDecision(room, decision, rqid);
 							return;
@@ -172,7 +178,7 @@
 			var defaultId = this.data[room].gametype + "-" + this.data[room].gen;
 			if (this.aiDefaultConfig[defaultId] && this.aiModules[this.aiDefaultConfig[defaultId]] && this.aiModules[this.aiDefaultConfig[defaultId]].getDecision) {
 				try {
-					debug("Make Decision: Using default module: " + this.aiDefaultConfig[defaultId]);
+					debug("[" + room + "] " + "Make Decision: Using default module: " + this.aiDefaultConfig[defaultId]);
 					decision = this.aiModules[this.aiDefaultConfig[defaultId]].getDecision(room, this.data[room], callback);
 					this.sendDecision(room, decision, rqid);
 					return;
@@ -182,7 +188,7 @@
 			}
 		}
 		try {
-			debug("Make Decision: Using generic function");
+			debug("[" + room + "] " + "Make Decision: Using generic function");
 			decision = this.getRandomMove(room);
 			this.sendDecision(room, decision, rqid);
 		} catch (e) {
