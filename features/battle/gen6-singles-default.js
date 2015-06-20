@@ -122,6 +122,14 @@ module.exports = {
 			/* Hazards Removal*/
 			if (dataMove.name === "Rapid Spin" || dataMove.name === "Defog") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
+				var isLastPoke = true;
+				for (var l = 0; l < req.side.pokemon.length; l++) {
+					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
+						isLastPoke = false;
+						break;
+					}
+				}
+				if (isLastPoke) continue;
 			}
 
 			/* Status */
@@ -258,6 +266,14 @@ module.exports = {
 
 			if (dataMove.name === "Rapid Spin") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
+				var isLastPoke = true;
+				for (var l = 0; l < req.side.pokemon.length; l++) {
+					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
+						isLastPoke = false;
+						break;
+					}
+				}
+				if (isLastPoke) continue;
 			}
 
 			if (dataMove.name === "Solar Beam") {
@@ -323,6 +339,14 @@ module.exports = {
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
 			if (dataMove.name === "Rapid Spin") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
+				var isLastPoke = true;
+				for (var l = 0; l < req.side.pokemon.length; l++) {
+					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
+						isLastPoke = false;
+						break;
+					}
+				}
+				if (isLastPoke) continue;
 			}
 			if (dataMove.name === "Solar Beam") {
 				var solarFlag = false;
