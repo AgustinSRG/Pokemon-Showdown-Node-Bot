@@ -211,7 +211,7 @@ module.exports = {
 			}
 
 			/* Do not use this moves - todo list */
-			if (dataMove.name in {"Lunar Dance": 1, "Healing Wish": 1, "Assist": 1, "Nature Power": 1, "Natural Gift": 1}) continue;
+			if (dataMove.name in {"Lunar Dance": 1, "Healing Wish": 1, "Memento": 1, "Assist": 1, "Nature Power": 1, "Natural Gift": 1}) continue;
 
 			//push
 			moves.push(i + 1);
