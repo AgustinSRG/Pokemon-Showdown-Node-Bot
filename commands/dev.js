@@ -119,7 +119,7 @@ exports.commands = {
 				this.reply('Some languages crashed: ' + errs.join(", "));
 				break;
 			default:
-				 this.reply('Valid arguments are: commands, features, data, config');
+				 this.reply('Valid arguments are: commands, features, data, config, languages');
 		}
 	},
 
