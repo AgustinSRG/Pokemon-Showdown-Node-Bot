@@ -10,6 +10,7 @@ const FLOOD_INTERVAL = 45 * 1000;
 var commands = exports.commands = {};
 var dynCommands = exports.dynCommands = {};
 var tempVar = exports.tempVar = '';
+var https = require('https');
 
 /* Resource Monitor */
 
@@ -118,6 +119,28 @@ var saveDynCmds = exports.saveDinCmds =  function () {
 var parse = exports.parse = function (room, by, msg) {
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
+	}
+	if (/youtube\.com/i.test(msg)) {
+		try {
+			var id = msg.substring(msg.indexOf("=") + 1).replace(".","");
+			var self = this;
+			var options = {
+				host: 'www.googleapis.com',
+				path: '/youtube/v3/videos?id=' + id + '&key=AIzaSyBHyOyjHSrOW5wiS5A55Ekx4df_qBp6hkQ&fields=items(snippet(channelId,title,categoryId))&part=snippet'
+			};
+			var callback = function(response) {
+				var str = '';
+				response.on('data', function(chunk) {
+					str += chunk;
+				});
+				response.on('end', function() {
+					Bot.say(room, ' ' + by + '\'s link: **"' + str.substring(str.indexOf("title") + 9, str.indexOf("categoryId") - 8) + '"**');
+				});
+			};
+			https.request(options, callback).end();
+		} catch (e) {
+			console.log(e.stack);
+		}
 	}
 	if (msg.substr(0, 8) === '/invite ' && Tools.equalOrHigherRank(by, '%')) {
 		Bot.say('', '/join ' +  msg.substr(8));
