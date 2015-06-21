@@ -41,6 +41,17 @@ Commands for developing (some of these are dangerous)
  - `updategit` - Fast forward from git repo
  - `kill` - End the process
 
+Misc Commands
+------------
+
+Other commands for multiple features
+
+ - `pick [option1], [option2], ...` - Choose between multiple options
+ - `randomanswer` - Get a random answer
+ - `usage` - Get a link to Smogon official usage stats
+ - `help` - Get a link to this guide
+ - `youtube [on/off]` - Enable / Disable YouTube link recognition
+
 Pokemon Commands
 ------------
 
