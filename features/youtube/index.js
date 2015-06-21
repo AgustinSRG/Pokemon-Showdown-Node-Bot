@@ -1,0 +1,68 @@
+var https = require('https');
+
+exports.id = 'youtube';
+exports.desc = 'Automated YouTube link recognition';
+
+exports.init = function () {
+	return;
+};
+
+function parseChat (room, time, by, msg) {
+	if (Settings.settings['ytlinks'] && Settings.settings['ytlinks'][room] && (/youtube\.com/i).test(msg)) {
+		var transYT = function (data) {
+			var tempLang = Config.language || 'english';
+			if (Settings.settings['language'] && Settings.settings['language'][room]) tempLang = Settings.settings['language'][room];
+			return Tools.translateGlobal('youtube', data, tempLang);
+		};
+		try {
+			var id = msg.substring(msg.indexOf("=") + 1).replace(".", "");
+			var options = {
+				host: 'www.googleapis.com',
+				path: '/youtube/v3/videos?id=' + id + '&key=AIzaSyBHyOyjHSrOW5wiS5A55Ekx4df_qBp6hkQ&fields=items(snippet(channelId,title,categoryId))&part=snippet'
+			};
+			var callback = function (response) {
+				var str = '';
+				response.on('data', function (chunk) {
+					str += chunk;
+				});
+				response.on('end', function () {
+					try {
+						var youTubeData = JSON.parse(str);
+						if (youTubeData.items && youTubeData.items.length && youTubeData.items[0].snippet) {
+							Bot.say(room, transYT('before') + ' ' + by.substr(1) + transYT('after') + ': **"' + youTubeData.items[0].snippet.title + '"**');
+						}
+					} catch (e) {}
+				});
+				response.on('error', function (e) {
+					debug('failed on connection with YouTube');
+				});
+			};
+			var ytErr = function (e) {
+				debug('failed on connection with YouTube');
+			};
+			var req = https.request(options, callback);
+			req.on('error', ytErr);
+			req.end();
+		} catch (e) {
+			errlog(e.stack);
+		}
+	}
+}
+
+exports.parse = function (room, message, isIntro, spl) {
+	if (isIntro) return;
+	if (!Bot.rooms[room] || Bot.rooms[room].type !== "chat") return;
+	switch (spl[0]) {
+		case 'c':
+			var by = spl[1];
+			var timeOff = Date.now();
+			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|").length));
+			break;
+
+		case 'c:':
+			var by = spl[2];
+			var timeOff = parseInt(spl[1]) * 1000;
+			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|" + spl[2] + "|").length));
+			break;
+	}
+};

@@ -10,7 +10,6 @@ const FLOOD_INTERVAL = 45 * 1000;
 var commands = exports.commands = {};
 var dynCommands = exports.dynCommands = {};
 var tempVar = exports.tempVar = '';
-var https = require('https');
 
 /* Resource Monitor */
 
@@ -119,46 +118,6 @@ var saveDynCmds = exports.saveDinCmds =  function () {
 var parse = exports.parse = function (room, by, msg) {
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
-	}
-	if (Settings.settings['ytlinks'] && Settings.settings['ytlinks'][room] && (/youtube\.com/i).test(msg)) {
-		var transYT = function (data) {
-			var tempLang = Config.language || 'english';
-			if (Settings.settings['language'] && Settings.settings['language'][room]) tempLang = Settings.settings['language'][room];
-			return Tools.translateGlobal('youtube', data, tempLang);
-		};
-		try {
-			var id = msg.substring(msg.indexOf("=") + 1).replace(".", "");
-			var self = this;
-			var options = {
-				host: 'www.googleapis.com',
-				path: '/youtube/v3/videos?id=' + id + '&key=AIzaSyBHyOyjHSrOW5wiS5A55Ekx4df_qBp6hkQ&fields=items(snippet(channelId,title,categoryId))&part=snippet'
-			};
-			var callback = function (response) {
-				var str = '';
-				response.on('data', function (chunk) {
-					str += chunk;
-				});
-				response.on('end', function () {
-					try {
-						var youTubeData = JSON.parse(str);
-						if (youTubeData.items && youTubeData.items.length && youTubeData.items[0].snippet) {
-							Bot.say(room, transYT('before') + ' ' + by.substr(1) + transYT('after') + ': **"' + youTubeData.items[0].snippet.title + '"**');
-						}
-					} catch (e) {}
-				});
-				response.on('error', function (e) {
-					debug('failed on connection with YouTube');
-				});
-			};
-			var ytErr = function (e) {
-				debug('failed on connection with YouTube');
-			};
-			var req = https.request(options, callback);
-			req.on('error', ytErr);
-			req.end();
-		} catch (e) {
-			errlog(e.stack);
-		}
 	}
 	if (msg.substr(0, 8) === '/invite ' && Tools.equalOrHigherRank(by, '%')) {
 		Bot.say('', '/join ' +  msg.substr(8));
