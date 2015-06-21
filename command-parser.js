@@ -121,6 +121,11 @@ var parse = exports.parse = function (room, by, msg) {
 		if (resourceMonitor.isLocked(by)) return;
 	}
 	if (Settings.settings['ytlinks'] && Settings.settings['ytlinks'][room] && (/youtube\.com/i).test(msg)) {
+		var transYT = function (data) {
+			var tempLang = Config.language || 'english';
+			if (Settings.settings['language'] && Settings.settings['language'][room]) tempLang = Settings.settings['language'][room];
+			return Tools.translateGlobal('youtube', data, tempLang);
+		};
 		try {
 			var id = msg.substring(msg.indexOf("=") + 1).replace(".", "");
 			var self = this;
@@ -137,7 +142,7 @@ var parse = exports.parse = function (room, by, msg) {
 					try {
 						var youTubeData = JSON.parse(str);
 						if (youTubeData.items && youTubeData.items.length && youTubeData.items[0].snippet) {
-							Bot.say(room, ' ' + by.substr(1) + '\'s link: **"' + youTubeData.items[0].snippet.title + '"**');
+							Bot.say(room, transYT('before') + ' ' + by.substr(1) + transYT('after') + ': **"' + youTubeData.items[0].snippet.title + '"**');
 						}
 					} catch (e) {}
 				});

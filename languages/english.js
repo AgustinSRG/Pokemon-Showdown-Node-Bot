@@ -92,6 +92,14 @@ exports.translations = {
 				'Don\'t count on it.'
 			]
 		},
+		youtube: {
+			'notchat': 'This command is only avaliable for chat rooms',
+			'u': 'Usage',
+			'ae': 'YouTube link recognition is already avaliable for room',
+			'e': 'YouTube link recognition is now avaliable for this room',
+			'ad': 'YouTube link recognition is already disabled for room',
+			'd': 'YouTube link recognition is now disabled for this room'
+		},
 		/*
 		* Pokemon Commands
 		*/
@@ -382,6 +390,11 @@ exports.translations = {
 		'hours': 'hours',
 		'day': 'day',
 		'days': 'days'
+	},
+
+	youtube: {
+		'before': '',
+		'after': '\'s link'
 	},
 
 	moderation: {
