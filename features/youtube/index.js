@@ -8,7 +8,12 @@ exports.init = function () {
 };
 
 function parseChat (room, time, by, msg) {
-	if (Settings.settings['ytlinks'] && Settings.settings['ytlinks'][room] && (/youtube\.com/i).test(msg)) {
+	var enableByDefault = Config.youtube ? Config.youtube.enableByDefault : false;
+	var enabled = enableByDefault;
+	if (Settings.settings['ytlinks'] && typeof Settings.settings['ytlinks'][room] !== "undefined") {
+		enabled = !!Settings.settings['ytlinks'][room];
+	}
+	if (enabled && (/youtube\.com/i).test(msg)) {
 		var transYT = function (data) {
 			var tempLang = Config.language || 'english';
 			if (Settings.settings['language'] && Settings.settings['language'][room]) tempLang = Settings.settings['language'][room];

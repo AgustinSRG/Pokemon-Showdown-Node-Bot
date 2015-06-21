@@ -173,3 +173,11 @@ exports.tourDefault = {
 	timeToStart: 30 * 1000,
 	autodq: 1.5
 };
+
+/*
+* Youtube
+*/
+
+exports.youtube = {
+	enableByDefault: false
+};

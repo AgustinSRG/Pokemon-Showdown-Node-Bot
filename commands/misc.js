@@ -56,8 +56,8 @@ exports.commands = {
 				break;
 			case 'off':
 			case 'disable':
-				if (!Settings.settings['ytlinks'][room]) return this.reply(this.trad('ad') + ' ' + room);
-				delete Settings.settings['ytlinks'][room];
+				if (Settings.settings['ytlinks'][room] === 0) return this.reply(this.trad('ad') + ' ' + room);
+				Settings.settings['ytlinks'][room] = 0;
 				Settings.save();
 				this.reply(this.trad('d'));
 				break;
