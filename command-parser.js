@@ -120,26 +120,39 @@ var parse = exports.parse = function (room, by, msg) {
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
 	}
-	if (/youtube\.com/i.test(msg)) {
+	if (Settings.settings['ytlinks'] && Settings.settings['ytlinks'][room] && (/youtube\.com/i).test(msg)) {
 		try {
-			var id = msg.substring(msg.indexOf("=") + 1).replace(".","");
+			var id = msg.substring(msg.indexOf("=") + 1).replace(".", "");
 			var self = this;
 			var options = {
 				host: 'www.googleapis.com',
 				path: '/youtube/v3/videos?id=' + id + '&key=AIzaSyBHyOyjHSrOW5wiS5A55Ekx4df_qBp6hkQ&fields=items(snippet(channelId,title,categoryId))&part=snippet'
 			};
-			var callback = function(response) {
+			var callback = function (response) {
 				var str = '';
-				response.on('data', function(chunk) {
+				response.on('data', function (chunk) {
 					str += chunk;
 				});
-				response.on('end', function() {
-					Bot.say(room, ' ' + by + '\'s link: **"' + str.substring(str.indexOf("title") + 9, str.indexOf("categoryId") - 8) + '"**');
+				response.on('end', function () {
+					try {
+						var youTubeData = JSON.parse(str);
+						if (youTubeData.items && youTubeData.items.length && youTubeData.items[0].snippet) {
+							Bot.say(room, ' ' + by.substr(1) + '\'s link: **"' + youTubeData.items[0].snippet.title + '"**');
+						}
+					} catch (e) {}
+				});
+				response.on('error', function (e) {
+					debug('failed on connection with YouTube');
 				});
 			};
-			https.request(options, callback).end();
+			var ytErr = function (e) {
+				debug('failed on connection with YouTube');
+			};
+			var req = https.request(options, callback);
+			req.on('error', ytErr);
+			req.end();
 		} catch (e) {
-			console.log(e.stack);
+			errlog(e.stack);
 		}
 	}
 	if (msg.substr(0, 8) === '/invite ' && Tools.equalOrHigherRank(by, '%')) {

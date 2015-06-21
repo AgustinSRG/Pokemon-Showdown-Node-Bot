@@ -38,5 +38,31 @@ exports.commands = {
 	botguide: 'help',
 	help: function (arg, user, room) {
 		this.restrictReply('https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md', 'help');
+	},
+
+	youtubelinks: 'youtube',
+	youtube: function (arg, user, room, cmd) {
+		if (!this.isRanked('#')) return false;
+		if (this.roomType !== 'chat') return this.reply('This command is only avaliable for chat rooms');
+		arg = toId(arg);
+		if (!Settings.settings['ytlinks']) Settings.settings['ytlinks'] = {};
+		switch (arg) {
+			case 'on':
+			case 'enable':
+				if (Settings.settings['ytlinks'][room]) return this.reply('YouTube link recognition is already avaliable for room' + room);
+				Settings.settings['ytlinks'][room] = 1;
+				Settings.save();
+				this.reply('YouTube link recognition is now avaliable for this room');
+				break;
+			case 'off':
+			case 'disable':
+				if (!Settings.settings['ytlinks'][room]) return this.reply('YouTube link recognition is already disabled for room' + room);
+				delete Settings.settings['ytlinks'][room];
+				Settings.save();
+				this.reply('YouTube link recognition is now disabled for this room');
+				break;
+			default:
+				this.reply('Usage: ' + Config.commandChar + cmd + ' [on/off]');
+		}
 	}
 };
