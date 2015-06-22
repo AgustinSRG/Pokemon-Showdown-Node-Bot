@@ -181,3 +181,14 @@ exports.tourDefault = {
 exports.youtube = {
 	enableByDefault: false
 };
+
+/*
+* Chat Logger
+*/
+
+exports.chatLogger = {
+	rooms: [],
+	ignore: {'tournament': ['update', 'updateEnd'], 'formats': true, 'challstr': true, 'updateuser': true, 'queryresponse': true},
+	logIntroMessages: true,
+	ageOfLogs: 7 //in days (max age of logs, 0 to keep logs infinitely)
+};
