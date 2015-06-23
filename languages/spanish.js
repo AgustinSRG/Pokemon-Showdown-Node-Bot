@@ -203,6 +203,18 @@
 			'e1': 'No hay ningún torneo en esta sala',
 			'e2': 'No estaba participando en el torneo'
 		},
+		battleset: {
+			'u1': 'Uso Correcto:',
+			'u2': '[permiso], [rango]',
+			'ps': 'Permisos',
+			'p': 'Permiso',
+			'd': 'ha sido deshabilitado para las salas de batalla',
+			'a': 'ha sido habilitado para todos los usuarios en las salas de batalla',
+			'r': 'en las salas de batalla está disponible para los usuarios de rango',
+			'r2': 'o superior',
+			'not1': 'Rango',
+			'not2': 'no encontrado'
+		},
 		team: {
 			'u1': 'Uso correcto',
 			'u2': '[add/delete], [nombre], [formato], [Exportable en Hastebin]',

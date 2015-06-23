@@ -129,5 +129,38 @@ exports.commands = {
 		if (!Features['battle'].TourManager.tourData[room] || !Features['battle'].TourManager.tourData[room].format) return this.reply(this.trad('e1'));
 		if (!Features['battle'].TourManager.tourData[room].isJoined) return this.reply(this.trad('e2'));
 		this.reply("/tour leave");
+	},
+
+	battlepermissions: 'battleset',
+	battlesettings: 'battleset',
+	battleset: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		var setPermission = function (room, perm, rank) {
+			if (!Settings.settings.commands) Settings.settings.commands = {};
+			if (!Settings.settings.commands[room]) Settings.settings.commands[room] = {};
+			Settings.settings.commands[room][perm] = rank;
+			Settings.save();
+		};
+		var args = arg.split(",");
+		if (args.length < 2) return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+		var perm = toId(args[0]);
+		var rank = args[1].trim();
+		if (!(perm in Settings.permissions)) {
+			return this.reply(this.trad('ps') + ": " + Object.keys(Settings.permissions).sort().join(", "));
+		}
+		if (rank in {'off': 1, 'disable': 1}) {
+			setPermission('battle-', perm, true);
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('d'));
+		}
+		if (rank in {'on': 1, 'all': 1, 'enable': 1}) {
+			setPermission('battle-', perm, ' ');
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('a'));
+		}
+		if (Config.ranks.indexOf(rank) >= 0) {
+			setPermission('battle-', perm, rank);
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('r') + ' ' + rank + " " + this.trad('r2'));
+		} else {
+			return this.reply(this.trad('not1') + " " + rank + " " + this.trad('not2'));
+		}
 	}
 };

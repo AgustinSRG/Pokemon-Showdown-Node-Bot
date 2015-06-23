@@ -121,6 +121,9 @@ Commands for battle feature
  - `team delete, [name]` - Remove a team from Bot teams list
  - `teamslist` - Upload teams list to Hastebin to view it.
 
+**Permissions in Battle Rooms**
+ - `battlesettings [permission], [rank]` - Change permissions for battle rooms
+
 Tournaments Commands
 ------------
 

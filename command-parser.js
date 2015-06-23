@@ -180,7 +180,8 @@ var parse = exports.parse = function (room, by, msg) {
 				isExcepted: Tools.equalOrHigherRank(by, true),
 				roomType:(room.charAt(0) === ',') ? 'pm' : Bot.rooms[room].type,
 				can: function (permission) {
-					return Settings.userCan(room, by, permission);
+					if (this.roomType === 'battle') return Settings.userCan('battle-', by, permission);
+					else return Settings.userCan(room, by, permission);
 				},
 				botRanked: function (rank) {
 					if (!Bot.rooms[room]) return false;

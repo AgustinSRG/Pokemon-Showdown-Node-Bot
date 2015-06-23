@@ -203,6 +203,18 @@ exports.translations = {
 			'e1': 'There is not a tournament in this room',
 			'e2': 'Error: Not joined'
 		},
+		battleset: {
+			'u1': 'Usage',
+			'u2': '[permission], [rank]',
+			'ps': 'Permissions',
+			'p': 'Permission',
+			'd': 'in battles is now disabled',
+			'a': 'in battles is now avaliable for all users',
+			'r': 'in battles is now avaliable for users with rank',
+			'r2': 'or highter',
+			'not1': 'Rank',
+			'not2': 'not found'
+		},
 		team: {
 			'u1': 'Usage',
 			'u2': '[add/delete], [name], [format], [Exportable in Hastebin]',

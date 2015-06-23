@@ -110,10 +110,6 @@ exports.commands = {
 
 	say: function (arg, by, room, cmd) {
 		if (!arg) return;
-		if (this.roomType !== 'chat') {
-			if (!this.isRanked('%')) return;
-			this.reply(Tools.stripCommands(arg));
-		}
 		if (!this.can('say')) return;
 		this.reply(Tools.stripCommands(arg));
 	},
