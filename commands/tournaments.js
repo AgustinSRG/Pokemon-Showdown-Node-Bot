@@ -30,7 +30,6 @@ exports.commands = {
 	tour: 'tournament',
 	tournament: function (arg, by, room, cmd) {
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
-		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " " + this.trad('e1'));
 		if (Features['tours'].tourData[room]) return this.reply(this.trad('e2'));
 		var details = {
 			format: 'ou',
