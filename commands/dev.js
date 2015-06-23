@@ -104,6 +104,25 @@ exports.commands = {
 				var errs = reloadFeatures() || [];
 				if (!errs.length) return this.reply('Features hotpatched');
 				return this.reply('Some features crashed: ' + errs.join(", "));
+			case 'commandparser':
+			case 'parser':
+				try {
+					Tools.uncacheTree('./command-parser.js');
+					global.CommandParser = require('./../command-parser.js');
+					this.reply('command-parser.js hotpatched');
+				} catch (e) {
+					this.reply('Error: command-parser.js has syntax errors');
+				}
+				break;
+			case 'tools':
+				try {
+					Tools.uncacheTree('./tools.js');
+					global.Tools = require('./../tools.js');
+					this.reply('tools.js hotpatched');
+				} catch (e) {
+					this.reply('Error: tools.js has syntax errors');
+				}
+				break;
 			case 'data':
 				DataDownloader.download();
 				this.reply('Data files reloaded');
@@ -119,7 +138,7 @@ exports.commands = {
 				this.reply('Some languages crashed: ' + errs.join(", "));
 				break;
 			default:
-				 this.reply('Valid arguments are: commands, features, data, config, languages');
+				 this.reply('Valid arguments are: commands, features, parser, tools, data, config, languages');
 		}
 	},
 
