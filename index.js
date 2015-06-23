@@ -288,11 +288,11 @@ Bot.on('line', function (room, message, isIntro, spl) {
 /* Info and debug */
 
 Bot.on('joinroom', function (room) {
-	ok('Joined room ' + room + ' [' + Bot.rooms[room].type + ']');
+	info('Joined room ' + room + ' [' + Bot.rooms[room].type + ']');
 });
 
 Bot.on('joinfailure', function (room, e, info) {
-	error('Could not join ' + room + ': [' + e + '] ' + info);
+	info('Could not join ' + room + ': [' + e + '] ' + info);
 });
 
 Bot.on('message', function (msg) {
