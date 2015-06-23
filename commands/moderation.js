@@ -51,7 +51,7 @@ exports.commands = {
 	autoban: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
 		var added = [];
 		var illegalNick = [];
@@ -94,7 +94,7 @@ exports.commands = {
 	unautoban: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
 		arg = arg.split(',');
 
@@ -130,7 +130,7 @@ exports.commands = {
 	regexautoban: function (arg, user, room) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
 		if (!arg) return this.say(room, this.trad('notarg'));
 
@@ -155,7 +155,7 @@ exports.commands = {
 	unregexautoban: function (arg, user, room) {
 		if (!this.can('autoban')) return;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
 		if (!arg) return this.say(room, this.trad('notarg'));
 
