@@ -64,6 +64,14 @@ exports.translations = {
 			'modified': 'has been successfully modified',
 			'created': 'has been successfully created'
 		},
+		setcmdalias: {
+			'u1': 'Usage',
+			'u2': '[alias], [cmd]',
+			'n': 'is not a dynamic command',
+			'c': 'Command',
+			'alias': 'is now an alias of',
+			'already': 'is an alias. You can\'t set aliases of another aliases'
+		},
 		/*
 		* Misc Commands
 		*/

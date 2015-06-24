@@ -64,6 +64,14 @@
 			'modified': 'ha sido modificado',
 			'created': 'ha sido creado'
 		},
+		setcmdalias: {
+			'u1': 'Uso correcto',
+			'u2': '[alias], [comando]',
+			'n': 'no es un comando dinámico',
+			'c': 'El comando',
+			'alias': 'es ahora alias de',
+			'already': 'es un alias. No se puede establecer un alias de otro alias'
+		},
 		/*
 		* Misc Commands
 		*/

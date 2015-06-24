@@ -11,6 +11,17 @@ exports.commands = {
 	wall: 'dyn',
 	info: 'dyn',
 	dyn: function (arg, by, room, cmd) {
+		var dcmd = toId(arg);
+		if (dcmd && CommandParser.dynCommands[dcmd] && CommandParser.dynCommands[dcmd].substr(0, 4) === "/ref") {
+			var basicCmd = toId(CommandParser.dynCommands[dcmd].substr(5));
+			if (CommandParser.dynCommands[basicCmd] && CommandParser.dynCommands[basicCmd].substr(0, 4) !== "/ref") {
+				this.parse(Config.commandChar + cmd + ' ' + basicCmd);
+			} else {
+				if (CommandParser.dynCommands[basicCmd]) error('Recursive dynamic command "' + dcmd + '"');
+				else error('Invalid reference for dynamic command "' + dcmd + '" -> "' + basicCmd + '"');
+			}
+			return;
+		}
 		var perm = (cmd in {'wall': 1, 'dynwall': 1, 'infowall': 1}) ? 'wall' : 'info';
 		if (!this.can(perm) || this.roomType === 'pm') {
 			if (!arg) {
@@ -18,7 +29,6 @@ exports.commands = {
 				if (!list) return this.pmReply(this.trad('nocmds'));
 				return this.pmReply(this.trad('list') + ': ' + list);
 			}
-			var dcmd = toId(arg);
 			if (CommandParser.dynCommands[dcmd]) {
 				return this.pmReply(CommandParser.dynCommands[dcmd]);
 			} else {
@@ -30,7 +40,6 @@ exports.commands = {
 				if (!list) return this.reply(this.trad('nocmds'));
 				return this.reply(this.trad('list') + ': ' + list);
 			}
-			var dcmd = toId(arg);
 			if (CommandParser.dynCommands[dcmd]) {
 				if (perm === 'wall') return this.reply('/announce ' + CommandParser.dynCommands[dcmd]);
 				return this.reply(CommandParser.dynCommands[dcmd]);
@@ -69,6 +78,21 @@ exports.commands = {
 		CommandParser.dynCommands[dcmd] = CommandParser.tempVar;
 		CommandParser.saveDinCmds();
 		this.reply(text);
+	},
+
+	setalias: 'setcmdalias',
+	setcmdalias: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		var args = arg.split(',');
+		if (args.length !== 2) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
+		var alias = toId(args[0]);
+		var dcmd = toId(args[1]);
+		if (!alias || !dcmd || alias === dcmd) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
+		if (!CommandParser.dynCommands[dcmd]) return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('n'));
+		if (CommandParser.dynCommands[dcmd].substr(0, 4) === "/ref") return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('already'));
+		CommandParser.dynCommands[alias] = '/ref ' + dcmd;
+		CommandParser.saveDinCmds();
+		this.reply(this.trad('c') + ' "' + alias + '" ' + this.trad('alias') + ' "' + dcmd + '"');
 	},
 
 	stemp: 'temp',
