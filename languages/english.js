@@ -33,6 +33,7 @@ exports.translations = {
 		},
 		set: {
 			'notchat': 'This command is only avaliable for chat rooms',
+			'denied': 'Access denied',
 			'u1': 'Usage',
 			'u2': '[permission], [rank]',
 			'ps': 'Permissions',

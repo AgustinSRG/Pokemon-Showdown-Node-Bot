@@ -139,14 +139,17 @@ exports.commands = {
 			return this.reply(this.trad('ps') + ": " + Object.keys(Settings.permissions).sort().join(", "));
 		}
 		if (rank in {'off': 1, 'disable': 1}) {
+			if (!this.canSet(perm, true)) return this.reply(this.trad('denied'));
 			setPermission(room, perm, true);
 			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('d'));
 		}
 		if (rank in {'on': 1, 'all': 1, 'enable': 1}) {
+			if (!this.canSet(perm, ' ')) return this.reply(this.trad('denied'));
 			setPermission(room, perm, ' ');
 			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('a'));
 		}
 		if (Config.ranks.indexOf(rank) >= 0) {
+			if (!this.canSet(perm, rank)) return this.reply(this.trad('denied'));
 			setPermission(room, perm, rank);
 			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('r') + ' ' + rank + " " + this.trad('r2'));
 		} else {

@@ -183,6 +183,17 @@ var parse = exports.parse = function (room, by, msg) {
 					if (this.roomType === 'battle') return Settings.userCan('battle-', by, permission);
 					else return Settings.userCan(room, by, permission);
 				},
+				canSet: function (permission, rank) {
+					var rankSet;
+					if (!Settings.settings['commands'] || !Settings.settings['commands'][room] || typeof Settings.settings['commands'][room][permission] === "undefined") {
+						rankSet = Config.defaultPermission;
+						if (Config.permissionExceptions[permission]) rankSet = Config.permissionExceptions[permission];
+					} else {
+						rankSet = Settings.settings['commands'][room][permission];
+					}
+					if (Tools.equalOrHigherRank(by, rankSet) && Tools.equalOrHigherRank(by, rank)) return true;
+					return false;
+				},
 				botRanked: function (rank) {
 					if (!Bot.rooms[room]) return false;
 					var ident = Bot.rooms[room].users[toId(Bot.status.nickName)];

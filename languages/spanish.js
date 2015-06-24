@@ -33,7 +33,8 @@
 		},
 		set: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
-			'u1': 'Uso Correcto:',
+			'denied': 'Acceso denegado',
+			'u1': 'Uso Correcto',
 			'u2': '[permiso], [rango]',
 			'ps': 'Permisos',
 			'p': 'Permiso',
