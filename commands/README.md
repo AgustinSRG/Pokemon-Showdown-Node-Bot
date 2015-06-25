@@ -111,7 +111,9 @@ Commands for battle feature
 
 **Tournaments Joining**
  - `jointours [on/off]` - Enable or disable tour joining
- - `jointour` - Join a tornament
+ - `jointour` - Join a tournament
+ - `leavetour` - Leave a tournament
+ - `checktour` - Check the tournament (If the bot does not challenge or something)
 
 **Ladder**
  - `searchbattle [format]` - Search a battle and returns the link

@@ -115,12 +115,14 @@ exports.commands = {
 		Bot.send(cmds);
 	},
 
+	checktour: 'jointour',
 	tourjoin: 'jointour',
 	jt: 'jointour',
 	jointour: function (arg, by, room, cmd) {
 		if (!this.can('jointour')) return false;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		if (!Features['battle'].TourManager.tourData[room] || !Features['battle'].TourManager.tourData[room].format) return this.reply(this.trad('e1'));
+		if (cmd === 'checktour') return this.say(room, '/tour getupdate');
 		if (Features['battle'].TourManager.tourData[room].isJoined) return this.reply(this.trad('e2'));
 		if (Features['battle'].TourManager.tourData[room].isStarted) return this.reply(this.trad('e3'));
 		var format = toId(Features['battle'].TourManager.tourData[room].format);
