@@ -218,7 +218,7 @@ var parse = exports.parse = function (room, by, msg) {
 			} catch (e) {
 				errlog(e.stack);
 				error("Command crash: " + cmd + ' | by: ' + by + ' | room: ' + room + ' | ' + sys.inspect(e));
-				Bot.say(room, 'The command crashed: ' + sys.inspect(e).replace(/\n/, " "));
+				Bot.say(room, 'The command crashed: ' + sys.inspect(e).toString().split('\n').join(' '));
 			}
 		} else {
 			error("unkwown command type: " + cmd + ' = ' + sys.inspect(commands[handler]));
