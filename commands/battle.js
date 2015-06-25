@@ -2,7 +2,7 @@
 	Battle commands (challenges, tours, ladder)
 */
 
-Settings.addPermissions(['searchbattle', 'jointour']);
+Settings.addPermissions(['challenge', 'searchbattle', 'jointour']);
 
 exports.commands = {
 	reloadteams: function (arg, by, room, cmd) {
@@ -95,10 +95,15 @@ exports.commands = {
 		if (Features['battle'].LadderManager.start(format)) this.reply(this.trad('start') + ' ' + format);
 	},
 
+	challme: 'challenge',
+	challengeme: 'challenge',
 	chall: 'challenge',
 	challenge: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.can('challenge')) return false;
 		var args = arg.split(",");
+		if (cmd in {'challme': 1, 'challengeme': 1}) {
+			args = [by, arg];
+		}
 		if (args.length < 2) return this.reply(this.trad('e11') + ': ' + Config.commandChar + cmd + " " + this.trad('e12'));
 		var format = toId(args[1]);
 		if (!Formats[format] || !Formats[format].chall) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));

@@ -67,6 +67,7 @@ exports.permissionExceptions = {
 	'autoban': '#',
 	'banword': '#',
 	'joinphrase': '#',
+	'challenge': '%',
 	'searchbattle': '~',
 	'tournament': '@'
 };

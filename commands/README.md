@@ -106,7 +106,8 @@ Commands for battle feature
 **Challeges**
  - `blockchallenges` - Block Challenges
  - `unblockchallenges` - Stop blocking challenges
- - `challenge [user], [format]` - Send a challenge
+ - `chall [user], [format]` - Send a challenge
+ - `challme [format]` - Send a challenge to yourself
 
 **Tournaments Joining**
  - `jointours [on/off]` - Enable or disable tour joining
