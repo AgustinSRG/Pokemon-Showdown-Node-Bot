@@ -7,20 +7,33 @@ exports.init = function () {
 	return;
 };
 
+function getLinkId (msg) {
+	msg = msg.split(' ');
+	for (var i = 0; i < msg.length; i++) {
+		if ((/youtu\.be/i).test(msg[i])) {
+			var temp = msg[i].split('/');
+			return temp[temp.length - 1];
+		} else if ((/youtube\.com/i).test(msg[i])) {
+			return msg[i].substring(msg[i].indexOf("=") + 1).replace(".", "");
+		}
+	}
+}
+
 function parseChat (room, time, by, msg) {
 	var enableByDefault = Config.youtube ? Config.youtube.enableByDefault : false;
 	var enabled = enableByDefault;
 	if (Settings.settings['ytlinks'] && typeof Settings.settings['ytlinks'][room] !== "undefined") {
 		enabled = !!Settings.settings['ytlinks'][room];
 	}
-	if (enabled && (/youtube\.com/i).test(msg)) {
+	if (enabled && ((/youtube\.com/i).test(msg) || (/youtu\.be/i).test(msg))) {
 		var transYT = function (data) {
 			var tempLang = Config.language || 'english';
 			if (Settings.settings['language'] && Settings.settings['language'][room]) tempLang = Settings.settings['language'][room];
 			return Tools.translateGlobal('youtube', data, tempLang);
 		};
 		try {
-			var id = msg.substring(msg.indexOf("=") + 1).replace(".", "");
+			var id = getLinkId(msg);
+			if (!id) return;
 			var options = {
 				host: 'www.googleapis.com',
 				path: '/youtube/v3/videos?id=' + id + '&key=AIzaSyBHyOyjHSrOW5wiS5A55Ekx4df_qBp6hkQ&fields=items(snippet(channelId,title,categoryId))&part=snippet'
