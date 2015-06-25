@@ -96,7 +96,7 @@ function parseChat (room, time, by, message) {
 	var user = toId(by);
 	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
-	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab') + ((ban === '#range') ? ' (range)' : ''));
+	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (range)' : ''));
 
 	/* Chat Logs */
 
@@ -171,19 +171,19 @@ function parseChat (room, time, by, message) {
 			}
 			if (isSpamming) {
 				if (msg.length < 10) {
-					muteMessage = ', ' + trad('automod') + ': ' + trad('fs');
+					muteMessage = ', ' + trad('automod', room) + ': ' + trad('fs', room);
 					pointVal = 3;
 				} else if (msg.toLowerCase().indexOf("http://") > -1 || msg.toLowerCase().indexOf("https://") > -1 || msg.toLowerCase().indexOf("www.") > -1) {
-					muteMessage = ', ' + trad('automod') + ': ' + trad('sl');
+					muteMessage = ', ' + trad('automod', room) + ': ' + trad('sl', room);
 					pointVal = 4;
 				} else {
 					if (msg.length > 70 || capsMatch || msg.toLowerCase().indexOf("**") > -1 || stretchMatch || inlineSpam) {
-						muteMessage = ', ' + trad('automod') + ': ' + trad('s');
+						muteMessage = ', ' + trad('automod', room) + ': ' + trad('s', room);
 						pointVal = 4;
 					} else {
 						if (modSettings['flooding'] !== 0) {
 							pointVal = 2;
-							muteMessage = ', ' + trad('automod') + ': ' + trad('f');
+							muteMessage = ', ' + trad('automod', room) + ': ' + trad('f', room);
 						}
 					}
 				}
@@ -194,12 +194,12 @@ function parseChat (room, time, by, message) {
 	if (modSettings['spam'] !== 0 && pointVal < 3) {
 		if (times.length >= 3 && (time - times[times.length - 3]) < FLOOD_MESSAGE_TIME && msg === chatData[room][user].lastMsgs[0] && chatData[room][user].lastMsgs[0] === chatData[room][user].lastMsgs[1]) {
 			pointVal = 3;
-			muteMessage = ', ' + trad('automod') + ': ' + trad('possible');
+			muteMessage = ', ' + trad('automod', room) + ': ' + trad('possible', room);
 			if (msg.toLowerCase().indexOf("http://") > -1 || msg.toLowerCase().indexOf("https://") > -1 || msg.toLowerCase().indexOf("www.") > -1) {
-				muteMessage = ', ' + trad('automod') + ': ' + trad('sl');
+				muteMessage = ', ' + trad('automod', room) + ': ' + trad('sl', room);
 				pointVal = 4;
 			} else if (msg.length > 70 || capsMatch || msg.toLowerCase().indexOf("**") > -1 || stretchMatch || inlineSpam) {
-				muteMessage = ', ' + trad('automod') + ': ' + trad('s');
+				muteMessage = ', ' + trad('automod', room) + ': ' + trad('s', room);
 				pointVal = 4;
 			}
 		}
@@ -210,34 +210,34 @@ function parseChat (room, time, by, message) {
 	*********************************************/
 
 	if (modSettings['caps'] !== 0 && capsMatch) {
-		infractions.push(trad('caps-0'));
+		infractions.push(trad('caps-0', room));
 		totalPointVal += 1;
 		if (pointVal < 1) {
 			pointVal = 1;
-			muteMessage = ', ' + trad('automod') + ': ' + trad('caps');
+			muteMessage = ', ' + trad('automod', room) + ': ' + trad('caps', room);
 		}
 	}
 
 	if (inlineSpam) {
-		infractions.push(trad('rep-0'));
+		infractions.push(trad('rep-0', room));
 		totalPointVal += 1;
 	}
 
 	if (modSettings['stretching'] !== 0 && stretchMatch) {
-		infractions.push(trad('stretch-0'));
+		infractions.push(trad('stretch-0', room));
 		totalPointVal += 1;
 		if (pointVal < 1) {
 			pointVal = 1;
-			muteMessage = ', ' + trad('automod') + ': ' + trad('stretch');
+			muteMessage = ', ' + trad('automod', room) + ': ' + trad('stretch', room);
 		}
 	}
 
 	if (modSettings['flooding'] !== 0 && isFlooding) {
-		infractions.push(trad('flood-0'));
+		infractions.push(trad('flood-0', room));
 		totalPointVal += 2;
 		if (pointVal < 2) {
 			pointVal = 2;
-			muteMessage = ', ' + trad('automod') + ': ' + trad('f');
+			muteMessage = ', ' + trad('automod', room) + ': ' + trad('f', room);
 		}
 	}
 
@@ -246,20 +246,20 @@ function parseChat (room, time, by, message) {
 	******************************/
 
 	if (modSettings['spoiler'] !== 0 && (msg.toLowerCase().indexOf("spoiler:") > -1 || msg.toLowerCase().indexOf("spoilers:") > -1)) {
-		infractions.push(trad('spoiler-0'));
+		infractions.push(trad('spoiler-0', room));
 		totalPointVal += 2;
 		if (pointVal < 2) {
 			pointVal = 2;
-			muteMessage = ', ' + trad('automod') + ': ' + trad('spoiler');
+			muteMessage = ', ' + trad('automod', room) + ': ' + trad('spoiler', room);
 		}
 	}
 
 	if (modSettings['youtube'] !== 0 && (msg.toLowerCase().indexOf("youtube.com/channel/") > -1 || msg.toLowerCase().indexOf("youtube.com/user/") > -1)) {
-		infractions.push(trad('youtube-0'));
+		infractions.push(trad('youtube-0', room));
 		totalPointVal += 2;
 		if (pointVal < 2) {
 			pointVal = 2;
-			muteMessage = ', ' + trad('automod') + ': ' + trad('youtube');
+			muteMessage = ', ' + trad('automod', room) + ': ' + trad('youtube', room);
 		}
 	}
 
@@ -267,11 +267,11 @@ function parseChat (room, time, by, message) {
 		var serverAds = getServersAds(msg);
 		for (var z = 0; z < serverAds.length; z++) {
 			if (!(serverAds[z] in Config.moderation.psServersExcepts)) {
-				infractions.push(trad('server-0'));
+				infractions.push(trad('server-0', room));
 				totalPointVal += 2;
 				if (pointVal < 2) {
 					pointVal = 2;
-					muteMessage = ', ' + trad('automod') + ': ' + trad('server');
+					muteMessage = ', ' + trad('automod', room) + ': ' + trad('server', room);
 				}
 				break;
 			}
@@ -288,11 +288,11 @@ function parseChat (room, time, by, message) {
 		var msgrip = " " + msg.toLowerCase().replace(/[^a-z0-9]/g, ' ') + " ";
 		for (var i = 0; i < inapropiatePhrases.length; i++) {
 			if (msgrip.indexOf(" " + inapropiatePhrases[i] + " ") > -1) {
-				infractions.push(trad('inapword-0'));
+				infractions.push(trad('inapword-0', room));
 				totalPointVal += 2;
 				if (pointVal < 2) {
 					pointVal = 2;
-					muteMessage = ', ' + trad('automod') + ': ' + trad('inapword');
+					muteMessage = ', ' + trad('automod', room) + ': ' + trad('inapword', room);
 				}
 				break;
 			}
@@ -305,11 +305,11 @@ function parseChat (room, time, by, message) {
 		var msglow = msg.toLowerCase();
 		for (var i = 0; i < bannedPhrases.length; i++) {
 			if (msglow.indexOf(bannedPhrases[i]) > -1) {
-				infractions.push(trad('banword-0'));
+				infractions.push(trad('banword-0', room));
 				totalPointVal += 2;
 				if (pointVal < 2) {
 					pointVal = 2;
-					muteMessage = ', ' + trad('automod') + ': ' + trad('banword');
+					muteMessage = ', ' + trad('automod', room) + ': ' + trad('banword', room);
 				}
 				break;
 			}
@@ -323,14 +323,14 @@ function parseChat (room, time, by, message) {
 	if (modSettings['multiple'] !== 0) {
 		if (infractions.length >= 2) {
 			pointVal = totalPointVal;
-			muteMessage = ', ' + trad('mult') + ': ' + infractions.join(", ");
+			muteMessage = ', ' + trad('mult', room) + ': ' + infractions.join(", ");
 		}
 	}
 
 	/* Zero Tolerance */
 
 	if (pointVal > 0 && zeroTol[user] && zeroTol[user] > 4) {
-		muteMessage += ' ' + trad('0tol');
+		muteMessage += ' ' + trad('0tol', room);
 		pointVal = Config.moderation.punishments.length;
 	}
 
@@ -360,7 +360,7 @@ function parseJoin (room, by) {
 	if (jp) Bot.say(room, jp);
 	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
-	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab') + ((ban === '#range') ? ' (range)' : ''));
+	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (range)' : ''));
 }
 
 function parseLeave (room, by) {
@@ -370,7 +370,7 @@ function parseLeave (room, by) {
 function parseRename (room, by, old) {
 	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
-	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab') + ((ban === '#range') ? ' (range)' : ''));
+	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (range)' : ''));
 }
 
 exports.init = function () {
