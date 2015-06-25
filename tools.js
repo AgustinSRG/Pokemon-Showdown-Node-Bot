@@ -163,7 +163,7 @@ exports.checkConfig = function () {
 	var issue = function (text) {
 		console.log('issue'.yellow + '\t' + text);
 	};
-	if (typeof Config.rooms !== 'object' || typeof Config.rooms.length !== 'number') {
+	if (typeof Config.rooms !== 'string' && (typeof Config.rooms !== 'object' || typeof Config.rooms.length !== 'number')) {
 		issue('Config.rooms is not an array');
 		Config.rooms = [];
 	}

@@ -78,7 +78,7 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
  - `Config.autoReloginDelay`: If it can't login because of server issues, how much time it is waiting before relogin
 
 **Rooms**
- - `Config.rooms`: Array of rooms to join after login
+ - `Config.rooms`: Array of rooms to join after login. You can specify a string value: `all` for joining all rooms, `official` for official rooms and `public` for not official rooms
  - `Config.privateRooms`: Specify which rooms are private
  - `Config.initCmds`: Array of commands to send after login
 

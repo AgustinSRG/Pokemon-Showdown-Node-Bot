@@ -100,15 +100,67 @@ global.reloadFeatures = function () {
 
 function botAfterConnect () {
 	//join rooms
-	var cmds = [];
-	for (var i = 0; i < Config.rooms.length; i++) {
-		cmds.push('|/join ' + Config.rooms[i]);
+	if (typeof Config.rooms === "string") {
+		joinByQueryRequest(Config.rooms);
+	} else {
+		var cmds = [];
+		for (var i = 0; i < Config.rooms.length; i++) {
+			cmds.push('|/join ' + Config.rooms[i]);
+		}
+		for (var i = 0; i < Config.initCmds.length; i++) {
+			cmds.push(Config.initCmds[i]);
+		}
+		Bot.send(cmds, 2000);
 	}
-	for (var i = 0; i < Config.initCmds.length; i++) {
-		cmds.push(Config.initCmds[i]);
-	}
-	Bot.send(cmds, 2000);
 	DataDownloader.download();
+}
+
+function joinByQueryRequest(target) {
+	if (target === 'official' || target === 'public' || target === 'all') {
+		info('Joining ' + target + ' rooms');
+	} else {
+		error('Config.rooms, as a string must be "official", "public" or "all"');
+		var cmds = [];
+		for (var i = 0; i < Config.initCmds.length; i++) {
+			cmds.push(Config.initCmds[i]);
+		}
+		Bot.send(cmds, 2000);
+		return;
+	}
+	Bot.on('queryresponse', function (data) {
+		data = data.split('|');
+		if (data[0] === 'rooms') {
+			data.splice(0, 1);
+			var str = data.join('|');
+			var cmds = [];
+			try {
+				var rooms = JSON.parse(str);
+				var offRooms = [], publicRooms = [];
+				if (rooms.official) {
+					for (var i = 0; i < rooms.official.length; i++) {
+						if (rooms.official[i].title) offRooms.push(toId(rooms.official[i].title));
+					}
+				}
+				if (rooms.chat) {
+					for (var i = 0; i < rooms.chat.length; i++) {
+						if (rooms.chat[i].title) publicRooms.push(toId(rooms.chat[i].title));
+					}
+				}
+				if (target === 'all' || target === 'official') {
+					for (var i = 0; i < offRooms.length; i++) cmds.push('|/join ' + offRooms[i]);
+				}
+				if (target === 'all' || target === 'public') {
+					for (var i = 0; i < publicRooms.length; i++) cmds.push('|/join ' + publicRooms[i]);
+				}
+			} catch (e) {}
+			for (var i = 0; i < Config.initCmds.length; i++) {
+				cmds.push(Config.initCmds[i]);
+			}
+			Bot.send(cmds, 2000);
+			Bot.on('queryresponse', function () {return;});
+		}
+	});
+	Bot.send('|/cmd rooms');
 }
 
 var opts = {
@@ -172,6 +224,7 @@ Bot.on('formats', function (formats) {
 });
 
 Bot.on('challstr', function (challstr) {
+	info('Received challstr, logging in...');
 	if (!Config.nick) {
 		Bot.rename('Bot ' + Tools.generateRandomNick(10));
 	} else {

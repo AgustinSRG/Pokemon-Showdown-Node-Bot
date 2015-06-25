@@ -34,6 +34,12 @@ exports.autoReloginDelay = 60 * 1000;
 */
 
 exports.rooms = ['lobby'];
+/*
+* exports.rooms = 'all'; //For joining all rooms
+* exports.rooms = 'official'; //For joining official rooms
+* exports.rooms = 'public'; //For joining not-official rooms
+* exports.rooms = ['room1', 'room2']; //For joining some rooms
+*/
 
 exports.privateRooms = {
 	//privateroomname: true
