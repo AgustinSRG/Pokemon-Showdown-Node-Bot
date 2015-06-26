@@ -165,6 +165,21 @@ exports.winmsg = ['GG', 'g_g'];
 
 exports.losemsg = ['gg', 'wp'];
 
+exports.battleMessages = {
+	/* Examples of battle messages:
+	'start': {
+		'self': [] //Example: ['gl hf', 'Hi, I\'m a Bot', 'gl']
+	},
+	'-crit': {
+		'self': [], //Example: ['lol that hax', 'stop haxing pls']
+		'foe': [] //Example: ['sorry', 'wow sorry for that', 'get critted']
+	},
+	'-miss': {
+		'self': [] //Example: ['wow hax', 'lol #poke you\'re blind']
+	}
+	*/
+};
+
 exports.ladderCheckInterval = 10 * 1000;
 
 exports.ladderNumberOfBattles = 1;

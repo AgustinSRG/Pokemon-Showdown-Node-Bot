@@ -47,6 +47,14 @@
 		Bot.send(room + "|" + text);
 	},
 
+	sendBattleMessage: function (room, type, side, poke) {
+		if (!poke) poke = '';
+		if (Config.battleMessages && Config.battleMessages[type] && Config.battleMessages[type][side] && Config.battleMessages[type][side].length) {
+			var text = Config.battleMessages[type][side][Math.floor(Math.random() * Config.battleMessages[type][side].length)];
+			this.send(room, text.replace('#poke', poke.trim()));
+		}
+	},
+
 	sendDecision: function (room, decision, rqid) {
 		debug("Send Decision: ".cyan + JSON.stringify(decision));
 		var str = '/choose ';
@@ -264,6 +272,15 @@
 						errlog(e.stack);
 					}
 				}
+			}
+		}
+		//Battle messages
+		if (this.data[room].opponent && this.data[room].self) {
+			if (args.length >= 2) {
+				var argIdent = this.getPokemonId(args[1]);
+				this.sendBattleMessage(room, args[0], (this.data[room].opponent.id === argIdent.sideId) ? 'foe' : 'self', argIdent.pokeId);
+			} else {
+				this.sendBattleMessage(room, args[0], 'self');
 			}
 		}
 		//DATA = args, kwargs
@@ -887,9 +904,6 @@
 				else fieldId = fieldId[0];
 				this.data[room].fields[fieldId] = false;
 				break;
-
-			default:
-				return;
 		}
 	}
 };
