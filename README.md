@@ -87,7 +87,7 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
  - `Config.ranks`: Array of user groups ordered from lowest to highest auth
 
 **Commands Config**
- - `Config.commandChar`: Command character. For example: `.` means `.command` usage
+ - `Config.commandTokens`: Array of valid command characters. A command character, for example, `.` means `.command` usage
  - `Config.defaultPermission`: Default permision set for `this.can` in commands permissions
  - `Config.permissionExceptions`: Exceptions for commands permissions
 
@@ -124,6 +124,7 @@ Commands have 4 arguments:
  - **cmd**: Original command before refrerences. For example if you use `altcommand1`, cmd is `altcommand1` but the function correspond to `command1`
 
 Also, command have a context:
+ - `this.cmdToken` - Command character used. Example: `.say hi` means this.cmdToken = `.`
  - `this.reply (pm)` - Replies in the same room (chat or pm)
  - `this.pmReply (text)` - Replies by pm
  - `this.restrictReply (text, permission)` - Replies by chat if user has permission, by pm otherwise

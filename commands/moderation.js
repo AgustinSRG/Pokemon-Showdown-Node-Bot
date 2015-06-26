@@ -433,7 +433,7 @@ exports.commands = {
 
 		var args = arg.split(",");
 
-		if (args.length < 2) return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		if (Settings.settings['jpdisable'] && Settings.settings['jpdisable'][room]) return this.reply(this.trad('dis'));
 
 		if (toId(args[0]) !== "delete" && args.length === 2) {
@@ -462,7 +462,7 @@ exports.commands = {
 			case 'add':
 			case 'change':
 				if (!arg || !arg.length) return false;
-				if (args.length < 3) return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+				if (args.length < 3) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 				if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
 				Settings.settings['joinphrases'][tarRoom][user] = Tools.stripCommands(arg);
 				Settings.save();
@@ -476,7 +476,7 @@ exports.commands = {
 				this.reply(this.trad('jpfor') + " " + user + ' ' + this.trad('del') + ' ' + ((tarRoom === 'global') ? this.trad('globally') : this.trad('forthis')));
 				break;
 			default:
-				return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+				return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		}
 	},
 
@@ -538,10 +538,10 @@ exports.commands = {
 			'multiple': 1
 		};
 		var args = arg.split(",");
-		if (args.length < 2) return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		args[0] = toId(args[0]);
 		args[1] = toId(args[1]);
-		if (args[1] !== 'on' && args[1] !== 'off') return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+		if (args[1] !== 'on' && args[1] !== 'off') return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		if (!(args[0] in modTable)) return this.reply(this.trad('valid') + ": " + Object.keys(modTable).sort().join(", "));
 
 		if (!Settings.settings['modding']) Settings.settings['modding'] = {};

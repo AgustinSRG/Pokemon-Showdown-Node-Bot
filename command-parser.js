@@ -115,6 +115,23 @@ var saveDynCmds = exports.saveDinCmds =  function () {
 
 /* Parser */
 
+var commandTokens = exports.commandTokens = [];
+
+var reloadTokens = exports.reloadTokens = function () {
+	commandTokens = [];
+	if (Config.commandTokens && Config.commandTokens.length) {
+		for (var i = 0; i < Config.commandTokens.length; i++)
+			commandTokens.push(Config.commandTokens[i]);
+	}
+	if (typeof Config.commandChar === "string") commandTokens.push(Config.commandChar);
+	if (!commandTokens.length) {
+		error('No command Tokens, using "." by default');
+		commandTokens = ['.'];
+	}
+};
+
+reloadTokens();
+
 var parse = exports.parse = function (room, by, msg) {
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
@@ -124,9 +141,18 @@ var parse = exports.parse = function (room, by, msg) {
 		return;
 	}
 
-	if (msg.substr(0, Config.commandChar.length) !== Config.commandChar) return;
+	var cmdToken = null;
 
-	var toParse = msg.substr(Config.commandChar.length);
+	for (var i = 0; i < commandTokens.length; i++) {
+		if (typeof commandTokens[i] === "string" && msg.substr(0, commandTokens[i].length) === commandTokens[i]) {
+			cmdToken = commandTokens[i];
+			break;
+		}
+	}
+
+	if (!cmdToken) return;
+
+	var toParse = msg.substr(cmdToken.length);
 	var spaceIndex = toParse.indexOf(' ');
 
 	var cmd, args;
@@ -151,6 +177,7 @@ var parse = exports.parse = function (room, by, msg) {
 		}
 		if (typeof commands[handler] === 'function') {
 			var context = {
+				cmdToken: cmdToken,
 				reply: function (data) {
 					Bot.say(room, data);
 				},

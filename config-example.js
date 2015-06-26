@@ -61,7 +61,7 @@ exports.ranks = ['+', '%', '@', '#', '&', '~'];
 * Commands configuration
 */
 
-exports.commandChar = '.';
+exports.commandTokens = ['.']; //Array of valid command characters
 
 exports.defaultPermission = '%';
 

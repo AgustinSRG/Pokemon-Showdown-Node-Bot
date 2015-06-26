@@ -15,7 +15,7 @@ exports.commands = {
 		if (dcmd && CommandParser.dynCommands[dcmd] && CommandParser.dynCommands[dcmd].substr(0, 4) === "/ref") {
 			var basicCmd = toId(CommandParser.dynCommands[dcmd].substr(5));
 			if (CommandParser.dynCommands[basicCmd] && CommandParser.dynCommands[basicCmd].substr(0, 4) !== "/ref") {
-				this.parse(Config.commandChar + cmd + ' ' + basicCmd);
+				this.parse(this.cmdToken + cmd + ' ' + basicCmd);
 			} else {
 				if (CommandParser.dynCommands[basicCmd]) error('Recursive dynamic command "' + dcmd + '"');
 				else error('Invalid reference for dynamic command "' + dcmd + '" -> "' + basicCmd + '"');
@@ -84,10 +84,10 @@ exports.commands = {
 	setcmdalias: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
 		var args = arg.split(',');
-		if (args.length !== 2) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
+		if (args.length !== 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 		var alias = toId(args[0]);
 		var dcmd = toId(args[1]);
-		if (!alias || !dcmd || alias === dcmd) return this.reply(this.trad('u1') + ': ' + Config.commandChar + cmd + ' ' + this.trad('u2'));
+		if (!alias || !dcmd || alias === dcmd) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 		if (!CommandParser.dynCommands[dcmd]) return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('n'));
 		if (CommandParser.dynCommands[dcmd].substr(0, 4) === "/ref") return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('already'));
 		CommandParser.dynCommands[alias] = '/ref ' + dcmd;

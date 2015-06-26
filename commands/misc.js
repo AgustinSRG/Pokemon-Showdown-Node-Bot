@@ -62,7 +62,7 @@ exports.commands = {
 				this.reply(this.trad('d'));
 				break;
 			default:
-				this.reply(this.trad('u') + ': ' + Config.commandChar + cmd + ' [on/off]');
+				this.reply(this.trad('u') + ': ' + this.cmdToken + cmd + ' [on/off]');
 		}
 	}
 };

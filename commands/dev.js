@@ -35,7 +35,7 @@ exports.commands = {
 			if (arg === 'official') target = 'official';
 			else if (arg === 'public') target = 'public';
 			else if (arg === 'all') target = 'all';
-			else return this.reply('Usage: ' + Config.commandChar + cmd + ' [official/public/all]');
+			else return this.reply('Usage: ' + this.cmdToken + cmd + ' [official/public/all]');
 		}
 		Bot.on('queryresponse', function (data) {
 			data = data.split('|');

@@ -22,7 +22,7 @@ Settings.addPermissions(['tournament']);
 
 exports.commands = {
 	tourhelp: function (arg, by, room, cmd) {
-		this.restrictReply('Usage: ' + Config.commandChar + this.trad('h'), 'tournament');
+		this.restrictReply('Usage: ' + this.cmdToken + this.trad('h'), 'tournament');
 	},
 
 	maketour: 'tournament',

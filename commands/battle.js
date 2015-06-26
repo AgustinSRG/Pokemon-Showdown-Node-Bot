@@ -104,7 +104,7 @@ exports.commands = {
 		if (cmd in {'challme': 1, 'challengeme': 1}) {
 			args = [by, arg];
 		}
-		if (args.length < 2) return this.reply(this.trad('e11') + ': ' + Config.commandChar + cmd + " " + this.trad('e12'));
+		if (args.length < 2) return this.reply(this.trad('e11') + ': ' + this.cmdToken + cmd + " " + this.trad('e12'));
 		var format = toId(args[1]);
 		if (!Formats[format] || !Formats[format].chall) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));
 		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply(this.trad('e31') + ' ' + format + '. ' + this.trad('e32'));
@@ -149,7 +149,7 @@ exports.commands = {
 			Settings.save();
 		};
 		var args = arg.split(",");
-		if (args.length < 2) return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		var perm = toId(args[0]);
 		var rank = args[1].trim();
 		if (!(perm in Settings.permissions)) {

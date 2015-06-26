@@ -132,7 +132,7 @@ exports.commands = {
 		if (!this.isRanked('#')) return false;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		var args = arg.split(",");
-		if (args.length < 2) return this.reply(this.trad('u1') + ": " + Config.commandChar + cmd + " " + this.trad('u2'));
+		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		var perm = toId(args[0]);
 		var rank = args[1].trim();
 		if (!(perm in Settings.permissions)) {

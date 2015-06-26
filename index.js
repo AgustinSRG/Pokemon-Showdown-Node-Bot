@@ -38,6 +38,7 @@ global.reloadConfig = function () {
 	Tools.uncacheTree('./config.js');
 	global.Config = require('./config.js');
 	Tools.checkConfig();
+	CommandParser.reloadTokens();
 };
 
 info('Loading globals');
