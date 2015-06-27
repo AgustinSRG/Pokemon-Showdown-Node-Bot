@@ -26,21 +26,21 @@ exports.translations = {
 			'n': 'changing nick to'
 		},
 		language: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'nolang': 'You must specify a language',
 			'v': 'Valid languages are',
 			'l': 'Language for this room is now English'
 		},
 		set: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'denied': 'Access denied',
 			'u1': 'Usage',
 			'u2': '[permission], [rank]',
 			'ps': 'Permissions',
 			'p': 'Permission',
 			'd': 'in this room is now disabled',
-			'a': 'in this room is now avaliable for all users',
-			'r': 'in this room is now avaliable for users with rank',
+			'a': 'in this room is now available for all users',
+			'r': 'in this room is now available for users with rank',
 			'r2': 'or highter',
 			'not1': 'Rank',
 			'not2': 'not found'
@@ -102,10 +102,10 @@ exports.translations = {
 			]
 		},
 		youtube: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'u': 'Usage',
-			'ae': 'YouTube link recognition is already avaliable for room',
-			'e': 'YouTube link recognition is now avaliable for this room',
+			'ae': 'YouTube link recognition is already available for room',
+			'e': 'YouTube link recognition is now available for this room',
 			'ad': 'YouTube link recognition is already disabled for room',
 			'd': 'YouTube link recognition is now disabled for this room'
 		},
@@ -167,9 +167,9 @@ exports.translations = {
 			'b': 'Challenges bloqued',
 			'nb': 'Challenges no longer blocked'
 		},
-		move: {'notbattle': 'This command is only avaliable for battle rooms'},
+		move: {'notbattle': 'This command is only available for battle rooms'},
 		jointours: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'ad': 'Mode "tour autojoin" already disabled for room',
 			'd': 'Mode "tour autojoin" disabled for room',
 			'ae': 'Mode "tour autojoin" already enabled for room',
@@ -180,7 +180,7 @@ exports.translations = {
 			'e21': 'Format',
 			'e22': 'is not valid for searching battle',
 			'e31': 'I do not have teams for searching battle in format',
-			'e32': 'Edit teams.js to add more bot teams'
+			'e32': 'Use "team add" command to add more bot teams'
 		},
 		ladderstart: {
 			'stop': 'Laddering stopped',
@@ -189,7 +189,7 @@ exports.translations = {
 			'e21': 'Format',
 			'e22': 'is not valid for searching battle',
 			'e31': 'I do not have teams for searching battle in format',
-			'e32': 'Edit teams.js to add more bot teams'
+			'e32': 'Use "team add" command to add more bot teams'
 		},
 		challenge: {
 			'e11': 'Usage',
@@ -197,18 +197,18 @@ exports.translations = {
 			'e21': 'Format',
 			'e22': 'is not valid for challenging',
 			'e31': 'I do not have teams for challenging in format',
-			'e32': 'Edit teams.js to add more bot teams'
+			'e32': 'Use "team add" command to add more bot teams'
 		},
 		jointour: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'e1': 'There is not a tournament in this room',
 			'e2': 'Error: Already joined',
 			'e3': 'Error: Tournament has already started',
 			'e41': 'I do not have teams for joining a tornament in format',
-			'e42': 'Edit teams.js to add more bot teams'
+			'e42': 'Use "team add" command to add more bot teams'
 		},
 		leavetour: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'e1': 'There is not a tournament in this room',
 			'e2': 'Error: Not joined'
 		},
@@ -218,8 +218,8 @@ exports.translations = {
 			'ps': 'Permissions',
 			'p': 'Permission',
 			'd': 'in battles is now disabled',
-			'a': 'in battles is now avaliable for all users',
-			'r': 'in battles is now avaliable for users with rank',
+			'a': 'in battles is now available for all users',
+			'r': 'in battles is now available for users with rank',
 			'r2': 'or highter',
 			'not1': 'Rank',
 			'not2': 'not found'
@@ -231,12 +231,12 @@ exports.translations = {
 			'notexists': 'does not exists',
 			'download': 'Dowloading and parsing team',
 			'team': 'Team',
-			'added': 'added sucessfully to bot teams list',
+			'added': 'added successfully to bot teams list',
 			'err1': 'Error: Hastebin document not found',
 			'err2': 'Error: Invalid team data',
 			'err3': 'Error: There was already a team with that name, use another name or delete the other team',
 			'err4': 'Error: Failed to get data from Hastebin',
-			'removed': 'removed sucessfully from teams list'
+			'removed': 'removed successfully from teams list'
 		},
 		teamlist: {
 			'list': 'Bot teams list',
@@ -250,7 +250,7 @@ exports.translations = {
 		* Moderation Commands
 		*/
 		autoban: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'notmod': 'requires moderator rank (@) or highter to ban users',
 			'notarg': 'You must specify at least one user to blacklist',
 			'bu': 'Blacklisted user',
@@ -262,7 +262,7 @@ exports.translations = {
 			'illegal': 'users had illegal nicks and were not blacklisted.'
 		},
 		unautoban: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'notmod': 'requires moderator rank (@) or highter to ban users',
 			'notarg': 'You must specify at least one user to unblacklist.',
 			'u': 'User(s)',
@@ -272,7 +272,7 @@ exports.translations = {
 			'nopresent': 'specified users were present in the blacklist.'
 		},
 		regexautoban: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'notmod': 'requires moderator rank (@) or highter to ban users',
 			'notarg': 'You must specify a regular expression to (un)blacklist.',
 			're': 'Regular expression',
@@ -282,7 +282,7 @@ exports.translations = {
 			'add': 'was added to the blacklist.'
 		},
 		unregexautoban: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'notmod': 'requires moderator rank (@) or highter to ban users',
 			'norarg': 'You must specify a regular expression to (un)blacklist.',
 			'notpresent': 'is not present in the blacklist.',
@@ -291,7 +291,7 @@ exports.translations = {
 			'r': 'was removed from the blacklist.'
 		},
 		viewblacklist: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'iu': 'Invalid nickname',
 			'u': 'User',
 			'currently': 'is currently',
@@ -371,7 +371,7 @@ exports.translations = {
 			'err': 'upload failure, could not upload joinphrases to hastebin'
 		},
 		mod: {
-			'notchat': 'This command is only avaliable for chat rooms',
+			'notchat': 'This command is only available for chat rooms',
 			'u1': 'Usage',
 			'u2': '[mod], [on/off]',
 			'valid': 'Valid moderations are',
