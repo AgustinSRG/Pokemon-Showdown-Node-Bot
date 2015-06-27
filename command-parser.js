@@ -164,6 +164,8 @@ var parse = exports.parse = function (room, by, msg) {
 		args = toParse.substr(spaceIndex + 1);
 	}
 
+	cmd = cmd.toLowerCase();
+
 	if (!commands[cmd] && dynCommands[toId(cmd)]) {
 		args = cmd;
 		cmd = 'dyn';
