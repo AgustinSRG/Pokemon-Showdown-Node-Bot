@@ -14,6 +14,11 @@ exports.commands = {
 		}
 	},
 
+	send: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		Bot.send(arg);
+	},
+
 	c: 'custom',
 	custom: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
@@ -23,6 +28,31 @@ exports.commands = {
 			arg = arg.substr(arg.indexOf(']') + 1).trim();
 		}
 		this.say(tarRoom || room, arg);
+	},
+
+	"join": function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		if (!arg) return;
+		arg = arg.split(',');
+		var cmds = [];
+		for (var i = 0; i < arg.length; i++) {
+			cmds.push('|/join ' + arg[i]);
+		}
+		Bot.send(cmds, 2000);
+	},
+
+	leave: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		if (!arg) {
+			if (this.roomType !== 'pm') this.reply('/leave');
+			return;
+		}
+		arg = arg.split(',');
+		var cmds = [];
+		for (var i = 0; i < arg.length; i++) {
+			cmds.push(toId(arg[i]) + '|/leave');
+		}
+		Bot.send(cmds, 2000);
 	},
 
 	joinallrooms: 'joinall',
