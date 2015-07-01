@@ -41,7 +41,7 @@ exports.translations = {
 			'd': 'in this room is now disabled',
 			'a': 'in this room is now available for all users',
 			'r': 'in this room is now available for users with rank',
-			'r2': 'or highter',
+			'r2': 'or higher',
 			'not1': 'Rank',
 			'not2': 'not found'
 		},
@@ -220,7 +220,7 @@ exports.translations = {
 			'd': 'in battles is now disabled',
 			'a': 'in battles is now available for all users',
 			'r': 'in battles is now available for users with rank',
-			'r2': 'or highter',
+			'r2': 'or higher',
 			'not1': 'Rank',
 			'not2': 'not found'
 		},
@@ -251,7 +251,7 @@ exports.translations = {
 		*/
 		autoban: {
 			'notchat': 'This command is only available for chat rooms',
-			'notmod': 'requires moderator rank (@) or highter to ban users',
+			'notmod': 'requires moderator rank (@) or higher to ban users',
 			'notarg': 'You must specify at least one user to blacklist',
 			'bu': 'Blacklisted user',
 			'u': 'User(s)',
@@ -263,7 +263,7 @@ exports.translations = {
 		},
 		unautoban: {
 			'notchat': 'This command is only available for chat rooms',
-			'notmod': 'requires moderator rank (@) or highter to ban users',
+			'notmod': 'requires moderator rank (@) or higher to ban users',
 			'notarg': 'You must specify at least one user to unblacklist.',
 			'u': 'User(s)',
 			'r': 'removed from blacklist successfully.',
@@ -273,7 +273,7 @@ exports.translations = {
 		},
 		regexautoban: {
 			'notchat': 'This command is only available for chat rooms',
-			'notmod': 'requires moderator rank (@) or highter to ban users',
+			'notmod': 'requires moderator rank (@) or higher to ban users',
 			'notarg': 'You must specify a regular expression to (un)blacklist.',
 			're': 'Regular expression',
 			'notadd': 'cannot be added to the blacklist. Don\'t be Machiavellian!',
@@ -283,7 +283,7 @@ exports.translations = {
 		},
 		unregexautoban: {
 			'notchat': 'This command is only available for chat rooms',
-			'notmod': 'requires moderator rank (@) or highter to ban users',
+			'notmod': 'requires moderator rank (@) or higher to ban users',
 			'norarg': 'You must specify a regular expression to (un)blacklist.',
 			'notpresent': 'is not present in the blacklist.',
 			're': 'Regular expression',
@@ -386,7 +386,7 @@ exports.translations = {
 		*/
 		tourhelp: {'h': 'tour (format), (seconds to start or off), (minutes autodq or off), (max Users or off), (elimination or roundrobin). All arguments are optional.'},
 		tournament: {
-			'e1': 'requires moderator rank (@) or highter to create tornaments',
+			'e1': 'requires moderator rank (@) or higher to create tornaments',
 			'e2': 'There is already a tournament in this room',
 			'e31': 'Format',
 			'e32': 'is not valid for tournaments',
