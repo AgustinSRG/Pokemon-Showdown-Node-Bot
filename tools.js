@@ -212,16 +212,12 @@ var loadTranslations = exports.loadTranslations = function (reloading) {
 };
 
 exports.translateCmd = function (cmd, data, lang) {
-	if (translations[lang]) {
-		if (!translations[lang]['commands'] || !translations[lang]['commands'][cmd]) {
-			return '__(not found)__';
-		} else {
-			return translations[lang]['commands'][cmd][data];
-		}
+	if (translations[lang] && translations[lang]['commands'] && translations[lang]['commands'][cmd]) {
+		return translations[lang]['commands'][cmd][data];
 	} else {
 		lang = 'english';
 		if (!translations[lang] || !translations[lang]['commands'] || !translations[lang]['commands'][cmd]) {
-			return '(not found)';
+			return '__(not found)__';
 		} else {
 			return translations[lang]['commands'][cmd][data];
 		}
@@ -229,21 +225,12 @@ exports.translateCmd = function (cmd, data, lang) {
 };
 
 exports.translateGlobal = function (glob, data, lang) {
-	if (translations[lang]) {
-		if (!translations[lang][glob]) {
-			lang = 'english';
-			if (!translations[lang] || !translations[lang][glob]) {
-				return '(not found)';
-			} else {
-				return translations[lang][glob][data];
-			}
-		} else {
-			return translations[lang][glob][data];
-		}
+	if (translations[lang] && translations[lang][glob]) {
+		return translations[lang][glob][data];
 	} else {
 		lang = 'english';
 		if (!translations[lang] || !translations[lang][glob]) {
-			return '(not found)';
+			return '__(not found)__';
 		} else {
 			return translations[lang][glob][data];
 		}
