@@ -31,11 +31,11 @@
     "cache-swap": "~0.2.0",
     "gulp": "~3.9.0",
     "gulp-cache": "~0.2.8",
-    "gulp-jshint": "git://github.com/spalger/gulp-jshint#c18df3a11",
+    "gulp-jshint": "~1.11.2",
     "gulp-jscs": "~1.6.0",
     "gulp-replace": "~0.5.1",
     "jshint-stylish": "~2.0.0",
-    "lazypipe": "~0.2.2",
+    "lazypipe": "~1.0.1",
     "merge-stream": "~0.1.7"
   },
   "description": "Pokemon Showdown Bot",
