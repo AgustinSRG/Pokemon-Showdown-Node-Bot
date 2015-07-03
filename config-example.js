@@ -157,8 +157,6 @@ exports.moderation = {
 * Battles
 */
 
-exports.clientUrl = 'http://play.pokemonshowdown.com/';
-
 exports.aceptAll = false;
 
 exports.winmsg = ['GG', 'g_g'];
