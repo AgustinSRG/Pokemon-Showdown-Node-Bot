@@ -408,9 +408,7 @@ exports.parse = function (room, message, isIntro, spl) {
 			break;
 
 		case 'N':
-			parseRename(room, spl[1], spl[3]);
+			parseRename(room, spl[1], spl[2]);
 			break;
 	}
 };
-
-
