@@ -101,6 +101,12 @@
 				'Ne pas compter sur elle.'
 			]
 		},
+		usage: {
+			'stats': 'Statistiques d\'utilisation'
+		},
+		help: {
+			'guide': 'Guide des commandes de bot'
+		},
 		youtube: {
 			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
 			'u': 'Usage',

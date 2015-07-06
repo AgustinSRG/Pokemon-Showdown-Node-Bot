@@ -101,6 +101,12 @@
 				'No cuentes con ello.'
 			]
 		},
+		usage: {
+			'stats': 'Estadísticas de uso'
+		},
+		help: {
+			'guide': 'Guía de comandos del bot'
+		},
 		youtube: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'u': 'Uso correcto',

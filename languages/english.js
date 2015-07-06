@@ -101,6 +101,12 @@ exports.translations = {
 				'Don\'t count on it.'
 			]
 		},
+		usage: {
+			'stats': 'Usage stats'
+		},
+		help: {
+			'guide': 'Bot commands guide'
+		},
 		youtube: {
 			'notchat': 'This command is only available for chat rooms',
 			'u': 'Usage',

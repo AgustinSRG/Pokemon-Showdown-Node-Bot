@@ -31,13 +31,13 @@ exports.commands = {
 
 	usagestats: 'usage',
 	usage: function (arg, user, room) {
-		this.restrictReply('http://www.smogon.com/stats/', 'usage');
+		this.restrictReply(this.trad('stats') + ': http://www.smogon.com/stats/', 'usage');
 	},
 
 	guide: 'help',
 	botguide: 'help',
 	help: function (arg, user, room) {
-		this.restrictReply('https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md', 'help');
+		this.restrictReply(this.trad('guide') + ': https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md', 'help');
 	},
 
 	youtubelinks: 'youtube',
