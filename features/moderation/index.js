@@ -380,6 +380,7 @@ exports.init = function () {
 		delete chatLog[i];
 
 	if (cleanDataTimer) clearInterval(cleanDataTimer);
+	cleanDataTimer = null;
 	cleanDataTimer = setInterval(cleanData, 30 * 60 * 1000);
 };
 
@@ -411,4 +412,10 @@ exports.parse = function (room, message, isIntro, spl) {
 			parseRename(room, spl[1], spl[2]);
 			break;
 	}
+};
+
+exports.destroy = function () {
+	if (cleanDataTimer) clearInterval(cleanDataTimer);
+	cleanDataTimer = null;
+	if (Features[exports.id]) delete Features[exports.id];
 };

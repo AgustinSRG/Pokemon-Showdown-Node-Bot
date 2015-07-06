@@ -46,3 +46,7 @@ exports.parse = function (room, message, isIntro, spl) {
 		error("BattleBot crash");
 	}
 };
+
+exports.destroy = function () {
+	if (Features[exports.id]) delete Features[exports.id];
+};

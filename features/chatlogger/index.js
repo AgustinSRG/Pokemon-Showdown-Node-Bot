@@ -23,3 +23,8 @@ exports.parse = function (room, message, isIntro, spl) {
 	}
 	logManager.log(room, message, isIntro);
 };
+
+exports.destroy = function () {
+	logManager.destroy();
+	if (Features[exports.id]) delete Features[exports.id];
+};

@@ -143,7 +143,7 @@ exports.commands = {
 					if (e === -1) {
 						return this.reply("Error: Feature " + args[1] + " not found");
 					} else {
-						errlog("");
+						errlog(e.stack);
 						return this.reply("Error: Feature " + args[1] + " crashed");
 					}
 				} else {

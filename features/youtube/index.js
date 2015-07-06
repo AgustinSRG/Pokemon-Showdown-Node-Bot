@@ -84,3 +84,7 @@ exports.parse = function (room, message, isIntro, spl) {
 			break;
 	}
 };
+
+exports.destroy = function () {
+	if (Features[exports.id]) delete Features[exports.id];
+};

@@ -85,6 +85,7 @@ global.reloadFeatures = function () {
 				Tools.uncacheTree('./features/' + feature + '/index.js');
 				var f = require('./features/' + feature + '/index.js');
 				if (f.id) {
+					if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
 					Features[f.id] = f;
 					Features[f.id].init();
 				}

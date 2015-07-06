@@ -15,8 +15,6 @@ var roomAuthChanges = exports.roomAuthChanges = {};
 
 var checkAuthTimer = null;
 var checkAuth = exports.checkAuth = function () {
-	var f = new Date();
-	debug('hello: ' + f.toString());
 	if (!Bot.status.connected) return;
 	parserArray = [];
 	for (var i in roomAuthChanges) {
@@ -152,4 +150,10 @@ exports.parse = function (room, message, isIntro, spl) {
 			break;
 	}
 	if (message.substr(0) !== '|') parseRaw(room, message);
+};
+
+exports.destroy = function () {
+	if (checkAuthTimer) clearInterval(checkAuthTimer);
+	checkAuthTimer = null;
+	if (Features[exports.id]) delete Features[exports.id];
 };

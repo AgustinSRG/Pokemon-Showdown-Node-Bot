@@ -63,8 +63,12 @@ var newTour = exports.newTour = function (room, details) {
 };
 
 exports.init = function () {
-	for (var i in tournaments)
+	for (var i in tournaments) {
+		try {
+			if (tournaments[i].startTimer) clearTimeout(tournaments[i].startTimer);
+		} catch (e) {}
 		delete tournaments[i];
+	}
 	for (var i in tourData)
 		delete tourData[i];
 };
@@ -114,4 +118,8 @@ exports.parse = function (room, message, isIntro, spl) {
 			if (tournaments[room]) delete tournaments[room];
 			break;
 	}
+};
+
+exports.destroy = function () {
+	if (Features[exports.id]) delete Features[exports.id];
 };

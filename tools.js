@@ -195,11 +195,15 @@ exports.checkConfig = function () {
 
 exports.reloadFeature = function (feature) {
 	try {
+		if (!fs.existsSync('./features/' + feature + '/index.js')) return -1;
 		Tools.uncacheTree('./features/' + feature + '/index.js');
 		var f = require('./features/' + feature + '/index.js');
 		if (f.id) {
+			if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
 			Features[f.id] = f;
 			Features[f.id].init();
+		} else {
+			return -1;
 		}
 		return false;
 	} catch (e) {

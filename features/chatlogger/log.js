@@ -76,5 +76,14 @@ module.exports = {
 		} catch (e) {
 			errlog(e.stack);
 		}
+	},
+
+	destroy: function () {
+		for (var room in this.logStreams) {
+			try {
+				this.logStreams[room].close();
+			} catch (e) {}
+			delete this.logStreams[room];
+		}
 	}
 };
