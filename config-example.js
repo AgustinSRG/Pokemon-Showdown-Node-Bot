@@ -212,3 +212,11 @@ exports.chatLogger = {
 	logIntroMessages: true,
 	ageOfLogs: 7 //in days (max age of logs, 0 to keep logs infinitely)
 };
+
+/*
+* Auto-Invite
+*/
+
+exports.autoInvite = [
+	//{linked: 'public room linked', private: 'private room', rank: '+'}
+];
