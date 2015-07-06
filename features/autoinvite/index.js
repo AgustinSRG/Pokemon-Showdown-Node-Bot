@@ -15,6 +15,7 @@ var roomAuthChanges = exports.roomAuthChanges = {};
 
 var checkAuthTimer = null;
 var checkAuth = exports.checkAuth = function () {
+	if (!Bot.status.connected) return;
 	parserArray = [];
 	for (var i in roomAuthChanges) {
 		parserArray.push(i);
@@ -133,7 +134,8 @@ exports.init = function () {
 		linkedRooms = Config.autoInvite;
 	}
 	if (checkAuthTimer) clearInterval(checkAuthTimer);
-	checkAuthTimer = setInterval(checkAuth, 30 * 1000);
+	checkAuthTimer = null;
+	if (privateRooms.length) checkAuthTimer = setInterval(checkAuth, 30 * 1000);
 };
 
 exports.parse = function (room, message, isIntro, spl) {
