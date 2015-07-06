@@ -379,13 +379,13 @@
 		mod: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'u1': 'Uso correcto',
-			'u2': '[mod], [on/off]',
+			'u2': '(room - opcional), [mod], [on/off]',
 			'valid': 'Mods válidas son',
 			'mod': 'Moderación para',
-			'ae': 'ya estaba activada en esta sala',
-			'e': 'ha sido activada para esta sala',
-			'ad': 'ya estaba desactivada para esta sala',
-			'd': 'ha sido desactivada para esta sala'
+			'ae': 'ya estaba activada en la sala',
+			'e': 'ha sido activada para la sala',
+			'ad': 'ya estaba desactivada para la sala',
+			'd': 'ha sido desactivada para la sala'
 		},
 		/*
 		* Tour Commands

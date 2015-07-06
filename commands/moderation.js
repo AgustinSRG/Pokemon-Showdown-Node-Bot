@@ -524,7 +524,13 @@ exports.commands = {
 	modsettings: 'mod',
 	mod: function (arg, by, room, cmd) {
 		if (!this.isRanked('#')) return false;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
+		var targetRoom = room;
+		var args = arg.split(",");
+		if (args.length > 2) {
+			if (!this.isRanked('~')) return false;
+			targetRoom = toId(args[0]);
+		}
+		if (!Bot.rooms[targetRoom] || Bot.rooms[targetRoom].type !== 'chat') return this.reply(this.trad('notchat'));
 		var modTable = {
 			'caps': 1,
 			'stretching': 1,
@@ -537,31 +543,30 @@ exports.commands = {
 			'psservers': 1,
 			'multiple': 1
 		};
-		var args = arg.split(",");
 		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
-		args[0] = toId(args[0]);
-		args[1] = toId(args[1]);
-		if (args[1] !== 'on' && args[1] !== 'off') return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
-		if (!(args[0] in modTable)) return this.reply(this.trad('valid') + ": " + Object.keys(modTable).sort().join(", "));
+		var mod = (args.length < 3) ? toId(args[0]) : toId(args[1]);
+		var set = (args.length < 3) ? toId(args[1]) : toId(args[2]);
+		if (set !== 'on' && set !== 'off') return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
+		if (!(mod in modTable)) return this.reply(this.trad('valid') + ": " + Object.keys(modTable).sort().join(", "));
 
 		if (!Settings.settings['modding']) Settings.settings['modding'] = {};
-		if (!Settings.settings['modding'][room]) Settings.settings['modding'][room] = {};
+		if (!Settings.settings['modding'][targetRoom]) Settings.settings['modding'][targetRoom] = {};
 
-		if (args[1] === 'on') {
-			if (Settings.settings['modding'][room][args[0]] === 1) {
-				this.reply(this.trad('mod') + " **" + args[0] + "** " + this.trad('ae'));
+		if (set === 'on') {
+			if (Settings.settings['modding'][targetRoom][mod] === 1) {
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('ae') + ' ' + targetRoom);
 			} else {
-				Settings.settings['modding'][room][args[0]] = 1;
+				Settings.settings['modding'][targetRoom][mod] = 1;
 				Settings.save();
-				this.reply(this.trad('mod') + " **" + args[0] + "** " + this.trad('e'));
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('e') + ' ' + targetRoom);
 			}
 		} else {
-			if (Settings.settings['modding'][room] === 0) {
-				this.reply(this.trad('mod') + " **" + args[0] + "** " + this.trad('ad'));
+			if (Settings.settings['modding'][targetRoom][mod] === 0) {
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('ad') + ' ' + targetRoom);
 			} else {
-				Settings.settings['modding'][room][args[0]] = 0;
+				Settings.settings['modding'][targetRoom][mod] = 0;
 				Settings.save();
-				this.reply(this.trad('mod') + " **" + args[0] + "** " + this.trad('d'));
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('d') + ' ' + targetRoom);
 			}
 		}
 	}

@@ -379,13 +379,13 @@ exports.translations = {
 		mod: {
 			'notchat': 'This command is only available for chat rooms',
 			'u1': 'Usage',
-			'u2': '[mod], [on/off]',
+			'u2': '(room - optional), [mod], [on/off]',
 			'valid': 'Valid moderations are',
 			'mod': 'Moderation for',
-			'ae': 'already ON for this room',
-			'e': 'is now ON for this room',
-			'ad': 'already OFF for this room',
-			'd': 'is now OFF for this room'
+			'ae': 'already ON for room',
+			'e': 'is now ON for room',
+			'ad': 'already OFF for room',
+			'd': 'is now OFF for room'
 		},
 		/*
 		* Tour Commands

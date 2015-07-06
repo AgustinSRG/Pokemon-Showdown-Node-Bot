@@ -73,7 +73,7 @@ Commands for getting pokemon info.
 Moderation Commands
 ------------
 
-**Mod Settings:** Use `mod [moderation], [on/off]` to enable or disable moderations.
+**Mod Settings:** Use `mod (room - optional), [moderation], [on/off]` to enable or disable moderations.
 
 **Autoban**
  - `ab [user], [user]...` - Add users to blacklist
