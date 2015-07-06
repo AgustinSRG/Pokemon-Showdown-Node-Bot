@@ -124,7 +124,14 @@ Commands have 4 arguments:
  - **cmd**: Original command before refrerences. For example if you use `altcommand1`, cmd is `altcommand1` but the function correspond to `command1`
 
 Also, command have a context:
+ - `this.arg` - Argument
+ - `this.by` - Argument
+ - `this.room` - Argument
+ - `this.cmd` - Argument
+ - `this.handler` - Command function name
  - `this.cmdToken` - Command character used. Example: `.say hi` means this.cmdToken = `.`
+ - `this.roomType` - Can be 'chat', 'battle' or 'pm'
+ - `this.botName` - Bot username
  - `this.reply (pm)` - Replies in the same room (chat or pm)
  - `this.pmReply (text)` - Replies by pm
  - `this.restrictReply (text, permission)` - Replies by chat if user has permission, by pm otherwise
@@ -133,8 +140,11 @@ Also, command have a context:
  - `this.isRoomRanked (room, rank)` - True if ranked equal or above (in specified room), false if not
  - `this.botRanked (rank)` - True if the bot has this rank or above, false if not
  - `this.isExcepted` - True if the user is excepted, false if not
- - `this.roomType` - Can be 'chat', 'battle' or 'pm'
  - `this.can (permission)` - True if user has permission, false if not
+ - `this.canSet (permission, rank)` - Checks if the user has permission to use `set` command
+ - `this.hasRank (user, rank, room)` - Similar to `isRoomRanked` but more general
+ - `this.getRoomUsers (room)` - Get an object of users who are in a room or null (if the bot is not in that room)
+ - `this.getUser (user, room)` - Get an string with the rank and username of an user or null (if the user or the bot are not in that room)
  - `this.trad (textId)` - Returns a text from the corresponding languages file
  - `this.parse (cmd)` - Parse a message (to call other commands)
 

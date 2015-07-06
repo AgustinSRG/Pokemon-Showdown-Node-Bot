@@ -179,7 +179,17 @@ var parse = exports.parse = function (room, by, msg) {
 		}
 		if (typeof commands[handler] === 'function') {
 			var context = {
+				/* Basic information */
+				arg: args,
+				by: by,
+				room: room,
+				cmd: cmd,
+				handler: handler,
 				cmdToken: cmdToken,
+				roomType:(room.charAt(0) === ',') ? 'pm' : (Bot.rooms[room] ? Bot.rooms[room].type : 'chat'),
+				botName: Bot.status.nickName,
+
+				/* Reply functions */
 				reply: function (data) {
 					Bot.say(room, data);
 				},
@@ -196,18 +206,19 @@ var parse = exports.parse = function (room, by, msg) {
 				say: function (targetRoom, data) {
 					Bot.say(targetRoom, data);
 				},
+
+				/* Persmission functions */
 				isRanked: function (rank) {
 					return Tools.equalOrHigherRank(by, rank);
 				},
 				isRoomRanked: function (targetRoom, rank) {
 					if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
 						var userIdent = Bot.rooms[targetRoom].users[toId(by)] || by;
-						return Tools.equalOrHigherRank(userIdent, '+');
+						return Tools.equalOrHigherRank(userIdent, rank);
 					}
 					return this.isRanked(rank);
 				},
 				isExcepted: Tools.equalOrHigherRank(by, true),
-				roomType:(room.charAt(0) === ',') ? 'pm' : Bot.rooms[room].type,
 				can: function (permission) {
 					if (this.roomType === 'battle') return Settings.userCan('battle-', by, permission);
 					else return Settings.userCan(room, by, permission);
@@ -229,6 +240,28 @@ var parse = exports.parse = function (room, by, msg) {
 					if (ident) return Tools.equalOrHigherRank(ident, rank);
 					return false;
 				},
+				hasRank: function (user, rank, targetRoom) {
+					if (!targetRoom) targetRoom = room;
+					if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
+						var userIdent = Bot.rooms[targetRoom].users[toId(user)] || user;
+						return Tools.equalOrHigherRank(userIdent, rank);
+					}
+					return Tools.equalOrHigherRank(user, rank);
+				},
+
+				/* Rooms and users */
+				getRoomUsers: function (targetRoom) {
+					if (!Bot.rooms[targetRoom]) return null;
+					return Bot.rooms[room].users;
+				},
+				getUser: function (user, targetRoom) {
+					if (!Bot.rooms[targetRoom]) return null;
+					user = toId(user);
+					if (!(user in Bot.rooms[room].users)) return null;
+					return Bot.rooms[room].users[user];
+				},
+
+				/* System functions */
 				trad: function (data) {
 					var lang = Config.language || 'english';
 					if (this.roomType === 'chat' && Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
