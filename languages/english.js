@@ -52,12 +52,12 @@ exports.translations = {
 			'nocmds': 'No commands',
 			'list': 'Dynamic cmds',
 			'c': 'Command',
-			'notexist': 'does not exists'
+			'notexist': 'does not exist'
 		},
 		delcmd: {
 			'c': 'Command',
 			'd': 'has been successfully deleted',
-			'n': 'does not exists'
+			'n': 'does not exist'
 		},
 		setcmd: {
 			'notemp': 'There is no temp string to set, use **stemp** before doing this',
@@ -71,7 +71,7 @@ exports.translations = {
 			'n': 'is not a dynamic command',
 			'c': 'Command',
 			'alias': 'is now an alias of',
-			'already': 'is an alias. You can\'t set aliases of another aliases'
+			'already': 'is an alias. You can\'t set an alias of another alias'
 		},
 		/*
 		* Misc Commands
@@ -104,8 +104,8 @@ exports.translations = {
 		youtube: {
 			'notchat': 'This command is only available for chat rooms',
 			'u': 'Usage',
-			'ae': 'YouTube link recognition is already available for room',
-			'e': 'YouTube link recognition is now available for this room',
+			'ae': 'YouTube link recognition is already enabled for room',
+			'e': 'YouTube link recognition is now enabled for this room',
 			'ad': 'YouTube link recognition is already disabled for room',
 			'd': 'YouTube link recognition is now disabled for this room'
 		},
@@ -136,7 +136,7 @@ exports.translations = {
 		prevo: {
 			'err': 'An error ocurred, try again later',
 			'p1': 'Pokemon',
-			'p2': 'has not preevo',
+			'p2': 'has no pre-evo',
 			'nfound': 'Pokemon not found'
 		},
 		priority: {
@@ -164,7 +164,7 @@ exports.translations = {
 		*/
 		reloadteams: {'s': 'Teams reloaded', 'e': 'An error ocurred, could not reload teams'},
 		blockchallenges: {
-			'b': 'Challenges bloqued',
+			'b': 'Challenges blocked',
 			'nb': 'Challenges no longer blocked'
 		},
 		move: {'notbattle': 'This command is only available for battle rooms'},
@@ -209,7 +209,7 @@ exports.translations = {
 		},
 		leavetour: {
 			'notchat': 'This command is only available for chat rooms',
-			'e1': 'There is not a tournament in this room',
+			'e1': 'There is no tournament in this room',
 			'e2': 'Error: Not joined'
 		},
 		battleset: {
