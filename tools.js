@@ -193,6 +193,20 @@ exports.checkConfig = function () {
 	}
 };
 
+exports.reloadFeature = function (feature) {
+	try {
+		Tools.uncacheTree('./features/' + feature + '/index.js');
+		var f = require('./features/' + feature + '/index.js');
+		if (f.id) {
+			Features[f.id] = f;
+			Features[f.id].init();
+		}
+		return false;
+	} catch (e) {
+		return e;
+	}
+};
+
 var translations = exports.translations = {};
 var loadTranslations = exports.loadTranslations = function (reloading) {
 	var errs = [];

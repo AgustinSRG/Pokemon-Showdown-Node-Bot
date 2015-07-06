@@ -123,8 +123,9 @@ exports.commands = {
 	hotpatch: 'reload',
 	reload: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
-		arg = toId(arg);
-		switch (arg) {
+		var args = arg.split(",");
+		var opt = toId(args[0]);
+		switch (opt) {
 			case '':
 			case 'commands':
 				var res = CommandParser.loadCommands(true) || [];
@@ -134,6 +135,21 @@ exports.commands = {
 				var errs = reloadFeatures() || [];
 				if (!errs.length) return this.reply('Features hotpatched');
 				return this.reply('Some features crashed: ' + errs.join(", "));
+			case 'feature':
+				if (!args[1]) return this.reply("You must specify a feature");
+				args[1] = args[1].trim();
+				var e = Tools.reloadFeature(args[1]);
+				if (e) {
+					if (e === -1) {
+						return this.reply("Error: Feature " + args[1] + " not found");
+					} else {
+						errlog("");
+						return this.reply("Error: Feature " + args[1] + " crashed");
+					}
+				} else {
+					return this.reply("Feature: " + args[1] + " hotpatched");
+				}
+				break;
 			case 'commandparser':
 			case 'parser':
 				try {
@@ -168,7 +184,7 @@ exports.commands = {
 				this.reply('Some languages crashed: ' + errs.join(", "));
 				break;
 			default:
-				 this.reply('Valid arguments are: commands, features, parser, tools, data, config, languages');
+				 this.reply('Valid arguments are: commands, feature, features, parser, tools, data, config, languages');
 		}
 	},
 
