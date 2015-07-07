@@ -312,16 +312,19 @@
 			'err': 'Erreur : Je ne peux pas télécharger la liste noire sur hastebin'
 		},
 		banword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'already': 'est déjà interdite.',
 			'ban': 'est désormais interdite.'
 		},
 		unbanword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'not': 'n\'est pas actuellement interdite.',
 			'unban': 'a été débannie.'
 		},
 		viewbannedwords: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'in': 'dans',
 			'globally': 'globalement',
 			'phrase': 'Phrase',
@@ -334,16 +337,19 @@
 			'err': 'Erreur: Je ne peux pas télécharger banwords à hastebin'
 		},
 		inapword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'already': 'est déjà inappropriée.',
 			'ban': 'est maintenant inappropriée.'
 		},
 		uninapword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'not': 'est actuellement pas inappropriée.',
 			'unban': 'est maintenant plus inappropriée.'
 		},
 		viewinapwords: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'in': 'dans',
 			'globally': 'globalement',
 			'phrase': 'Phrase',
@@ -356,6 +362,7 @@
 			'err': 'Erreur : Je ne pouvais pas télécharger les phrases inappropriées sur hastebin'
 		},
 		joinphrase: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'ae': 'Ces phrases de connections sont déjà permis pour cette salle',
 			'e': 'Ces phrases de connections sont maintenant permis pour cette salle"',
 			'ad': 'Ces phrases de connections sont déjà désactivées pour cette salle"',
@@ -371,6 +378,7 @@
 			'not': 'n\'existe pas'
 		},
 		viewjoinphrases: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'iu': 'Nom d\'utilisateur invalide.',
 			'not': 'Aucune de ces phrases n\'est fixé pour',
 			'empty': 'Ce n\'est pas des phrases de connection dans cette salle.',

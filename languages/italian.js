@@ -312,16 +312,19 @@ exports.translations = {
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
 		banword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'already': 'è già bannata.',
 			'ban': 'è ora banned.'
 		},
 		unbanword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'not': 'non è bannata.',
 			'unban': 'non è più bannata.'
 		},
 		viewbannedwords: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'in': 'in',
 			'globally': 'globalmente',
 			'phrase': 'La frase',
@@ -334,16 +337,19 @@ exports.translations = {
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
 		inapword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'already': 'è già inappropriata.',
 			'ban': 'è ora inappropriata.'
 		},
 		uninapword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'not': 'è al momento non inappropriata.',
 			'unban': 'non è più inappropriata.'
 		},
 		viewinapwords: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'in': 'in',
 			'globally': 'globalmente',
 			'phrase': 'La frase',
@@ -356,6 +362,7 @@ exports.translations = {
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
 		joinphrase: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'ae': 'Greetings già abilitate',
 			'e': 'Greeting ora abilitate',
 			'ad': 'Greetings già disabilitate',
@@ -371,6 +378,7 @@ exports.translations = {
 			'not': 'non esiste'
 		},
 		viewjoinphrases: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'iu': 'Nickname non valido.',
 			'not': 'Nessun greeting per',
 			'empty': 'Nessuna greet in questa room.',

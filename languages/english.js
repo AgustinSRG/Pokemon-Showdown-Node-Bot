@@ -312,16 +312,19 @@ exports.translations = {
 			'err': 'upload failure, could not upload blacklist to hastebin'
 		},
 		banword: {
+			'notchat': 'This command is only available for chat rooms',
 			'phrase': 'Phrase',
 			'already': 'is already banned.',
 			'ban': 'is now banned.'
 		},
 		unbanword: {
+			'notchat': 'This command is only available for chat rooms',
 			'phrase': 'Phrase',
 			'not': 'is not currently banned.',
 			'unban': 'is no longer banned.'
 		},
 		viewbannedwords: {
+			'notchat': 'This command is only available for chat rooms',
 			'in': 'in',
 			'globally': 'globally',
 			'phrase': 'Phrase',
@@ -334,16 +337,19 @@ exports.translations = {
 			'err': 'upload failure, could not upload banwords to hastebin'
 		},
 		inapword: {
+			'notchat': 'This command is only available for chat rooms',
 			'phrase': 'Phrase',
 			'already': 'is already inapropiate.',
 			'ban': 'is now inapropiate.'
 		},
 		uninapword: {
+			'notchat': 'This command is only available for chat rooms',
 			'phrase': 'Phrase',
 			'not': 'is not currently inapropiate.',
 			'unban': 'is no longer inapropiate.'
 		},
 		viewinapwords: {
+			'notchat': 'This command is only available for chat rooms',
 			'in': 'in',
 			'globally': 'globally',
 			'phrase': 'Phrase',
@@ -356,6 +362,7 @@ exports.translations = {
 			'err': 'upload failure, could not upload inapropiate phrases to hastebin'
 		},
 		joinphrase: {
+			'notchat': 'This command is only available for chat rooms',
 			'ae': 'Join phrases already enabled for this room',
 			'e': 'Join phrases are now enabled for this room"',
 			'ad': 'Join phrases already disabled for this room"',
@@ -371,6 +378,7 @@ exports.translations = {
 			'not': 'does not exists'
 		},
 		viewjoinphrases: {
+			'notchat': 'This command is only available for chat rooms',
 			'iu': 'Invalid username.',
 			'not': 'No Joinphrase set for',
 			'empty': 'There are not JoinPhrases in this room.',

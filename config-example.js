@@ -120,6 +120,7 @@ exports.moderation = {
 	modException: '%', // Min rank for not receive moderation
 
 	allowmute: true,
+	disableModNote: false,
 
 	modDefault: {
 		//basic mods
