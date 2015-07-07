@@ -87,7 +87,7 @@
 				'Comme je le vois, oui.',
 				'Vous pouvez compter sur elle.',
 				'Concentrez-vous et demander à nouveau.',
-				'Perspectives pas si bon.',
+				'Perspectives pas si bonnes.',
 				'Il est donc décidément. ',
 				'Mieux vaut ne pas vous dire maintenant.',
 				'Très douteux.',
@@ -97,7 +97,7 @@
 				'Probablement.',
 				'Demandez à nouveau plus tard. ',
 				'Ma réponse est non.',
-				'Perspectives bonne.',
+				'Perspective bonne.',
 				'Ne pas compter sur elle.'
 			]
 		},
