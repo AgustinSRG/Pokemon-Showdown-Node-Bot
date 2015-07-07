@@ -3,6 +3,9 @@
 		/*
 		* Basic Commands
 		*/
+		about: {
+			'about': 'Soy un **Bot para Pokemon Showdown** escrito en JavaScript para Node. Por: Ecuacion'
+		},
 		time: {'time': 'Hora del Bot'},
 		uptime: {
 			'week': 'semana',

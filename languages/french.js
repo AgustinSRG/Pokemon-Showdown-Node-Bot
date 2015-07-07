@@ -4,7 +4,7 @@
 		* Basic Commands
 		*/
 		about: {
-			'about': 'Je suis un **robot de Pokémon Showdown** qui a été écrit en Javascript pour node. Par Ecuacion'
+			'about': 'Je suis un **Robot de Pokémon Showdown** qui a été écrit en Javascript pour node. Par Ecuacion'
 		},
 		time: {'time': 'Temps de Bot'},
 		uptime: {

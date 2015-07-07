@@ -3,6 +3,9 @@ exports.translations = {
 		/*
 		* Basic Commands
 		*/
+		about: {
+			'about': 'I\'m a **Pokemon Showdown Bot** written in JavaScript for Node. By: Ecuacion'
+		},
 		time: {'time': 'Bot Time'},
 		uptime: {
 			'week': 'week',
