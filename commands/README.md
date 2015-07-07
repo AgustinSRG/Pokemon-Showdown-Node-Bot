@@ -23,7 +23,7 @@ Dynanic commads are commands saved in a JSON, used for commands that are continu
 
  - `dyn [cmd]` - To call a dynamic command
  - `wall [cmd]` - To call a dynamic command (with announce / wall)
- - `temp [text]` - Set temp var, tocreate a command
+ - `temp [text]` - Set temp var, to create a command
  - `setcmd [cmd]` - Create or modify a command, with `temp` data previosly set
  - `setalias [alias], [cmd]` - Set an alias of an existent dynamic command
  - `delcmd [cmd]` - Delete a command
