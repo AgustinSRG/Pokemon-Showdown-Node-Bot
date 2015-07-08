@@ -2,11 +2,20 @@
 	Moderation Feature
 */
 
-const FLOOD_MESSAGE_NUM = 5;
-const FLOOD_PER_MSG_MIN = 500; // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
-const FLOOD_MESSAGE_TIME = 6 * 1000;
-const MIN_CAPS_LENGTH = 18;
-const MIN_CAPS_PROPORTION = 0.8;
+var MOD_CONSTS = {
+	FLOOD_MESSAGE_NUM: 5,
+	FLOOD_PER_MSG_MIN: 500, // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
+	FLOOD_MESSAGE_TIME: 6 * 1000,
+	MIN_CAPS_LENGTH: 18,
+	MIN_CAPS_PROPORTION: 0.8,
+	MAX_STRETCH: 7,
+	MAX_REPEAT: 4
+};
+
+function getConst (c) {
+	if (Config.moderation && Config.moderation.MOD_CONSTS && typeof Config.moderation.MOD_CONSTS[c] !== 'undefined') return Config.moderation.MOD_CONSTS[c];
+	return MOD_CONSTS[c];
+}
 
 exports.id = 'moderation';
 exports.desc = 'Automated moderation for chat rooms';
@@ -96,7 +105,7 @@ function parseChat (room, time, by, message) {
 	var user = toId(by);
 	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
-	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegEx)' : ''));
+	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegExp)' : ''));
 
 	/* Chat Logs */
 
@@ -151,17 +160,19 @@ function parseChat (room, time, by, message) {
 	}
 
 	var capsMatch = msg.replace(/[^A-Za-z]/g, '').match(/[A-Z]/g);
-	capsMatch = capsMatch && toId(msg).length > MIN_CAPS_LENGTH && (capsMatch.length >= Math.floor(toId(msg).length * MIN_CAPS_PROPORTION));
-	var stretchMatch = msg.toLowerCase().match(/(.)\1{7,}/g);
-	var inlineSpam = stretchMatch ? false : msg.toLowerCase().match(/(..+)\1{4,}/g);
-	var isFlooding = (times.length >= FLOOD_MESSAGE_NUM && (time - times[times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME && (time - times[times.length - FLOOD_MESSAGE_NUM]) > (FLOOD_PER_MSG_MIN * FLOOD_MESSAGE_NUM));
+	capsMatch = capsMatch && toId(msg).length > getConst('MIN_CAPS_LENGTH') && (capsMatch.length >= Math.floor(toId(msg).length * getConst('MIN_CAPS_PROPORTION')));
+	var stretchRegExp = new RegExp('(.)\\1{' + getConst('MAX_STRETCH').toString() + ',}', 'g');
+	var repeatRegExp = new RegExp('(..+)\\1{' + getConst('MAX_REPEAT').toString() + ',}', 'g');
+	var stretchMatch = msg.toLowerCase().match(stretchRegExp);
+	var inlineSpam = stretchMatch ? false : msg.toLowerCase().match(repeatRegExp);
+	var isFlooding = (times.length >= getConst('FLOOD_MESSAGE_NUM') && (time - times[times.length - getConst('FLOOD_MESSAGE_NUM')]) < getConst('FLOOD_MESSAGE_TIME') && (time - times[times.length - getConst('FLOOD_MESSAGE_NUM')]) > (getConst('FLOOD_PER_MSG_MIN') * getConst('FLOOD_MESSAGE_NUM')));
 
 	/*****************
 	* Spam Mod
 	******************/
 
 	if (modSettings['spam'] !== 0) {
-		if (times.length >= FLOOD_MESSAGE_NUM && (time - times[times.length - FLOOD_MESSAGE_NUM]) < FLOOD_MESSAGE_TIME) {
+		if (times.length >= getConst('FLOOD_MESSAGE_NUM') && (time - times[times.length - getConst('FLOOD_MESSAGE_NUM')]) < getConst('FLOOD_MESSAGE_TIME')) {
 			var isSpamming = false;
 			for (var i = chatLog[room].users.length - 2; i > chatLog[room].users.length - 4; i--) {
 				if (chatLog[room].users[i] !== chatLog[room].users[chatLog[room].users.length - 1]) {
@@ -192,7 +203,7 @@ function parseChat (room, time, by, message) {
 	}
 
 	if (modSettings['spam'] !== 0 && pointVal < 3) {
-		if (times.length >= 3 && (time - times[times.length - 3]) < FLOOD_MESSAGE_TIME && msg === chatData[room][user].lastMsgs[0] && chatData[room][user].lastMsgs[0] === chatData[room][user].lastMsgs[1]) {
+		if (times.length >= 3 && (time - times[times.length - 3]) < getConst('FLOOD_MESSAGE_TIME') && msg === chatData[room][user].lastMsgs[0] && chatData[room][user].lastMsgs[0] === chatData[room][user].lastMsgs[1]) {
 			pointVal = 3;
 			muteMessage = ', ' + trad('automod', room) + ': ' + trad('possible', room);
 			if (msg.toLowerCase().indexOf("http://") > -1 || msg.toLowerCase().indexOf("https://") > -1 || msg.toLowerCase().indexOf("www.") > -1) {
@@ -360,7 +371,7 @@ function parseJoin (room, by) {
 	if (jp) Bot.say(room, jp);
 	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
-	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegEx)' : ''));
+	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegExp)' : ''));
 }
 
 function parseLeave (room, by) {
@@ -370,7 +381,7 @@ function parseLeave (room, by) {
 function parseRename (room, by, old) {
 	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
-	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegEx)' : ''));
+	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegExp)' : ''));
 }
 
 exports.init = function () {
@@ -387,6 +398,7 @@ exports.init = function () {
 exports.parse = function (room, message, isIntro, spl) {
 	if (isIntro) return;
 	if (!Bot.rooms[room] || Bot.rooms[room].type !== "chat") return;
+	if (!Config.moderation) Config.moderation = {};
 	switch (spl[0]) {
 		case 'c':
 			var by = spl[1];

@@ -122,6 +122,18 @@ exports.moderation = {
 	allowmute: true,
 	disableModNote: false,
 
+	MOD_CONSTS: {
+		FLOOD_MESSAGE_NUM: 5,
+		FLOOD_PER_MSG_MIN: 500, // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
+		FLOOD_MESSAGE_TIME: 6 * 1000,
+
+		MIN_CAPS_LENGTH: 18,
+		MIN_CAPS_PROPORTION: 0.8,
+
+		MAX_STRETCH: 7,
+		MAX_REPEAT: 4
+	},
+
 	modDefault: {
 		//basic mods
 		'caps': 1,
