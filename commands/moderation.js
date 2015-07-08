@@ -530,7 +530,6 @@ exports.commands = {
 			if (!this.isRanked('~')) return false;
 			targetRoom = toId(args[0]);
 		}
-		if (!Bot.rooms[targetRoom] || Bot.rooms[targetRoom].type !== 'chat') return this.reply(this.trad('notchat'));
 		var modTable = {
 			'caps': 1,
 			'stretching': 1,
