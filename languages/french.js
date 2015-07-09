@@ -206,7 +206,8 @@
 			'e21': 'Format',
 			'e22': 'est pas valable pour refuser',
 			'e31': 'Je ne dois pas faire d\'équipes pour contester en format',
-			'e32': 'Utiliser "team add" pour ajouter d\'autres équipes sur bot'
+			'e32': 'Utiliser "team add" pour ajouter d\'autres équipes sur bot',
+			'spf': 'S\'il vous plaît spécifier un format' // Assuming this is wrong too
 		},
 		jointour: {
 			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
