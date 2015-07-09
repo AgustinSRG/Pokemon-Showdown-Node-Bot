@@ -23,7 +23,7 @@ Dynanic commads are commands saved in a JSON, used for commands that are continu
 
  - `dyn [cmd]` - To call a dynamic command
  - `wall [cmd]` - To call a dynamic command (with announce / wall)
- - `temp [text]` - Set temp var, tocreate a command
+ - `temp [text]` - Set temp var, to create a command
  - `setcmd [cmd]` - Create or modify a command, with `temp` data previosly set
  - `setalias [alias], [cmd]` - Set an alias of an existent dynamic command
  - `delcmd [cmd]` - Delete a command
@@ -82,6 +82,12 @@ Moderation Commands
  - `unrab [regex]` - Remove a regex ban
  - `vab` - View blacklist
 
+**Zero Tolerance**
+ - `0tol [user]` - Checks if an user is in the zero tolerance list
+ - `0tol add, [user1]:[level1], [user2]:[level2]...` - Add users to zero tolerance list
+ - `0tol delete, [user1], [user2]...` - Removeusers from zero tolerance list
+ - `vzt` - Upload zero tolerance list to hastebin
+
 **Banwords and InapropiateWords:** Saying this words means automute. InapropiateWords requires that words are separated.
  - `banword [phrase]` - Add a banword
  - `unbanword [phrase]` - Remove a banword
@@ -95,6 +101,8 @@ Moderation Commands
  - `joinphrase set, [user], [phrase]` - Set a joinphrase
  - `joinphrase delete, [user]` - Remove a joinphrase
  - `vjf` - View joinphrases list
+ 
+**Note:** Excepted users can use moderation commands in format `command [roomid]Arguments` to set moderation through PM or other room. Example: `ab [lobby]spammer1, spammer2`
 
 Battle Commands
 ------------

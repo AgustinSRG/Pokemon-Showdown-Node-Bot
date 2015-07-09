@@ -5,6 +5,10 @@ global.toId = function (text) {
 	return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 };
 
+global.toRoomid = function (roomid) {
+	return roomid.replace(/[^a-zA-Z0-9-]+/g, '').toLowerCase();
+};
+
 global.ok = function (str) {
 	if (Config.debug && Config.debug.ok === false) return;
 	console.log('ok'.green + '\t' + str);
@@ -136,7 +140,6 @@ exports.uncacheTree = function (root) {
 };
 
 exports.uploadToHastebin = function (toUpload, callback) {
-	var self = this;
 	var reqOpts = {
 		hostname: "hastebin.com",
 		method: "POST",
