@@ -311,17 +311,41 @@ exports.translations = {
 			'listrab': 'Le seguenti regex sono bannate in',
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
+		zerotol: {
+			'nolevels': 'Non ci sono livelli di tolleranza zero',
+			'user': 'User',
+			'level': 'Livello',
+			'ztl': 'Lista di tolleranza zero',
+			'empty': 'Lista di tolleranza zero è vuoto',
+			'is': '',
+			'n': 'NON',
+			'y': '',
+			'in': 'nella lista di tolleranza zero',
+			'u1': 'Usage',
+			'u2': '[add/delete], [User:livello]...',
+			'users': 'User(s)',
+			'add': 'aggiunti alla lista di tolleranza zero',
+			'illegal': 'users aveva nick illegali',
+			'invalid': 'avevano livelli non validi',
+			'already': 'erano già nell\'elenco',
+			'removed': 'rimosso dalla lista di tolleranza zero',
+			'not': 'users non erano presenti nella lista',
+			'err': 'upload fallito, impossibile caricare su hastebin'
+		},
 		banword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'already': 'è già bannata.',
 			'ban': 'è ora banned.'
 		},
 		unbanword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'not': 'non è bannata.',
 			'unban': 'non è più bannata.'
 		},
 		viewbannedwords: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'in': 'in',
 			'globally': 'globalmente',
 			'phrase': 'La frase',
@@ -334,16 +358,19 @@ exports.translations = {
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
 		inapword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'already': 'è già inappropriata.',
 			'ban': 'è ora inappropriata.'
 		},
 		uninapword: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',
 			'not': 'è al momento non inappropriata.',
 			'unban': 'non è più inappropriata.'
 		},
 		viewinapwords: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'in': 'in',
 			'globally': 'globalmente',
 			'phrase': 'La frase',
@@ -356,6 +383,7 @@ exports.translations = {
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
 		joinphrase: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'ae': 'Greetings già abilitate',
 			'e': 'Greeting ora abilitate',
 			'ad': 'Greetings già disabilitate',
@@ -371,6 +399,7 @@ exports.translations = {
 			'not': 'non esiste'
 		},
 		viewjoinphrases: {
+			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'iu': 'Nickname non valido.',
 			'not': 'Nessun greeting per',
 			'empty': 'Nessuna greet in questa room.',

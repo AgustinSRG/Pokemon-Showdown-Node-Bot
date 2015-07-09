@@ -311,17 +311,41 @@
 			'listrab': 'Las siguientes expresiones regulares están en la lista negra de la sala',
 			'err': 'Error: No se puede subir la lista negra a hastebin'
 		},
+		zerotol: {
+			'nolevels': 'No hay niveles de tolerancia cero disponibles',
+			'user': 'Usuario',
+			'level': 'Nivel',
+			'ztl': 'Lista de tolerancia cero',
+			'empty': 'La lista de tolerancia zero está vacía',
+			'is': '',
+			'n': 'NO ESTA',
+			'y': 'Sí ESTA',
+			'in': 'presente en la lista de tolerancia cero',
+			'u1': 'Uso correcto',
+			'u2': '[add/delete], [Usuario:nivel]...',
+			'users': 'Usuario(s)',
+			'add': 'agregado(s) a la lista de tolerancia cero',
+			'illegal': 'usuarios tenían nicks ilegales',
+			'invalid': 'tenían niveles no válidos',
+			'already': 'ya estaban presentes en la lista',
+			'removed': 'eliminado(s) correctamente de la lista de tolerancia cero',
+			'not': 'usuarios no etaban en la lista',
+			'err': 'Error: no se puede subir la lista de tolerancia cero a hastebin'
+		},
 		banword: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'phrase': 'La frase',
 			'already': 'ya estaba prohibida.',
 			'ban': 'está prohibida a partir de ahora.'
 		},
 		unbanword: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'phrase': 'La frase',
 			'not': 'no estaba prohibida.',
 			'unban': 'ha dejado de estar prohibida.'
 		},
 		viewbannedwords: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'in': 'en',
 			'globally': 'globalmente',
 			'phrase': 'La frase',
@@ -334,16 +358,19 @@
 			'err': 'Error: no se puede subir la lista de frases prohibidas a hastebin'
 		},
 		inapword: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'phrase': 'La frase',
 			'already': 'ya era inapropiada.',
 			'ban': 'es inapropiada a partir de ahora.'
 		},
 		uninapword: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'phrase': 'La frase',
 			'not': 'no era inapropiada.',
 			'unban': 'ha dejado de ser inapropiada.'
 		},
 		viewinapwords: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'in': 'en',
 			'globally': 'globalmente',
 			'phrase': 'La frase',
@@ -356,6 +383,7 @@
 			'err': 'Error: no se puede subir la lista de frases inapropiadas a hastebin'
 		},
 		joinphrase: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'ae': 'Ls frases de entrada ya estaban activadas en esta sala',
 			'e': 'Las frases de entrada han sido habilitadas para esta sala"',
 			'ad': 'Las frases de entrada ya estaban deshabilitadas para esta sala"',
@@ -371,6 +399,7 @@
 			'not': 'no existe'
 		},
 		viewjoinphrases: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'iu': 'Nombre de usuario incorrecto.',
 			'not': 'No hay frase de entrada para',
 			'empty': 'No hay frases de entrada en esta sala.',

@@ -95,6 +95,8 @@ Moderation Commands
  - `joinphrase set, [user], [phrase]` - Set a joinphrase
  - `joinphrase delete, [user]` - Remove a joinphrase
  - `vjf` - View joinphrases list
+ 
+**Note:** Excepted users can use moderation commands in format `command [roomid]Arguments` to set moderation through PM or other room. Example: `ab [lobby]spammer1, spammer2`
 
 Battle Commands
 ------------

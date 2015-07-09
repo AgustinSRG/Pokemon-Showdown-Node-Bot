@@ -311,17 +311,41 @@
 			'listrab': 'Les expressions régulières suivantes sont interdites dans',
 			'err': 'Erreur : Je ne peux pas télécharger la liste noire sur hastebin'
 		},
+		zerotol: {
+			'nolevels': 'Il n\'y a pas de niveaux de tolérance zéro',
+			'user': 'Utilisateur',
+			'level': 'Niveau',
+			'ztl': 'Liste de tolérance zéro',
+			'empty': 'Zero tolerance list is empty',
+			'is': 'est actuellement',
+			'n': 'pas',
+			'y': '',
+			'in': 'sur le liste de tolérance zéro',
+			'u1': 'Usage',
+			'u2': '[add/delete], [Utilisateur:niveau]...',
+			'users': 'Utilisateur(s)',
+			'add': 'ajouté à la liste de tolérance zéro',
+			'illegal': 'utilisateurs avaient entailles illégales',
+			'invalid': 'avaient des niveaux invalides',
+			'already': 'étaient déjà présents dans la liste',
+			'removed': 'retiré de la liste de tolérance zéro',
+			'not': 'utilisateurs sont pas sur la liste',
+			'err': 'Erreur : Je ne peux pas télécharger la liste de tolérance zéro sur hastebin'
+		},
 		banword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'already': 'est déjà interdite.',
 			'ban': 'est désormais interdite.'
 		},
 		unbanword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'not': 'n\'est pas actuellement interdite.',
 			'unban': 'a été débannie.'
 		},
 		viewbannedwords: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'in': 'dans',
 			'globally': 'globalement',
 			'phrase': 'Phrase',
@@ -334,16 +358,19 @@
 			'err': 'Erreur: Je ne peux pas télécharger banwords à hastebin'
 		},
 		inapword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'already': 'est déjà inappropriée.',
 			'ban': 'est maintenant inappropriée.'
 		},
 		uninapword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
 			'not': 'est actuellement pas inappropriée.',
 			'unban': 'est maintenant plus inappropriée.'
 		},
 		viewinapwords: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'in': 'dans',
 			'globally': 'globalement',
 			'phrase': 'Phrase',
@@ -356,6 +383,7 @@
 			'err': 'Erreur : Je ne pouvais pas télécharger les phrases inappropriées sur hastebin'
 		},
 		joinphrase: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'ae': 'Ces phrases de connections sont déjà permis pour cette salle',
 			'e': 'Ces phrases de connections sont maintenant permis pour cette salle"',
 			'ad': 'Ces phrases de connections sont déjà désactivées pour cette salle"',
@@ -371,6 +399,7 @@
 			'not': 'n\'existe pas'
 		},
 		viewjoinphrases: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'iu': 'Nom d\'utilisateur invalide.',
 			'not': 'Aucune de ces phrases n\'est fixé pour',
 			'empty': 'Ce n\'est pas des phrases de connection dans cette salle.',
