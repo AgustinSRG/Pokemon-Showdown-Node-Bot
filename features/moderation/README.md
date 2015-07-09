@@ -16,6 +16,10 @@ Moderation Commands
  - `vab` - View blacklist
 
 **Zero Tolerance**
+ - `0tol [user]` - Checks if an user is in the zero tolerance list
+ - `0tol add, [user1]:[level1], [user2]:[level2]...` - Add users to zero tolerance list
+ - `0tol delete, [user1], [user2]...` - Removeusers from zero tolerance list
+ - `vzt` - Upload zero tolerance list to hastebin
 
 **Banwords and InapropiateWords:** Saying this words means automute. InapropiateWords requires that words are separated.
  - `banword [phrase]` - Add a banword
