@@ -311,6 +311,27 @@
 			'listrab': 'Les expressions régulières suivantes sont interdites dans',
 			'err': 'Erreur : Je ne peux pas télécharger la liste noire sur hastebin'
 		},
+		zerotol: {
+			'nolevels': 'Il n\'y a pas de niveaux de tolérance zéro',
+			'user': 'Utilisateur',
+			'level': 'Niveau',
+			'ztl': 'Liste de tolérance zéro',
+			'empty': 'Zero tolerance list is empty',
+			'is': 'est actuellement',
+			'n': 'pas',
+			'y': '',
+			'in': 'sur le liste de tolérance zéro',
+			'u1': 'Usage',
+			'u2': '[add/delete], [Utilisateur:niveau]...',
+			'users': 'Utilisateur(s)',
+			'add': 'ajouté à la liste de tolérance zéro',
+			'illegal': 'utilisateurs avaient entailles illégales',
+			'invalid': 'avaient des niveaux invalides',
+			'already': 'étaient déjà présents dans la liste',
+			'removed': 'retiré de la liste de tolérance zéro',
+			'not': 'utilisateurs sont pas sur la liste',
+			'err': 'Erreur : Je ne peux pas télécharger la liste de tolérance zéro sur hastebin'
+		},
 		banword: {
 			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',

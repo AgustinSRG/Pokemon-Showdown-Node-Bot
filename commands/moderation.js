@@ -20,6 +20,28 @@ function unblacklistUser(user, room) {
 	return false;
 }
 
+function addZeroTolUser(user, level) {
+	if (!Settings.settings['zerotol'] || Settings.settings['zerotol'][user] !== level) {
+		if (!Settings.settings['zerotol']) Settings.settings['zerotol'] = {};
+		Settings.settings['zerotol'][user] = level;
+		return true;
+	}
+	return false;
+}
+
+function removeZeroTolUser(user) {
+	if (Settings.settings['zerotol'] && Settings.settings['zerotol'][user]) {
+		delete Settings.settings['zerotol'][user];
+		return true;
+	}
+	return false;
+}
+
+function getZeroTol(user) {
+	if (Settings.settings['zerotol'] && Settings.settings['zerotol'][user]) return Settings.settings['zerotol'][user];
+	return false;
+}
+
 function blacklistRegex(regex, room) {
 	if (!Settings.settings['regexautoban'] || !Settings.settings['regexautoban'][room] || !Settings.settings['regexautoban'][room][regex]) {
 		if (!Settings.settings['regexautoban']) Settings.settings['regexautoban'] = {};
@@ -262,6 +284,125 @@ exports.commands = {
 			}.bind(this));
 		} else {
 			this.pmReply(this.trad('nousers') + ' ' + tarRoom);
+		}
+	},
+
+	/**************************
+	* Zero Tolerance
+	***************************/
+
+	'0tol': 'zerotol',
+	'0tole': 'zerotol',
+	zt: 'zerotol',
+	vzt: 'zerotol',
+	viewzerotol: 'zerotol',
+	zerotol: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return;
+		var ztLevels, defaultLevel, aliases;
+		if (Config.moderation && Config.moderation.zeroToleranceLevels && Config.moderation.zeroToleranceDefaultLevel) {
+			ztLevels = Config.moderation.zeroToleranceLevels;
+			defaultLevel = Config.moderation.zeroToleranceDefaultLevel;
+			aliases = {};
+			for (var l in ztLevels) {
+				if (ztLevels[l].name) aliases[toId(ztLevels[l].name)] = l;
+			}
+		} else {
+			return this.reply(this.trad('nolevels'));
+		}
+		if (cmd === 'vzt' || cmd === 'viewzerotol') {
+			var ztList = [];
+			if (Settings.settings['zerotol']) {
+				for (var i in Settings.settings['zerotol']) {
+					var level = ztLevels[Settings.settings['zerotol'][i]] ? ztLevels[Settings.settings['zerotol'][i]].name : Settings.settings['zerotol'][i];
+					ztList.push(this.trad('user') + ': ' + i + ' | ' + this.trad('level') + ': ' + level);
+				}
+			}
+			if (ztList.length) {
+				Tools.uploadToHastebin(this.trad('ztl') + ':\n\n' + ztList.join('\n'), function (r, linkStr) {
+					if (r) this.pmReply(linkStr);
+					else this.pmReply(this.trad('err'));
+				}.bind(this));
+			} else {
+				this.reply(this.trad('empty'));
+			}
+			return;
+		}
+		var args = arg.split(',');
+		if (!args[1]) {
+			var user = toId(args[0]);
+			var level = getZeroTol(user);
+			if (level) level = (ztLevels[level] && ztLevels[level].name) ? ztLevels[level].name : level;
+			this.reply(this.trad('user') + ' "' + user + '" ' + this.trad('is') + ' ' + (level ? this.trad('y') : this.trad('n')) + ' ' + this.trad('in') + '. ' + (level ? ('(' + level + ')') : ''));
+		} else {
+			var aliases = {
+				'low': 'l',
+				'normal': 'n',
+				'high': 'h'
+			};
+			switch (toId(args[0])) {
+				case 'add':
+					if (args.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+					var added = [], illegal = [], alreadyAdded = [], levelFail = [];
+					for (var i = 1; i < args.length; i++) {
+						var splArg = args[i].split(':');
+						var user = toId(splArg[0]);
+						var level = toId(splArg[1] || defaultLevel);
+						if (aliases[level]) level = aliases[level];
+						if (!user.length || user.length > 18) {
+							illegal.push(user);
+							continue;
+						}
+						if (!ztLevels[level]) {
+							levelFail.push(user);
+							continue;
+						}
+						if (addZeroTolUser(user, level)) {
+							added.push(user);
+						} else {
+							alreadyAdded.push(user);
+						}
+					}
+					var text = '';
+					if (added.length) {
+						text += this.trad('users') + ' "' + added.join('", "') + '" ' + this.trad('add') + '. ';
+						Settings.save();
+					}
+					if (illegal.length) {
+						text += illegal.length + ' ' + this.trad('illegal') + '. ';
+					}
+					if (levelFail.length) {
+						text += this.trad('users') + ' "' + levelFail.join('", "') + '" ' + this.trad('invalid') + '. ';
+					}
+					if (alreadyAdded.length) {
+						text += this.trad('users') + ' "' + alreadyAdded.join('", "') + '" ' + this.trad('already') + '. ';
+					}
+					this.reply(text);
+					break;
+				case 'delete':
+				case 'remove':
+					if (args.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+					var removed = [], notFound = [];
+					for (var i = 1; i < args.length; i++) {
+						var user = toId(args[i]);
+						if (removeZeroTolUser(user)) {
+							removed.push(user);
+						} else {
+							notFound.push(user);
+						}
+					}
+					var text = '';
+					if (removed.length) {
+						text += this.trad('users') + 'User(s) "' + removed.join('", "') + '" ' + this.trad('removed') + '. ';
+						Settings.save();
+					}
+					if (notFound.length) {
+						text += notFound.length + ' ' + this.trad('not') + '. ';
+					}
+					this.reply(text);
+					break;
+				default:
+					this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+			}
 		}
 	},
 
@@ -659,7 +800,8 @@ exports.commands = {
 			'spoiler': 1,
 			'youtube': 1,
 			'psservers': 1,
-			'multiple': 1
+			'multiple': 1,
+			'zerotol': 1
 		};
 		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		var mod = (args.length < 3) ? toId(args[0]) : toId(args[1]);

@@ -150,7 +150,10 @@ exports.moderation = {
 		'psservers': 1,
 
 		//multiple infraction
-		'multiple': 1
+		'multiple': 1,
+
+		//zero tolerance
+		'zerotol': 1
 	},
 
 	punishments: [
@@ -163,6 +166,13 @@ exports.moderation = {
 	psServersExcepts: {
 		"showdown": 1,
 		"smogtours": 1
+	},
+
+	zeroToleranceDefaultLevel: 'h',
+	zeroToleranceLevels: {
+		'l': {name: 'Low', value: 1},
+		'n': {name: 'Normal', value: 2},
+		'h': {name: 'High', value: 3},
 	}
 };
 

@@ -311,6 +311,27 @@ exports.translations = {
 			'listrab': 'Le seguenti regex sono bannate in',
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
+		zerotol: {
+			'nolevels': 'Non ci sono livelli di tolleranza zero',
+			'user': 'User',
+			'level': 'Livello',
+			'ztl': 'Lista di tolleranza zero',
+			'empty': 'Lista di tolleranza zero è vuoto',
+			'is': '',
+			'n': 'NON',
+			'y': '',
+			'in': 'nella lista di tolleranza zero',
+			'u1': 'Usage',
+			'u2': '[add/delete], [User:livello]...',
+			'users': 'User(s)',
+			'add': 'aggiunti alla lista di tolleranza zero',
+			'illegal': 'users aveva nick illegali',
+			'invalid': 'avevano livelli non validi',
+			'already': 'erano già nell\'elenco',
+			'removed': 'rimosso dalla lista di tolleranza zero',
+			'not': 'users non erano presenti nella lista',
+			'err': 'upload fallito, impossibile caricare su hastebin'
+		},
 		banword: {
 			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'phrase': 'La frase',

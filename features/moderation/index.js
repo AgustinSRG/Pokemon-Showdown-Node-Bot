@@ -83,6 +83,28 @@ function getJoinPhrase (room, user) {
 	return false;
 }
 
+function addZeroTolUser(user, level) {
+	if (!Settings.settings['zerotol'] || Settings.settings['zerotol'][user] !== level) {
+		if (!Settings.settings['zerotol']) Settings.settings['zerotol'] = {};
+		Settings.settings['zerotol'][user] = level;
+		return true;
+	}
+	return false;
+}
+
+function removeZeroTolUser(user) {
+	if (Settings.settings['zerotol'] && Settings.settings['zerotol'][user]) {
+		delete Settings.settings['zerotol'][user];
+		return true;
+	}
+	return false;
+}
+
+function getZeroTol(user) {
+	if (Settings.settings['zerotol'] && Settings.settings['zerotol'][user]) return Settings.settings['zerotol'][user];
+	return false;
+}
+
 function getServersAds (text) {
 	var aux = text.toLowerCase();
 	var serversAds = [];
@@ -340,9 +362,12 @@ function parseChat (room, time, by, message) {
 
 	/* Zero Tolerance */
 
-	if (pointVal > 0 && zeroTol[user] && zeroTol[user] > 4) {
-		muteMessage += ' ' + trad('0tol', room);
-		pointVal = Config.moderation.punishments.length;
+	if (modSettings['zerotol'] && pointVal > 0 && Config.moderation && Config.moderation.zeroToleranceLevels && getZeroTol(user)) {
+		var ztObj = Config.moderation.zeroToleranceLevels[getZeroTol(user)];
+		if (ztObj && ztObj.value) {
+			muteMessage += ' ' + trad('0tol', room);
+			pointVal += ztObj.value;
+		}
 	}
 
 	/* Applying punishment */
@@ -355,6 +380,9 @@ function parseChat (room, time, by, message) {
 		if (pointVal >= 2) {
 			if (!zeroTol[user]) zeroTol[user] = 0;
 			zeroTol[user]++;
+			if (zeroTol[user] > 4 && Config.moderation.zeroToleranceDefaultLevel) {
+				addZeroTolUser(user, Config.moderation.zeroToleranceDefaultLevel);
+			}
 		}
 
 		var cmd = Config.moderation.punishments[pointVal - 1];

@@ -311,6 +311,27 @@ exports.translations = {
 			'listrab': 'The following regexes are banned in',
 			'err': 'upload failure, could not upload blacklist to hastebin'
 		},
+		zerotol: {
+			'nolevels': 'There are not any zero tolerance levels',
+			'user': 'User',
+			'level': 'Level',
+			'ztl': 'Zero tolerance list',
+			'empty': 'Zero tolerance list is empty',
+			'is': 'is',
+			'n': 'NOT',
+			'y': '',
+			'in': 'in the zero tolerance list',
+			'u1': 'Usage',
+			'u2': '[add/delete], [User1:level]...',
+			'users': 'User(s)',
+			'add': 'added to the zero tolerance list',
+			'illegal': 'users had illegal nicks',
+			'invalid': 'had invalid levels',
+			'already': 'were already present in the list',
+			'removed': 'removed from the zero tolerance list',
+			'not': 'users were not present in the list',
+			'err': 'upload failure, could not upload zero tolerance list to hastebin'
+		},
 		banword: {
 			'notchat': 'This command is only available for chat rooms',
 			'phrase': 'Phrase',
