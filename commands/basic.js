@@ -15,7 +15,7 @@ exports.commands = {
 	credits: 'about',
 	bot: 'about',
 	about: function (arg, by, room, cmd) {
-		this.restricReply(this.trad('about') + ' (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)', 'about');
+		this.restrictReply(this.trad('about') + ' (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)', 'about');
 	},
 
 	bottime: 'time',
