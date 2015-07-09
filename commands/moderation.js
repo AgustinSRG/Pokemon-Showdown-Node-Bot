@@ -20,6 +20,28 @@ function unblacklistUser(user, room) {
 	return false;
 }
 
+function addZeroTolUser(user, level) {
+	if (!Settings.settings['zerotol'] || Settings.settings['zerotol'][user] !== level) {
+		if (!Settings.settings['zerotol']) Settings.settings['zerotol'] = {};
+		Settings.settings['zerotol'][user] = level;
+		return true;
+	}
+	return false;
+}
+
+function removeZeroTolUser(user) {
+	if (Settings.settings['zerotol'] && Settings.settings['zerotol'][user]) {
+		delete Settings.settings['zerotol'][user];
+		return true;
+	}
+	return false;
+}
+
+function getZeroTol(user) {
+	if (Settings.settings['zerotol'] && Settings.settings['zerotol'][user]) return Settings.settings['zerotol'][user];
+	return false;
+}
+
 function blacklistRegex(regex, room) {
 	if (!Settings.settings['regexautoban'] || !Settings.settings['regexautoban'][room] || !Settings.settings['regexautoban'][room][regex]) {
 		if (!Settings.settings['regexautoban']) Settings.settings['regexautoban'] = {};
@@ -38,6 +60,15 @@ function unblacklistRegex(regex, room) {
 	return false;
 }
 
+function getTargetRoom(arg) {
+	if (!arg) return null;
+	if (arg.indexOf("[") !== 0) return null;
+	if (arg.indexOf("]") < 0) return null;
+	var target = toRoomid(arg.substr(arg.indexOf("[") + 1, arg.indexOf("]") - arg.indexOf("[") - 1));
+	var newArg = arg.substr(arg.indexOf("]") + 1);
+	return {arg: newArg, room: target};
+}
+
 Settings.addPermissions(['autoban', 'banword', 'joinphrase']);
 
 exports.commands = {
@@ -50,8 +81,16 @@ exports.commands = {
 	ab: 'autoban',
 	autoban: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		var tarRoom = room;
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
+		if (!this.isExcepted && !this.botRanked('@')) return this.reply(this.botName + " " + this.trad('notmod'));
 
 		var added = [];
 		var illegalNick = [];
@@ -67,11 +106,11 @@ exports.commands = {
 				illegalNick.push(tarUser);
 				continue;
 			}
-			if (!blacklistUser(tarUser, room)) {
+			if (!blacklistUser(tarUser, tarRoom)) {
 				alreadyAdded.push(tarUser);
 				continue;
 			}
-			this.reply('/roomban ' + tarUser + ', ' + this.trad('bu'));
+			this.say(tarRoom, '/roomban ' + tarUser + ', ' + this.trad('bu'));
 			added.push(tarUser);
 		}
 
@@ -84,7 +123,7 @@ exports.commands = {
 		}
 		if (alreadyAdded.length) text += this.trad('u') + ' "' + alreadyAdded.join('", "') + '" ' + this.trad('already') + ' ';
 		if (illegalNick.length) text += this.trad('all') + ' ' + (text.length ? (this.trad('other') + ' ') : '') + ' ' + this.trad('illegal');
-		if (mn.length) this.reply("/mn " + text + " | By: " + by);
+		if (mn.length && (!Config.moderation || !Config.moderation.disableModNote)) this.say(tarRoom, "/mn " + text + " | By: " + by);
 		this.reply(text);
 	},
 
@@ -93,8 +132,16 @@ exports.commands = {
 	unab: 'unautoban',
 	unautoban: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		var tarRoom = room;
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
+		if (!this.isExcepted && !this.botRanked('@')) return this.reply(this.botName + " " + this.trad('notmod'));
 
 		arg = arg.split(',');
 
@@ -109,11 +156,11 @@ exports.commands = {
 				notRemoved.push(tarUser);
 				continue;
 			}
-			if (!unblacklistUser(tarUser, room)) {
+			if (!unblacklistUser(tarUser, tarRoom)) {
 				notRemoved.push(tarUser);
 				continue;
 			}
-			this.reply('/roomunban ' + tarUser);
+			this.say(tarRoom, '/roomunban ' + tarUser);
 			removed.push(tarUser);
 		}
 
@@ -129,42 +176,58 @@ exports.commands = {
 	rab: 'regexautoban',
 	regexautoban: function (arg, user, room) {
 		if (!this.can('autoban')) return;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		var tarRoom = room;
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
+		if (!this.isExcepted && !this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
-		if (!arg) return this.say(room, this.trad('notarg'));
+		if (!arg) return this.reply(this.trad('notarg'));
 
 		try {
 			var testing = new RegExp(arg, 'i');
 		} catch (e) {
-			return this.say(room, e.message);
+			return this.reply(e.message);
 		}
 
 		if (/^(?:(?:\.+|[a-z0-9]|\\[a-z0-9SbB])(?![a-z0-9\.\\])(?:\*|\{\d+\,(?:\d+)?\}))+$/i.test(arg)) {
-			return this.say(room, this.trad('re') + ' /' + arg + '/i ' + this.trad('notadd'));
+			return this.reply(this.trad('re') + ' /' + arg + '/i ' + this.trad('notadd'));
 		}
 
 		var regex = '/' + arg + '/i';
-		if (!blacklistRegex(regex, room)) return this.say(room, '/' + regex + '/ ' + this.trad('already'));
+		if (!blacklistRegex(regex, tarRoom)) return this.reply('/' + regex + '/ ' + this.trad('already'));
 		Settings.save();
-		this.say(room, '/modnote ' + this.trad('re') + ' ' + regex + ' ' + this.trad('addby') + ' ' + user + '.');
-		this.say(room, this.trad('re') + ' ' + regex + ' ' + this.trad('add'));
+		if (!Config.moderation || !Config.moderation.disableModNote) this.say(tarRoom, '/modnote ' + this.trad('re') + ' ' + regex + ' ' + this.trad('addby') + ' ' + user + '.');
+		this.reply(this.trad('re') + ' ' + regex + ' ' + this.trad('add'));
 	},
 
 	unrab: 'unregexautoban',
 	unregexautoban: function (arg, user, room) {
 		if (!this.can('autoban')) return;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		var tarRoom = room;
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
+		if (!this.isExcepted && !this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
-		if (!arg) return this.say(room, this.trad('notarg'));
+		if (!arg) return this.reply(this.trad('notarg'));
 
 		arg = '/' + arg.replace(/\\\\/g, '\\') + '/i';
-		if (!unblacklistRegex(arg, room)) return this.say(room, this.trad('re') + ' ' + arg + ' ' + this.trad('notpresent'));
+		if (!unblacklistRegex(arg, tarRoom)) return this.reply(this.trad('re') + ' ' + arg + ' ' + this.trad('notpresent'));
 
 		Settings.save();
-		this.say(room, '/modnote ' + this.trad('re') + ' ' + arg + ' ' + this.trad('rby') + ' ' + user + '.');
-		this.say(room, this.trad('re') + ' ' + arg + ' ' + this.trad('r'));
+		if (!Config.moderation || !Config.moderation.disableModNote) this.say(tarRoom, '/modnote ' + this.trad('re') + ' ' + arg + ' ' + this.trad('rby') + ' ' + user + '.');
+		this.reply(this.trad('re') + ' ' + arg + ' ' + this.trad('r'));
 	},
 
 	viewbans: 'viewblacklist',
@@ -172,35 +235,43 @@ exports.commands = {
 	viewautobans: 'viewblacklist',
 	viewblacklist: function (arg, by, room, cmd) {
 		if (!this.can('autoban')) return;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
+		var tarRoom = room;
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
 
 		var text = '';
 		var nBans = 0;
 
 		if (arg.length) {
-			if (Settings.settings['autoban'] && Settings.settings['autoban'][room]) {
+			if (Settings.settings['autoban'] && Settings.settings['autoban'][tarRoom]) {
 				var nick = toId(arg);
 				if (nick.length < 1 || nick.length > 18) {
 					return this.pmReply(this.trad('iu') + ': "' + nick + '".');
 				} else {
-					return this.pmReply(this.trad('u') + ' "' + nick + '" ' + this.trad('currently') + ' ' + (nick in Settings.settings['autoban'][room] ? '' : (this.trad('not') + ' ')) + this.trad('b') + ' ' + room + '.');
+					return this.pmReply(this.trad('u') + ' "' + nick + '" ' + this.trad('currently') + ' ' + (nick in Settings.settings['autoban'][tarRoom] ? '' : (this.trad('not') + ' ')) + this.trad('b') + ' ' + tarRoom + '.');
 				}
 			} else {
-				return this.pmReply(this.trad('nousers') + ' ' + room);
+				return this.pmReply(this.trad('nousers') + ' ' + tarRoom);
 			}
 		}
 
-		if (Settings.settings['autoban'] && Settings.settings['autoban'][room]) {
-			text += this.trad('listab') + ' ' + room + ':\n\n';
-			for (var i in Settings.settings['autoban'][room]) {
+		if (Settings.settings['autoban'] && Settings.settings['autoban'][tarRoom]) {
+			text += this.trad('listab') + ' ' + tarRoom + ':\n\n';
+			for (var i in Settings.settings['autoban'][tarRoom]) {
 				text += i + "\n";
 				nBans++;
 			}
 		}
 
-		if (Settings.settings['regexautoban'] && Settings.settings['regexautoban'][room]) {
-			text += '\n' + this.trad('listrab') + ' ' + room + ':\n\n';
-			for (var i in Settings.settings['regexautoban'][room]) {
+		if (Settings.settings['regexautoban'] && Settings.settings['regexautoban'][tarRoom]) {
+			text += '\n' + this.trad('listrab') + ' ' + tarRoom + ':\n\n';
+			for (var i in Settings.settings['regexautoban'][tarRoom]) {
 				text += i + "\n";
 				nBans++;
 			}
@@ -212,7 +283,126 @@ exports.commands = {
 				else this.pmReply(this.trad('err'));
 			}.bind(this));
 		} else {
-			this.pmReply(this.trad('nousers') + ' ' + room);
+			this.pmReply(this.trad('nousers') + ' ' + tarRoom);
+		}
+	},
+
+	/**************************
+	* Zero Tolerance
+	***************************/
+
+	'0tol': 'zerotol',
+	'0tole': 'zerotol',
+	zt: 'zerotol',
+	vzt: 'zerotol',
+	viewzerotol: 'zerotol',
+	zerotol: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return;
+		var ztLevels, defaultLevel, aliases;
+		if (Config.moderation && Config.moderation.zeroToleranceLevels && Config.moderation.zeroToleranceDefaultLevel) {
+			ztLevels = Config.moderation.zeroToleranceLevels;
+			defaultLevel = Config.moderation.zeroToleranceDefaultLevel;
+			aliases = {};
+			for (var l in ztLevels) {
+				if (ztLevels[l].name) aliases[toId(ztLevels[l].name)] = l;
+			}
+		} else {
+			return this.reply(this.trad('nolevels'));
+		}
+		if (cmd === 'vzt' || cmd === 'viewzerotol') {
+			var ztList = [];
+			if (Settings.settings['zerotol']) {
+				for (var i in Settings.settings['zerotol']) {
+					var level = ztLevels[Settings.settings['zerotol'][i]] ? ztLevels[Settings.settings['zerotol'][i]].name : Settings.settings['zerotol'][i];
+					ztList.push(this.trad('user') + ': ' + i + ' | ' + this.trad('level') + ': ' + level);
+				}
+			}
+			if (ztList.length) {
+				Tools.uploadToHastebin(this.trad('ztl') + ':\n\n' + ztList.join('\n'), function (r, linkStr) {
+					if (r) this.pmReply(linkStr);
+					else this.pmReply(this.trad('err'));
+				}.bind(this));
+			} else {
+				this.reply(this.trad('empty'));
+			}
+			return;
+		}
+		var args = arg.split(',');
+		if (!args[1]) {
+			var user = toId(args[0]);
+			var level = getZeroTol(user);
+			if (level) level = (ztLevels[level] && ztLevels[level].name) ? ztLevels[level].name : level;
+			this.reply(this.trad('user') + ' "' + user + '" ' + this.trad('is') + ' ' + (level ? this.trad('y') : this.trad('n')) + ' ' + this.trad('in') + '. ' + (level ? ('(' + level + ')') : ''));
+		} else {
+			var aliases = {
+				'low': 'l',
+				'normal': 'n',
+				'high': 'h'
+			};
+			switch (toId(args[0])) {
+				case 'add':
+					if (args.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+					var added = [], illegal = [], alreadyAdded = [], levelFail = [];
+					for (var i = 1; i < args.length; i++) {
+						var splArg = args[i].split(':');
+						var user = toId(splArg[0]);
+						var level = toId(splArg[1] || defaultLevel);
+						if (aliases[level]) level = aliases[level];
+						if (!user.length || user.length > 18) {
+							illegal.push(user);
+							continue;
+						}
+						if (!ztLevels[level]) {
+							levelFail.push(user);
+							continue;
+						}
+						if (addZeroTolUser(user, level)) {
+							added.push(user);
+						} else {
+							alreadyAdded.push(user);
+						}
+					}
+					var text = '';
+					if (added.length) {
+						text += this.trad('users') + ' "' + added.join('", "') + '" ' + this.trad('add') + '. ';
+						Settings.save();
+					}
+					if (illegal.length) {
+						text += illegal.length + ' ' + this.trad('illegal') + '. ';
+					}
+					if (levelFail.length) {
+						text += this.trad('users') + ' "' + levelFail.join('", "') + '" ' + this.trad('invalid') + '. ';
+					}
+					if (alreadyAdded.length) {
+						text += this.trad('users') + ' "' + alreadyAdded.join('", "') + '" ' + this.trad('already') + '. ';
+					}
+					this.reply(text);
+					break;
+				case 'delete':
+				case 'remove':
+					if (args.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+					var removed = [], notFound = [];
+					for (var i = 1; i < args.length; i++) {
+						var user = toId(args[i]);
+						if (removeZeroTolUser(user)) {
+							removed.push(user);
+						} else {
+							notFound.push(user);
+						}
+					}
+					var text = '';
+					if (removed.length) {
+						text += this.trad('users') + 'User(s) "' + removed.join('", "') + '" ' + this.trad('removed') + '. ';
+						Settings.save();
+					}
+					if (notFound.length) {
+						text += notFound.length + ' ' + this.trad('not') + '. ';
+					}
+					this.reply(text);
+					break;
+				default:
+					this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+			}
 		}
 	},
 
@@ -222,50 +412,69 @@ exports.commands = {
 
 	banphrase: 'banword',
 	banword: function (arg, user, room) {
-		arg = arg.trim().toLowerCase();
+		if (!this.can('banword')) return;
 		if (!arg) return false;
 
-		var tarRoom = room;
+		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
+			if (!this.isRanked('~')) return false;
 			tarRoom = 'global';
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			tarRoom = room;
 		} else {
-			return false;
+			tarRoom = room;
 		}
+
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
+		arg = arg.trim().toLowerCase();
 
 		var bannedPhrases = Settings.settings['bannedphrases'] ? Settings.settings['bannedphrases'][tarRoom] : null;
 		if (!bannedPhrases) {
 			if (bannedPhrases === null) Settings.settings['bannedphrases'] = {};
 			bannedPhrases = (Settings.settings['bannedphrases'][tarRoom] = {});
 		} else if (bannedPhrases[arg]) {
-			return this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('already'));
+			return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('already') + textHelper);
 		}
 		bannedPhrases[arg] = 1;
 
 		Settings.save();
-		this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('ban'));
+		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('ban') + textHelper);
 	},
 
 	unbanphrase: 'unbanword',
 	unbanword: function (arg, user, room) {
+		if (!this.can('banword')) return;
+		if (!arg) return false;
+
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
+			if (!this.isRanked('~')) return false;
 			tarRoom = 'global';
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			tarRoom = room;
 		} else {
-			return false;
+			tarRoom = room;
 		}
 
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
 		arg = arg.trim().toLowerCase();
-		if (!arg) return false;
-		if (!Settings.settings['bannedphrases']) return this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('not'));
+
+		if (!Settings.settings['bannedphrases']) return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('not') + textHelper);
 
 		var bannedPhrases = Settings.settings['bannedphrases'][tarRoom];
-		if (!bannedPhrases || !bannedPhrases[arg]) return this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('not'));
+		if (!bannedPhrases || !bannedPhrases[arg]) return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('not') + textHelper);
 
 		delete bannedPhrases[arg];
 		if (Object.isEmpty(bannedPhrases)) {
@@ -274,90 +483,117 @@ exports.commands = {
 		}
 
 		Settings.save();
-		this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('unban'));
+		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('unban') + textHelper);
 	},
 
 	viewbannedphrases: 'viewbannedwords',
 	vbw: 'viewbannedwords',
 	viewbannedwords: function (arg, user, room) {
-		var tarRoom = room;
+		if (!this.can('banword')) return;
+		var tarRoom;
 		var text = '';
 		var bannedFrom = '';
 		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
+			if (!this.isRanked('~')) return false;
 			tarRoom = 'global';
-			bannedFrom += this.trad('globally');
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			text += '/pm ' + user + ', ';
-			bannedFrom += this.trad('in') + ' ' + room;
 		} else {
-			return false;
+			tarRoom = room;
+		}
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
 		}
 
-		if (!Settings.settings['bannedphrases']) return this.say(room, text + this.trad('nowords'));
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
+
+		if (tarRoom === 'global') bannedFrom += this.trad('globally');
+		else bannedFrom += this.trad('in') + ' ' + tarRoom;
+
+		if (!Settings.settings['bannedphrases']) return this.reply(this.trad('nowords') + textHelper);
 		var bannedPhrases = Settings.settings['bannedphrases'][tarRoom];
-		if (!bannedPhrases) return this.say(room, text + this.trad('nowords'));
+		if (!bannedPhrases) return this.reply(this.trad('nowords') + textHelper);
 
 		if (arg.length) {
-			text += this.trad('phrase') + ' "' + arg + '" ' + this.trad('curr') + ' ' + (bannedPhrases[arg] ? '' : (this.trad('not') + ' ')) + this.trad('banned') + ' ' + bannedFrom + '.';
-			return this.say(room, text);
+			return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('curr') + ' ' + (bannedPhrases[arg] ? '' : (this.trad('not') + ' ')) + this.trad('banned') + ' ' + bannedFrom + '.');
 		}
 
 		var banList = Object.keys(bannedPhrases);
-		if (!banList.length) return this.say(room, text + this.trad('nowords'));
+		if (!banList.length) return this.reply(this.trad('nowords') + textHelper);
 
 		Tools.uploadToHastebin(this.trad('list') + ' ' + bannedFrom + ':\n\n' + banList.join('\n'), function (r, link) {
-			if (r) return this.say(room, text + this.trad('link') + ' ' + bannedFrom + ': ' + link);
+			if (r) return this.pmReply(this.trad('link') + ' ' + bannedFrom + ': ' + link);
 			else this.pmReply(this.trad('err'));
 		}.bind(this));
 	},
 
 	inapropiatephrase: 'inapword',
 	inapword: function (arg, user, room) {
-		arg = arg.trim().toLowerCase();
+		if (!this.can('banword')) return;
 		if (!arg) return false;
 
-		var tarRoom = room;
+		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
+			if (!this.isRanked('~')) return false;
 			tarRoom = 'global';
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			tarRoom = room;
 		} else {
-			return false;
+			tarRoom = room;
 		}
+
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
+		arg = arg.trim().toLowerCase();
 
 		var bannedPhrases = Settings.settings['inapropiatephrases'] ? Settings.settings['inapropiatephrases'][tarRoom] : null;
 		if (!bannedPhrases) {
 			if (bannedPhrases === null) Settings.settings['inapropiatephrases'] = {};
 			bannedPhrases = (Settings.settings['inapropiatephrases'][tarRoom] = {});
 		} else if (bannedPhrases[arg]) {
-			return this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('already'));
+			return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('already') + textHelper);
 		}
 		bannedPhrases[arg] = 1;
 
 		Settings.save();
-		this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('ban'));
+		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('ban') + textHelper);
 	},
 
 	uninapropiatephrase: 'uninapword',
 	uninapword: function (arg, user, room) {
+		if (!this.can('banword')) return;
+		if (!arg) return false;
+
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
+			if (!this.isRanked('~')) return false;
 			tarRoom = 'global';
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			tarRoom = room;
 		} else {
-			return false;
+			tarRoom = room;
 		}
 
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
 		arg = arg.trim().toLowerCase();
-		if (!arg) return false;
-		if (!Settings.settings['inapropiatephrases']) return this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('not'));
+
+		if (!Settings.settings['inapropiatephrases']) return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('not') + textHelper);
 
 		var bannedPhrases = Settings.settings['inapropiatephrases'][tarRoom];
-		if (!bannedPhrases || !bannedPhrases[arg]) return this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('not'));
+		if (!bannedPhrases || !bannedPhrases[arg]) return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('not') + textHelper);
 
 		delete bannedPhrases[arg];
 		if (Object.isEmpty(bannedPhrases)) {
@@ -366,40 +602,48 @@ exports.commands = {
 		}
 
 		Settings.save();
-		this.say(room, this.trad('phrase') + ' "' + arg + '" ' + this.trad('unban'));
+		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('unban') + textHelper);
 	},
 
 	viewinapropiatephrases: 'viewinapwords',
 	viw: 'viewinapwords',
 	viewinapwords: function (arg, user, room) {
-		var tarRoom = room;
+		if (!this.can('banword')) return;
+		var tarRoom;
 		var text = '';
 		var bannedFrom = '';
 		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
+			if (!this.isRanked('~')) return false;
 			tarRoom = 'global';
-			bannedFrom += 'globally';
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			text += '/pm ' + user + ', ';
-			bannedFrom += 'in ' + room;
 		} else {
-			return false;
+			tarRoom = room;
+		}
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
 		}
 
-		if (!Settings.settings['inapropiatephrases']) return this.say(room, text + this.trad('nowords'));
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
+
+		if (tarRoom === 'global') bannedFrom += this.trad('globally');
+		else bannedFrom += this.trad('in') + ' ' + tarRoom;
+
+		if (!Settings.settings['inapropiatephrases']) return this.reply(this.trad('nowords') + textHelper);
 		var bannedPhrases = Settings.settings['inapropiatephrases'][tarRoom];
-		if (!bannedPhrases) return this.say(room, text + this.trad('nowords'));
+		if (!bannedPhrases) return this.reply(this.trad('nowords') + textHelper);
 
 		if (arg.length) {
-			text += this.trad('phrase') + ' "' + arg + '" ' + this.trad('curr') + ' ' + (bannedPhrases[arg] || (this.trad('not') + ' ')) + this.trad('banned') + ' ' + bannedFrom + '.';
-			return this.say(room, text);
+			return this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('curr') + ' ' + (bannedPhrases[arg] || (this.trad('not') + ' ')) + this.trad('banned') + ' ' + bannedFrom + '.');
 		}
 
 		var banList = Object.keys(bannedPhrases);
-		if (!banList.length) return this.say(room, text + this.trad('nowords'));
+		if (!banList.length) return this.reply(this.trad('nowords') + textHelper);
 
 		Tools.uploadToHastebin(this.trad('list') + ' ' + bannedFrom + ':\n\n' + banList.join('\n'), function (r, link) {
-			if (r) return this.say(room, text + this.trad('link') + ' ' + bannedFrom + ': ' + link);
+			if (r) return this.pmReply(this.trad('link') + ' ' + bannedFrom + ': ' + link);
 			else this.pmReply(this.trad('err'));
 		}.bind(this));
 	},
@@ -413,28 +657,45 @@ exports.commands = {
 		if (!this.can('joinphrase')) return;
 		if (!Settings.settings['joinphrases']) Settings.settings['joinphrases'] = {};
 
-		if (this.roomType === 'chat' && toId(arg) in {'on': 1, 'enable': 1}) {
-			if (!this.isRanked('#')) return false;
-			if (!Settings.settings['jpdisable']) Settings.settings['jpdisable'] = {};
-			if (Settings.settings['jpdisable'][room]) delete Settings.settings['jpdisable'][room];
-			else return this.reply(this.trad('ae'));
-			Settings.save();
-			return this.reply(this.trad('e'));
+		var tarRoom;
+		if (this.roomType === 'pm') {
+			if (!this.isRanked('~')) return false;
+			tarRoom = 'global';
+		} else {
+			tarRoom = room;
 		}
 
-		if (this.roomType === 'chat' && toId(arg) in {'off': 1, 'disable': 1}) {
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
+
+		if (Bot.rooms[tarRoom] && Bot.rooms[tarRoom].type === 'chat' && toId(arg) in {'on': 1, 'enable': 1}) {
 			if (!this.isRanked('#')) return false;
 			if (!Settings.settings['jpdisable']) Settings.settings['jpdisable'] = {};
-			if (!Settings.settings['jpdisable'][room]) Settings.settings['jpdisable'][room] = 1;
-			else return this.reply(this.trad('ad'));
+			if (Settings.settings['jpdisable'][tarRoom]) delete Settings.settings['jpdisable'][tarRoom];
+			else return this.reply(this.trad('ae') + textHelper);
 			Settings.save();
-			return this.reply(this.trad('d'));
+			return this.reply(this.trad('e') + textHelper);
+		}
+
+		if (Bot.rooms[tarRoom] && Bot.rooms[tarRoom].type === 'chat' && toId(arg) in {'off': 1, 'disable': 1}) {
+			if (!this.isRanked('#')) return false;
+			if (!Settings.settings['jpdisable']) Settings.settings['jpdisable'] = {};
+			if (!Settings.settings['jpdisable'][tarRoom]) Settings.settings['jpdisable'][tarRoom] = 1;
+			else return this.reply(this.trad('ad') + textHelper);
+			Settings.save();
+			return this.reply(this.trad('d') + textHelper);
 		}
 
 		var args = arg.split(",");
 
 		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
-		if (Settings.settings['jpdisable'] && Settings.settings['jpdisable'][room]) return this.reply(this.trad('dis'));
+		if (Settings.settings['jpdisable'] && Settings.settings['jpdisable'][tarRoom]) return this.reply(this.trad('dis') + textHelper);
 
 		if (toId(args[0]) !== "delete" && args.length === 2) {
 			arg = "set," + toId(args[0]) + "," + arg.substr(args[0].length + 1);
@@ -447,16 +708,6 @@ exports.commands = {
 		var user = toId(args[1]);
 		if (!user) return false;
 
-		var tarRoom;
-		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
-			tarRoom = 'global';
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			tarRoom = room;
-		} else {
-			return false;
-		}
-
 		switch (toId(args[0])) {
 			case 'set':
 			case 'add':
@@ -466,14 +717,14 @@ exports.commands = {
 				if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
 				Settings.settings['joinphrases'][tarRoom][user] = Tools.stripCommands(arg);
 				Settings.save();
-				this.reply(this.trad('jpfor') + " " + user + ' ' + this.trad('modified') + ' ' + ((tarRoom === 'global') ? this.trad('globally') : this.trad('forthis')));
+				this.reply(this.trad('jpfor') + " " + user + ' ' + this.trad('modified') + ' ' + ((tarRoom === 'global') ? this.trad('globally') : (this.trad('forthis') + textHelper)));
 				break;
 			case 'delete':
 				if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
-				if (!Settings.settings['joinphrases'][tarRoom][user]) return this.reply(this.trad('jpfor') + " " + user + " " + this.trad('not') + " " + ((tarRoom === 'global') ? this.trad('globally') : this.trad('forthis')));
+				if (!Settings.settings['joinphrases'][tarRoom][user]) return this.reply(this.trad('jpfor') + " " + user + " " + this.trad('not') + " " + ((tarRoom === 'global') ? this.trad('globally') : (this.trad('forthis') + textHelper)));
 				delete Settings.settings['joinphrases'][tarRoom][user];
 				Settings.save();
-				this.reply(this.trad('jpfor') + " " + user + ' ' + this.trad('del') + ' ' + ((tarRoom === 'global') ? this.trad('globally') : this.trad('forthis')));
+				this.reply(this.trad('jpfor') + " " + user + ' ' + this.trad('del') + ' ' + ((tarRoom === 'global') ? this.trad('globally') : (this.trad('forthis') + textHelper)));
 				break;
 			default:
 				return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
@@ -484,17 +735,25 @@ exports.commands = {
 	viewjoinphrases: function (arg, by, room, cmd) {
 		if (!this.can('joinphrase')) return;
 		if (!Settings.settings['joinphrases']) Settings.settings['joinphrases'] = {};
-		arg = toId(arg);
 
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isExcepted()) return false;
+			if (!this.isRanked('~')) return false;
 			tarRoom = 'global';
-		} else if (this.can('banword') && this.roomType === 'chat') {
-			tarRoom = room;
 		} else {
-			return false;
+			tarRoom = room;
 		}
+
+		var targetObj = getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
+
+		arg = toId(arg);
 
 		if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
 
@@ -508,9 +767,9 @@ exports.commands = {
 		for (var i in Settings.settings['joinphrases'][tarRoom]) {
 			List.push(i + " => " + Settings.settings['joinphrases'][tarRoom][i]);
 		}
-		if (!List.length) return this.reply(this.trad('empty'));
-		Tools.uploadToHastebin(this.trad('jp') + " " + (tarRoom === 'global' ? this.trad('globally') : (this.trad('in') + " " + room)) + ":\n\n" + List.join('\n'), function (r, link) {
-			if (r) return this.pmReply(this.trad('jp') + ' ' + (tarRoom === 'global' ? this.trad('globally') : (this.trad('in') + " " + room)) + ': ' + link);
+		if (!List.length) return this.reply(this.trad('empty') + textHelper);
+		Tools.uploadToHastebin(this.trad('jp') + " " + (tarRoom === 'global' ? this.trad('globally') : (this.trad('in') + " " + tarRoom)) + ":\n\n" + List.join('\n'), function (r, link) {
+			if (r) return this.pmReply(this.trad('jp') + ' ' + (tarRoom === 'global' ? this.trad('globally') : (this.trad('in') + " " + tarRoom)) + ': ' + link);
 			else this.pmReply(this.trad('err'));
 		}.bind(this));
 	},
@@ -524,13 +783,13 @@ exports.commands = {
 	modsettings: 'mod',
 	mod: function (arg, by, room, cmd) {
 		if (!this.isRanked('#')) return false;
-		var targetRoom = room;
+		var tarRoom = room;
 		var args = arg.split(",");
 		if (args.length > 2) {
 			if (!this.isRanked('~')) return false;
-			targetRoom = toId(args[0]);
+			tarRoom = toRoomid(args[0]);
 		}
-		if (!Bot.rooms[targetRoom] || Bot.rooms[targetRoom].type !== 'chat') return this.reply(this.trad('notchat'));
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + ' (' + tarRoom + ')');
 		var modTable = {
 			'caps': 1,
 			'stretching': 1,
@@ -541,7 +800,8 @@ exports.commands = {
 			'spoiler': 1,
 			'youtube': 1,
 			'psservers': 1,
-			'multiple': 1
+			'multiple': 1,
+			'zerotol': 1
 		};
 		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		var mod = (args.length < 3) ? toId(args[0]) : toId(args[1]);
@@ -550,23 +810,23 @@ exports.commands = {
 		if (!(mod in modTable)) return this.reply(this.trad('valid') + ": " + Object.keys(modTable).sort().join(", "));
 
 		if (!Settings.settings['modding']) Settings.settings['modding'] = {};
-		if (!Settings.settings['modding'][targetRoom]) Settings.settings['modding'][targetRoom] = {};
+		if (!Settings.settings['modding'][tarRoom]) Settings.settings['modding'][tarRoom] = {};
 
 		if (set === 'on') {
-			if (Settings.settings['modding'][targetRoom][mod] === 1) {
-				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('ae') + ' ' + targetRoom);
+			if (Settings.settings['modding'][tarRoom][mod] === 1) {
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('ae') + ' ' + tarRoom);
 			} else {
-				Settings.settings['modding'][targetRoom][mod] = 1;
+				Settings.settings['modding'][tarRoom][mod] = 1;
 				Settings.save();
-				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('e') + ' ' + targetRoom);
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('e') + ' ' + tarRoom);
 			}
 		} else {
-			if (Settings.settings['modding'][targetRoom][mod] === 0) {
-				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('ad') + ' ' + targetRoom);
+			if (Settings.settings['modding'][tarRoom][mod] === 0) {
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('ad') + ' ' + tarRoom);
 			} else {
-				Settings.settings['modding'][targetRoom][mod] = 0;
+				Settings.settings['modding'][tarRoom][mod] = 0;
 				Settings.save();
-				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('d') + ' ' + targetRoom);
+				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('d') + ' ' + tarRoom);
 			}
 		}
 	}

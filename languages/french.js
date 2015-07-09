@@ -3,6 +3,9 @@
 		/*
 		* Basic Commands
 		*/
+		about: {
+			'about': 'Je suis un **Robot de Pokémon Showdown** qui a été écrit en Javascript pour node. Par Ecuacion'
+		},
 		time: {'time': 'Temps de Bot'},
 		uptime: {
 			'week': 'semaine',
@@ -26,21 +29,21 @@
 			'n': 'changer de nick à'
 		},
 		language: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'nolang': 'Vous devez spécifier une langue',
 			'v': 'Les langues possibles sont',
-			'l': 'Langue de la salle est maintenant Français'
+			'l': 'La langue de la salle est maintenant Français'
 		},
 		set: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'denied': 'Accès refusé',
 			'u1': 'Usage',
 			'u2': '[permission], [rank]',
 			'ps': 'Permissions',
 			'p': 'Permission',
-			'd': 'dans cette salle est maintenant handicapé',
-			'a': 'dans cette salle est maintenant avaliable pour tous les utilisateurs',
-			'r': 'dans cette salle est maintenant avaliable pour les utilisateurs ayant rang',
+			'd': 'Cette salle est maintenant handicapé',
+			'a': 'Cette salle est maintenant disponible pour tous les utilisateurs',
+			'r': 'Cette salle est maintenant disponible pour les utilisateurs ayant le rang',
 			'r2': 'ou haut',
 			'not1': 'Rank',
 			'not2': 'non trouvé'
@@ -49,15 +52,15 @@
 		* Dyn Commands
 		*/
 		dyn: {
-			'nocmds': 'Il n\'y à pas de commandes',
+			'nocmds': 'Il n\'y a pas de commandes',
 			'list': 'Commandes dynamiques',
 			'c': 'Commande',
-			'notexist': 'ne pas existe'
+			'notexist': 'n\'existe pas'
 		},
 		delcmd: {
 			'c': 'Commande',
 			'd': 'a été supprimé',
-			'n': 'ne pas existe'
+			'n': 'n\'existe pas'
 		},
 		setcmd: {
 			'notemp': 'Il n\'y a aucune chaîne temporaire pour définir, utiliser **stemp** avant de faire cela',
@@ -68,7 +71,7 @@
 		setcmdalias: {
 			'u1': 'Usage',
 			'u2': '[alias], [cmd]',
-			'n': 'est pas une commande dynamique',
+			'n': 'n\'est pas une commande dynamique',
 			'c': 'Commande',
 			'alias': 'est maintenant un alias de',
 			'already': 'est un alias. Vous ne pouvez pas définir des alias d\'un autre alias'
@@ -79,15 +82,15 @@
 		pick: {'err': 'Vous devez donner au moins 2 choix valides'},
 		randomanswer: {
 			'answers': [
-				'Signes soulignent oui.',
+				'Les signes disent que oui.',
 				'Oui.',
-				'Réponse floue, essayez à nouveau. ',
+				'La réponse floue, essayez à nouveau. ',
 				'Sans aucun doute.',
-				'Mes sources disent pas.',
+				'Mes sources disent non.',
 				'Comme je le vois, oui.',
 				'Vous pouvez compter sur elle.',
 				'Concentrez-vous et demander à nouveau.',
-				'Perspectives pas si bon.',
+				'Perspectives pas si bonnes.',
 				'Il est donc décidément. ',
 				'Mieux vaut ne pas vous dire maintenant.',
 				'Très douteux.',
@@ -97,7 +100,7 @@
 				'Probablement.',
 				'Demandez à nouveau plus tard. ',
 				'Ma réponse est non.',
-				'Perspectives bonne.',
+				'Perspectives bonnes.',
 				'Ne pas compter sur elle.'
 			]
 		},
@@ -110,10 +113,10 @@
 		youtube: {
 			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
 			'u': 'Usage',
-			'ae': 'YouTube reconnaissance du lien est déjà disponible pour la salle',
-			'e': 'YouTube reconnaissance de lien est maintenant disponible pour cette salle',
-			'ad': 'YouTube reconnaissance du lien est déjà désactivé pour la salle',
-			'd': 'YouTube reconnaissance de lien est maintenant désactivée pour cette salle'
+			'ae': 'La reconnaissance YouTube est déjà disponible pour la salle',
+			'e': 'La reconnaissance de lien YouTube est  maintenant disponible pour cette salle',
+			'ad': 'La reconnaissance de lien YouTube est  déjà désactivé pour la salle',
+			'd': 'La reconnaissance de lien YouTube  est  maintenant désactivée pour cette salle'
 		},
 		/*
 		* Pokemon Commands
@@ -122,60 +125,60 @@
 		gen: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
 			'err2': 'Vous devez spécifier un pokemon, mouvement, objet ou capacité',
-			'nfound': 'Pokemon, mouvement, objet ou capacité introuvable',
+			'nfound': 'Pokémon, mouvement, objet ou capacité introuvable',
 			'g': 'Génération de'
 		},
 		randommoves: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
-			'err2': 'Vous devez spécifier un pokemon',
+			'err2': 'Vous devez spécifier un pokémon',
 			'r': 'Random singles moves',
 			'rd': 'Random doubles/triples moves',
-			'nfound': 'Pokemon introuvable'
+			'nfound': 'Pokémon introuvable'
 		},
 		heavyslam: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
 			'err2': 'Vous devez spécifier 2 pokemon',
-			'n1': 'L\'attaquant Pokemon introuvable',
-			'n2': 'Defender Pokemon introuvable',
+			'n1': 'L\'attaquant Pokémon introuvable',
+			'n2': 'Le défenseur Pokémon est introuvable',
 			's': 'Heavy slam/Heat crash base power'
 		},
 		prevo: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
-			'p1': 'Pokemon',
+			'p1': 'Pokémon',
 			'p2': 'n\'a pas preevo',
-			'nfound': 'Pokemon introuvable'
+			'nfound': 'Pokémon introuvable'
 		},
 		priority: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
-			'err2': 'Pokemon introuvable',
-			'err3': 'Aucun mouvement trouvés'
+			'err2': 'Pokémon introuvable',
+			'err3': 'Aucun mouvement trouvé'
 		},
 		boosting: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
-			'err2': 'Pokemon introuvable',
-			'err3': 'Aucun mouvement trouvés'
+			'err2': 'Pokémon introuvable',
+			'err3': 'Aucun mouvement trouvé'
 		},
 		recovery: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
 			'err2': 'Pokemon introuvable',
-			'err3': 'Aucun mouvement trouvés'
+			'err3': 'Aucun mouvement trouvé'
 		},
 		hazard: {
 			'err': 'Une erreur est survenue, essayez à nouveau plus tard',
-			'err2': 'Pokemon introuvable',
-			'err3': 'Aucun mouvement trouvés'
+			'err2': 'Pokémon introuvable',
+			'err3': 'Aucun mouvement trouvé'
 		},
 		/*
 		* Battle Commands
 		*/
 		reloadteams: {'s': 'Équipes rechargés', 'e': 'Une erreur est survenue, ne pouvait pas recharger équipes'},
 		blockchallenges: {
-			'b': 'Défis bloquée',
+			'b': 'Défis bloqués',
 			'nb': 'Défis débloqués'
 		},
 		move: {'notbattle': 'Cette commande est disponible uniquement pour les salles de bataille'},
 		jointours: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'ad': 'Mode "tour autojoin" est déjà désactivé pour la salle',
 			'd': 'Mode "tour autojoin" est déjà activé pour la salle',
 			'ae': 'Mode "tour autojoin" est déjà activé pour la salle',
@@ -184,39 +187,39 @@
 		searchbattle: {
 			'e1': 'Vous devez spécifier un format',
 			'e21': 'Format',
-			'e22': 'est pas valable pour la recherche bataille',
-			'e31': 'Je ne dois équipes pour la recherche bataille en format',
-			'e32': 'Utiliser "team add" commande pour ajouter d\'autres équipes de bot'
+			'e22': 'est pas valable pour la recherche de bataille',
+			'e31': 'Je ne dois pas faire d\'équipes pour la recherche de batailles en format',
+			'e32': 'Utiliser "team add" pour ajouter d\'autres équipes de bot'
 		},
 		ladderstart: {
-			'stop': 'Laddering arrêté',
-			'start': 'Maintenant laddering en format',
+			'stop': 'Laddering a arrêté',
+			'start': 'Laddering en format',
 			'e1': 'Vous devez spécifier un format',
 			'e21': 'Format',
-			'e22': 'est pas valable pour la recherche bataille',
-			'e31': 'Je ne dois équipes pour la recherche bataille en format',
-			'e32': 'Utiliser "team add" commande pour ajouter d\'autres équipes de bot'
+			'e22': 'est pas valable pour la recherche de bataille',
+			'e31': 'Je ne dois pas faire d\'équipes pour la recherche bataille en format',
+			'e32': 'Utiliser "team add" pour ajouter d\'autres équipes sur le bot'
 		},
 		challenge: {
 			'e11': 'Usage',
 			'e12': '[user], [format]',
 			'e21': 'Format',
-			'e22': 'est pas valable pour contester',
-			'e31': 'Je ne dois équipes pour contester en format',
-			'e32': 'Utiliser "team add" commande pour ajouter d\'autres équipes de bot'
+			'e22': 'est pas valable pour refuser',
+			'e31': 'Je ne dois pas faire d\'équipes pour contester en format',
+			'e32': 'Utiliser "team add" pour ajouter d\'autres équipes sur bot'
 		},
 		jointour: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'e1': 'Il n\'y a pas un tournoi dans cette salle',
-			'e2': 'Erreur: Déjà rejoint',
-			'e3': 'Erreur: tournoi a déjà commencé',
-			'e41': 'Je ne dois équipes pour rejoindre un tournoi en format',
-			'e42': 'Utiliser "team add" commande pour ajouter d\'autres équipes de bot'
+			'e2': 'Erreur: Déjà dans le tournoi',
+			'e3': 'Erreur: Le tournoi a déjà commencé',
+			'e41': 'Je ne dois pas faire d\'équipes pour rejoindre un tournoi en format',
+			'e42': 'Utiliser "team add" pour ajouter d\'autres équipes sur bot'
 		},
 		leavetour: {
 			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
-			'e1': 'Il n\'y a pas un tournoi dans cette salle',
-			'e2': 'Erreur: Pas encore adhérer'
+			'e1': 'Il n\'y a pas de tournoi dans cette salle',
+			'e2': 'Erreur: Pas encore dans le tournoi'
 		},
 		battleset: {
 			'u1': 'Usage',
@@ -225,39 +228,39 @@
 			'p': 'Permission',
 			'd': 'dans des batailles est maintenant désactivé',
 			'a': 'dans des batailles est maintenant disponible pour tous les utilisateurs',
-			'r': 'dans des batailles est maintenant disponible pour les utilisateurs de rang',
+			'r': 'dans des batailles est maintenant disponible pour les utilisateurs du rang',
 			'r2': 'ou plus',
 			'not1': 'Rang',
 			'not2': 'pas trouvé'
 		},
 		team: {
 			'u1': 'Usage',
-			'u2': '[add/delete], [nom], [format], [Exportable dans Hastebin]',
+			'u2': '[Ajouter/Supprimer], [nom], [format], [Exportable dans un Hastebin]',
 			'format': 'Format',
-			'notexists': 'ne pas existe',
+			'notexists': 'n\'existe existe',
 			'download': 'Le téléchargement et l\'analyse de l\'équipe',
 			'team': 'Équipe',
 			'added': 'ajouté à la liste des équipes de bots',
-			'err1': 'Erreur: le document Hastebin introuvable',
-			'err2': 'Erreur: les données de l\'équipe non valide',
+			'err1': 'Erreur: le document Hastebin est introuvable',
+			'err2': 'Erreur: les données de l\'équipe ne sont pas valides',
 			'err3': 'Erreur: Il y avait déjà une équipe avec ce nom, utiliser un autre nom ou supprimer l\'autre équipe',
-			'err4': 'Erreur: Impossible d\'obtenir des données à partir Hastebin',
+			'err4': 'Erreur: Impossible d\'obtenir des données à partir d\'Hastebin',
 			'removed': 'supprimé avec succès de la liste des équipes'
 		},
 		teamlist: {
-			'list': 'Liste des équipes de Bot',
-			'empty': 'Liste des équipes de Bot est vide',
+			'list': 'La liste des équipes du Bot',
+			'empty': 'La siste des équipes du Bot est vide',
 			'id': 'Id',
 			'format': 'Format',
-			'pokemon': 'Pokemon',
-			'err': 'Erreur: échec de télécharger équipes liste Hastebin'
+			'pokémon': 'Pokémon',
+			'err': 'Erreur: échec de téléchargement des équipes listés sur Hastebin'
 		},
 		/*
 		* Moderation Commands
 		*/
 		autoban: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
-			'notmod': 'exige modérateur rang (@) ou plus pour bannir des utilisateurs',
+			'notchat': 'Cette commande est disponibles seulement pour les salles de chat',
+			'notmod': 'exige modérateur (@) ou plus pour bannir des utilisateurs',
 			'notarg': 'Vous devez spécifier au moins un utilisateur à la liste noire',
 			'bu': 'Utilisateur sur la liste noire',
 			'u': 'Utilisateur(s)',
@@ -265,21 +268,21 @@
 			'already': 'déjà présent dans la liste noire.',
 			'all': 'Tous',
 			'other': 'autre',
-			'illegal': 'les utilisateurs devaient entailles illégales et ne sont pas mis à l\'index.'
+			'illegal': 'les utilisateurs devaient faire des entailles illégales et ne sont plus mis à l\'index.'
 		},
 		unautoban: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
-			'notmod': 'exige modérateur rang (@) ou plus pour bannir des utilisateurs',
-			'notarg': 'Vous devez spécifier au moins un utilisateur de unblacklist.',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
+			'notmod': 'exige modérateur (@) ou plus pour bannir des utilisateurs',
+			'notarg': 'Vous devez spécifier au moins un utilisateur pour unblacklist.',
 			'u': 'Utilisateur(s)',
 			'r': 'retiré de la liste noire avec succès.',
 			'noother': 'Aucun autre',
 			'no': 'Aucun',
-			'nopresent': 'utilisateurs spécifiés étaient présents dans la liste noire.'
+			'nopresent': 'Les utilisateurs spécifiés n\'étaient pas présents dans la liste noire.'
 		},
 		regexautoban: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
-			'notmod': 'exige modérateur rang (@) ou plus pour bannir des utilisateurs',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
+			'notmod': 'exige modérateur (@) ou plus pour bannir des utilisateurs',
 			'notarg': 'Vous devez spécifier une expression régulière à la liste noire.',
 			're': 'Expression régulière',
 			'notadd': 'ne peut pas être ajouté à la liste noire. Ne soyez pas machiavélique!',
@@ -288,8 +291,8 @@
 			'add': 'a été ajouté à la liste noire.'
 		},
 		unregexautoban: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
-			'notmod': 'exige modérateur rang (@) ou plus pour bannir des utilisateurs',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
+			'notmod': 'exige modérateur (@) ou plus pour bannir des utilisateurs',
 			'norarg': 'Vous devez spécifier une expression régulière à la liste noire.',
 			'notpresent': 'est pas présent dans la liste noire.',
 			're': 'Expression régulière',
@@ -297,7 +300,7 @@
 			'r': 'a été retiré de la liste noire.'
 		},
 		viewblacklist: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'iu': 'Nom d\'utilisateur invalide',
 			'u': 'Utilisateur',
 			'currently': 'est actuellement',
@@ -306,75 +309,104 @@
 			'nousers': 'Aucun utilisateur est sur la liste noire',
 			'listab': 'Les utilisateurs suivants sont interdits dans',
 			'listrab': 'Les expressions régulières suivantes sont interdites dans',
-			'err': 'télécharger l\'échec, ne pouvait pas télécharger la liste noire à hastebin'
+			'err': 'Erreur : Je ne peux pas télécharger la liste noire sur hastebin'
+		},
+		zerotol: {
+			'nolevels': 'Il n\'y a pas de niveaux de tolérance zéro',
+			'user': 'Utilisateur',
+			'level': 'Niveau',
+			'ztl': 'Liste de tolérance zéro',
+			'empty': 'Zero tolerance list is empty',
+			'is': 'est actuellement',
+			'n': 'pas',
+			'y': '',
+			'in': 'sur le liste de tolérance zéro',
+			'u1': 'Usage',
+			'u2': '[add/delete], [Utilisateur:niveau]...',
+			'users': 'Utilisateur(s)',
+			'add': 'ajouté à la liste de tolérance zéro',
+			'illegal': 'utilisateurs avaient entailles illégales',
+			'invalid': 'avaient des niveaux invalides',
+			'already': 'étaient déjà présents dans la liste',
+			'removed': 'retiré de la liste de tolérance zéro',
+			'not': 'utilisateurs sont pas sur la liste',
+			'err': 'Erreur : Je ne peux pas télécharger la liste de tolérance zéro sur hastebin'
 		},
 		banword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
-			'already': 'est déjà interdit.',
-			'ban': 'est désormais interdit.'
+			'already': 'est déjà interdite.',
+			'ban': 'est désormais interdite.'
 		},
 		unbanword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
-			'not': 'est pas actuellement interdit.',
-			'unban': 'a été débanni.'
+			'not': 'n\'est pas actuellement interdite.',
+			'unban': 'a été débannie.'
 		},
 		viewbannedwords: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'in': 'dans',
 			'globally': 'globalement',
 			'phrase': 'Phrase',
-			'nowords': 'Pas de phrase sont interdits dans cette salle.',
+			'nowords': 'Pas de phrases interdites dans cette salle.',
 			'curr': 'est actuellement',
 			'not': 'pas',
-			'banned': 'interdit',
+			'banned': 'interdite',
 			'list': 'Les phrases suivantes sont interdites',
 			'link': 'Phrases interdites',
-			'err': 'télécharger l\'échec, ne pouvait pas télécharger banwords à hastebin'
+			'err': 'Erreur: Je ne peux pas télécharger banwords à hastebin'
 		},
 		inapword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
-			'already': 'est déjà inapproprié.',
-			'ban': 'est maintenant inapproprié.'
+			'already': 'est déjà inappropriée.',
+			'ban': 'est maintenant inappropriée.'
 		},
 		uninapword: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'phrase': 'Phrase',
-			'not': 'est pas actuellement inapproprié.',
-			'unban': 'est pas maintenant inappropriée.'
+			'not': 'est actuellement pas inappropriée.',
+			'unban': 'est maintenant plus inappropriée.'
 		},
 		viewinapwords: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'in': 'dans',
 			'globally': 'globalement',
 			'phrase': 'Phrase',
-			'nowords': 'Pas de phrase sont inappropriées dans cette salle.',
+			'nowords': 'Pas de phrase inappropriées dans cette salle.',
 			'curr': 'est actuellement',
 			'not': 'pas',
-			'banned': 'inapproprié',
+			'banned': 'inappropriée',
 			'list': 'Les phrases suivantes sont inappropriées',
 			'link': 'Phrases inappropriés',
-			'err': 'télécharger l\'échec, ne pouvait pas télécharger phrases inappropriés à hastebin'
+			'err': 'Erreur : Je ne pouvais pas télécharger les phrases inappropriées sur hastebin'
 		},
 		joinphrase: {
-			'ae': 'Rejoignez Phrases déjà permis pour cette salle',
-			'e': 'Rejoignez Phrases sont maintenant permis pour cette salle"',
-			'ad': 'Rejoignez Phrases déjà désactivé pour cette salle"',
-			'd': 'Rejoignez Phrases sont maintenant désactivé pour cette salle',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
+			'ae': 'Ces phrases de connections sont déjà permis pour cette salle',
+			'e': 'Ces phrases de connections sont maintenant permis pour cette salle"',
+			'ad': 'Ces phrases de connections sont déjà désactivées pour cette salle"',
+			'd': 'Ces phrases de connections sont maintenant désactivé pour cette salle',
 			'u1': 'Usage',
-			'u2': '[set/delete], [utilisateur], [phrase]',
-			'dis': 'Rejoignez phrases sont désactivées dans cette salle',
-			'jpfor': 'Rejoignez Phrase pour l\'utilisateur',
-			'modified': 'a été modifié',
+			'u2': '[Mettre/supprimé], [utilisateur], [phrase]',
+			'dis': 'Ces phrases de connection sont désactivées dans cette salle',
+			'jpfor': 'Ces phrases de connection sont interdites pour l\'utilisateur',
+			'modified': 'a été modifiée',
 			'globally': 'globalement.',
 			'forthis': 'pour cette salle.',
-			'del': 'a été supprimé',
-			'not': 'ne pas existe'
+			'del': 'a été supprimée',
+			'not': 'n\'existe pas'
 		},
 		viewjoinphrases: {
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'iu': 'Nom d\'utilisateur invalide.',
-			'not': 'Aucune Rejoignez Phrase fixé pour',
-			'empty': 'Il ne sont pas de Rejoignez Phrases dans cette salle.',
-			'jp': 'Rejoignez Phrases ensemble',
+			'not': 'Aucune de ces phrases n\'est fixé pour',
+			'empty': 'Ce n\'est pas des phrases de connection dans cette salle.',
+			'jp': 'Phrase de connection ensemble',
 			'globally': 'globalement',
 			'in': 'dans',
-			'err': 'télécharger l\'échec, ne pourrait télécharger rejoindre phrases pour hastebin'
+			'err': 'Erreur: Je ne peux pas télécharger les phrases de connections sur hastebin'
 		},
 		mod: {
 			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
@@ -382,25 +414,25 @@
 			'u2': '(room - optional), [mod], [on/off]',
 			'valid': 'Modérations valides sont',
 			'mod': 'Modération pour',
-			'ae': 'déjà sur ON pour la salle',
-			'e': 'est maintenant ON pour la salle',
-			'ad': 'déjà sur OFF pour la salle',
-			'd': 'est maintenant OFF pour la salle'
+			'ae': 'déjà sur ACTIVÉE pour la salle',
+			'e': 'est maintenant ACTIVÉE pour la salle',
+			'ad': 'déjà sur DÉSACTIVÉE pour la salle',
+			'd': 'est maintenant DÉSACTIVÉE pour la salle'
 		},
 		/*
 		* Tour Commands
 		*/
-		tourhelp: {'h': 'tour (format), (secondes pour démarrer ou OFF), (minutes autodq ou OFF) (max Utilisateurs ou OFF), (elimination ou roundrobin). Tous les arguments sont optionnels.'},
+		tourhelp: {'h': 'tour (format), (secondes pour démarrer ou DÉSACTIVÉE), (minutes autodq ou DÉSACTIVÉE) (Utilisateurs max ou DÉSACTIVÉE), (elimination ou roundrobin). Tous les arguments sont optionnels.'},
 		tournament: {
-			'e1': 'exige modérateur rang (@) ou plus pour créer tournois',
-			'e2': 'Il ya déjà un tournoi dans cette salle',
+			'e1': 'exige modérateur (@) ou plus pour créer tournois',
+			'e2': 'Il y\'a déjà un tournoi dans cette salle',
 			'e31': 'Format',
 			'e32': 'est pas valide pour les tournois',
-			'e4': 'Temps de commencer est pas une heure valide',
+			'e4': 'Le temps de commencer n\'est pas une heure valide',
 			'e5': 'Autodq est pas une heure valide',
-			'e6': 'Nombre d\'utilisateurs Max est pas valable',
-			'e7': 'Type de tour est pas valide. Les types valides sont: elimination, roundrobin',
-			'notstarted': 'Erreur: le tournoi n\'a pas commencé, probablement parce que je suis pas la permission de créer des tournois ou des commandes ont été changés.'
+			'e6': 'Nombre d\'utilisateurs max est pas disponible',
+			'e7': 'Le type de tour n\est pas valide. Les types valides sont: elimination, roundrobin',
+			'notstarted': 'Erreur: le tournoi n\'a pas commencé, probablement parce que je n\'ai pas la permission de créer des tournois ou des commandes ont été changées.'
 		}
 	},
 

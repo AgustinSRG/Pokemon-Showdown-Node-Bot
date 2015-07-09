@@ -12,9 +12,10 @@ function setPermission(room, perm, rank) {
 Settings.addPermissions(['say']);
 
 exports.commands = {
-	about: 'bot',
-	bot: function (arg, by, room, cmd) {
-		var text = "I'm a **Pokemon Showdown Bot** written in JavaScript for Node. By: Ecuacion (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)";
+	credits: 'about',
+	bot: 'about',
+	about: function (arg, by, room, cmd) {
+		var text = this.trad('about') + " (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)";
 		if (!this.isRanked('#')) {
 			this.pmReply(text);
 		} else {
@@ -25,7 +26,7 @@ exports.commands = {
 	bottime: 'time',
 	time: function (arg, by, room, cmd) {
 		var f = new Date();
-		var text = "**" + this.trad('time') + ":** " + Tools.addLeftZero(f.getHours(), 2) + ":" + Tools.addLeftZero(f.getMinutes(), 2) + ":" + Tools.addLeftZero(f.getSeconds(), 2);
+		var text = "**" + this.trad('time') + ":** __" + f.toString() + "__";
 		if (!this.isRanked('#')) {
 			this.pmReply(text);
 		} else {

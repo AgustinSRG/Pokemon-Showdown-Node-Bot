@@ -176,6 +176,11 @@ Credits
 
  - [Ecuacion](https://github.com/Ecuacion/) (Owner)
  
+Contributors:
+
+ - [Irraquated](https://github.com/Irraquated) (Languages and bug fixes)
+ - [panpawn](https://github.com/panpawn) (YouTube feature, fixes)
+
 Part of this code is imported from other developments, so credits to:
 		
  - Quinella, [Morfent](https://github.com/Morfent) and [TalkTakesTime](https://github.com/TalkTakesTime) developers of [Pokemon-Showdown-Bot](https://github.com/TalkTakesTime/Pokemon-Showdown-Bot)

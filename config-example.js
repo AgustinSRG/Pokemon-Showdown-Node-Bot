@@ -55,7 +55,7 @@ exports.exceptions = {
 	//userid: 'rank' or userid: true for full access
 };
 
-exports.ranks = ['+', '%', '@', '#', '&', '~'];
+exports.ranks = ['+', '\u2605', '%', '@', '#', '&', '~'];
 
 /*
 * Commands configuration
@@ -120,6 +120,19 @@ exports.moderation = {
 	modException: '%', // Min rank for not receive moderation
 
 	allowmute: true,
+	disableModNote: false,
+
+	MOD_CONSTS: {
+		FLOOD_MESSAGE_NUM: 5,
+		FLOOD_PER_MSG_MIN: 500, // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
+		FLOOD_MESSAGE_TIME: 6 * 1000,
+
+		MIN_CAPS_LENGTH: 18,
+		MIN_CAPS_PROPORTION: 0.8,
+
+		MAX_STRETCH: 7,
+		MAX_REPEAT: 4
+	},
 
 	modDefault: {
 		//basic mods
@@ -137,7 +150,10 @@ exports.moderation = {
 		'psservers': 1,
 
 		//multiple infraction
-		'multiple': 1
+		'multiple': 1,
+
+		//zero tolerance
+		'zerotol': 1
 	},
 
 	punishments: [
@@ -150,6 +166,13 @@ exports.moderation = {
 	psServersExcepts: {
 		"showdown": 1,
 		"smogtours": 1
+	},
+
+	zeroToleranceDefaultLevel: 'h',
+	zeroToleranceLevels: {
+		'l': {name: 'Low', value: 1},
+		'n': {name: 'Normal', value: 2},
+		'h': {name: 'High', value: 3}
 	}
 };
 
