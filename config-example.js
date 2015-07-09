@@ -55,7 +55,7 @@ exports.exceptions = {
 	//userid: 'rank' or userid: true for full access
 };
 
-exports.ranks = ['+', '%', '@', '#', '&', '~'];
+exports.ranks = ['+', '\u2605', '%', '@', '#', '&', '~'];
 
 /*
 * Commands configuration
