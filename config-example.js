@@ -172,7 +172,7 @@ exports.moderation = {
 	zeroToleranceLevels: {
 		'l': {name: 'Low', value: 1},
 		'n': {name: 'Normal', value: 2},
-		'h': {name: 'High', value: 3},
+		'h': {name: 'High', value: 3}
 	}
 };
 
