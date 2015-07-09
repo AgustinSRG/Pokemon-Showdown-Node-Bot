@@ -2,7 +2,7 @@
 	Battle commands (challenges, tours, ladder)
 */
 
-Settings.addPermissions(['challenge', 'searchbattle', 'jointour']);
+Settings.addPermissions(['challenge', 'searchbattle', 'jointour', 'ladderstart']);
 
 exports.commands = {
 	reloadteams: function (arg, by, room, cmd) {
@@ -84,7 +84,7 @@ exports.commands = {
 
 	ladderstop: 'ladderstart',
 	ladderstart: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.can('ladderstart')) return false;
 		if (cmd === 'ladderstop') {
 			if (Features['battle'].LadderManager.stop()) this.reply(this.trad('stop'));
 			return;
