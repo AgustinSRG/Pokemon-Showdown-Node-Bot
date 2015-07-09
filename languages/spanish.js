@@ -206,7 +206,8 @@
 			'e21': 'El formato',
 			'e22': 'no es válido para retos',
 			'e31': 'No tengo equipos para retar en el formato',
-			'e32': 'Edite teams.js para agregar más equipos'
+			'e32': 'Edite teams.js para agregar más equipos',
+			'spf': 'Por favor especificar un formato' // I'm assuming this is wrong btw :P
 		},
 		jointour: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
