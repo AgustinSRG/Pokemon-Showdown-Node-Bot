@@ -26,7 +26,7 @@ exports.commands = {
 	bottime: 'time',
 	time: function (arg, by, room, cmd) {
 		var f = new Date();
-		var text = "**" + this.trad('time') + ":** " + Tools.addLeftZero(f.getHours(), 2) + ":" + Tools.addLeftZero(f.getMinutes(), 2) + ":" + Tools.addLeftZero(f.getSeconds(), 2);
+		var text = "**" + this.trad('time') + ":** __" + f.toString() + "__";
 		if (!this.isRanked('#')) {
 			this.pmReply(text);
 		} else {
