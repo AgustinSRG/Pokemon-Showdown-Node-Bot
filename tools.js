@@ -136,7 +136,6 @@ exports.uncacheTree = function (root) {
 };
 
 exports.uploadToHastebin = function (toUpload, callback) {
-	var self = this;
 	var reqOpts = {
 		hostname: "hastebin.com",
 		method: "POST",
