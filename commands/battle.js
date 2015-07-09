@@ -106,6 +106,7 @@ exports.commands = {
 		}
 		if (args.length < 2) return this.reply(this.trad('e11') + ': ' + this.cmdToken + cmd + " " + this.trad('e12'));
 		var format = toId(args[1]);
+		if (!toId(args[1])) return this.reply(this.trad('spf'));
 		if (!Formats[format] || !Formats[format].chall) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));
 		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply(this.trad('e31') + ' ' + format + '. ' + this.trad('e32'));
 		var cmds = [];
