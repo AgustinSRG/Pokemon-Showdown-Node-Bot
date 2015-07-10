@@ -346,8 +346,8 @@ Bot.on('joinroom', function (room) {
 	info('Joined room ' + room + ' [' + Bot.rooms[room].type + ']');
 });
 
-Bot.on('joinfailure', function (room, e, info) {
-	info('Could not join ' + room + ': [' + e + '] ' + info);
+Bot.on('joinfailure', function (room, e, moreInfo) {
+	info('Could not join ' + room + ': [' + e + '] ' + moreInfo);
 });
 
 Bot.on('message', function (msg) {
