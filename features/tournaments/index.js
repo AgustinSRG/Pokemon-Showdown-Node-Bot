@@ -32,6 +32,7 @@ var Tour = function () {
 			this.startTimer = setTimeout(function () {
 				this.startTour();
 				this.started = true;
+				this.startTimer = null;
 			}.bind(this), this.timeToStart);
 		},
 
@@ -115,6 +116,7 @@ exports.parse = function (room, message, isIntro, spl) {
 		case 'end':
 		case 'forceend':
 			delete tourData[room];
+			if (tournaments[room] && tournaments[room].startTimer) clearTimeout(tournaments[room].startTimer);
 			if (tournaments[room]) delete tournaments[room];
 			break;
 	}

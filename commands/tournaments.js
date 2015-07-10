@@ -38,7 +38,11 @@ exports.commands = {
 			timeToStart: 30 * 1000,
 			autodq: 1.5
 		};
-		if (typeof Config.tourDefault === 'object') details = Config.tourDefault;
+		if (typeof Config.tourDefault === 'object') {
+			for (var i in Config.tourDefault) {
+				details[i] = Config.tourDefault[i];
+			}
+		}
 		if (arg && arg.length) {
 			var args = arg.split(",");
 			if (args[0]) {
@@ -53,7 +57,7 @@ exports.commands = {
 				} else {
 					var time = parseInt(args[1]);
 					if (!time || time < 0) return this.reply(this.trad('e4'));
-					details.timeToStart = time;
+					details.timeToStart = time * 1000;
 				}
 			}
 			if (args[2]) {
