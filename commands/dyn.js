@@ -2,7 +2,7 @@
 	Dynamic Commands
 */
 
-Settings.addPermissions(['info', 'wall']);
+Settings.addPermissions(['info', 'wall', 'dynamic']);
 
 exports.commands = {
 
@@ -51,7 +51,7 @@ exports.commands = {
 
 	deletecommand: 'delcmd',
 	delcmd: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.can('dynamic')) return false;
 		var dcmd = toId(arg);
 		if (CommandParser.dynCommands[dcmd]) {
 			delete CommandParser.dynCommands[dcmd];
@@ -64,7 +64,7 @@ exports.commands = {
 
 	setcommand: 'setcmd',
 	setcmd: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.can('dynamic')) return false;
 		if (!CommandParser.tempVar) {
 			this.reply(this.trad('notemp'));
 		}
@@ -82,7 +82,7 @@ exports.commands = {
 
 	setalias: 'setcmdalias',
 	setcmdalias: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.can('dynamic')) return false;
 		var args = arg.split(',');
 		if (args.length !== 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 		var alias = toId(args[0]);
@@ -97,7 +97,7 @@ exports.commands = {
 
 	stemp: 'temp',
 	temp: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.can('dynamic')) return false;
 		if (arg) CommandParser.tempVar = Tools.stripCommands(arg);
 		this.reply('Temp: ' + CommandParser.tempVar);
 	}
