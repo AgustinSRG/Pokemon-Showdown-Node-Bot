@@ -647,7 +647,48 @@ exports.commands = {
 			else this.pmReply(this.trad('err'));
 		}.bind(this));
 	},
-
+	/**************************
+	* Timed bans
+	***************************/
+	timerban: 'tban',
+	tban: function (arg, by, room) {
+		if (!this.can('tban')) return false;
+		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
+		if (!this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		var args = arg.split(",");
+		
+		var opt = toId(args[1]);
+		if (!args[2]) args[2] = 'undefined';
+		switch (opt) {
+			// TODO: Add translation support
+			// TODO: Add variables for different times
+			case 'hour':
+				setTimeout(function() {this.say(room,'/roomban ' + toId(args[0]) +', you have been banned for 1 hour for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/modlog ' + toId(args[0]) +' was banned for 1 hour by: ' +  by + ' for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/roomunban ' + toId(args[0]))}.bind(this), 3600000);
+			break;
+			case '6hours':
+				setTimeout(function() {this.say(room,'/roomban ' + toId(args[0]) +', you have been banned for 6 hours for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/modlog ' + toId(args[0]) +'was banned for 6 hours by: ' +  by + ' for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/roomunban ' + toId(args[0]))}.bind(this), 21600000);
+			break;
+			case '12hours':
+				setTimeout(function() {this.say(room,'/roomban ' + toId(args[0]) +', you have been banned for 12 hours for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/modlog ' + toId(args[0]) +' was banned for 12 hours by: ' +  by + ' for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/roomunban ' + toId(args[0]))}.bind(this), 43200000);
+			break;
+			case 'day':
+				setTimeout(function() {this.say(room,'/roomban ' + toId(args[0]) +', you have been banned for a day for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/modlog ' + toId(args[0]) +' was banned for a day by: ' +  by + ' for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/roomunban ' + toId(args[0]))}.bind(this), 86400000);	
+			break;
+			case 'week':
+				setTimeout(function() {this.say(room,'/roomban ' + toId(args[0]) +', you have been banned for a week for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/modlog ' + toId(args[0]) +' was banned for a week by: ' +  by + ' for: ' + toId(args[2]))}.bind(this), 0);
+				setTimeout(function() {this.say(room,'/roomunban ' + toId(args[0]))}.bind(this), 604800000);	
+			break;
+	}
+},
 	/**************************
 	* Join Phrases
 	***************************/
