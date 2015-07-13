@@ -291,18 +291,11 @@ exports.commands = {
 				}
 			}
 			recoverymoves.sort();
-			for (var l in recoverymoves) {
-				text += recoverymoves[l];
-				if (l !== recoverymoves.length - 1 || drainmoves.length > 0) text += ', ';
-			}
+			text += recoverymoves.join(', ');
 			if (drainmoves.length > 0) {
+				text += ', ';
 				drainmoves.sort();
-				text += '__';
-				for (var k in drainmoves) {
-					text += drainmoves[k];
-					if (k !== drainmoves.length - 1) text += ', ';
-				}
-				text += '__';
+				text += drainmoves.join(', ');
 			}
 		} else {
 			text += this.trad('err2');
