@@ -105,7 +105,7 @@ function writeConfig (server, port, serverid) {
 			if (!status.port) conf.unshift("exports.port = " + port + ";");
 			if (!status.serverid) conf.unshift("exports.serverid = '" + serverid + "';");
 			fs.writeFileSync('./config.js', conf.join('\n'));
-			console.log("Done!".green + "\t" + "successfully created default config")
+			console.log("Done!".green + "\t" + "successfully created default config");
 			rl.close();
 			return process.exit();
 		}
