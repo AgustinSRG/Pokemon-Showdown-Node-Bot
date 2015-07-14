@@ -51,7 +51,7 @@ function getRank (room, from) {
 
 function hasAuth (room, user, from) {
 	if (!roomAuth[room] || !roomAuth[room][user]) return false;
-	var userIdent = user + roomAuth[room][user];
+	var userIdent = roomAuth[room][user] + user;
 	var rank = getRank(room, from);
 	return Tools.equalOrHigherRank(userIdent, rank);
 }
