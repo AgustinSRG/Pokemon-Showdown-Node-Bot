@@ -142,6 +142,13 @@
 			'list': 'Lista de citas',
 			'err': 'Error: No se han podido subir las citas a Hastebin'
 		},
+		addquotes: {
+			'notfound': 'Error: Documento no encontrado',
+			'd': 'Descargando documento de Hastebin',
+			'add': 'Agregadas',
+			'q': 'citas',
+			'err': 'Error: no se ha podido establecer la conexión con hastebin'
+		},
 		/*
 		* Pokemon Commands
 		*/

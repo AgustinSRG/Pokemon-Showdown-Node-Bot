@@ -95,5 +95,44 @@ exports.commands = {
 			if (r) return this.pmReply(this.trad('list') + ': ' + link);
 			else this.pmReply(this.trad('err'));
 		}.bind(this));
+	},
+	addquotes: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		if (!arg) return false;
+		var link = arg.trim();
+		if (!link) return false;
+		if (link.substr(-1) === '/') link = link.substr(0, link.length - 1);
+		var splitedLink = link.split('/');
+		link = 'http://hastebin.com/raw/' + splitedLink[splitedLink.length - 1];
+		this.reply(this.trad('d') + ': ' + link);
+		var http = require('http');
+		http.get(link, function (res) {
+			var data = '';
+			res.on('data', function (part) {
+				data += part;
+			}.bind(this));
+			res.on('end', function (end) {
+				if (data === '{"message":"Document not found."}') {
+					Bot.say(room, this.trad('notfound'));
+					return;
+				}
+				var lines = data.split('\n');
+				for (var i = 0; i < lines.length; i++) {
+					if (!lines[i].trim()) continue;
+					var quoteId;
+					do {
+						quoteId = Tools.generateRandomNick(4);
+					} while (quotes[quoteId]);
+					quotes[quoteId] = lines[i].trim();
+				}
+				Bot.say(room, this.trad('add') + ' ' + lines.length + ' ' + this.trad('q'));
+				saveQuotes();
+			}.bind(this));
+			res.on('error', function (end) {
+				Bot.say(room, this.trad('err'));
+			}.bind(this));
+		}.bind(this)).on('error', function (e) {
+			Bot.say(room, this.trad('err'));
+		}.bind(this));
 	}
 };

@@ -142,6 +142,13 @@ exports.translations = {
 			'list': 'List of quotes',
 			'err': 'Error: failed to upload quotes to Hastebin'
 		},
+		addquotes: {
+			'notfound': 'Error: Document not found',
+			'd': 'Downloading Hastebin document',
+			'add': 'Added',
+			'q': 'quotes',
+			'err': 'Error: failed to get quotes from Hastebin'
+		},
 		/*
 		* Pokemon Commands
 		*/

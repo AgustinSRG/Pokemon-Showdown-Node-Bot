@@ -142,6 +142,13 @@ exports.translations = {
 			'list': 'Elenco di citazioni',
 			'err': 'upload fallito, impossibile caricare su hastebin'
 		},
+		addquotes: {
+			'notfound': 'Error: Document not found',
+			'd': 'Il download del documento Hastebin',
+			'add': 'aggiunti',
+			'q': 'citaziones',
+			'err': 'Error: impossibile caricare su hastebin'
+		},
 		/*
 		* Pokemon Commands
 		*/

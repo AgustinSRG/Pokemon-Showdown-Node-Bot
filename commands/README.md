@@ -62,6 +62,7 @@ Commands for quotes / jokes
 This is a database of jokes or quotes that can be modified through commands. Then, users can get a random one using **quote** or **joke** command.
 
  - `quote` or `joke` - Get a random quote / joke
+ - `addquotes [http://hastebin.com/raw/example]` - Add quotes from a Hastebin document
  - `temp [text]` - Set temp var, to create or modify a quote / joke
  - `setquote [id]` - Create or modify a quote / joke using the **temp** var
  - `delquote [id]` - Remove a quote by Id

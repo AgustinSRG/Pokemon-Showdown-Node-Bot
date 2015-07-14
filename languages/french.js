@@ -142,6 +142,13 @@
 			'list': 'Liste des citations',
 			'err': 'Erreur : Je ne peux pas télécharger les citations sur hastebin'
 		},
+		addquotes: {
+			'notfound': 'Error: Document not found',
+			'd': 'Télécharger le document Hastebin',
+			'add': 'ajoutés',
+			'q': 'citations',
+			'err': 'Erreur : Je ne peux pas télécharger les citations sur hastebin'
+		},
 		/*
 		* Pokemon Commands
 		*/
