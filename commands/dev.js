@@ -24,7 +24,7 @@ exports.commands = {
 		if (!this.isRanked('~')) return false;
 		var tarRoom;
 		if (arg.indexOf('[') === 0 && arg.indexOf(']') > -1) {
-			tarRoom = arg.slice(1, arg.indexOf(']'));
+			tarRoom = toRoomid(arg.slice(1, arg.indexOf(']')));
 			arg = arg.substr(arg.indexOf(']') + 1).trim();
 		}
 		this.say(tarRoom || room, arg);
