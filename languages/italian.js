@@ -119,6 +119,30 @@ exports.translations = {
 			'd': 'Il riconoscimento dei link YouTube è ora disabilitato'
 		},
 		/*
+		* Quotes
+		*/
+		quote: {
+			'nodata': 'Database vuoto'
+		},
+		setquote: {
+			'notemp': 'Non ci sono string temporanee da settare, usa **stemp** prima di ciò',
+			'q': 'Citazione',
+			'modified': 'has been successfully modified',
+			'created': 'has been successfully created'
+		},
+		delquote: {
+			'q': 'Citazione',
+			'd': 'rimosso con successo',
+			'n': 'non esiste'
+		},
+		viewquotes: {
+			'q': 'Citazione',
+			'n': 'non esiste',
+			'empty': 'Elenco di citazioni è vuoto',
+			'list': 'Elenco di citazioni',
+			'err': 'upload fallito, impossibile caricare su hastebin'
+		},
+		/*
 		* Pokemon Commands
 		*/
 		randompokemon: {'err': 'C\'è stato un errore, riprova più tardi'},

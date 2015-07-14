@@ -56,6 +56,18 @@ Other commands for multiple features
  - `help` - Get a link to this guide
  - `youtube [on/off]` - Enable / Disable YouTube link recognition
 
+Commands for quotes / jokes
+------------
+
+This is a database of jokes or quotes that can be modified through commands. Then, users can get a random one using **quote** or **joke** command.
+
+ - `quote` or `joke` - Get a random quote / joke
+ - `temp [text]` - Set temp var, to create or modify a quote / joke
+ - `setquote [id]` - Create or modify a quote / joke using the **temp** var
+ - `delquote [id]` - Remove a quote by Id
+ - `viewquote [id]` - View a quote by Id
+ - `viewquotes` - Upload quote list to Hastebin
+
 Pokemon Commands
 ------------
 

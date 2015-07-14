@@ -119,6 +119,30 @@ exports.translations = {
 			'd': 'YouTube link recognition is now disabled for this room'
 		},
 		/*
+		* Quotes
+		*/
+		quote: {
+			'nodata': 'Database is empty'
+		},
+		setquote: {
+			'notemp': 'There is no temp string to set, use **stemp** before doing this',
+			'q': 'Quote',
+			'modified': 'has been successfully modified',
+			'created': 'has been successfully created'
+		},
+		delquote: {
+			'q': 'Quote',
+			'n': 'does not exist',
+			'd': 'has been successfully deleted'
+		},
+		viewquotes: {
+			'q': 'Quote',
+			'n': 'does not exist',
+			'empty': 'List of quotes is empty',
+			'list': 'List of quotes',
+			'err': 'Error: failed to upload quotes to Hastebin'
+		},
+		/*
 		* Pokemon Commands
 		*/
 		randompokemon: {'err': 'An error ocurred, try again later'},

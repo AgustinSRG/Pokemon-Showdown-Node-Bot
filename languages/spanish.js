@@ -119,6 +119,30 @@
 			'd': 'Reconocimiento automático de links de YouTube ha sido desactivado en esta sala'
 		},
 		/*
+		* Quotes
+		*/
+		quote: {
+			'nodata': 'La base de datos está vacía'
+		},
+		setquote: {
+			'notemp': 'No hay datos en temp, usa el comando **stemp** antes de hacer esto',
+			'q': 'Cita',
+			'modified': 'ha sido modificada',
+			'created': 'ha sido creada'
+		},
+		delquote: {
+			'q': 'Cita',
+			'd': 'ha sido eliminada',
+			'n': 'no existe'
+		},
+		viewquotes: {
+			'q': 'Cita',
+			'n': 'no existe',
+			'empty': 'La lista de citas está vacía',
+			'list': 'Lista de citas',
+			'err': 'Error: No se han podido subir las citas a Hastebin'
+		},
+		/*
 		* Pokemon Commands
 		*/
 		randompokemon: {'err': 'Hay un problema, intenta este comando en unos minutos'},

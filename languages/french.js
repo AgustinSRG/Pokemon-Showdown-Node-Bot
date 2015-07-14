@@ -119,6 +119,30 @@
 			'd': 'La reconnaissance de lien YouTube  est  maintenant désactivée pour cette salle'
 		},
 		/*
+		* Quotes
+		*/
+		quote: {
+			'nodata': 'Base de données est vide'
+		},
+		setquote: {
+			'notemp': 'Il n\'y a aucune chaîne temporaire pour définir, utiliser **stemp** avant de faire cela',
+			'q': 'Citation',
+			'modified': 'a été modifié',
+			'created': 'a été créé'
+		},
+		delquote: {
+			'q': 'Citation',
+			'n': 'n\'existe pas',
+			'd': 'a été supprimé'
+		},
+		viewquotes: {
+			'q': 'Citation',
+			'n': 'n\'existe pas',
+			'empty': 'Liste des citations est vide',
+			'list': 'Liste des citations',
+			'err': 'Erreur : Je ne peux pas télécharger les citations sur hastebin'
+		},
+		/*
 		* Pokemon Commands
 		*/
 		randompokemon: {'err': 'Une erreur est survenue, essayez à nouveau plus tard'},

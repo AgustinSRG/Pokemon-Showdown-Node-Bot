@@ -66,7 +66,7 @@ exports.commands = {
 	setcmd: function (arg, by, room, cmd) {
 		if (!this.isRanked('~')) return false;
 		if (!CommandParser.tempVar) {
-			this.reply(this.trad('notemp'));
+			return this.reply(this.trad('notemp'));
 		}
 		var dcmd = toId(arg);
 		var text = '';
