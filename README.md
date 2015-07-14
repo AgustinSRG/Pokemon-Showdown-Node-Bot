@@ -72,13 +72,16 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
  - `Config.autoReconnectDelay`: If connection gets closed, how much time it is waiting before reconnect
  - `Config.connectionTimeout`: If connection hang up, the time to check for reconnect
 
+**Crashguard**
+ - `Config.crashguard`: If true, write errors to console instead of crashing
+
 **Login Details**
  - `Config.nick`: Bot Nickname, if you don't specify a nickname, it will log in a random nickname
  - `Config.pass`: Password, if needed
  - `Config.autoReloginDelay`: If it can't login because of server issues, how much time it is waiting before relogin
 
 **Rooms**
- - `Config.rooms`: Array of rooms to join after login. You can specify a string value: `all` for joining all rooms, `official` for official rooms and `public` for not official rooms
+ - `Config.rooms`: Array of rooms to join after login. You can specify a string value: `all` for joining all rooms, `official` for official rooms and `public` for not official rooms 
  - `Config.privateRooms`: Specify which rooms are private
  - `Config.initCmds`: Array of commands to send after login
 

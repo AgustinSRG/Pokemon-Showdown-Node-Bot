@@ -399,3 +399,11 @@ var checkSystem = function () {
 	}
 };
 var sysChecker = setInterval(checkSystem, 60 * 60 * 1000);
+
+//CrashGuard
+if (Config.crashguard) {
+	process.on('uncaughtException', function (err) {
+		errlog(err.stack);
+		error(err.message);
+	});
+}

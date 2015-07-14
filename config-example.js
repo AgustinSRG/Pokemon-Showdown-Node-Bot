@@ -20,6 +20,14 @@ exports.autoReconnectDelay = 10 * 1000;
 exports.connectionTimeout = 2 * 60 * 1000;
 
 /*
+* Crash Guard
+*
+* If true, write errors to console instead of crashing
+*/
+
+exports.crashguard = true;
+
+/*
 * Login Details
 */
 
