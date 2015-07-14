@@ -46,6 +46,7 @@ module.exports = {
 		if (moveData.type === "Water" && this.has_ability(pokemonA, ["Water Absorb", "Dry Skin", "Storm Drain"])) return true;
 		if (moveData.type === "Fire" && this.has_ability(pokemonA, ["Flash Fire"])) return true;
 		if (moveData.type === "Electric" && this.has_ability(pokemonA, ["Volt Absorb", "Lightning Rod"])) return true;
+		if ((moveData.category in {"Physical": 1, "Special": 1}) && this.gen6_get_mux(moveData.type, data1.types) <= 1 && this.has_ability(pokemonA, ["Wonder Guard"])) return true;
 		return false;
 	},
 	gen6_getDisadvantage: function (pokemonA, pokemonB, inverse) {
