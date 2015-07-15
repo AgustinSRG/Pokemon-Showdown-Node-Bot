@@ -47,6 +47,23 @@ exports.commands = {
 	joke: 'quote',
 	randomquote: 'quote',
 	quote: function (arg, by, room, cmd) {
+		if (arg) {
+			var args = arg.split(',');
+			var action = toId(args[0]);
+			args.splice(0, 1);
+			switch (action) {
+				case 'add':
+					return this.parse(this.cmdToken + 'addquotes ' + args.join(','));
+				case 'set':
+					return this.parse(this.cmdToken + 'setquote ' + args.join(','));
+				case 'delete':
+				case 'remove':
+					return this.parse(this.cmdToken + 'delquote ' + args.join(','));
+				case 'view':
+				case 'list':
+					return this.parse(this.cmdToken + 'viewquotes ' + args.join(','));
+			}
+		}
 		var quotesArr = Object.keys(quotes);
 		if (!quotesArr.length) return this.restrictReply(this.trad('nodata'), 'quote');
 		var rand = quotesArr[Math.floor(Math.random() * quotesArr.length)];
