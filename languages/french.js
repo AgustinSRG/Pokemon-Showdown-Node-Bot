@@ -76,6 +76,11 @@
 			'alias': 'est maintenant un alias de',
 			'already': 'est un alias. Vous ne pouvez pas définir des alias d\'un autre alias'
 		},
+		getdyncmdlist: {
+			'nocmds': 'Il n\'y a pas de commandes',
+			'list': 'Commandes dynamiques',
+			'err': 'Erreur : Je ne peux pas télécharger les commandes sur hastebin'
+		},
 		/*
 		* Misc Commands
 		*/

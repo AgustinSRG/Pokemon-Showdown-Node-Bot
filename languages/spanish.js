@@ -76,6 +76,11 @@
 			'alias': 'es ahora alias de',
 			'already': 'es un alias. No se puede establecer un alias de otro alias'
 		},
+		getdyncmdlist: {
+			'nocmds': 'No hay ningún comando',
+			'list': 'Comandos Dinámicos',
+			'err': 'Error: No se han podido subir los comandos a Hastebin'
+		},
 		/*
 		* Misc Commands
 		*/

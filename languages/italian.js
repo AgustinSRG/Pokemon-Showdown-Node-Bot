@@ -76,6 +76,11 @@ exports.translations = {
 			'alias': 'è ora un alias di',
 			'already': 'è un alias. Non puoi impostare un alias di un alias.'
 		},
+		getdyncmdlist: {
+			'nocmds': 'Nessun comando',
+			'list': 'Comandi dinamici',
+			'err': 'upload fallito, impossibile caricare su hastebin'
+		},
 		/*
 		* Misc Commands
 		*/

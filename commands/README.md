@@ -27,6 +27,7 @@ Dynanic commads are commands saved in a JSON, used for commands that are continu
  - `setcmd [cmd]` - Create or modify a command, with `temp` data previosly set
  - `setalias [alias], [cmd]` - Set an alias of an existent dynamic command
  - `delcmd [cmd]` - Delete a command
+ - `dyncmdlist` - Get the list of dynamic commands
 
 Developing Commands
 ------------
