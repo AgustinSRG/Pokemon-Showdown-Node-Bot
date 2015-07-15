@@ -56,6 +56,21 @@ exports.commands = {
 					Bot.say(room, this.trad('err4'));
 				}.bind(this));
 				break;
+			case 'get':
+				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+				var id = toId(arg[1]);
+				if (!Features['battle'].TeamBuilder.dynTeams[id]) return this.reply(this.trad('team') + " __" + name + "__ " + this.trad('notexists'));
+				try {
+					var data = Tools.exportTeam(Features['battle'].TeamBuilder.dynTeams[id].packed);
+					Tools.uploadToHastebin(data, function (r, link) {
+						if (r) return this.pmReply(id + ': ' + link);
+						else this.pmReply(this.trad('err'));
+					}.bind(this));
+				} catch (e) {
+					errlog(e.stack);
+					this.pmReply(this.trad('err2'));
+				}
+				break;
 			case 'delete':
 			case 'remove':
 				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
