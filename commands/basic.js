@@ -44,6 +44,11 @@ exports.commands = {
 		do {
 			var divisor = divisors.pop();
 			var unit = uptime % divisor;
+			if (!unit) {
+				units.pop();
+				uptime = ~~(uptime / divisor);
+				continue;
+			}
 			buffer.push(unit > 1 ? unit + ' ' + units.pop() + 's' : unit + ' ' + units.pop());
 			uptime = ~~(uptime / divisor);
 		} while (uptime);

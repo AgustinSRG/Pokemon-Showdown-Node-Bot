@@ -196,7 +196,7 @@ exports.losemsg = ['gg', 'wp'];
 
 exports.battleMessages = {
 	/* Examples of battle messages:
-	'start': {
+	'tier': {
 		'self': [] //Example: ['gl hf', 'Hi, I\'m a Bot', 'gl']
 	},
 	'-crit': {
