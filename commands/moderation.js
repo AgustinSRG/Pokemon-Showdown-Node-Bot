@@ -529,7 +529,7 @@ exports.commands = {
 		}.bind(this));
 	},
 
-	inapropiatephrase: 'inapword',
+	inappropriatephrase: 'inapword',
 	inapword: function (arg, user, room) {
 		if (!this.can('banword')) return;
 		if (!arg) return false;
@@ -566,7 +566,7 @@ exports.commands = {
 		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('ban') + textHelper);
 	},
 
-	uninapropiatephrase: 'uninapword',
+	uninappropriatephrase: 'uninapword',
 	uninapword: function (arg, user, room) {
 		if (!this.can('banword')) return;
 		if (!arg) return false;

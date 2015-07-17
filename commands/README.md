@@ -106,8 +106,8 @@ Moderation Commands
  - `banword [phrase]` - Add a banword
  - `unbanword [phrase]` - Remove a banword
  - `vbw` - View banword list
- - `inapword [phrase]` - Add an inapropiate word
- - `uninapword [phrase]` - Remove an inapropiate word
+ - `inapword [phrase]` - Add an inappropriate word
+ - `uninapword [phrase]` - Remove an inappropriate word
  - `viw` - View inapropiate words list
 
 **Joinphrases:** Configure what phrase Bot says when certain user joins a room. This can be spammable, much caution!
