@@ -13,7 +13,7 @@ exports.commands = {
 		switch (opt) {
 			case 'add':
 			case 'new':
-				if (arg.length < 4) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+				if (arg.length < 4) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u3'));
 				var name = toId(arg[1]);
 				var format = Tools.parseAliases(arg[2]);
 				var link = arg[3].trim();
@@ -57,7 +57,7 @@ exports.commands = {
 				}.bind(this));
 				break;
 			case 'get':
-				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u5'));
 				var id = toId(arg[1]);
 				if (!Features['battle'].TeamBuilder.dynTeams[id]) return this.reply(this.trad('team') + " __" + name + "__ " + this.trad('notexists'));
 				try {
@@ -71,9 +71,19 @@ exports.commands = {
 					this.pmReply(this.trad('err2'));
 				}
 				break;
+			case 'check':
+				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u6'));
+				var id = toId(arg[1]);
+				if (!Features['battle'].TeamBuilder.dynTeams[id]) return this.reply(this.trad('team') + " __" + name + "__ " + this.trad('notexists'));
+				var cmds = [];
+				var team = Features['battle'].TeamBuilder.dynTeams[id].packed;
+				if (team) cmds.push('|/useteam ' + team);
+				cmds.push('|/challenge ' + toId(arg[2] || by) + ", " + Features['battle'].TeamBuilder.dynTeams[id].format);
+				Bot.send(cmds);
+				break;
 			case 'delete':
 			case 'remove':
-				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
+				if (arg.length < 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u4'));
 				var name = toId(arg[1]);
 				if (Features['battle'].TeamBuilder.removeTeam(name)) {
 					this.reply(this.trad('team') + " __" + name + "__ " + this.trad('removed'));

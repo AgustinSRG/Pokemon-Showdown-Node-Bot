@@ -271,7 +271,11 @@ exports.translations = {
 		},
 		team: {
 			'u1': 'Usage',
-			'u2': '[add/delete/get], [name], [format], [Exportable in Hastebin]',
+			'u2': '[add/delete/get/check]',
+			'u3': 'add, [name], [format], [Exportable in Hastebin]',
+			'u4': 'delete, [name]',
+			'u5': 'get, [name]',
+			'u6': 'check, [name], (user)',
 			'format': 'Il formato',
 			'notexists': 'non esiste',
 			'download': 'Importando il team',

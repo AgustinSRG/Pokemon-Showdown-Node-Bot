@@ -271,7 +271,11 @@
 		},
 		team: {
 			'u1': 'Uso correcto',
-			'u2': '[add/delete/get], [nombre], [formato], [Exportable en Hastebin]',
+			'u2': '[add/delete/get/check]',
+			'u3': 'add, [nombre], [formato], [Exportable en Hastebin]',
+			'u4': 'delete, [nombre]',
+			'u5': 'get, [nombre]',
+			'u6': 'check, [nombre], (usuario)',
 			'format': 'El formato',
 			'notexists': 'no existe',
 			'download': 'Descargando y procesando equipo',

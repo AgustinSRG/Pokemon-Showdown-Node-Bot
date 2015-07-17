@@ -271,7 +271,11 @@
 		},
 		team: {
 			'u1': 'Usage',
-			'u2': '[add/delete/get], [nom], [format], [Exportable dans un Hastebin]',
+			'u2': '[add/delete/get/check]',
+			'u3': 'add, [nom], [format], [Exportable dans un Hastebin]',
+			'u4': 'delete, [nom]',
+			'u5': 'get, [nom]',
+			'u6': 'check, [nom], (user)',
 			'format': 'Format',
 			'notexists': 'n\'existe existe',
 			'download': 'Le téléchargement et l\'analyse de l\'équipe',

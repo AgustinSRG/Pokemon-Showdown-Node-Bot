@@ -149,6 +149,7 @@ Commands for battle feature
  - `team add, [name], [format], [http://hastebin.com/raw/example]` - Add a team to Bot teams list
  - `team delete, [name]` - Remove a team from Bot teams list
  - `team get, [id]` - Get a team in exportable format
+ - `team check, [id], (user)` - Challenge with a specific team
  - `teamslist` - Upload teams list to Hastebin to view it.
 
 **Permissions in Battle Rooms**
