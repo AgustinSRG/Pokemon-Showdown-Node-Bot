@@ -213,6 +213,23 @@ exports.ladderCheckInterval = 10 * 1000;
 
 exports.ladderNumberOfBattles = 1;
 
+exports.formatAliases = {
+	'random': 'Random Battle',
+	'randomdoubles': 'Random Doubles Battle',
+	'randomtriples': 'Random Triples Battle',
+	'doubles': 'Doubles OU',
+	'triples': 'Smogon Triples',
+	'vgc': 'Battle Spot Doubles (VGC 2015)',
+	'vgc2015': 'Battle Spot Doubles (VGC 2015)',
+	'ag': 'Anything Goes',
+	'oras': 'OU',
+	'bw': '[Gen 5] OU',
+	'dpp': '[Gen 4] OU',
+	'adv': '[Gen 3] OU',
+	'gsc': '[Gen 2] OU',
+	'rby': '[Gen 1] OU'
+};
+
 /*
 * Tournaments
 */

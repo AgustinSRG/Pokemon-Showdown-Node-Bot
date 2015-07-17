@@ -15,7 +15,7 @@ exports.commands = {
 			case 'new':
 				if (arg.length < 4) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 				var name = toId(arg[1]);
-				var format = toId(arg[2]);
+				var format = Tools.parseAliases(arg[2]);
 				var link = arg[3].trim();
 				if (!link) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 				if (link.substr(-1) === '/') link = link.substr(0, link.length - 1);

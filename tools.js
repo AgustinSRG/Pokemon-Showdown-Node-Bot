@@ -260,6 +260,14 @@ exports.translateGlobal = function (glob, data, lang) {
 
 loadTranslations();
 
+exports.parseAliases = function (format) {
+	format = toId(format);
+	var aliases = Config.formatAliases || {};
+	if (Formats[format]) return format;
+	if (aliases[format]) return toId(aliases[format]);
+	return format;
+};
+
 var BattleStatIDs = exports.BattleStatIDs = {
 	HP: 'hp',
 	hp: 'hp',
