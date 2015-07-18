@@ -49,9 +49,44 @@ global.sent = function (str) {
 	console.log('sent'.grey + '\t' + str);
 };
 
-global.monitor = function (str) {
-	if (Config.debug && Config.debug.monitor === false) return;
-	console.log('monitor'.bgBlue + '\t' + str);
+global.monitor = function (str, type, flag) {
+	switch (type) {
+		case 'room':
+			if (Config.debug && Config.debug.room === false) return;
+			switch (flag) {
+				case 'join':
+					console.log('room'.green + '\t' + str);
+					break;
+				case 'leave':
+					console.log('room'.yellow + '\t' + str);
+					break;
+				case 'error':
+					console.log('room'.red + '\t' + str);
+					break;
+				default:
+					console.log('room'.blue + '\t' + str);
+			}
+			break;
+		case 'battle':
+			if (Config.debug && Config.debug.battle === false) return;
+			switch (flag) {
+				case 'join':
+					console.log('battle'.green + '\t' + str);
+					break;
+				case 'leave':
+					console.log('battle'.yellow + '\t' + str);
+					break;
+				case 'error':
+					console.log('battle'.red + '\t' + str);
+					break;
+				default:
+					console.log('battle'.blue + '\t' + str);
+			}
+			break;
+		default:
+			if (Config.debug && Config.debug.monitor === false) return;
+			console.log('monitor'.cyan + '\t' + str);
+	}
 };
 
 /* Tools */
@@ -205,6 +240,7 @@ exports.reloadFeature = function (feature) {
 			if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
 			Features[f.id] = f;
 			Features[f.id].init();
+			info("Feature \"" + f.id + '\" reloaded');
 		} else {
 			return -1;
 		}
@@ -229,6 +265,8 @@ var loadTranslations = exports.loadTranslations = function (reloading) {
 			}
 		}
 	});
+	if (reloading) info('Languages reloaded' + (errs.length ? ('. Errors: ' + errs.join(', ')) : '') + '. Languages: ' + Object.keys(translations).join(', '));
+	else ok('Loaded languages' + (errs.length ? ('. Errors: ' + errs.join(', ')) : '') + '. Languages: ' + Object.keys(translations).join(', '));
 	return errs;
 };
 
@@ -257,8 +295,6 @@ exports.translateGlobal = function (glob, data, lang) {
 		}
 	}
 };
-
-loadTranslations();
 
 exports.parseAliases = function (format) {
 	format = toId(format);

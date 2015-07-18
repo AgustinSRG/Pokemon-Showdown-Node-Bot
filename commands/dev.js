@@ -155,18 +155,24 @@ exports.commands = {
 				try {
 					Tools.uncacheTree('./command-parser.js');
 					global.CommandParser = require('./../command-parser.js');
-					this.reply('command-parser.js hotpatched');
+					this.reply('command-parser.js reloaded');
+					info('command-parser.js reloaded');
+					CommandParser.loadCommands(true);
 				} catch (e) {
-					this.reply('Error: command-parser.js has syntax errors');
+					errlog(e.stack);
+					this.reply('Error: command-parser.js has errors');
 				}
 				break;
 			case 'tools':
 				try {
 					Tools.uncacheTree('./tools.js');
 					global.Tools = require('./../tools.js');
-					this.reply('tools.js hotpatched');
+					this.reply('tools.js reloaded');
+					info('tools.js reloaded');
+					Tools.loadTranslations(true);
 				} catch (e) {
-					this.reply('Error: tools.js has syntax errors');
+					errlog(e.stack);
+					this.reply('Error: tools.js has errors');
 				}
 				break;
 			case 'data':
@@ -176,6 +182,7 @@ exports.commands = {
 			case 'config':
 				reloadConfig();
 				this.reply('config.js reloaded');
+				info('config.js reloaded');
 				break;
 			case 'lang':
 			case 'languages':

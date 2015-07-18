@@ -70,10 +70,10 @@ var loadCommands = exports.loadCommands = function (reloading) {
 			}
 		}
 	});
+	if (reloading) info('Commands reloaded' + (errs.length ? ('. Errors: ' + errs.join(', ')) : ''));
+	else ok('Loaded commands' + (errs.length ? ('. Errors: ' + errs.join(', ')) : ''));
 	return errs;
 };
-
-loadCommands();
 
 if (!fs.existsSync(dynCommandsDataFile))
 	fs.writeFileSync(dynCommandsDataFile, '{}');

@@ -97,15 +97,19 @@ exports.language = 'english';
 */
 
 exports.debug = {
-	/* Status Messages */
-	info: true,
+	/* Basic messages - Production Mode */
 	error: true,
 	ok: true,
-
 	errlog: true,
-	monitor: false,
 
-	/* Internal Debug */
+	/* Monitoring */
+	info: true,
+	monitor: true,
+
+	room: true,
+	battle: false,
+
+	/* Debug Mode */
 	debug: false,
 	cmdr: false,
 

@@ -53,6 +53,14 @@ global.DataDownloader = require('./data-downloader.js');
 
 global.CommandParser = require('./command-parser.js');
 
+/* Commands */
+
+CommandParser.loadCommands();
+
+/* Languages (translations) */
+
+Tools.loadTranslations();
+
 /* Features */
 
 global.Features = {};
@@ -95,6 +103,7 @@ global.reloadFeatures = function () {
 			}
 		}
 	});
+	info('Features reloaded' + (errs.length ? ('. Errors: ' + errs.join(', ')) : ''));
 	return errs;
 };
 
@@ -114,7 +123,9 @@ function botAfterConnect () {
 		}
 		Bot.send(cmds, 2000);
 	}
-	DataDownloader.download();
+	if (!Config.disableDownload) {
+		DataDownloader.download();
+	}
 }
 
 function joinByQueryRequest(target) {
@@ -181,8 +192,6 @@ var opts = {
 	debug: (Config.debug ? Config.debug.debug : true)
 };
 
-info('Connecting to server ' + Config.server + ':' + Config.port);
-
 global.Bot = new PSClient(Config.server, Config.port, opts);
 
 var connected = false;
@@ -223,6 +232,7 @@ Bot.on('formats', function (formats) {
 			Formats[toId(f)] = formatData;
 		}
 	}
+	ok('Received battle formats. Total: ' + formatsArr.length);
 });
 
 Bot.on('challstr', function (challstr) {
@@ -267,12 +277,14 @@ Bot.on('renamefailure', function (e) {
 });
 
 Bot.on('rename', function (name, named) {
+	monitor('Bot nickname has changed: ' + (named ? name.green : name.yellow) + (named ? '' : ' [guest]'));
 	if (named) {
-		ok('Succesfully logged in as ' + name);
 		if (!Config.nick) {
 			if (Bot.roomcount > 0) return; // Namechange, not initial login
+			ok('Succesfully logged in as ' + name);
 			botAfterConnect();
 		} else if (toId(Config.nick) === toId(name)) {
+			ok('Succesfully logged in as ' + name);
 			botAfterConnect();
 		}
 	}
@@ -342,12 +354,21 @@ Bot.on('line', function (room, message, isIntro, spl) {
 
 /* Info and debug */
 
-Bot.on('joinroom', function (room) {
-	info('Joined room ' + room + ' [' + Bot.rooms[room].type + ']');
+Bot.on('joinroom', function (room, type) {
+	if (type === 'chat') monitor('Joined room ' + room, 'room', 'join');
+	else if (type === 'battle') monitor('Joined battle ' + room, 'battle', 'join');
+	else monitor('Joined room ' + room + ' [' + Bot.rooms[room].type + ']', 'room', 'join');
 });
 
 Bot.on('joinfailure', function (room, e, moreInfo) {
-	info('Could not join ' + room + ': [' + e + '] ' + moreInfo);
+	monitor('Could not join ' + room + ': [' + e + '] ' + moreInfo, 'room', 'error');
+});
+
+Bot.on('leaveroom', function (room) {
+	var roomType = Bot.rooms[room] ? Bot.rooms[room].type : 'chat';
+	if (roomType === 'chat') monitor('Left room ' + room, 'room', 'leave');
+	else if (roomType === 'battle') monitor('Left battle ' + room, 'battle', 'leave');
+	else monitor('Left room ' + room + ' [' + Bot.rooms[room].type + ']', 'room', 'leave');
 });
 
 Bot.on('message', function (msg) {
@@ -358,7 +379,7 @@ Bot.on('send', function (msg) {
 	sent(msg);
 });
 
-Bot.connect();
+ok('Bot object is ready');
 
 /* Global Monitor */
 
@@ -387,11 +408,11 @@ var checkSystem = function () {
 	if (issue) {
 		switch (issue) {
 			case 'connect':
-				info("Monitor failed: Connaction issue. Reconnecting");
+				monitor("Monitor failed: Connection issue. Reconnecting");
 				Bot.connect();
 				break;
 			case 'login':
-				info("Monitor failed: Login issue. Loging in a random username");
+				monitor("Monitor failed: Login issue. Loging in a random username");
 				Config.nick = '';
 				Bot.rename('Bot ' + Tools.generateRandomNick(10));
 				break;
@@ -399,11 +420,19 @@ var checkSystem = function () {
 	}
 };
 var sysChecker = setInterval(checkSystem, 60 * 60 * 1000);
+ok('Global monitor is working');
 
 //CrashGuard
 if (Config.crashguard) {
 	process.on('uncaughtException', function (err) {
-		errlog(err.stack);
-		error(err.message);
+		error(("" + err.message).red);
+		errlog(("" + err.stack).red);
 	});
+	ok("Crashguard enabled");
 }
+
+console.log("\n-----------------------------------------------\n".yellow);
+
+//Connection
+info('Connecting to server ' + Config.server + ':' + Config.port);
+Bot.connect();
