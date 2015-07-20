@@ -214,6 +214,10 @@ module.exports = {
 					if (data.statusData.foe.pokemon[0]['boost'][j] && data.statusData.foe.pokemon[0]['boost'][j] > 0) bosts++;
 				if (!bosts) continue;
 			}
+			if (dataMove.name === 'Belly Drum') {
+				if (data.statusData.self.pokemon[0]['boost'] && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] > 3) continue;
+				if (data.statusData.self.pokemon[0]['hp'] < 60) continue;
+			}
 
 			/* Do not use this moves - todo list */
 			if (dataMove.name in {"Lunar Dance": 1, "Healing Wish": 1, "Memento": 1, "Assist": 1, "Nature Power": 1, "Natural Gift": 1, "Switcheroo": 1, "Trick": 1}) continue;
