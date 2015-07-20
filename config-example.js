@@ -159,7 +159,7 @@ exports.moderation = {
 		//specific mods
 		'spoiler': 0,
 		'youtube': 0,
-		'psservers': 1,
+		'psservers': 0,
 
 		//multiple infraction
 		'multiple': 1,
