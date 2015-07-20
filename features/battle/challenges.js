@@ -2,9 +2,10 @@
 exports.challenges = {};
 
 function canChallenge(i, nBattles) {
-	if (!nBattles) return true;
-	if (Config.aceptAll) return true;
-	if (Tools.equalOrHigherRank(i, '%')) return true;
+	if (!nBattles) return true; //If it is not busy, accept the challenge
+	if (Config.aceptAll) return true; //Acept all challenges if 'aceptAll' is enabled
+	if (Config.maxBattles && Config.maxBattles > nBattles) return true; //If it is not in too many battles, accept the challenge
+	if (Tools.equalOrHigherRank(i, '%')) return true; //Staff exception
 	return false;
 }
 

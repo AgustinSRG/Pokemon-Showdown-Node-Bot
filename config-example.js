@@ -194,6 +194,8 @@ exports.moderation = {
 
 exports.aceptAll = false;
 
+exports.maxBattles = 1;
+
 exports.winmsg = ['GG', 'g_g'];
 
 exports.losemsg = ['gg', 'wp'];
