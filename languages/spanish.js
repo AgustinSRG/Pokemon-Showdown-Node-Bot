@@ -497,6 +497,10 @@
 		'after': ''
 	},
 
+	battle: {
+		'battlefound': 'Batalla encontrada en ladder'
+	},
+
 	moderation: {
 		'automod': 'Moderación Automática',
 		//mods

@@ -497,6 +497,10 @@ exports.translations = {
 		'after': '\'s link'
 	},
 
+	battle: {
+		'battlefound': 'Battle found in ladder'
+	},
+
 	moderation: {
 		'automod': 'Automated moderation',
 		//mods
