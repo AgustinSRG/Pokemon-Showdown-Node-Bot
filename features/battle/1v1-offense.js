@@ -1,6 +1,14 @@
 const POKEDEX_FILE = './../../data/pokedex.js';
 const MOVEDEX_FILE = './../../data/moves.js';
 
+var blacklistedMoves = {
+	/* These moves are bad in 1v1, with an false high base power */
+	"Focus Punch": 1,
+	"Explosion": 1,
+	"Self-Destruct": 1,
+	"Last Resort": 1
+};
+
 module.exports = {
 	gen6_get_mux: function (typeA, typesB, not_inmune, inverse) {
 		var mux = 1;
@@ -77,7 +85,7 @@ module.exports = {
 					else dataMove.basePower = 102;
 				}
 				if (typeof dataMove.basePower !== "number" || !dataMove.basePower) continue;
-				if (dataMove.name in {"Focus Punch": 1, "Explosion": 1, "Self-Destruct": 1}) continue;
+				if (dataMove.name in blacklistedMoves) continue;
 				if (dataMove.category === "Special") {
 					basePower = dataMove.basePower * actPoke.stats['spa'];
 				} else {
@@ -134,7 +142,7 @@ module.exports = {
 				else dataMove.basePower = 102;
 			}
 			if (typeof dataMove.basePower !== "number" || !dataMove.basePower) continue;
-			if (dataMove.name in {"Focus Punch": 1, "Explosion": 1, "Self-Destruct": 1}) continue;
+			if (dataMove.name in blacklistedMoves) continue;
 			switch (req.active[0].baseAbility) {
 				case 'Aerilate':
 					if (dataMove.type === "Normal") dataMove.type = "Flying";
