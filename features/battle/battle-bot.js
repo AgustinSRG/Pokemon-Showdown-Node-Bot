@@ -76,6 +76,7 @@
 		}
 		if (rqid)  str += '|' + rqid;
 		this.send(room, str);
+		return str;
 	},
 
 	getRandomMove: function (room) {
@@ -401,14 +402,17 @@
 				break;
 			case 'teampreview':
 				this.data[room].teampreview = args[1];
+				if (this.data[room].manual) break;
 				this.send(room, '/timer on');
 				this.makeDecision(room, false);
 				break;
 			case 'turn':
 				this.data[room].turn = args[1];
+				if (this.data[room].manual) break;
 				this.makeDecision(room, false);
 				break;
 			case 'inactive':
+				if (this.data[room].manual) break;
 				this.makeDecision(room, false);
 				break;
 			case 'forcemove':
@@ -431,6 +435,7 @@
 						} catch (e) {}
 					}
 				}
+				if (this.data[room].manual) break;
 				this.makeDecision(room, false, args[1]);
 				break;
 			case 'win':

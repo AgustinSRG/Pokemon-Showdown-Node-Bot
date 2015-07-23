@@ -35,6 +35,7 @@ Developing Commands
 Commands for developing (some of these are dangerous)
 
  - `eval` or `js` - Execute arbitrary JavaScript
+ - `evalbattle` - Execute arbitrary JavaScript in a battle context
  - `send` - Send anything to the server
  - `custom` - Send anything to current room
  - `join [room1], [room2]...` - Join chat rooms
