@@ -110,6 +110,15 @@ exports.generateRandomNick = function (numChars) {
 	return str;
 };
 
+exports.getTargetRoom = function (arg) {
+	if (!arg) return null;
+	if (arg.indexOf("[") !== 0) return null;
+	if (arg.indexOf("]") < 0) return null;
+	var target = toRoomid(arg.substr(arg.indexOf("[") + 1, arg.indexOf("]") - arg.indexOf("[") - 1));
+	var newArg = arg.substr(arg.indexOf("]") + 1);
+	return {arg: newArg, room: target};
+};
+
 exports.equalOrHigherRank = function (userIdentity, rank) {
 	if (rank === ' ') return true;
 	if (!Config.ranks) Config.ranks = [];

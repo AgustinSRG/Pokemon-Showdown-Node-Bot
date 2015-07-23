@@ -2,15 +2,6 @@
 	Development Commands
 */
 
-function getTargetRoom(arg) {
-	if (!arg) return null;
-	if (arg.indexOf("[") !== 0) return null;
-	if (arg.indexOf("]") < 0) return null;
-	var target = toRoomid(arg.substr(arg.indexOf("[") + 1, arg.indexOf("]") - arg.indexOf("[") - 1));
-	var newArg = arg.substr(arg.indexOf("]") + 1);
-	return {arg: newArg, room: target};
-}
-
 exports.commands = {
 	"eval": 'js',
 	js: function (arg, by, room, cmd) {
@@ -28,7 +19,7 @@ exports.commands = {
 	evalbattle: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
 		var tarRoom = room;
-		var tarObj = getTargetRoom(arg);
+		var tarObj = Tools.getTargetRoom(arg);
 		if (tarObj) {
 			arg = tarObj.arg;
 			tarRoom = tarObj.room;
