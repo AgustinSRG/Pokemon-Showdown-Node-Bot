@@ -8,7 +8,7 @@ exports.commands = {
 		if (!this.isExcepted) return false;
 		try {
 			var result = eval(arg.trim());
-			this.say(room, JSON.stringify(result));
+			this.say(room, '``' + JSON.stringify(result) + '``');
 		} catch (e) {
 			this.say(room, e.name + ": " + e.message);
 		}
@@ -132,7 +132,7 @@ exports.commands = {
 
 				/* Eval */
 				var result = eval(txt.trim());
-				if (result !== '') Bot.say(room, '**Result:** ' + JSON.stringify(result));
+				if (result !== '') Bot.say(room, '``' + JSON.stringify(result) + '``');
 			} catch (e) {
 				Bot.say(room, e.name + ": " + e.message);
 			}
