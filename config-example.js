@@ -105,6 +105,7 @@ exports.debug = {
 	/* Monitoring */
 	info: true,
 	monitor: true,
+	status: true,
 
 	room: true,
 	battle: false,

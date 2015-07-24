@@ -196,7 +196,7 @@ global.Bot = new PSClient(Config.server, Config.port, opts);
 
 var connected = false;
 Bot.on('connect', function (con) {
-	ok('Connected to server ' + Config.serverid);
+	ok('Connected to server ' + Config.serverid + ' (' + Tools.getDateString() + ')');
 	connected = true;
 	for (var f in Features) {
 		try {
@@ -386,10 +386,10 @@ ok('Bot object is ready');
 var checkSystem = function () {
 	var status = '';
 	var issue = false;
-	status += 'Connection Status: ';
+	status += 'Connection: ';
 	if (connected) {
 		status += 'connected'.green;
-		status += ' | Login Status: ';
+		status += ' | Nickname: ';
 		if (Bot.status.named) {
 			status += Bot.status.nickName.green;
 		} else if (retryingRename) {
@@ -404,7 +404,7 @@ var checkSystem = function () {
 		issue = 'connect';
 		status += 'disconnected'.red;
 	}
-	monitor(status);
+	monitor(status + ' (' + Tools.getDateString() + ')', 'status');
 	if (issue) {
 		switch (issue) {
 			case 'connect':

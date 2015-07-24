@@ -83,6 +83,10 @@ global.monitor = function (str, type, flag) {
 					console.log('battle'.blue + '\t' + str);
 			}
 			break;
+		case 'status':
+			if (Config.debug && Config.debug.status === false) return;
+			console.log('status'.blue + '\t' + str);
+			break;
 		default:
 			if (Config.debug && Config.debug.monitor === false) return;
 			console.log('monitor'.cyan + '\t' + str);
@@ -99,6 +103,11 @@ exports.addLeftZero = function (num, nz) {
 	var str = num.toString();
 	while (str.length < nz) str = "0" + str;
 	return str;
+};
+
+exports.getDateString = function () {
+	var date = new Date();
+	return (Tools.addLeftZero(date.getDate(), 2) + '/' + Tools.addLeftZero(date.getMonth() + 1, 2) + '/' + Tools.addLeftZero(date.getFullYear(), 4) + ' ' + Tools.addLeftZero(date.getHours(), 2) + ':' + Tools.addLeftZero(date.getMinutes(), 2) + ':' + Tools.addLeftZero(date.getSeconds(), 2));
 };
 
 exports.generateRandomNick = function (numChars) {
