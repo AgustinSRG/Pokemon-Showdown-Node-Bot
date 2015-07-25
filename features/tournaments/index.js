@@ -9,57 +9,52 @@ exports.desc = 'A tool to ease tournaments creation';
 var tournaments = exports.tournaments = {};
 var tourData = exports.tourData = {};
 
-var Tour = function () {
-	var TourPrototype = {
-		format: 'randombattle',
-		type: 'elimination',
-		users: 0,
-		maxUsers: null,
-		signups: false,
-		started: false,
-		startTimer: null,
-		room: '',
-		timeToStart: 30 * 1000,
-		autodq: false,
+var Tournament = exports.Tournament = (function () {
+	function Tournament (room, details) {
+		this.format = details.format || 'randombattle';
+		this.type = details.type || 'elimination';
+		this.users = 0;
+		this.maxUsers = details.maxUsers || null;
+		this.signups = false;
+		this.started = false;
+		this.startTimer = null;
+		this.room = room || 'lobby';
+		this.timeToStart = details.timeToStart || 30 * 1000;
+		this.autodq = details.autodq || false;
+	}
 
-		createTour: function () {
-			Bot.say(this.room, '/tournament create ' + this.format + ', ' + this.type);
-		},
-
-		startTimeout: function () {
-			if (!this.timeToStart) return;
-			this.signups = true;
-			this.startTimer = setTimeout(function () {
-				this.startTour();
-				this.started = true;
-				this.startTimer = null;
-			}.bind(this), this.timeToStart);
-		},
-
-		startTour: function () {
-			Bot.say(this.room, '/tournament start');
-		},
-
-		checkUsers: function () {
-			if (!this.maxUsers) return;
-			if (this.maxUsers <= this.users) this.startTour();
-		},
-
-		setAutodq: function () {
-			if (!this.autodq) return;
-			Bot.say(this.room, '/tournament autodq ' + this.autodq);
-		}
+	Tournament.prototype.createTour = function () {
+		Bot.say(this.room, '/tournament create ' + this.format + ', ' + this.type);
 	};
-	for (var i in TourPrototype)
-		this[i] = TourPrototype[i];
-	return this;
-};
+	Tournament.prototype.startTimeout = function () {
+		if (!this.timeToStart) return;
+		this.signups = true;
+		this.startTimer = setTimeout(function () {
+			this.startTour();
+			this.started = true;
+			this.startTimer = null;
+		}.bind(this), this.timeToStart);
+	};
+	Tournament.prototype.startTour = function () {
+		Bot.say(this.room, '/tournament start');
+	};
+	Tournament.prototype.checkUsers = function () {
+		if (!this.maxUsers) return;
+		if (this.maxUsers <= this.users) this.startTour();
+	};
+	Tournament.prototype.setAutodq = function () {
+		if (!this.autodq) return;
+		Bot.say(this.room, '/tournament autodq ' + this.autodq);
+	};
+	Tournament.prototype.endTour = function () {
+		Bot.say(this.room, '/tournament end');
+	};
+
+	return Tournament;
+})();
 
 var newTour = exports.newTour = function (room, details) {
-	tournaments[room] = new Tour();
-	tournaments[room].room = room;
-	for (var i in details)
-		tournaments[room][i] = details[i];
+	tournaments[room] = new Tournament(room, details);
 	tournaments[room].createTour();
 };
 
