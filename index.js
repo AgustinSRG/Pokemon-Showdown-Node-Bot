@@ -436,3 +436,4 @@ console.log("\n-----------------------------------------------\n".yellow);
 //Connection
 info('Connecting to server ' + Config.server + ':' + Config.port);
 Bot.connect();
+Bot.startConnectionTimeOut();

@@ -25,7 +25,7 @@
   "dependencies": {
     "sugar": "1.4.1",
     "colors": "1.0.3",
-	"node-ps-client": "0.1.2"
+	"node-ps-client": "0.2.1"
   },
   "devDependencies": {
     "cache-swap": "~0.2.0",
