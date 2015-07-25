@@ -146,8 +146,9 @@ Also, command have a context:
  - `this.can (permission)` - True if user has permission, false if not
  - `this.canSet (permission, rank)` - Checks if the user has permission to use `set` command
  - `this.hasRank (user, rank, room)` - Similar to `isRoomRanked` but more general
- - `this.getRoomUsers (room)` - Get an object of users who are in a room or null (if the bot is not in that room)
- - `this.getUser (user, room)` - Get an string with the rank and username of an user or null (if the user or the bot are not in that room)
+ - `this.getRoom (room)` - Get a room object or null (if the bot is not in that room)
+ - `this.getRoomUsers (room)` - Get an array of users who are in a room or null (if the bot is not in that room)
+ - `this.getUser (user, room)` - Get an user object or null (if the user or the bot are not in that room)
  - `this.trad (textId)` - Returns a text from the corresponding languages file
  - `this.parse (cmd)` - Parse a message (to call other commands)
 

@@ -132,6 +132,114 @@ var reloadTokens = exports.reloadTokens = function () {
 
 reloadTokens();
 
+var Context = exports.Context = (function () {
+	function Context (opts) {
+		this.arg = opts.arg || '';
+		this.by = opts.by || '';
+		this.room = opts.room || 'lobby';
+		this.handler = opts.handler || '';
+		this.cmdToken = opts.cmdToken || '';
+		this.roomType = (this.room.charAt(0) === ',') ? 'pm' : (Bot.rooms[this.room] ? Bot.rooms[this.room].type : 'chat');
+		this.botName = Bot.status.nickName;
+		this.isExcepted = Tools.equalOrHigherRank(this.by, true);
+	}
+
+	Context.prototype.reply = function (data) {
+		Bot.say(this.room, data);
+	};
+	Context.prototype.pmReply = function (data) {
+		Bot.pm(this.by, data);
+	};
+	Context.prototype.restrictReply = function (data, perm) {
+		if (!this.can(perm)) {
+			this.pmReply(data);
+		} else {
+			this.reply(data);
+		}
+	};
+	Context.prototype.say = function (targetRoom, data) {
+		Bot.say(targetRoom, data);
+	};
+	Context.prototype.isRanked = function (rank) {
+		return Tools.equalOrHigherRank(this.by, rank);
+	};
+	Context.prototype.isRoomRanked = function (targetRoom, rank) {
+		if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
+			var userIdent = Bot.rooms[targetRoom].users[toId(this.by)] || this.by;
+			return Tools.equalOrHigherRank(userIdent, rank);
+		}
+		return this.isRanked(rank);
+	};
+	Context.prototype.can = function (permission) {
+		if (this.roomType === 'battle') return Settings.userCan('battle-', this.by, permission);
+		else return Settings.userCan(this.room, this.by, permission);
+	};
+	Context.prototype.canSet = function (permission, rank) {
+		var rankSet;
+		if (!Settings.settings['commands'] || !Settings.settings['commands'][this.room] || typeof Settings.settings['commands'][this.room][permission] === "undefined") {
+			rankSet = Config.defaultPermission;
+			if (Config.permissionExceptions[permission]) rankSet = Config.permissionExceptions[permission];
+		} else {
+			rankSet = Settings.settings['commands'][this.room][permission];
+		}
+		if (Tools.equalOrHigherRank(this.by, rankSet) && Tools.equalOrHigherRank(this.by, rank)) return true;
+		return false;
+	};
+	Context.prototype.botRanked = function (rank) {
+		if (!Bot.rooms[this.room]) return false;
+		var ident = Bot.rooms[this.room].users[toId(Bot.status.nickName)];
+		if (ident) return Tools.equalOrHigherRank(ident, rank);
+		return false;
+	};
+	Context.prototype.hasRank = function (user, rank, targetRoom) {
+		if (!targetRoom) targetRoom = this.room;
+		if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
+			var userIdent = Bot.rooms[targetRoom].users[toId(user)] || user;
+			return Tools.equalOrHigherRank(userIdent, rank);
+		}
+		return Tools.equalOrHigherRank(user, rank);
+	};
+	Context.prototype.getRoom = function (targetRoom) {
+		if (!Bot.rooms[targetRoom]) return null;
+		var roomObj = {};
+		roomObj.id = toRoomid(targetRoom);
+		roomObj.type = Bot.rooms[targetRoom].type;
+		roomObj.title = Bot.rooms[targetRoom].title;
+		roomObj.users = this.getRoomUsers(targetRoom);
+		return roomObj;
+	};
+	Context.prototype.getRoomUsers = function (targetRoom) {
+		if (!Bot.rooms[targetRoom]) return null;
+		var users = [];
+		for (var i in Bot.rooms[targetRoom].users) {
+			users.push(Bot.rooms[targetRoom].users[i]);
+		}
+		return users;
+	};
+	Context.prototype.getUser = function (user, targetRoom) {
+		if (!Bot.rooms[targetRoom]) return null;
+		user = toId(user);
+		if (!(user in Bot.rooms[targetRoom].users)) return null;
+		return {
+			room: targetRoom,
+			ident: Bot.rooms[targetRoom].users[user],
+			id: toId(Bot.rooms[targetRoom].users[user]),
+			name: Bot.rooms[targetRoom].users[user].substr(1),
+			rank: Bot.rooms[targetRoom].users[user].charAt(0)
+		};
+	};
+	Context.prototype.trad = Context.prototype.tra = function (data) {
+		var lang = Config.language || 'english';
+		if (this.roomType === 'chat' && Settings.settings['language'] && Settings.settings['language'][this.room]) lang = Settings.settings['language'][this.room];
+		return Tools.translateCmd(this.handler, data, lang);
+	};
+	Context.prototype.parse = function (data) {
+		return exports.parse(this.room, this.by, data);
+	};
+
+	return Context;
+})();
+
 var parse = exports.parse = function (room, by, msg) {
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
@@ -178,99 +286,15 @@ var parse = exports.parse = function (room, by, msg) {
 			handler = commands[handler];
 		}
 		if (typeof commands[handler] === 'function') {
-			var context = {
-				/* Basic information */
+			var opts = {
 				arg: args,
 				by: by,
 				room: room,
 				cmd: cmd,
 				handler: handler,
-				cmdToken: cmdToken,
-				roomType:(room.charAt(0) === ',') ? 'pm' : (Bot.rooms[room] ? Bot.rooms[room].type : 'chat'),
-				botName: Bot.status.nickName,
-
-				/* Reply functions */
-				reply: function (data) {
-					Bot.say(room, data);
-				},
-				pmReply: function (data) {
-					Bot.pm(by, data);
-				},
-				restrictReply: function (data, perm) {
-					if (!this.can(perm)) {
-						this.pmReply(data);
-					} else {
-						this.reply(data);
-					}
-				},
-				say: function (targetRoom, data) {
-					Bot.say(targetRoom, data);
-				},
-
-				/* Persmission functions */
-				isRanked: function (rank) {
-					return Tools.equalOrHigherRank(by, rank);
-				},
-				isRoomRanked: function (targetRoom, rank) {
-					if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
-						var userIdent = Bot.rooms[targetRoom].users[toId(by)] || by;
-						return Tools.equalOrHigherRank(userIdent, rank);
-					}
-					return this.isRanked(rank);
-				},
-				isExcepted: Tools.equalOrHigherRank(by, true),
-				can: function (permission) {
-					if (this.roomType === 'battle') return Settings.userCan('battle-', by, permission);
-					else return Settings.userCan(room, by, permission);
-				},
-				canSet: function (permission, rank) {
-					var rankSet;
-					if (!Settings.settings['commands'] || !Settings.settings['commands'][room] || typeof Settings.settings['commands'][room][permission] === "undefined") {
-						rankSet = Config.defaultPermission;
-						if (Config.permissionExceptions[permission]) rankSet = Config.permissionExceptions[permission];
-					} else {
-						rankSet = Settings.settings['commands'][room][permission];
-					}
-					if (Tools.equalOrHigherRank(by, rankSet) && Tools.equalOrHigherRank(by, rank)) return true;
-					return false;
-				},
-				botRanked: function (rank) {
-					if (!Bot.rooms[room]) return false;
-					var ident = Bot.rooms[room].users[toId(Bot.status.nickName)];
-					if (ident) return Tools.equalOrHigherRank(ident, rank);
-					return false;
-				},
-				hasRank: function (user, rank, targetRoom) {
-					if (!targetRoom) targetRoom = room;
-					if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
-						var userIdent = Bot.rooms[targetRoom].users[toId(user)] || user;
-						return Tools.equalOrHigherRank(userIdent, rank);
-					}
-					return Tools.equalOrHigherRank(user, rank);
-				},
-
-				/* Rooms and users */
-				getRoomUsers: function (targetRoom) {
-					if (!Bot.rooms[targetRoom]) return null;
-					return Bot.rooms[room].users;
-				},
-				getUser: function (user, targetRoom) {
-					if (!Bot.rooms[targetRoom]) return null;
-					user = toId(user);
-					if (!(user in Bot.rooms[room].users)) return null;
-					return Bot.rooms[room].users[user];
-				},
-
-				/* System functions */
-				trad: function (data) {
-					var lang = Config.language || 'english';
-					if (this.roomType === 'chat' && Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
-					return Tools.translateCmd(handler, data, lang);
-				},
-				parse: function (data) {
-					return exports.parse(room, by, data);
-				}
+				cmdToken: cmdToken
 			};
+			var context = new Context(opts);
 			try {
 				if (!Tools.equalOrHigherRank(by, true)) {
 					if (resourceMonitor.countcmd(by)) return;
