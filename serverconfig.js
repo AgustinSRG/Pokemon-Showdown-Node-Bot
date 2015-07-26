@@ -25,7 +25,6 @@ function askUrl () {
 		}
 		console.log('Getting data for ' + serverUrl + '...');
 		console.log('This may take some time, depending on Showdown\'s speed.');
-
 		var received = false;
 		var requestOptions = {
 			hostname: 'play.pokemonshowdown.com',
@@ -35,16 +34,20 @@ function askUrl () {
 		};
 		var req = http.request(requestOptions, function(res) {
 			res.setEncoding('utf8');
+			var str = '';
 			res.on('data', function(chunk) {
+				str += chunk;
+			});
+			res.on('end', function () {
 				if (received) {
 					return;
 				}
 				received = true;
 
 				var search = 'var config = ';
-				var index = chunk.indexOf(search);
+				var index = str.indexOf(search);
 				if (index !== -1) {
-					var data = chunk.substr(index);
+					var data = str.substr(index);
 					data = data.substr(search.length, data.indexOf(';') - search.length);
 					data = JSON.parse(data);
 					console.log('---------------');
@@ -58,6 +61,11 @@ function askUrl () {
 					rl.close();
 					process.exit(-1);
 				}
+			});
+			res.on('error', function (err) {
+				console.log('ERROR: ' + sys.inspect(err));
+				rl.close();
+				process.exit(-1);
 			});
 		});
 
