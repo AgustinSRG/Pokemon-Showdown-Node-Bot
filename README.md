@@ -29,9 +29,7 @@ If you want to use `Gulp` test, install all dependencies with `npm install`
 
 Now, to start the bot use `node index.js`
 
-To [configure your bot](#configuration), copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'.
-
-**NOTE:** If you don't know about `server`, `port` or `serverid` parameters you can run `node serverconfig.js` to set them.
+To configure your bot, copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'. Read the [Configuration Guide](https://gist.github.com/Ecuacion/351a0a467bc5b057e86f) for more information
 
 Keeping your bot updated
 ------------

@@ -101,13 +101,12 @@ exports.debug = {
 	error: true,
 	ok: true,
 	errlog: true,
+	info: true,
+	room: true,
 
 	/* Monitoring */
-	info: true,
 	monitor: true,
 	status: true,
-
-	room: true,
 	battle: false,
 
 	/* Debug Mode */
