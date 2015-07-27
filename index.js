@@ -211,25 +211,39 @@ Bot.on('connect', function (con) {
 Bot.on('formats', function (formats) {
 	global.Formats = {};
 	var formatsArr = formats.split('|');
-	var commaIndex, sharpIndex, f, arg, formatData, spf, nCommas;
+	var commaIndex, arg, formatData, code, name;
 	for (var i = 0; i < formatsArr.length; i++) {
 		commaIndex = formatsArr[i].indexOf(',');
 		if (commaIndex === -1) {
 			Formats[toId(formatsArr[i])] = {name: formatsArr[i], team: true, ladder: true, chall: true};
 		} else if (commaIndex === 0) {
+			i++;
 			continue;
 		} else {
-			f = formatsArr[i].substr(0, commaIndex);
-			arg = formatsArr[i].substr(commaIndex);
-			formatData = {name: f, team: true, ladder: true, chall: true};
-			sharpIndex = arg.indexOf('#');
-			if (sharpIndex >= 0) formatData.team = false;
-			spf = arg.split(',');
-			nCommas = 0;
-			for (var k = 0; k < spf.length; k++) if (!spf[k]) nCommas++;
-			if (nCommas === 2) formatData.ladder = false;
-			else if (nCommas === 3) formatData.chall = false;
-			Formats[toId(f)] = formatData;
+			name = formatsArr[i];
+			formatData = {name: name, team: true, ladder: true, chall: true};
+			code = commaIndex >= 0 ? parseInt(name.substr(commaIndex + 1), 16) : NaN;
+			if (!isNaN(code)) {
+				name = name.substr(0, commaIndex);
+				if (code & 1) formatData.team = false;
+				if (!(code & 2)) formatData.ladder = false;
+				if (!(code & 4)) formatData.chall = false;
+				if (!(code & 8)) formatData.disableTournaments = true;
+			} else {
+				if (name.substr(name.length - 2) === ',#') { // preset teams
+					formatData.team = false;
+					name = name.substr(0, name.length - 2);
+				}
+				if (name.substr(name.length - 2) === ',,') { // search-only
+					formatData.chall = false;
+					name = name.substr(0, name.length - 2);
+				} else if (name.substr(name.length - 1) === ',') { // challenge-only
+					formatData.ladder = false;
+					name = name.substr(0, name.length - 1);
+				}
+			}
+			formatData.name = name;
+			Formats[toId(name)] = formatData;
 		}
 	}
 	ok('Received battle formats. Total: ' + formatsArr.length);
