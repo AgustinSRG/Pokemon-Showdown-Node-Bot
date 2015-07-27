@@ -77,7 +77,7 @@ module.exports = {
 			if (req.active[0].moves[i].disabled) continue;
 			dataMove = movedex[toId(req.active[0].moves[i].move)];
 			if (!dataMove) continue;
-			if (dataMove.category !== 'Status') continue;
+			if (dataMove.category !== 'Status' && dataMove.name !== "Rapid Spin") continue;
 			//discard moves
 
 			/* Hazards - Foe side*/
@@ -269,18 +269,7 @@ module.exports = {
 				if (dataMove.category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] < -1) continue;
 			}
 
-			if (dataMove.name === "Rapid Spin") {
-				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
-				var isLastPoke = true;
-				for (var l = 0; l < req.side.pokemon.length; l++) {
-					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
-						isLastPoke = false;
-						break;
-					}
-				}
-				if (isLastPoke) continue;
-			}
-
+			if (dataMove.name === "Rapid Spin") continue;
 			if (dataMove.name === "Solar Beam") {
 				var solarFlag = false;
 				if (data.weather && toId(data.weather) in {"sunnyday": 1, "desolateland": 1}) solarFlag = true;
@@ -342,17 +331,7 @@ module.exports = {
 			if (req.active[0].baseAbility === "Scrappy" && dataMove.type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
 			//discard moves
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
-			if (dataMove.name === "Rapid Spin") {
-				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
-				var isLastPoke = true;
-				for (var l = 0; l < req.side.pokemon.length; l++) {
-					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
-						isLastPoke = false;
-						break;
-					}
-				}
-				if (isLastPoke) continue;
-			}
+			if (dataMove.name === "Rapid Spin") continue;
 			if (dataMove.name === "Solar Beam") {
 				var solarFlag = false;
 				if (data.weather && toId(data.weather) in {"sunnyday": 1, "desolateland": 1}) solarFlag = true;
@@ -589,6 +568,14 @@ module.exports = {
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
 			if (dataMove.name === "Rapid Spin") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
+				var isLastPoke = true;
+				for (var l = 0; l < req.side.pokemon.length; l++) {
+					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
+						isLastPoke = false;
+						break;
+					}
+				}
+				if (isLastPoke) continue;
 			}
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
 			if (this.gen6_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
