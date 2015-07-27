@@ -181,6 +181,7 @@ Credits
 Contributors:
 
  - [Irraquated](https://github.com/Irraquated) (Languages and bug fixes)
+ - [Spudling](https://github.com/Spudling) (German translation)
  - [panpawn](https://github.com/panpawn) (YouTube feature, fixes)
 
 Part of this code is imported from other developments, so credits to:
