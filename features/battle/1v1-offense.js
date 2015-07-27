@@ -6,7 +6,8 @@ var blacklistedMoves = {
 	"Focus Punch": 1,
 	"Explosion": 1,
 	"Self-Destruct": 1,
-	"Last Resort": 1
+	"Last Resort": 1,
+	"Dream Eater": 1
 };
 
 module.exports = {
@@ -194,6 +195,7 @@ module.exports = {
 				if (dataMove.type === "Fire") basePower *= 1.5;
 				if (dataMove.type === "Water") basePower *= 0.5;
 			}
+			if (!basePower || basePower < 0) continue;
 			viableMoves.push({id: i + 1, power: basePower});
 		}
 		viableMoves = viableMoves.randomize();
