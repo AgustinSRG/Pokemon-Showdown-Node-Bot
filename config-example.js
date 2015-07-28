@@ -274,3 +274,14 @@ exports.chatLogger = {
 exports.autoInvite = [
 	//{linked: 'public room linked', private: 'private room', rank: '+'}
 ];
+
+/*
+* GitHub
+* Read this: https://developer.github.com/webhooks/creating/
+*/
+
+exports.github = {
+	room: 'development',
+	secret: "",
+	port: 3420
+};
