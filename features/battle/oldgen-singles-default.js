@@ -36,6 +36,7 @@ module.exports = {
 		if (moveData.type === "Water" && this.has_ability(pokemonA, ["Water Absorb", "Dry Skin", "Storm Drain"])) return true;
 		if (moveData.type === "Fire" && this.has_ability(pokemonA, ["Flash Fire"])) return true;
 		if (moveData.type === "Electric" && this.has_ability(pokemonA, ["Volt Absorb", "Lightning Rod"])) return true;
+		if ((moveData.category in {"Physical": 1, "Special": 1}) && this.oldgen_get_mux(moveData.type, data1.types) <= 1 && this.has_ability(pokemonA, ["Wonder Guard"])) return true;
 		return false;
 	},
 	gen5_getDisadvantage: function (pokemonA, pokemonB, inverse) {
@@ -82,7 +83,7 @@ module.exports = {
 			if (req.active[0].moves[i].disabled) continue;
 			dataMove = movedex[toId(req.active[0].moves[i].move)];
 			if (!dataMove) continue;
-			if (dataMove.category !== 'Status') continue;
+			if (dataMove.category !== 'Status' && dataMove.name !== "Rapid Spin") continue;
 			//discard moves
 
 			/* Hazards - Foe side*/
@@ -127,6 +128,14 @@ module.exports = {
 			/* Hazards Removal*/
 			if (dataMove.name === "Rapid Spin") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
+				var isLastPoke = true;
+				for (var l = 0; l < req.side.pokemon.length; l++) {
+					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
+						isLastPoke = false;
+						break;
+					}
+				}
+				if (isLastPoke) continue;
 			}
 
 			/* Status */
@@ -209,6 +218,10 @@ module.exports = {
 					if (data.statusData.foe.pokemon[0]['boost'][j] && data.statusData.foe.pokemon[0]['boost'][j] > 0) bosts++;
 				if (!bosts) continue;
 			}
+			if (dataMove.name === 'Belly Drum') {
+				if (data.statusData.self.pokemon[0]['boost'] && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] > 3) continue;
+				if (data.statusData.self.pokemon[0]['hp'] < 60) continue;
+			}
 
 			/* Do not use this moves - todo list */
 			if (dataMove.name in {"Lunar Dance": 1, "Healing Wish": 1, "Memento": 1, "Assist": 1, "Nature Power": 1, "Natural Gift": 1, "Switcheroo": 1, "Trick": 1}) continue;
@@ -268,10 +281,7 @@ module.exports = {
 				if (dataMove.category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] < -1) continue;
 			}
 
-			if (dataMove.name === "Rapid Spin") {
-				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
-			}
-
+			if (dataMove.name === "Rapid Spin") continue;
 			if (dataMove.name === "Solar Beam") {
 				var solarFlag = false;
 				if (data.weather && toId(data.weather) in {"sunnyday": 1, "desolateland": 1}) solarFlag = true;
@@ -337,9 +347,7 @@ module.exports = {
 			if (req.active[0].baseAbility === "Scrappy" && dataMove.type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
 			//discard moves
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
-			if (dataMove.name === "Rapid Spin") {
-				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
-			}
+			if (dataMove.name === "Rapid Spin") continue;
 			if (dataMove.name === "Solar Beam") {
 				var solarFlag = false;
 				if (data.weather && toId(data.weather) in {"sunnyday": 1, "desolateland": 1}) solarFlag = true;
@@ -585,6 +593,14 @@ module.exports = {
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
 			if (dataMove.name === "Rapid Spin") {
 				if (!data.statusData.self.side['Spikes'] && !data.statusData.self.side['Toxic Spikes'] && !data.statusData.self.side['Stealth Rock'] && !data.statusData.self.side['Sticky Web']) continue;
+				var isLastPoke = true;
+				for (var l = 0; l < req.side.pokemon.length; l++) {
+					if (req.side.pokemon[l].condition !== '0 fnt' && !req.side.pokemon[l].active) {
+						isLastPoke = false;
+						break;
+					}
+				}
+				if (isLastPoke) continue;
 			}
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
 			if (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;

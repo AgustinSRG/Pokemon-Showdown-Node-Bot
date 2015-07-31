@@ -4,8 +4,17 @@
 
 Settings.addPermissions(['info', 'wall', 'dynamic']);
 
-exports.commands = {
+function getCmdList () {
+	var cmdArr = Object.keys(CommandParser.dynCommands).sort();
+	var newCmdArr = [];
+	for (var i = 0; i < cmdArr.length; i++) {
+		if (CommandParser.dynCommands[cmdArr[i]] && CommandParser.dynCommands[cmdArr[i]].substr(0, 4) === "/ref") continue;
+		newCmdArr.push(cmdArr[i]);
+	}
+	return newCmdArr.join(", ");
+}
 
+exports.commands = {
 	infowall: 'dyn',
 	dynwall: 'dyn',
 	wall: 'dyn',
@@ -25,7 +34,7 @@ exports.commands = {
 		var perm = (cmd in {'wall': 1, 'dynwall': 1, 'infowall': 1}) ? 'wall' : 'info';
 		if (!this.can(perm) || this.roomType === 'pm') {
 			if (!arg) {
-				var list = Object.keys(CommandParser.dynCommands).sort().join(", ");
+				var list = getCmdList();
 				if (!list) return this.pmReply(this.trad('nocmds'));
 				return this.pmReply(this.trad('list') + ': ' + list);
 			}
@@ -36,7 +45,7 @@ exports.commands = {
 			}
 		} else {
 			if (!arg) {
-				var list = Object.keys(CommandParser.dynCommands).sort().join(", ");
+				var list = getCmdList();
 				if (!list) return this.reply(this.trad('nocmds'));
 				return this.reply(this.trad('list') + ': ' + list);
 			}
@@ -66,7 +75,7 @@ exports.commands = {
 	setcmd: function (arg, by, room, cmd) {
 		if (!this.can('dynamic')) return false;
 		if (!CommandParser.tempVar) {
-			this.reply(this.trad('notemp'));
+			return this.reply(this.trad('notemp'));
 		}
 		var dcmd = toId(arg);
 		var text = '';
@@ -93,6 +102,25 @@ exports.commands = {
 		CommandParser.dynCommands[alias] = '/ref ' + dcmd;
 		CommandParser.saveDinCmds();
 		this.reply(this.trad('c') + ' "' + alias + '" ' + this.trad('alias') + ' "' + dcmd + '"');
+	},
+
+	dyncmdlist: 'getdyncmdlist',
+	getdyncmdlist: function (arg, by, room, cmd) {
+		if (!this.isRanked('~')) return false;
+		var list = Object.keys(CommandParser.dynCommands).sort();
+		if (!list.length) return this.pmReply(this.trad('nocmds'));
+		var text = this.trad('list') + ':\n\n';
+		for (var i in CommandParser.dynCommands) {
+			if (CommandParser.dynCommands[i].substr(0, 4) === "/ref") {
+				text += i + ' ~ ' + toId(CommandParser.dynCommands[i].substr(5)) + '\n';
+				continue;
+			}
+			text += i + ' -> "' + CommandParser.dynCommands[i] + '"' + '\n';
+		}
+		Tools.uploadToHastebin(text, function (r, link) {
+			if (r) return this.pmReply(this.trad('list') + ': ' + link);
+			else this.pmReply(this.trad('err'));
+		}.bind(this));
 	},
 
 	stemp: 'temp',

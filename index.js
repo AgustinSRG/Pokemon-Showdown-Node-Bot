@@ -53,6 +53,14 @@ global.DataDownloader = require('./data-downloader.js');
 
 global.CommandParser = require('./command-parser.js');
 
+/* Commands */
+
+CommandParser.loadCommands();
+
+/* Languages (translations) */
+
+Tools.loadTranslations();
+
 /* Features */
 
 global.Features = {};
@@ -95,6 +103,7 @@ global.reloadFeatures = function () {
 			}
 		}
 	});
+	info('Features reloaded' + (errs.length ? ('. Errors: ' + errs.join(', ')) : ''));
 	return errs;
 };
 
@@ -114,7 +123,9 @@ function botAfterConnect () {
 		}
 		Bot.send(cmds, 2000);
 	}
-	DataDownloader.download();
+	if (!Config.disableDownload) {
+		DataDownloader.download();
+	}
 }
 
 function joinByQueryRequest(target) {
@@ -181,13 +192,11 @@ var opts = {
 	debug: (Config.debug ? Config.debug.debug : true)
 };
 
-info('Connecting to server ' + Config.server + ':' + Config.port);
-
 global.Bot = new PSClient(Config.server, Config.port, opts);
 
 var connected = false;
 Bot.on('connect', function (con) {
-	ok('Connected to server ' + Config.serverid);
+	ok('Connected to server ' + Config.serverid + ' (' + Tools.getDateString() + ')');
 	connected = true;
 	for (var f in Features) {
 		try {
@@ -202,27 +211,42 @@ Bot.on('connect', function (con) {
 Bot.on('formats', function (formats) {
 	global.Formats = {};
 	var formatsArr = formats.split('|');
-	var commaIndex, sharpIndex, f, arg, formatData, spf, nCommas;
+	var commaIndex, arg, formatData, code, name;
 	for (var i = 0; i < formatsArr.length; i++) {
 		commaIndex = formatsArr[i].indexOf(',');
 		if (commaIndex === -1) {
 			Formats[toId(formatsArr[i])] = {name: formatsArr[i], team: true, ladder: true, chall: true};
 		} else if (commaIndex === 0) {
+			i++;
 			continue;
 		} else {
-			f = formatsArr[i].substr(0, commaIndex);
-			arg = formatsArr[i].substr(commaIndex);
-			formatData = {name: f, team: true, ladder: true, chall: true};
-			sharpIndex = arg.indexOf('#');
-			if (sharpIndex >= 0) formatData.team = false;
-			spf = arg.split(',');
-			nCommas = 0;
-			for (var k = 0; k < spf.length; k++) if (!spf[k]) nCommas++;
-			if (nCommas === 2) formatData.ladder = false;
-			else if (nCommas === 3) formatData.chall = false;
-			Formats[toId(f)] = formatData;
+			name = formatsArr[i];
+			formatData = {name: name, team: true, ladder: true, chall: true};
+			code = commaIndex >= 0 ? parseInt(name.substr(commaIndex + 1), 16) : NaN;
+			if (!isNaN(code)) {
+				name = name.substr(0, commaIndex);
+				if (code & 1) formatData.team = false;
+				if (!(code & 2)) formatData.ladder = false;
+				if (!(code & 4)) formatData.chall = false;
+				if (!(code & 8)) formatData.disableTournaments = true;
+			} else {
+				if (name.substr(name.length - 2) === ',#') { // preset teams
+					formatData.team = false;
+					name = name.substr(0, name.length - 2);
+				}
+				if (name.substr(name.length - 2) === ',,') { // search-only
+					formatData.chall = false;
+					name = name.substr(0, name.length - 2);
+				} else if (name.substr(name.length - 1) === ',') { // challenge-only
+					formatData.ladder = false;
+					name = name.substr(0, name.length - 1);
+				}
+			}
+			formatData.name = name;
+			Formats[toId(name)] = formatData;
 		}
 	}
+	ok('Received battle formats. Total: ' + formatsArr.length);
 });
 
 Bot.on('challstr', function (challstr) {
@@ -267,12 +291,14 @@ Bot.on('renamefailure', function (e) {
 });
 
 Bot.on('rename', function (name, named) {
+	monitor('Bot nickname has changed: ' + (named ? name.green : name.yellow) + (named ? '' : ' [guest]'));
 	if (named) {
-		ok('Succesfully logged in as ' + name);
 		if (!Config.nick) {
 			if (Bot.roomcount > 0) return; // Namechange, not initial login
+			ok('Succesfully logged in as ' + name);
 			botAfterConnect();
 		} else if (toId(Config.nick) === toId(name)) {
+			ok('Succesfully logged in as ' + name);
 			botAfterConnect();
 		}
 	}
@@ -342,12 +368,21 @@ Bot.on('line', function (room, message, isIntro, spl) {
 
 /* Info and debug */
 
-Bot.on('joinroom', function (room) {
-	info('Joined room ' + room + ' [' + Bot.rooms[room].type + ']');
+Bot.on('joinroom', function (room, type) {
+	if (type === 'chat') monitor('Joined room ' + room, 'room', 'join');
+	else if (type === 'battle') monitor('Joined battle ' + room, 'battle', 'join');
+	else monitor('Joined room ' + room + ' [' + Bot.rooms[room].type + ']', 'room', 'join');
 });
 
-Bot.on('joinfailure', function (room, e, info) {
-	info('Could not join ' + room + ': [' + e + '] ' + info);
+Bot.on('joinfailure', function (room, e, moreInfo) {
+	monitor('Could not join ' + room + ': [' + e + '] ' + moreInfo, 'room', 'error');
+});
+
+Bot.on('leaveroom', function (room) {
+	var roomType = Bot.rooms[room] ? Bot.rooms[room].type : 'chat';
+	if (roomType === 'chat') monitor('Left room ' + room, 'room', 'leave');
+	else if (roomType === 'battle') monitor('Left battle ' + room, 'battle', 'leave');
+	else monitor('Left room ' + room + ' [' + Bot.rooms[room].type + ']', 'room', 'leave');
 });
 
 Bot.on('message', function (msg) {
@@ -358,17 +393,17 @@ Bot.on('send', function (msg) {
 	sent(msg);
 });
 
-Bot.connect();
+ok('Bot object is ready');
 
 /* Global Monitor */
 
 var checkSystem = function () {
 	var status = '';
 	var issue = false;
-	status += 'Connection Status: ';
+	status += 'Connection: ';
 	if (connected) {
 		status += 'connected'.green;
-		status += ' | Login Status: ';
+		status += ' | Nickname: ';
 		if (Bot.status.named) {
 			status += Bot.status.nickName.green;
 		} else if (retryingRename) {
@@ -383,15 +418,15 @@ var checkSystem = function () {
 		issue = 'connect';
 		status += 'disconnected'.red;
 	}
-	monitor(status);
+	monitor(status + ' (' + Tools.getDateString() + ')', 'status');
 	if (issue) {
 		switch (issue) {
 			case 'connect':
-				info("Monitor failed: Connaction issue. Reconnecting");
+				monitor("Monitor failed: Connection issue. Reconnecting");
 				Bot.connect();
 				break;
 			case 'login':
-				info("Monitor failed: Login issue. Loging in a random username");
+				monitor("Monitor failed: Login issue. Loging in a random username");
 				Config.nick = '';
 				Bot.rename('Bot ' + Tools.generateRandomNick(10));
 				break;
@@ -399,3 +434,20 @@ var checkSystem = function () {
 	}
 };
 var sysChecker = setInterval(checkSystem, 60 * 60 * 1000);
+ok('Global monitor is working');
+
+//CrashGuard
+if (Config.crashguard) {
+	process.on('uncaughtException', function (err) {
+		error(("" + err.message).red);
+		errlog(("" + err.stack).red);
+	});
+	ok("Crashguard enabled");
+}
+
+console.log("\n-----------------------------------------------\n".yellow);
+
+//Connection
+info('Connecting to server ' + Config.server + ':' + Config.port);
+Bot.connect();
+Bot.startConnectionTimeOut();

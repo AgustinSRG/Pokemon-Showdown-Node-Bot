@@ -76,6 +76,11 @@
 			'alias': 'est maintenant un alias de',
 			'already': 'est un alias. Vous ne pouvez pas définir des alias d\'un autre alias'
 		},
+		getdyncmdlist: {
+			'nocmds': 'Il n\'y a pas de commandes',
+			'list': 'Commandes dynamiques',
+			'err': 'Erreur : Je ne peux pas télécharger les commandes sur hastebin'
+		},
 		/*
 		* Misc Commands
 		*/
@@ -117,6 +122,37 @@
 			'e': 'La reconnaissance de lien YouTube est  maintenant disponible pour cette salle',
 			'ad': 'La reconnaissance de lien YouTube est  déjà désactivé pour la salle',
 			'd': 'La reconnaissance de lien YouTube  est  maintenant désactivée pour cette salle'
+		},
+		/*
+		* Quotes
+		*/
+		quote: {
+			'nodata': 'Base de données est vide'
+		},
+		setquote: {
+			'notemp': 'Il n\'y a aucune chaîne temporaire pour définir, utiliser **stemp** avant de faire cela',
+			'q': 'Citation',
+			'modified': 'a été modifié',
+			'created': 'a été créé'
+		},
+		delquote: {
+			'q': 'Citation',
+			'n': 'n\'existe pas',
+			'd': 'a été supprimé'
+		},
+		viewquotes: {
+			'q': 'Citation',
+			'n': 'n\'existe pas',
+			'empty': 'Liste des citations est vide',
+			'list': 'Liste des citations',
+			'err': 'Erreur : Je ne peux pas télécharger les citations sur hastebin'
+		},
+		addquotes: {
+			'notfound': 'Error: Document not found',
+			'd': 'Télécharger le document Hastebin',
+			'add': 'ajoutés',
+			'q': 'citations',
+			'err': 'Erreur : Je ne peux pas télécharger les citations sur hastebin'
 		},
 		/*
 		* Pokemon Commands
@@ -236,12 +272,17 @@
 		},
 		team: {
 			'u1': 'Usage',
-			'u2': '[Ajouter/Supprimer], [nom], [format], [Exportable dans un Hastebin]',
+			'u2': '[add/delete/get/check]',
+			'u3': 'add, [nom], [format], [Exportable dans un Hastebin]',
+			'u4': 'delete, [nom]',
+			'u5': 'get, [nom]',
+			'u6': 'check, [nom], (user)',
 			'format': 'Format',
 			'notexists': 'n\'existe existe',
 			'download': 'Le téléchargement et l\'analyse de l\'équipe',
 			'team': 'Équipe',
 			'added': 'ajouté à la liste des équipes de bots',
+			'err': 'Erreur: échec de téléchargement de équipe sur Hastebin',
 			'err1': 'Erreur: le document Hastebin est introuvable',
 			'err2': 'Erreur: les données de l\'équipe ne sont pas valides',
 			'err3': 'Erreur: Il y avait déjà une équipe avec ce nom, utiliser un autre nom ou supprimer l\'autre équipe',
@@ -455,6 +496,10 @@
 	youtube: {
 		'before': 'Le lien de',
 		'after': ''
+	},
+
+	battle: {
+		'battlefound': 'Bataille trouve dans la ladder'
 	},
 
 	moderation: {

@@ -76,6 +76,11 @@ exports.translations = {
 			'alias': 'is now an alias of',
 			'already': 'is an alias. You can\'t set an alias of another alias'
 		},
+		getdyncmdlist: {
+			'nocmds': 'No commands',
+			'list': 'Dynamic cmds',
+			'err': 'Error: failed to upload commands to Hastebin'
+		},
 		/*
 		* Misc Commands
 		*/
@@ -117,6 +122,37 @@ exports.translations = {
 			'e': 'YouTube link recognition is now enabled for this room',
 			'ad': 'YouTube link recognition is already disabled for room',
 			'd': 'YouTube link recognition is now disabled for this room'
+		},
+		/*
+		* Quotes
+		*/
+		quote: {
+			'nodata': 'Database is empty'
+		},
+		setquote: {
+			'notemp': 'There is no temp string to set, use **stemp** before doing this',
+			'q': 'Quote',
+			'modified': 'has been successfully modified',
+			'created': 'has been successfully created'
+		},
+		delquote: {
+			'q': 'Quote',
+			'n': 'does not exist',
+			'd': 'has been successfully deleted'
+		},
+		viewquotes: {
+			'q': 'Quote',
+			'n': 'does not exist',
+			'empty': 'List of quotes is empty',
+			'list': 'List of quotes',
+			'err': 'Error: failed to upload quotes to Hastebin'
+		},
+		addquotes: {
+			'notfound': 'Error: Document not found',
+			'd': 'Downloading Hastebin document',
+			'add': 'Added',
+			'q': 'quotes',
+			'err': 'Error: failed to get quotes from Hastebin'
 		},
 		/*
 		* Pokemon Commands
@@ -236,12 +272,17 @@ exports.translations = {
 		},
 		team: {
 			'u1': 'Usage',
-			'u2': '[add/delete], [name], [format], [Exportable in Hastebin]',
+			'u2': '[add/delete/get/check]',
+			'u3': 'add, [name], [format], [Exportable in Hastebin]',
+			'u4': 'delete, [name]',
+			'u5': 'get, [name]',
+			'u6': 'check, [name], (user)',
 			'format': 'Format',
 			'notexists': 'does not exists',
 			'download': 'Dowloading and parsing team',
 			'team': 'Team',
 			'added': 'added successfully to bot teams list',
+			'err': 'Error: failed to upload team to Hastebin',
 			'err1': 'Error: Hastebin document not found',
 			'err2': 'Error: Invalid team data',
 			'err3': 'Error: There was already a team with that name, use another name or delete the other team',
@@ -361,27 +402,27 @@ exports.translations = {
 		inapword: {
 			'notchat': 'This command is only available for chat rooms',
 			'phrase': 'Phrase',
-			'already': 'is already inapropiate.',
-			'ban': 'is now inapropiate.'
+			'already': 'is already inappropriate.',
+			'ban': 'is now inappropriate.'
 		},
 		uninapword: {
 			'notchat': 'This command is only available for chat rooms',
 			'phrase': 'Phrase',
-			'not': 'is not currently inapropiate.',
-			'unban': 'is no longer inapropiate.'
+			'not': 'is not currently inappropriate.',
+			'unban': 'is no longer inappropriate.'
 		},
 		viewinapwords: {
 			'notchat': 'This command is only available for chat rooms',
 			'in': 'in',
 			'globally': 'globally',
 			'phrase': 'Phrase',
-			'nowords': 'No phrases are inapropiate in this room.',
+			'nowords': 'No phrases are inappropriate in this room.',
 			'curr': 'is currently',
 			'not': 'not',
-			'banned': 'inapropiate',
-			'list': 'The following phrases are inapropiate',
-			'link': 'Inapropiate phrases',
-			'err': 'upload failure, could not upload inapropiate phrases to hastebin'
+			'banned': 'inappropriate',
+			'list': 'The following phrases are inappropriate',
+			'link': 'Inappropriate phrases',
+			'err': 'upload failure, could not upload inappropriate phrases to hastebin'
 		},
 		joinphrase: {
 			'notchat': 'This command is only available for chat rooms',
@@ -457,6 +498,10 @@ exports.translations = {
 		'after': '\'s link'
 	},
 
+	battle: {
+		'battlefound': 'Battle found in ladder'
+	},
+
 	moderation: {
 		'automod': 'Automated moderation',
 		//mods
@@ -470,7 +515,7 @@ exports.translations = {
 		'spoiler': 'Spoilers are not allowed in this room',
 		'youtube': 'Youtube channels are not allowed in this room',
 		'server': 'Pokemon Showdown private servers are not allowed in this room',
-		'inapword': 'Your message contained an inapropiate phrase',
+		'inapword': 'Your message contained an inappropriate phrase',
 		'banword': 'Your message contained a banned phrase',
 		'mult': 'Multiple infraction',
 		'0tol': '(zero tolerance)',
@@ -482,7 +527,7 @@ exports.translations = {
 		'spoiler-0': 'Spoiler',
 		'youtube-0': 'Youtube channel',
 		'server-0': 'Private Servers',
-		'inapword-0': 'Inapropiate',
+		'inapword-0': 'Inappropriate',
 		'banword-0': 'Bannedwords',
 		//autoban
 		'ab': 'Blacklisted user'

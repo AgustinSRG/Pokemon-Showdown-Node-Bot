@@ -8,10 +8,136 @@ exports.commands = {
 		if (!this.isExcepted) return false;
 		try {
 			var result = eval(arg.trim());
-			this.say(room, JSON.stringify(result));
+			this.say(room, '``' + JSON.stringify(result) + '``');
 		} catch (e) {
 			this.say(room, e.name + ": " + e.message);
 		}
+	},
+
+	jsbattle: 'evalbattle',
+	eb: 'evalbattle',
+	evalbattle: function (arg, by, room, cmd) {
+		if (!this.isExcepted) return false;
+		var tarRoom = room;
+		var tarObj = Tools.getTargetRoom(arg);
+		if (tarObj) {
+			arg = tarObj.arg;
+			tarRoom = tarObj.room;
+		}
+		if (!Features['battle'] || !Features['battle'].BattleBot || !Features['battle'].BattleBot.data) return false;
+		if (!Features['battle'].BattleBot.data[tarRoom]) return this.reply('Battle "' + tarRoom + '" not found');
+		var battleContext = {
+			id: tarRoom,
+			room: room,
+			data: Features['battle'].BattleBot.data[tarRoom],
+			request: Features['battle'].BattleBot.data[tarRoom].request,
+			status: Features['battle'].BattleBot.data[tarRoom].statusData,
+			opponentTeamData: Features['battle'].BattleBot.data[tarRoom].oppTeamOffSet,
+			opponentTeam: Features['battle'].BattleBot.data[tarRoom].oppTeam,
+			system: Features['battle'].BattleBot,
+			sendBattle: function (data) {
+				return Bot.say(this.id, data);
+			},
+			report: function (data) {
+				Bot.say(this.room, data);
+				return '';
+			},
+			manual: function (flag) {
+				if (flag === undefined) flag = true;
+				this.data['manual'] = flag;
+				if (flag) this.sendBattle('/undo');
+				return this.data['manual'];
+			},
+			timer: function (flag) {
+				if (flag === undefined) flag = true;
+				if (flag) this.sendBattle('/timer on');
+				else this.sendBattle('/timer off');
+				return !!flag;
+			},
+			decision: function (decision) {
+				var rqid = 0;
+				if (this.request) rqid = parseInt(this.request.rqid);
+				if (decision.length === undefined) decision = [decision];
+				return this.system.sendDecision(this.id, decision, rqid);
+			},
+			moves: function (num) {
+				if (!num) num = 0;
+				if (!this.request.active || !this.request.active[num] || !this.request.active[num].moves) return [];
+				var poke = this.request.active[num];
+				var moves = [];
+				for (var i in poke.moves) {
+					moves.push(poke.moves[i].move);
+				}
+				return moves;
+			},
+			pokemon: function () {
+				var pokes = [];
+				if (this.request && this.request.side && this.request.side.pokemon) {
+					var poke;
+					for (var i = 0; i < this.request.side.pokemon.length; i++) {
+						if (this.request.side.pokemon[i].details.indexOf(",") > -1) poke = this.request.side.pokemon[i].details.substr(0, this.request.side.pokemon[i].details.indexOf(","));
+						else poke = this.request.side.pokemon[i].details;
+						pokes.push(poke);
+					}
+				}
+				return pokes;
+			},
+			move: function (move, mega, target, poke) {
+				if (typeof move === 'string') {
+					var moves = this.moves(poke || 0);
+					for (var i = 0; i < moves.length; i++) moves[i] = toId(moves[i]);
+					return {type: 'move', move: (moves.indexOf(toId(move)) + 1), mega: mega, target: target};
+				} else {
+					return {type: 'move', move: parseInt(move), mega: mega, target: target};
+				}
+			},
+			"switch": function (pokemon) {
+				var side = this.pokemon();
+				for (var i = 0; i < side.length; i++) side[i] = toId(side[i]);
+				if (typeof pokemon === "string" && side.indexOf(toId(pokemon)) >= 0) {
+					return {type: 'switch', switchIn: (side.indexOf(toId(pokemon)) + 1)};
+				} else {
+					return {type: 'switch', switchIn: parseInt(pokemon)};
+				}
+			},
+			pass: function () {
+				return {type: 'pass'};
+			},
+			team: function (team) {
+				return {type: 'team', team: team};
+			},
+			random: function () {
+				return this.system.getRandomMove(this.id);
+			},
+			cancel: function () {
+				this.sendBattle('/undo');
+				return true;
+			},
+			forfeit: function () {
+				this.sendBattle('/forfeit');
+				return '';
+			}
+		};
+		var evalFunction = function (txt) {
+			try {
+				var battle = this;
+
+				/* Fast access methods - decisions */
+				var choose = this.decision.bind(this);
+				var move = this.move.bind(this);
+				var sw = this.switch.bind(this);
+				var pass = this.pass.bind(this);
+				var team = this.team.bind(this);
+				var cancel = this.cancel.bind(this);
+
+				/* Eval */
+				var result = eval(txt.trim());
+				if (result !== '') Bot.say(room, '``' + JSON.stringify(result) + '``');
+			} catch (e) {
+				Bot.say(room, e.name + ": " + e.message);
+			}
+		};
+		evalFunction.call(battleContext, arg);
 	},
 
 	send: function (arg, by, room, cmd) {
@@ -24,7 +150,7 @@ exports.commands = {
 		if (!this.isRanked('~')) return false;
 		var tarRoom;
 		if (arg.indexOf('[') === 0 && arg.indexOf(']') > -1) {
-			tarRoom = arg.slice(1, arg.indexOf(']'));
+			tarRoom = toRoomid(arg.slice(1, arg.indexOf(']')));
 			arg = arg.substr(arg.indexOf(']') + 1).trim();
 		}
 		this.say(tarRoom || room, arg);
@@ -155,18 +281,24 @@ exports.commands = {
 				try {
 					Tools.uncacheTree('./command-parser.js');
 					global.CommandParser = require('./../command-parser.js');
-					this.reply('command-parser.js hotpatched');
+					this.reply('command-parser.js reloaded');
+					info('command-parser.js reloaded');
+					CommandParser.loadCommands(true);
 				} catch (e) {
-					this.reply('Error: command-parser.js has syntax errors');
+					errlog(e.stack);
+					this.reply('Error: command-parser.js has errors');
 				}
 				break;
 			case 'tools':
 				try {
 					Tools.uncacheTree('./tools.js');
 					global.Tools = require('./../tools.js');
-					this.reply('tools.js hotpatched');
+					this.reply('tools.js reloaded');
+					info('tools.js reloaded');
+					Tools.loadTranslations(true);
 				} catch (e) {
-					this.reply('Error: tools.js has syntax errors');
+					errlog(e.stack);
+					this.reply('Error: tools.js has errors');
 				}
 				break;
 			case 'data':
@@ -176,6 +308,7 @@ exports.commands = {
 			case 'config':
 				reloadConfig();
 				this.reply('config.js reloaded');
+				info('config.js reloaded');
 				break;
 			case 'lang':
 			case 'languages':
@@ -225,11 +358,39 @@ exports.commands = {
 		});
 	},
 
-	end: 'kill',
 	exit: 'kill',
 	kill: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
 		console.log('Forced Exit. By: ' + by);
 		process.exit();
+	},
+
+	reloadroomauth: 'getroomauth',
+	useroomauth: 'getroomauth',
+	getroomauth: function (arg, user, room, cmd) {
+		if (!this.isExcepted) return false;
+		var tarRoom = toRoomid(arg) || room;
+		if (!Features['autoinvite']) return false;
+		if (!Bot.rooms || !Bot.rooms[tarRoom]) return false;
+		if (cmd === 'reloadroomauth') {
+			Features['autoinvite'].roomAuthChanges[tarRoom] = 1;
+			Features['autoinvite'].checkAuth();
+			this.reply('Room auth from room __' + tarRoom + '__ has been reloaded');
+		} else if (cmd === 'getroomauth') {
+			if (!Features['autoinvite'].roomAuth[tarRoom]) return this.reply('Room auth for room __' + tarRoom + '__ is empty. Try ' + this.cmdToken + 'reloadroomauth');
+			Tools.uploadToHastebin('Room auth (' + tarRoom + ')\n\n' + JSON.stringify(Features['autoinvite'].roomAuth[tarRoom]), function (r, link) {
+				if (r) return this.reply('Room auth of __' + tarRoom + '__: ' + link);
+				else this.reply('Error connecting to hastebin');
+			}.bind(this));
+		} else if (cmd === 'useroomauth') {
+			if (!Features['autoinvite'].roomAuth[tarRoom]) return this.reply('Room auth for room __' + tarRoom + '__ is empty. Try ' + this.cmdToken + 'reloadroomauth');
+			var auth = Features['autoinvite'].roomAuth[tarRoom];
+			for (var i in auth) {
+				if (Tools.equalOrHigherRank(i, '&')) continue; //Global auth and excepted users
+				Config.exceptions[i] = auth[i];
+			}
+			monitor('Auth exceptions changed temporarily\n' + JSON.stringify(Config.exceptions));
+			this.reply('Using room auth of room __' + tarRoom + '__ as global auth. Use ' + this.cmdToken + 'reload config to revert it.');
+		}
 	}
 };

@@ -76,6 +76,11 @@ exports.translations = {
 			'alias': 'è ora un alias di',
 			'already': 'è un alias. Non puoi impostare un alias di un alias.'
 		},
+		getdyncmdlist: {
+			'nocmds': 'Nessun comando',
+			'list': 'Comandi dinamici',
+			'err': 'upload fallito, impossibile caricare su hastebin'
+		},
 		/*
 		* Misc Commands
 		*/
@@ -117,6 +122,37 @@ exports.translations = {
 			'e': 'Il riconoscimento dei link YouTube è ora abilitato',
 			'ad': 'Il riconoscimento dei link YouTube è già disabilitato',
 			'd': 'Il riconoscimento dei link YouTube è ora disabilitato'
+		},
+		/*
+		* Quotes
+		*/
+		quote: {
+			'nodata': 'Database vuoto'
+		},
+		setquote: {
+			'notemp': 'Non ci sono string temporanee da settare, usa **stemp** prima di ciò',
+			'q': 'Citazione',
+			'modified': 'has been successfully modified',
+			'created': 'has been successfully created'
+		},
+		delquote: {
+			'q': 'Citazione',
+			'd': 'rimosso con successo',
+			'n': 'non esiste'
+		},
+		viewquotes: {
+			'q': 'Citazione',
+			'n': 'non esiste',
+			'empty': 'Elenco di citazioni è vuoto',
+			'list': 'Elenco di citazioni',
+			'err': 'upload fallito, impossibile caricare su hastebin'
+		},
+		addquotes: {
+			'notfound': 'Error: Document not found',
+			'd': 'Il download del documento Hastebin',
+			'add': 'aggiunti',
+			'q': 'citaziones',
+			'err': 'Error: impossibile caricare su hastebin'
 		},
 		/*
 		* Pokemon Commands
@@ -236,12 +272,17 @@ exports.translations = {
 		},
 		team: {
 			'u1': 'Usage',
-			'u2': '[add/delete], [name], [format], [Exportable in Hastebin]',
+			'u2': '[add/delete/get/check]',
+			'u3': 'add, [name], [format], [Exportable in Hastebin]',
+			'u4': 'delete, [name]',
+			'u5': 'get, [name]',
+			'u6': 'check, [name], (user)',
 			'format': 'Il formato',
 			'notexists': 'non esiste',
 			'download': 'Importando il team',
 			'team': 'Team',
 			'added': 'aggiunto con successo all\'elenco',
+			'err': 'Error: Impossibile caricare i team su Hastebin',
 			'err1': 'Error: Hastebin non valido',
 			'err2': 'Error: Team non valido',
 			'err3': 'Error: Un team con lo stesso nome è già presente, si prega di sceglierne uno diverso',
@@ -455,6 +496,10 @@ exports.translations = {
 	youtube: {
 		'before': '',
 		'after': 'link di'
+	},
+
+	battle: {
+		'battlefound': 'Battaglia trovato in ladder'
 	},
 
 	moderation: {

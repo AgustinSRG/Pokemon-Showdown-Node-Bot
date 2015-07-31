@@ -2,7 +2,10 @@
 exports.reportsRoom = false;
 
 exports.reportBattle = function (room) {
-	if (exports.reportsRoom) Bot.say(exports.reportsRoom, "Battle found: <<" + room + ">>");
+	if (!exports.reportsRoom) return;
+	var lang = Config.language || 'english';
+	if (Settings.settings['language'] && Settings.settings['language'][exports.reportsRoom]) lang = Settings.settings['language'][exports.reportsRoom];
+	Bot.say(exports.reportsRoom, Tools.translateGlobal('battle', 'battlefound', lang) + ": <<" + room + ">>");
 	exports.reportsRoom = false;
 };
 

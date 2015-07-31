@@ -71,7 +71,7 @@ exports.commands = {
 	searchbattle: function (arg, by, room, cmd) {
 		if (!this.can('searchbattle')) return false;
 		if (!arg || !arg.length) return this.reply(this.trad('e1'));
-		var format = toId(arg);
+		var format = Tools.parseAliases(arg);
 		if (!Formats[format] || !Formats[format].ladder) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));
 		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply(this.trad('e31') + ' ' + format + '. ' + this.trad('e32'));
 		Features['battle'].LadderManager.reportsRoom = room;
@@ -89,7 +89,7 @@ exports.commands = {
 			if (Features['battle'].LadderManager.stop()) this.reply(this.trad('stop'));
 			return;
 		}
-		var format = toId(arg);
+		var format = Tools.parseAliases(arg);
 		if (!Formats[format] || !Formats[format].ladder) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));
 		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply(this.trad('e31') + ' ' + format + '. ' + this.trad('e32'));
 		if (Features['battle'].LadderManager.start(format)) this.reply(this.trad('start') + ' ' + format);
@@ -105,9 +105,8 @@ exports.commands = {
 			args = [by, arg];
 		}
 		if (args.length < 2) return this.reply(this.trad('e11') + ': ' + this.cmdToken + cmd + " " + this.trad('e12'));
-		var format = toId(args[1]);
-		if (!toId(args[1])) return this.reply(this.trad('spf'));
-		if (!Formats[format] || !Formats[format].chall) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));
+		var format = Tools.parseAliases(args[1]);
+		if (!format || !Formats[format] || !Formats[format].chall) return this.reply(this.trad('e21') + ' "' + format + '" ' + this.trad('e22'));
 		if (Formats[format].team && !Features['battle'].TeamBuilder.hasTeam(format)) return this.reply(this.trad('e31') + ' ' + format + '. ' + this.trad('e32'));
 		var cmds = [];
 		var team = Features['battle'].TeamBuilder.getTeam(format);

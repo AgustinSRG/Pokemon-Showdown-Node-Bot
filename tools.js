@@ -49,9 +49,48 @@ global.sent = function (str) {
 	console.log('sent'.grey + '\t' + str);
 };
 
-global.monitor = function (str) {
-	if (Config.debug && Config.debug.monitor === false) return;
-	console.log('monitor'.bgBlue + '\t' + str);
+global.monitor = function (str, type, flag) {
+	switch (type) {
+		case 'room':
+			if (Config.debug && Config.debug.room === false) return;
+			switch (flag) {
+				case 'join':
+					console.log('room'.green + '\t' + str);
+					break;
+				case 'leave':
+					console.log('room'.yellow + '\t' + str);
+					break;
+				case 'error':
+					console.log('room'.red + '\t' + str);
+					break;
+				default:
+					console.log('room'.blue + '\t' + str);
+			}
+			break;
+		case 'battle':
+			if (Config.debug && Config.debug.battle === false) return;
+			switch (flag) {
+				case 'join':
+					console.log('battle'.green + '\t' + str);
+					break;
+				case 'leave':
+					console.log('battle'.yellow + '\t' + str);
+					break;
+				case 'error':
+					console.log('battle'.red + '\t' + str);
+					break;
+				default:
+					console.log('battle'.blue + '\t' + str);
+			}
+			break;
+		case 'status':
+			if (Config.debug && Config.debug.status === false) return;
+			console.log('status'.blue + '\t' + str);
+			break;
+		default:
+			if (Config.debug && Config.debug.monitor === false) return;
+			console.log('monitor'.cyan + '\t' + str);
+	}
 };
 
 /* Tools */
@@ -66,6 +105,16 @@ exports.addLeftZero = function (num, nz) {
 	return str;
 };
 
+exports.escapeHTML = function (str) {
+	if (!str) return '';
+	return ('' + str).escapeHTML();
+};
+
+exports.getDateString = function () {
+	var date = new Date();
+	return (Tools.addLeftZero(date.getDate(), 2) + '/' + Tools.addLeftZero(date.getMonth() + 1, 2) + '/' + Tools.addLeftZero(date.getFullYear(), 4) + ' ' + Tools.addLeftZero(date.getHours(), 2) + ':' + Tools.addLeftZero(date.getMinutes(), 2) + ':' + Tools.addLeftZero(date.getSeconds(), 2));
+};
+
 exports.generateRandomNick = function (numChars) {
 	var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
 	var str = '';
@@ -73,6 +122,15 @@ exports.generateRandomNick = function (numChars) {
 		str += chars.charAt(~~(Math.random() * l));
 	}
 	return str;
+};
+
+exports.getTargetRoom = function (arg) {
+	if (!arg) return null;
+	if (arg.indexOf("[") !== 0) return null;
+	if (arg.indexOf("]") < 0) return null;
+	var target = toRoomid(arg.substr(arg.indexOf("[") + 1, arg.indexOf("]") - arg.indexOf("[") - 1));
+	var newArg = arg.substr(arg.indexOf("]") + 1);
+	return {arg: newArg, room: target};
 };
 
 exports.equalOrHigherRank = function (userIdentity, rank) {
@@ -205,6 +263,7 @@ exports.reloadFeature = function (feature) {
 			if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
 			Features[f.id] = f;
 			Features[f.id].init();
+			info("Feature \"" + f.id + '\" reloaded');
 		} else {
 			return -1;
 		}
@@ -229,6 +288,8 @@ var loadTranslations = exports.loadTranslations = function (reloading) {
 			}
 		}
 	});
+	if (reloading) info('Languages reloaded' + (errs.length ? ('. Errors: ' + errs.join(', ')) : '') + '. Languages: ' + Object.keys(translations).join(', '));
+	else ok('Loaded languages' + (errs.length ? ('. Errors: ' + errs.join(', ')) : '') + '. Languages: ' + Object.keys(translations).join(', '));
 	return errs;
 };
 
@@ -258,7 +319,13 @@ exports.translateGlobal = function (glob, data, lang) {
 	}
 };
 
-loadTranslations();
+exports.parseAliases = function (format) {
+	format = toId(format);
+	var aliases = Config.formatAliases || {};
+	if (Formats[format]) return format;
+	if (aliases[format]) return toId(aliases[format]);
+	return format;
+};
 
 var BattleStatIDs = exports.BattleStatIDs = {
 	HP: 'hp',
@@ -278,6 +345,15 @@ var BattleStatIDs = exports.BattleStatIDs = {
 	Spe: 'spe',
 	Spd: 'spe',
 	spe: 'spe'
+};
+
+var BattleStatNames = exports.BattleStatNames = {
+	hp: 'HP',
+	atk: 'Atk',
+	def: 'Def',
+	spa: 'SpA',
+	spd: 'SpD',
+	spe: 'Spe'
 };
 
 var BattleTypeChart = exports.BattleTypeChart = {
@@ -905,7 +981,7 @@ var packTeam = exports.packTeam = function (team) {
 };
 
 var fastUnpackTeam = exports.fastUnpackTeam = function (buf) {
-	if (!buf) return null;
+	if (!buf) return [];
 
 	var team = [];
 	var i = 0, j = 0;
@@ -932,13 +1008,7 @@ var fastUnpackTeam = exports.fastUnpackTeam = function (buf) {
 		// ability
 		j = buf.indexOf('|', i);
 		var ability = buf.substring(i, j);
-		var template = set.species;
-		try {
-			template = require('./data/pokedex.js').BattlePokedex[toId(template)];
-		} catch (e) {
-			errlog(e.stack);
-			template = null;
-		}
+		var template = Tools.getTemplate(set.species);
 		set.ability = (template.abilities && ability in {'': 1, 0: 1, 1: 1, H: 1} ? template.abilities[ability || '0'] : ability);
 		i = j + 1;
 
@@ -1020,4 +1090,145 @@ var teamOverview = exports.teamOverview = function (buf) {
 	}
 	if (!pokes.length) return '(empty)';
 	return pokes.join(', ');
+};
+
+exports.getTemplate = function (name) {
+	name = toId(name || '');
+	try {
+		return (require('./data/pokedex.js').BattlePokedex[name] || {});
+	} catch (e) {}
+	return {};
+};
+
+exports.getItem = function (name) {
+	name = toId(name || '');
+	try {
+		return (require('./data/items.js').BattleItems[name] || {});
+	} catch (e) {}
+	return {};
+};
+
+exports.getAbility = function (name) {
+	name = toId(name || '');
+	try {
+		return (require('./data/abilities.js').BattleAbilities[name] || {});
+	} catch (e) {}
+	return {};
+};
+
+exports.getMove = function (name) {
+	name = toId(name || '');
+	try {
+		return (require('./data/moves.js').BattleMovedex[name] || {});
+	} catch (e) {}
+	return {};
+};
+
+exports.exportTeam = function (team) {
+	if (!team) return "";
+	if (typeof team === 'string') {
+		if (team.indexOf('\n') >= 0) return team;
+		team = Tools.fastUnpackTeam(team);
+	}
+	var text = '';
+	for (var i = 0; i < team.length; i++) {
+		var curSet = team[i];
+		if (curSet.name !== curSet.species) {
+			text += '' + curSet.name + ' (' + (Tools.getTemplate(curSet.species).name || curSet.species) + ')';
+		} else {
+			text += '' + (Tools.getTemplate(curSet.species).name || curSet.species);
+		}
+		if (curSet.gender === 'M') text += ' (M)';
+		if (curSet.gender === 'F') text += ' (F)';
+		if (curSet.item) {
+			curSet.item = Tools.getItem(curSet.item).name || curSet.item;
+			text += ' @ ' + curSet.item;
+		}
+		text += "\n";
+		if (curSet.ability) {
+			text += 'Ability: ' + curSet.ability + "\n";
+		}
+		if (curSet.level && curSet.level !== 100) {
+			text += 'Level: ' + curSet.level + "\n";
+		}
+		if (curSet.shiny) {
+			text += 'Shiny: Yes\n';
+		}
+		if (typeof curSet.happiness === 'number' && curSet.happiness !== 255) {
+			text += 'Happiness: ' + curSet.happiness + "\n";
+		}
+		var first = true;
+		if (curSet.evs) {
+			for (var j in BattleStatNames) {
+				if (!curSet.evs[j]) continue;
+				if (first) {
+					text += 'EVs: ';
+					first = false;
+				} else {
+					text += ' / ';
+				}
+				text += '' + curSet.evs[j] + ' ' + BattleStatNames[j];
+			}
+		}
+		if (!first) {
+			text += "\n";
+		}
+		if (curSet.nature) {
+			text += '' + curSet.nature + ' Nature' + "\n";
+		}
+		var first = true;
+		if (curSet.ivs) {
+			var defaultIvs = true;
+			var hpType = false;
+			for (var j = 0; j < curSet.moves.length; j++) {
+				var move = curSet.moves[j];
+				if (move.substr(0, 13) === 'Hidden Power ' && move.substr(0, 14) !== 'Hidden Power [') {
+					hpType = move.substr(13);
+					if (!exports.BattleTypeChart[hpType].HPivs) {
+						continue;
+					}
+					for (var stat in BattleStatNames) {
+						if ((curSet.ivs[stat] === undefined ? 31 : curSet.ivs[stat]) !== (exports.BattleTypeChart[hpType].HPivs[stat] || 31)) {
+							defaultIvs = false;
+							break;
+						}
+					}
+				}
+			}
+			if (defaultIvs && !hpType) {
+				for (var stat in BattleStatNames) {
+					if (curSet.ivs[stat] !== 31 && typeof curSet.ivs[stat] !== undefined) {
+						defaultIvs = false;
+						break;
+					}
+				}
+			}
+			if (!defaultIvs) {
+				for (var stat in BattleStatNames) {
+					if (typeof curSet.ivs[stat] === 'undefined' || isNaN(curSet.ivs[stat]) || curSet.ivs[stat] === 31) continue;
+					if (first) {
+						text += 'IVs: ';
+						first = false;
+					} else {
+						text += ' / ';
+					}
+					text += '' + curSet.ivs[stat] + ' ' + BattleStatNames[stat];
+				}
+			}
+		}
+		if (!first) {
+			text += "\n";
+		}
+		if (curSet.moves) {
+			for (var j = 0; j < curSet.moves.length; j++) {
+				var move = curSet.moves[j];
+				if (move.substr(0, 13) === 'Hidden Power ') {
+					move = move.substr(0, 13) + '[' + move.substr(13) + ']';
+				}
+				text += '- ' + (Tools.getMove(move).name || move) + "\n";
+			}
+		}
+		text += "\n";
+	}
+	return text;
 };

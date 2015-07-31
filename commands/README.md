@@ -27,6 +27,7 @@ Dynanic commads are commands saved in a JSON, used for commands that are continu
  - `setcmd [cmd]` - Create or modify a command, with `temp` data previosly set
  - `setalias [alias], [cmd]` - Set an alias of an existent dynamic command
  - `delcmd [cmd]` - Delete a command
+ - `dyncmdlist` - Get the list of dynamic commands
 
 Developing Commands
 ------------
@@ -34,6 +35,7 @@ Developing Commands
 Commands for developing (some of these are dangerous)
 
  - `eval` or `js` - Execute arbitrary JavaScript
+ - `evalbattle` - Execute arbitrary JavaScript in a battle context
  - `send` - Send anything to the server
  - `custom` - Send anything to current room
  - `join [room1], [room2]...` - Join chat rooms
@@ -55,6 +57,19 @@ Other commands for multiple features
  - `usage` - Get a link to Smogon official usage stats
  - `help` - Get a link to this guide
  - `youtube [on/off]` - Enable / Disable YouTube link recognition
+
+Commands for quotes / jokes
+------------
+
+This is a database of jokes or quotes that can be modified through commands. Then, users can get a random one using **quote** or **joke** command.
+
+ - `quote` or `joke` - Get a random quote / joke
+ - `addquotes [http://hastebin.com/raw/example]` - Add quotes from a Hastebin document
+ - `temp [text]` - Set temp var, to create or modify a quote / joke
+ - `setquote [id]` - Create or modify a quote / joke using the **temp** var
+ - `delquote [id]` - Remove a quote by Id
+ - `viewquote [id]` - View a quote by Id
+ - `viewquotes` - Upload quote list to Hastebin
 
 Pokemon Commands
 ------------
@@ -92,8 +107,8 @@ Moderation Commands
  - `banword [phrase]` - Add a banword
  - `unbanword [phrase]` - Remove a banword
  - `vbw` - View banword list
- - `inapword [phrase]` - Add an inapropiate word
- - `uninapword [phrase]` - Remove an inapropiate word
+ - `inapword [phrase]` - Add an inappropriate word
+ - `uninapword [phrase]` - Remove an inappropriate word
  - `viw` - View inapropiate words list
 
 **Joinphrases:** Configure what phrase Bot says when certain user joins a room. This can be spammable, much caution!
@@ -134,6 +149,8 @@ Commands for battle feature
 **Teams**
  - `team add, [name], [format], [http://hastebin.com/raw/example]` - Add a team to Bot teams list
  - `team delete, [name]` - Remove a team from Bot teams list
+ - `team get, [id]` - Get a team in exportable format
+ - `team check, [id], (user)` - Challenge with a specific team
  - `teamslist` - Upload teams list to Hastebin to view it.
 
 **Permissions in Battle Rooms**

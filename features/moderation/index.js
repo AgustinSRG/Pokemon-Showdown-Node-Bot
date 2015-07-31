@@ -149,7 +149,7 @@ function parseChat (room, time, by, message) {
 
 	if (!chatData[room]) chatData[room] = {};
 
-	if (!chatData[room][user]) chatData[room][user] = {times:[], lastMsgs: ['', ''], points:0, lastAction:0};
+	if (!chatData[room][user]) chatData[room][user] = {times:[], lastMsgs: ['', '', ''], points:0, lastAction:0};
 
 	chatData[room][user].lastMsgs.push(msg);
 	chatData[room][user].lastMsgs.shift();
