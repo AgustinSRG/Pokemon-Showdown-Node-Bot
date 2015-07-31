@@ -60,15 +60,6 @@ function unblacklistRegex(regex, room) {
 	return false;
 }
 
-function getTargetRoom(arg) {
-	if (!arg) return null;
-	if (arg.indexOf("[") !== 0) return null;
-	if (arg.indexOf("]") < 0) return null;
-	var target = toRoomid(arg.substr(arg.indexOf("[") + 1, arg.indexOf("]") - arg.indexOf("[") - 1));
-	var newArg = arg.substr(arg.indexOf("]") + 1);
-	return {arg: newArg, room: target};
-}
-
 Settings.addPermissions(['autoban', 'banword', 'joinphrase', 'tban']);
 
 exports.commands = {
