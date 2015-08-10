@@ -2,7 +2,7 @@ const POKEDEX_FILE = './../../data/pokedex.js';
 const MOVEDEX_FILE = './../../data/moves.js';
 
 var blacklistedMoves = {
-	/* These moves are bad in 1v1, with an false high base power */
+	/* These moves are bad in 1v1, with a false high base power */
 	"Focus Punch": 1,
 	"Explosion": 1,
 	"Self-Destruct": 1,
@@ -178,12 +178,24 @@ module.exports = {
 			if (this.inmune(dataMove, pokemonB) && !(toId(actPoke.baseAbility) in {'moldbreaker': 1, 'teravolt': 1, 'turboblaze': 1})) basePower = 0;
 			basePower *= this.gen6_get_mux(dataMove.type, data2.types, not_inmune);
 			if (data.statusData.self.pokemon[0]['boost']) {
-				if (dataMove.category === "Special" && data.statusData.self.pokemon[0]['boost']['spa']) basePower *= (1 + data.statusData.self.pokemon[0]['boost']['spa'] * 0.5);
-				if (dataMove.category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk']) basePower *= (1 + data.statusData.self.pokemon[0]['boost']['atk'] * 0.5);
+				if (dataMove.category === "Special" && data.statusData.self.pokemon[0]['boost']['spa']) {
+					if (data.statusData.self.pokemon[0]['boost']['spa'] > 0) basePower *= (1 + data.statusData.self.pokemon[0]['boost']['spa'] * 0.5);
+					else basePower /= (1 - data.statusData.self.pokemon[0]['boost']['spa'] * 0.5);
+				}
+				if (dataMove.category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk']) {
+					if (data.statusData.self.pokemon[0]['boost']['atk'] > 0) basePower *= (1 + data.statusData.self.pokemon[0]['boost']['atk'] * 0.5);
+					else basePower /= (1 - data.statusData.self.pokemon[0]['boost']['atk'] * 0.5);
+				}
 			}
 			if (data.statusData.foe.pokemon[0]['boost']) {
-				if (dataMove.category === "Special" && data.statusData.foe.pokemon[0]['boost']['spd']) basePower /= (1 + data.statusData.foe.pokemon[0]['boost']['spd'] * 0.5);
-				if (dataMove.category === "Physical" && data.statusData.foe.pokemon[0]['boost']['def']) basePower /= (1 + data.statusData.foe.pokemon[0]['boost']['def'] * 0.5);
+				if (dataMove.category === "Special" && data.statusData.foe.pokemon[0]['boost']['spd']) {
+					if (data.statusData.foe.pokemon[0]['boost']['spd'] > 0) basePower /= (1 + data.statusData.foe.pokemon[0]['boost']['spd'] * 0.5);
+					else basePower *= (1 - data.statusData.foe.pokemon[0]['boost']['spd'] * 0.5);
+				}
+				if (dataMove.category === "Physical" && data.statusData.foe.pokemon[0]['boost']['def']) {
+					if (data.statusData.foe.pokemon[0]['boost']['def'] > 0) basePower /= (1 + data.statusData.foe.pokemon[0]['boost']['def'] * 0.5);
+					else basePower *= (1 - data.statusData.foe.pokemon[0]['boost']['def'] * 0.5);
+				}
 			}
 			if (dataMove.category === "Special" && data.statusData.foe.side['Light Screen']) basePower *= 0.5;
 			if (dataMove.category === "Physical" && data.statusData.foe.side['Reflect']) basePower *= 0.5;
