@@ -113,6 +113,10 @@ module.exports = {
 				}
 				if (dataMove.flags && dataMove.flags['powder'] && (data2.types[0] === "Grass" || (data2.types[1] && data2.types[1] === "Grass"))) continue;
 				if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+				if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+				if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+				if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+				if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
 				if (this.inmune(dataMove, pokemonB)) continue;
 				if (data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Substitute']) continue;
 			}
@@ -278,7 +282,12 @@ module.exports = {
 			}
 
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-
+			if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+			if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+			if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+			if (dataMove.type === "Fire" && data.weather && toId(data.weather) === "primordialsea") continue;
+			if (dataMove.type === "Water" && data.weather && toId(data.weather) === "desolateland") continue;
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
@@ -339,6 +348,12 @@ module.exports = {
 				if (!solarFlag) continue;
 			}
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+			if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+			if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+			if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+			if (dataMove.type === "Fire" && data.weather && toId(data.weather) === "primordialsea") continue;
+			if (dataMove.type === "Water" && data.weather && toId(data.weather) === "desolateland") continue;
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
 			if (this.gen6_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
@@ -578,6 +593,12 @@ module.exports = {
 				if (isLastPoke) continue;
 			}
 			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+			if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+			if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+			if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+			if (dataMove.type === "Fire" && data.weather && toId(data.weather) === "primordialsea") continue;
+			if (dataMove.type === "Water" && data.weather && toId(data.weather) === "desolateland") continue;
 			if (this.gen6_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
