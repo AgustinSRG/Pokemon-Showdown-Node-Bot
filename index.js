@@ -445,6 +445,21 @@ if (Config.crashguard) {
 	ok("Crashguard enabled");
 }
 
+//WatchConfig
+if (Config.watchconfig) {
+	Tools.watchFile('./config.js', function (curr, prev) {
+		if (curr.mtime <= prev.mtime) return;
+		try {
+			reloadConfig();
+			info('config.js reloaded');
+		} catch (e) {
+			error('could not reload config.js');
+			errlog(e.stack);
+		}
+	});
+	ok("Watchconfig enabled");
+}
+
 console.log("\n-----------------------------------------------\n".yellow);
 
 //Connection

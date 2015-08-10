@@ -28,6 +28,12 @@ exports.connectionTimeout = 2 * 60 * 1000;
 exports.crashguard = true;
 
 /*
+* Watch Config
+*/
+
+exports.watchconfig = true;
+
+/*
 * Login Details
 */
 

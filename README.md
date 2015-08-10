@@ -73,6 +73,9 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
 **Crashguard**
  - `Config.crashguard`: If true, write errors to console instead of crashing
 
+**Watchconfig**
+ - `Config.watchconfig`: If true, config.js is automatically reloaded when it is changed
+
 **Login Details**
  - `Config.nick`: Bot Nickname, if you don't specify a nickname, it will log in a random nickname
  - `Config.pass`: Password, if needed

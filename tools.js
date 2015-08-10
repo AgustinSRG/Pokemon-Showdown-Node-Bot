@@ -184,6 +184,15 @@ exports.getTimeAgo = function (time, lang) {
 	return times.join(', ');
 };
 
+exports.watchFile = function () {
+	try {
+		return fs.watchFile.apply(fs, arguments);
+	} catch (e) {
+		error('Your version of node does not support `fs.watchFile`');
+		return false;
+	}
+};
+
 exports.uncacheTree = function (root) {
 	var uncache = [require.resolve(root)];
 	do {
