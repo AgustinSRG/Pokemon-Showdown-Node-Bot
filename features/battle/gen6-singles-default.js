@@ -222,6 +222,9 @@ module.exports = {
 				if (data.statusData.self.pokemon[0]['boost'] && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] > 3) continue;
 				if (data.statusData.self.pokemon[0]['hp'] < 60) continue;
 			}
+			if (dataMove.name === 'Geomancy') {
+				if (!req.side.pokemon[0].item) continue;
+			}
 
 			/* Do not use this moves - todo list */
 			if (dataMove.name in {"Lunar Dance": 1, "Healing Wish": 1, "Memento": 1, "Assist": 1, "Nature Power": 1, "Natural Gift": 1, "Switcheroo": 1, "Trick": 1}) continue;
