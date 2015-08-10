@@ -237,7 +237,7 @@
 		}
 		sideId = sideId.substr(0, 2);
 		return {
-			pokeId: pokeId,
+			pokeId: Tools.toName(pokeId),
 			sideId: sideId,
 			pokeIndex: pokeIndex
 		};
@@ -470,7 +470,8 @@
 					for (var i = 1; i < dataPoke.length; i++) {
 						argPoke = dataPoke[i].trim();
 						if (argPoke.charAt(0) === 'L') poke.level = parseInt(argPoke.substr(1));
-						else poke.gender = argPoke;
+						else if (argPoke === "M" || argPoke === "F") poke.gender = argPoke;
+						else poke[argPoke] = true;
 					}
 					this.data[room].oppTeam.push(poke);
 				}

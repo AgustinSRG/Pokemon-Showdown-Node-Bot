@@ -95,6 +95,11 @@ global.monitor = function (str, type, flag) {
 
 /* Tools */
 
+exports.toName = function (text) {
+	if (!text) return '';
+	return text.trim();
+};
+
 exports.stripCommands = function (text) {
 	return ((text.trim().charAt(0) === '/') ? '/' : ((text.trim().charAt(0) === '!') ? ' ' : '')) + text.trim();
 };
