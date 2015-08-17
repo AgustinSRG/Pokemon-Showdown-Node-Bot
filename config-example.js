@@ -274,6 +274,24 @@ exports.chatLogger = {
 };
 
 /*
+exports.logServer = {
+	port: 5400,
+	bindaddress: null,
+	users: {
+		'admin': {
+			name: 'Administrator',
+			pass: 'password',
+			access: {'room1': 1, 'room2': 1}
+		}
+	},
+	rooms: {
+		'room1': {private: true},
+		'room2': {private: true}
+	}
+};
+*/
+
+/*
 * Auto-Invite
 */
 

@@ -21,3 +21,26 @@ exports.chatLogger = {
 	ageOfLogs: 7 //in days (max age of logs, 0 to keep logs infinitely)
 };
 ```
+
+**Logs Server**: Simple html servers for an easy access to chat logs.
+ - `port` - Server listening port 
+ - `rooms` - Add chatrooms whose logs can be requested, set private attribute if you want that only a few users can access room logs. 
+ - `users` - Add users credential in order to accessing private logs (useful for staff)
+ 
+```js
+exports.logServer = {
+	port: 5400,
+	bindaddress: null,
+	users: {
+		'admin': {
+			name: 'Administrator',
+			pass: 'password',
+			access: {'room1': 1, 'room2': 1}
+		}
+	},
+	rooms: {
+		'room1': {private: true},
+		'room2': {private: true}
+	}
+};
+```
