@@ -9,12 +9,21 @@ exports.commands = {
 		this.restrictReply('Usage: ' + this.cmdToken + this.trad('h'), 'tournament');
 	},
 
+	tourend: function (arg, by, room, cmd) {
+		if (this.roomType !== 'chat' || !this.can('tournament')) return;
+		if (!Features['tours'].tourData[room]) return this.reply(this.trad('err'));
+		this.reply("/tournament end");
+	},
+
 	maketour: 'tournament',
 	newtour: 'tournament',
 	tour: 'tournament',
 	tournament: function (arg, by, room, cmd) {
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
-		if (Features['tours'].tourData[room]) return this.reply(this.trad('e2'));
+		if (Features['tours'].tourData[room]) {
+			if (toId(arg) === 'end') return this.parse(this.cmdToken + 'tourend');
+			return this.reply(this.trad('e2'));
+		}
 		var details = {
 			format: 'ou',
 			type: 'elimination',
@@ -29,40 +38,100 @@ exports.commands = {
 		}
 		if (arg && arg.length) {
 			var args = arg.split(",");
-			if (args[0]) {
-				var format = Tools.parseAliases(args[0]);
+			var params = {
+				format: null,
+				type: null,
+				maxUsers: null,
+				timeToStart: null,
+				autodq: null
+			};
+			var splArg;
+			for (var i = 0; i < args.length; i++) {
+				args[i] = args[i].trim();
+				if (!args[i]) continue;
+				splArg = args[i].split("=");
+				if (splArg.length < 2) {
+					switch (i) {
+						case 0:
+							params.format = args[i];
+							break;
+						case 1:
+							params.timeToStart = args[i];
+							break;
+						case 2:
+							params.autodq = args[i];
+							break;
+						case 3:
+							params.maxUsers = args[i];
+							break;
+						case 4:
+							params.type = args[i];
+							break;
+					}
+				} else {
+					var idArg = toId(splArg[0]);
+					var valueArg = splArg[1].trim();
+					switch (idArg) {
+						case 'format':
+						case 'tier':
+							params.format = valueArg;
+							break;
+						case 'time':
+						case 'singups':
+						case 'timer':
+							params.timeToStart = valueArg;
+							break;
+						case 'autodq':
+						case 'dq':
+							params.autodq = valueArg;
+							break;
+						case 'maxusers':
+						case 'users':
+							params.maxUsers = valueArg;
+							break;
+						case 'generator':
+						case 'type':
+							params.type = valueArg;
+							break;
+						default:
+							return this.reply(this.trad('param') + ' ' + idArg + ' ' + this.trad('paramhelp') + ": tier, timer, dq, users, type");
+					}
+				}
+			}
+			if (params.format) {
+				var format = Tools.parseAliases(params.format);
 				if (!Formats[format] || !Formats[format].chall) return this.reply(this.trad('e31') + ' ' + format + ' ' + this.trad('e32'));
 				details.format = format;
 			}
-			if (args[1]) {
-				if (toId(args[1]) === 'off') {
+			if (params.timeToStart) {
+				if (toId(params.timeToStart) === 'off') {
 					details.timeToStart = null;
 				} else {
-					var time = parseInt(args[1]);
-					if (!time || time < 0) return this.reply(this.trad('e4'));
+					var time = parseInt(params.timeToStart);
+					if (!time || time < 10) return this.reply(this.trad('e4'));
 					details.timeToStart = time * 1000;
 				}
 			}
-			if (args[2]) {
-				if (toId(args[2]) === 'off') {
+			if (params.autodq) {
+				if (toId(params.autodq) === 'off') {
 					details.autodq = false;
 				} else {
-					var dq = parseFloat(args[2]);
+					var dq = parseFloat(params.autodq);
 					if (!dq || dq < 0) return this.reply(this.trad('e5'));
 					details.autodq = dq;
 				}
 			}
-			if (args[3]) {
-				if (toId(args[3]) === 'off') {
+			if (params.maxUsers) {
+				if (toId(params.maxUsers) === 'off') {
 					details.maxUsers = null;
 				} else {
-					var musers = parseInt(args[3]);
-					if (!musers || musers < 2) return this.reply(this.trad('e6'));
+					var musers = parseInt(params.maxUsers);
+					if (!musers || musers < 4) return this.reply(this.trad('e6'));
 					details.maxUsers = musers;
 				}
 			}
-			if (args[4]) {
-				var type = toId(args[4]);
+			if (params.type) {
+				var type = toId(params.type);
 				if (type !== 'elimination' && type !== 'roundrobin') return this.reply(this.trad('e7'));
 				details.type = type;
 			}
