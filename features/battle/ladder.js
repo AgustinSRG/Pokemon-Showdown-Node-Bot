@@ -43,3 +43,9 @@ exports.stop = function () {
 	exports.ladderTimer = null;
 	return true;
 };
+
+exports.destroy = function () {
+	exports.laddering = false;
+	if (exports.ladderTimer) clearTimeout(exports.ladderTimer);
+	exports.ladderTimer = null;
+};

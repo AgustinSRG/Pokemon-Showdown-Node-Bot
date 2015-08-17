@@ -48,5 +48,6 @@ exports.parse = function (room, message, isIntro, spl) {
 };
 
 exports.destroy = function () {
+	LadderManager.destroy();
 	if (Features[exports.id]) delete Features[exports.id];
 };

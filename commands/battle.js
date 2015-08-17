@@ -17,10 +17,13 @@ exports.commands = {
 	reloadbattle: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
 		try {
-			Tools.uncacheTree('./features/battle/index.js');
-			Features['battle'] = require('./../features/battle/index.js');
-			Features['battle'].init();
-			this.reply("Battle feature hotpatched");
+			var data = Features['battle'].BattleBot.data;
+			Tools.uncacheTree('./features/battle/battle-bot.js');
+			Features['battle'].BattleBot = require('./../features/battle/battle-bot.js');
+			Features['battle'].BattleBot.init();
+			Features['battle'].BattleBot.data = data;
+			Features['battle'].BattleBot.battlesCount = Object.keys(data).length;
+			this.reply("Battle modules hotpatched");
 		} catch (e) {
 			this.reply("Error: " + sys.inspect(e));
 		}
