@@ -242,7 +242,8 @@ exports.translations = {
 			'e21': 'Il formato',
 			'e22': 'non è valido per le challenges',
 			'e31': 'Non ho team per accettare challenges in questo formato',
-			'e32': 'Usa "team add" per aggiungere più team'
+			'e32': 'Usa "team add" per aggiungere più team',
+			'spf': 'Specifica un formato, per favore'
 		},
 		jointour: {
 			'notchat': 'Questo comando è disponibile solo nelle chat',

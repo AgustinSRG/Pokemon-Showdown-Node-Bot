@@ -242,6 +242,7 @@
 			'e21': 'El formato',
 			'e22': 'no es válido para retos',
 			'e31': 'No tengo equipos para retar en el formato',
+			'spf': 'Por favor especificar un formato', // I'm assuming this is wrong btw :P
 			'e32': 'Use el comando "team add" para agregar más equipos'
 		},
 		jointour: {

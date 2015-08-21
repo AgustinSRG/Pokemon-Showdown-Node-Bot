@@ -9,18 +9,13 @@ function setPermission(room, perm, rank) {
 	Settings.save();
 }
 
-Settings.addPermissions(['say']);
+Settings.addPermissions(['say', 'about']);
 
 exports.commands = {
 	credits: 'about',
 	bot: 'about',
 	about: function (arg, by, room, cmd) {
-		var text = this.trad('about') + " (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)";
-		if (!this.isRanked('#')) {
-			this.pmReply(text);
-		} else {
-			this.reply(text);
-		}
+		this.restrictReply(this.trad('about') + ' (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)', 'about');
 	},
 
 	bottime: 'time',
