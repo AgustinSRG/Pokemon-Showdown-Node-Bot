@@ -132,7 +132,7 @@ var LogServer = (function () {
 		var roomConfig = this.getConfig().rooms;
 		var acs = this.checkToken(secToken);
 
-		var htmlHead = {'Content-Type': 'text/html; charset=utf-8'}, logHead = {'Content-Type': 'text/plain charset=utf-8'};
+		var htmlHead = {'Content-Type': 'text/html; charset=utf-8'}, logHead = {'Content-Type': 'text/plain; charset=utf-8'};
 		if (setToken) {
 			htmlHead['Set-Cookie'] = 'accesstoken=' + secToken + "; Path=/";
 			logHead['Set-Cookie'] = 'accesstoken=' + secToken + "; Path=/";
