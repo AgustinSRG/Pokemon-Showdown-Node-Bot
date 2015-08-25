@@ -89,6 +89,7 @@
 			'answers': [
 				'Todo apunta a que sí.',
 				'Sí.',
+				'Hay mucha niebla. Inténtalo de nuevo.',
 				'Respuesta poco clara, pregunta de nuevo.',
 				'Sin ninguna duda.',
 				'Mis fuentes dicen que no.',
@@ -101,11 +102,13 @@
 				'Muy dudable.',
 				'Sí - definitivamente.',
 				'Es cierto.',
+				'No es cierto.',
 				'No puedo predecir eso.',
 				'Más o menos.',
 				'Pregunta más tarde.',
 				'Mi respuesta es no.',
 				'Parece buena idea.',
+				'Quizás.',
 				'No cuentes con ello.'
 			]
 		},
