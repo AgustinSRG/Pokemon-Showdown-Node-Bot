@@ -120,11 +120,8 @@ function getNextRoom () {
 }
 
 exports.init = function () {
-	for (var i in roomAuth)
-		delete roomAuth[i];
 	privateRooms = [];
 	linkedRooms = {};
-	roomAuth = exports.roomAuth = {};
 	roomAuthChanges = exports.roomAuthChanges = {};
 	if (Config.autoInvite) {
 		for (var i = 0; i < Config.autoInvite.length; i++) {
@@ -153,6 +150,8 @@ exports.parse = function (room, message, isIntro, spl) {
 };
 
 exports.destroy = function () {
+	for (var i in roomAuth)
+		delete roomAuth[i];
 	if (checkAuthTimer) clearInterval(checkAuthTimer);
 	checkAuthTimer = null;
 	if (Features[exports.id]) delete Features[exports.id];
