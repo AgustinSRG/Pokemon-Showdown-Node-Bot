@@ -194,10 +194,7 @@ exports.commands = {
 				}
 			}
 			prioritymoves.sort();
-			for (var l in prioritymoves) {
-				text += prioritymoves[l];
-				if (l !== prioritymoves.length - 1) text += ', ';
-			}
+			text += prioritymoves.join(', ');
 		} else {
 			text += this.trad('err2');
 		}
@@ -230,7 +227,7 @@ exports.commands = {
 				if (learnsets[pokemonToCheck[j]]) {
 					for (var k in learnsets[pokemonToCheck[j]].learnset) {
 						if (movedex[k]) {
-							if ((movedex[k].boosts && movedex[k].target === 'self' && k !== 'doubleteam' && k !== 'minimize') || k === 'bellydrum') {
+							if ((movedex[k].boosts && movedex[k].target === 'self' && k !== 'doubleteam' && k !== 'minimize') || k === 'bellydrum' || (movedex[k].secondary && movedex[k].secondary.chance === 100 && movedex[k].secondary.self && movedex[k].secondary.self.boosts)) {
 								if (boostingmoves.indexOf(movedex[k].name) === -1) {
 									boostingmoves.push(movedex[k].name);
 								}
@@ -240,10 +237,7 @@ exports.commands = {
 				}
 			}
 			boostingmoves.sort();
-			for (var l in boostingmoves) {
-				text += boostingmoves[l];
-				if (l !== boostingmoves.length - 1) text += ', ';
-			}
+			text += boostingmoves.join(', ');
 		} else {
 			text += this.trad('err2');
 		}
@@ -277,7 +271,7 @@ exports.commands = {
 				if (learnsets[pokemonToCheck[j]]) {
 					for (var k in learnsets[pokemonToCheck[j]].learnset) {
 						if (movedex[k]) {
-							if (movedex[k].heal || k === "synthesis" || k === "moonlight" || k === "morningsun" || k === "wish" || k === "swallow") {
+							if (movedex[k].heal || k === "synthesis" || k === "moonlight" || k === "morningsun" || k === "wish" || k === "swallow" || k === "rest") {
 								if (recoverymoves.indexOf(movedex[k].name) === -1) {
 									recoverymoves.push(movedex[k].name);
 								}
@@ -291,12 +285,10 @@ exports.commands = {
 				}
 			}
 			recoverymoves.sort();
-			text += recoverymoves.join(', ');
-			if (drainmoves.length > 0) {
-				text += ', ';
-				drainmoves.sort();
-				text += drainmoves.join(', ');
+			for (var l = 0; l < drainmoves.length; l++) {
+				recoverymoves.push(drainmoves[l]);
 			}
+			text += recoverymoves.join(', ');
 		} else {
 			text += this.trad('err2');
 		}
@@ -340,10 +332,7 @@ exports.commands = {
 				}
 			}
 			hazards.sort();
-			for (var l in hazards) {
-				text += hazards[l];
-				if (l !== hazards.length - 1) text += ', ';
-			}
+			text += hazards.join(', ');
 		} else {
 			text += this.trad('err2');
 		}
