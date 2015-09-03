@@ -81,7 +81,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked('@')) return this.reply(this.botName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(this.botName + " " + this.trad('notmod'));
 
 		var added = [];
 		var illegalNick = [];
@@ -132,7 +132,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked('@')) return this.reply(this.botName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(this.botName + " " + this.trad('notmod'));
 
 		arg = arg.split(',');
 
@@ -176,7 +176,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
 		if (!arg) return this.reply(this.trad('notarg'));
 
@@ -209,7 +209,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked('@')) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
 
 		if (!arg) return this.reply(this.trad('notarg'));
 
@@ -288,7 +288,7 @@ exports.commands = {
 	vzt: 'zerotol',
 	viewzerotol: 'zerotol',
 	zerotol: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return;
+		if (!this.isRanked(Tools.getGroup('admin'))) return;
 		var ztLevels, defaultLevel, aliases;
 		if (Config.moderation && Config.moderation.zeroToleranceLevels && Config.moderation.zeroToleranceDefaultLevel) {
 			ztLevels = Config.moderation.zeroToleranceLevels;
@@ -383,7 +383,7 @@ exports.commands = {
 					}
 					var text = '';
 					if (removed.length) {
-						text += this.trad('users') + 'User(s) "' + removed.join('", "') + '" ' + this.trad('removed') + '. ';
+						text += this.trad('users') + ' "' + removed.join('", "') + '" ' + this.trad('removed') + '. ';
 						Settings.save();
 					}
 					if (notFound.length) {
@@ -408,7 +408,7 @@ exports.commands = {
 
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -445,7 +445,7 @@ exports.commands = {
 
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -485,7 +485,7 @@ exports.commands = {
 		var text = '';
 		var bannedFrom = '';
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -527,7 +527,7 @@ exports.commands = {
 
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -564,7 +564,7 @@ exports.commands = {
 
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -604,7 +604,7 @@ exports.commands = {
 		var text = '';
 		var bannedFrom = '';
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -650,7 +650,7 @@ exports.commands = {
 
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -666,7 +666,7 @@ exports.commands = {
 		if (tarRoom !== 'global' && (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat')) return this.reply(this.trad('notchat') + textHelper);
 
 		if (Bot.rooms[tarRoom] && Bot.rooms[tarRoom].type === 'chat' && toId(arg) in {'on': 1, 'enable': 1}) {
-			if (!this.isRanked('#')) return false;
+			if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
 			if (!Settings.settings['jpdisable']) Settings.settings['jpdisable'] = {};
 			if (Settings.settings['jpdisable'][tarRoom]) delete Settings.settings['jpdisable'][tarRoom];
 			else return this.reply(this.trad('ae') + textHelper);
@@ -675,7 +675,7 @@ exports.commands = {
 		}
 
 		if (Bot.rooms[tarRoom] && Bot.rooms[tarRoom].type === 'chat' && toId(arg) in {'off': 1, 'disable': 1}) {
-			if (!this.isRanked('#')) return false;
+			if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
 			if (!Settings.settings['jpdisable']) Settings.settings['jpdisable'] = {};
 			if (!Settings.settings['jpdisable'][tarRoom]) Settings.settings['jpdisable'][tarRoom] = 1;
 			else return this.reply(this.trad('ad') + textHelper);
@@ -729,7 +729,7 @@ exports.commands = {
 
 		var tarRoom;
 		if (this.roomType === 'pm') {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = 'global';
 		} else {
 			tarRoom = room;
@@ -773,11 +773,11 @@ exports.commands = {
 	modset: 'mod',
 	modsettings: 'mod',
 	mod: function (arg, by, room, cmd) {
-		if (!this.isRanked('#')) return false;
+		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
 		var tarRoom = room;
 		var args = arg.split(",");
 		if (args.length > 2) {
-			if (!this.isRanked('~')) return false;
+			if (!this.isRanked(Tools.getGroup('admin'))) return false;
 			tarRoom = toRoomid(args[0]);
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + ' (' + tarRoom + ')');

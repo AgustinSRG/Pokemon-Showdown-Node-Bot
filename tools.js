@@ -155,6 +155,15 @@ exports.equalOrHigherRank = function (userIdentity, rank) {
 	return false;
 };
 
+exports.getGroup = function (perm) {
+	if (!perm) return true;
+	var globalPermissions = {'voice': '+', 'driver': '%', 'moderator': '@', 'roomowner': '#', 'admin': '~'};
+	if (Config.globalPermissions) {
+		for (var i in Config.globalPermissions) globalPermissions[i] = Config.globalPermissions[i];
+	}
+	return globalPermissions[perm] || true;
+};
+
 exports.getTimeAgo = function (time, lang) {
 	time = Date.now() - time;
 	time = Math.round(time / 1000); // rounds to nearest second

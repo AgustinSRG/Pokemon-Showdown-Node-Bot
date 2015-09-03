@@ -108,7 +108,7 @@ exports.commands = {
 
 	lang: 'language',
 	language: function (arg, by, room, cmd) {
-		if (!this.isRanked('#')) return false;
+		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		var lang = toId(arg);
 		if (!lang.length) return this.reply(this.trad('nolang'));
@@ -121,7 +121,7 @@ exports.commands = {
 
 	settings: 'set',
 	set: function (arg, by, room, cmd) {
-		if (!this.isRanked('#')) return false;
+		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		var args = arg.split(",");
 		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));

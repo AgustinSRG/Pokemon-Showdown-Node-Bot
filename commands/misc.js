@@ -35,7 +35,7 @@ exports.commands = {
 
 	youtubelinks: 'youtube',
 	youtube: function (arg, user, room, cmd) {
-		if (!this.isRanked('#')) return false;
+		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		arg = toId(arg);
 		if (!Settings.settings['ytlinks']) Settings.settings['ytlinks'] = {};

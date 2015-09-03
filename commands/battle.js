@@ -31,7 +31,7 @@ exports.commands = {
 
 	unblockchallenges: 'blockchallenges',
 	blockchallenges: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return;
+		if (!this.isRanked(Tools.getGroup('admin'))) return;
 		if (cmd === "blockchallenges") {
 			this.say('', '/blockchallenges');
 			this.say(room, this.trad('b'));
@@ -87,7 +87,7 @@ exports.commands = {
 
 	ladderstop: 'ladderstart',
 	ladderstart: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		if (cmd === 'ladderstop') {
 			if (Features['battle'].LadderManager.stop()) this.reply(this.trad('stop'));
 			return;
@@ -134,7 +134,7 @@ exports.commands = {
 	},
 
 	leavetour: function (arg, by, room, cmd) {
-		if (!this.isRanked('#')) return false;
+		if (!this.can('jointour')) return false;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		if (!Features['battle'].TourManager.tourData[room] || !Features['battle'].TourManager.tourData[room].format) return this.reply(this.trad('e1'));
 		if (!Features['battle'].TourManager.tourData[room].isJoined) return this.reply(this.trad('e2'));
@@ -144,7 +144,7 @@ exports.commands = {
 	battlepermissions: 'battleset',
 	battlesettings: 'battleset',
 	battleset: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		var setPermission = function (room, perm, rank) {
 			if (!Settings.settings.commands) Settings.settings.commands = {};
 			if (!Settings.settings.commands[room]) Settings.settings.commands[room] = {};

@@ -159,7 +159,7 @@ function parseChat (room, time, by, message) {
 	/* Moderation */
 
 	if (!Config.moderation.allowmute) return;
-	if (!isBotRanked(room, '%')) return; // Bot is not a driver or above
+	if (!isBotRanked(room, Tools.getGroup('driver'))) return; // Bot is not a driver or above
 
 	var infractions = [];
 	var muteMessage = '';
@@ -387,7 +387,7 @@ function parseChat (room, time, by, message) {
 
 		var cmd = Config.moderation.punishments[pointVal - 1];
 
-		if (cmd  === 'roomban' && !isBotRanked(room, '@')) cmd = 'hourmute'; //Bot is not a moderator
+		if (cmd  === 'roomban' && !isBotRanked(room, Tools.getGroup('moderator'))) cmd = 'hourmute'; //Bot is not a moderator
 		if ((room in Config.privateRooms) && cmd === 'warn') cmd = 'mute'; //can't warn in private rooms
 
 		Bot.say(room, '/' + cmd + ' ' + user + muteMessage);

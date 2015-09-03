@@ -60,7 +60,7 @@ exports.commands = {
 
 	deletecommand: 'delcmd',
 	delcmd: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		var dcmd = toId(arg);
 		if (CommandParser.dynCommands[dcmd]) {
 			delete CommandParser.dynCommands[dcmd];
@@ -73,7 +73,7 @@ exports.commands = {
 
 	setcommand: 'setcmd',
 	setcmd: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		if (!CommandParser.tempVar) {
 			return this.reply(this.trad('notemp'));
 		}
@@ -91,7 +91,7 @@ exports.commands = {
 
 	setalias: 'setcmdalias',
 	setcmdalias: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		var args = arg.split(',');
 		if (args.length !== 2) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 		var alias = toId(args[0]);
@@ -106,7 +106,7 @@ exports.commands = {
 
 	dyncmdlist: 'getdyncmdlist',
 	getdyncmdlist: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		var list = Object.keys(CommandParser.dynCommands).sort();
 		if (!list.length) return this.pmReply(this.trad('nocmds'));
 		var text = this.trad('list') + ':\n\n';
@@ -125,7 +125,7 @@ exports.commands = {
 
 	stemp: 'temp',
 	temp: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		if (arg) CommandParser.tempVar = Tools.stripCommands(arg);
 		this.reply('Temp: ' + CommandParser.tempVar);
 	}

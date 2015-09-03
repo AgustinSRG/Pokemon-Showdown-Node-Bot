@@ -6,7 +6,7 @@ exports.commands = {
 	botteams: 'team',
 	teams: 'team',
 	team: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		if (!arg) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 		arg = arg.split(',');
 		var opt = toId(arg[0]);
@@ -100,7 +100,7 @@ exports.commands = {
 	viewteamslist: 'teamlist',
 	teamslist: 'teamlist',
 	teamlist: function (arg, by, room, cmd) {
-		if (!this.isRanked('~')) return false;
+		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		var teamsStr = this.trad('list') + ':\n\n';
 		var teams = Features['battle'].TeamBuilder.dynTeams;
 		var nTeams = 0;

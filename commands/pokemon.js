@@ -24,7 +24,7 @@ exports.commands = {
 		var rpoke = pokeList[Math.floor(Math.random() * pokeList.length)];
 		rpoke = pokedex[rpoke].species;
 		if (!this.can('pokemon')) return this.pmReply(rpoke);
-		if (cmd === 'poke' && this.botRanked('+')) return this.reply('!dt ' + rpoke);
+		if (cmd === 'poke' && this.botRanked(Tools.getGroup('voice'))) return this.reply('!dt ' + rpoke);
 		this.reply(rpoke);
 	},
 
