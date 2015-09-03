@@ -25,4 +25,4 @@ exports.github = {
 
 This feature requires:
  - A domain for your bot. If you don't have one you can port forward using [ngrok](https://ngrok.com/) for example.
- - Al least one Webhooks from a remote repository. To create one go to the repositories you want to monitor, access settings panel, pick "Webhooks & Services" and select "Add webhook". Set payload URL to `http://yourdomain:3420/github/callback`, content type to `application/json`, the same secret you choose in the config and select events to send (now this only supports `push` and `pull-request` events).
+ - At least one Webhooks from a remote repository. To create one go to the repositories you want to monitor, access settings panel, pick "Webhooks & Services" and select "Add webhook". Set payload URL to `http://yourdomain:3420/github/callback`, content type to `application/json`, the same secret you choose in the config and select events to send (now this only supports `push` and `pull-request` events).
