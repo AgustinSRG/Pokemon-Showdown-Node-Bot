@@ -9,10 +9,11 @@ exports.commands = {
 		this.restrictReply('Usage: ' + this.cmdToken + this.trad('h'), 'tournament');
 	},
 
+	tourstart: 'tourend',
 	tourend: function (arg, by, room, cmd) {
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
 		if (!Features['tours'].tourData[room]) return this.reply(this.trad('err'));
-		this.reply("/tournament end");
+		this.reply("/tournament " + (cmd === 'tourend' ? 'end' : 'start'));
 	},
 
 	maketour: 'tournament',
@@ -22,6 +23,7 @@ exports.commands = {
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
 		if (Features['tours'].tourData[room]) {
 			if (toId(arg) === 'end') return this.parse(this.cmdToken + 'tourend');
+			if (toId(arg) === 'start') return this.parse(this.cmdToken + 'tourstart');
 			return this.reply(this.trad('e2'));
 		}
 		var details = {

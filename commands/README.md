@@ -164,4 +164,5 @@ Commands for Tournaments feature
  - `tour` - Start a tournament
  - `tour tier=example, timer=30, users=64, dq=1.5, type=elimination` - Start a tournament with custom and optional parameters
  - `tourhelp` - Help for `tour command`
+ - `tourstart` - Force start a tornament
  - `tourend` - Force end a tornament
