@@ -18,6 +18,10 @@ exports.commands = {
 		this.restrictReply(this.trad('about') + " (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)", 'info');
 	},
 
+	git: function() {
+		this.restrictReply("**Pokemon Showdown Node Bot** source: https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot");
+	},
+
 	bottime: 'time',
 	time: function () {
 		var f = new Date();
