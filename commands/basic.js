@@ -21,7 +21,7 @@ exports.commands = {
 	guide: 'help',
 	botguide: 'help',
 	help: function () {
-		this.restrictReply(this.trad('guide') + ': https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md', 'info');
+		this.restrictReply(this.trad('guide') + ': ' + (Config.botguide || "https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md"), 'info');
 	},
 
 	bottime: 'time',

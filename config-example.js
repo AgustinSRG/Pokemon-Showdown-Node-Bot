@@ -100,6 +100,8 @@ exports.permissionExceptions = {
 	'tournament': '@'
 };
 
+exports.botguide = "https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md";
+
 /*
 * Language configuration
 */
