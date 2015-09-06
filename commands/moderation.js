@@ -81,7 +81,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(this.botName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(this.botName + " " + this.trad('notmod').replace('@', Tools.getGroup('moderator')));
 
 		var added = [];
 		var illegalNick = [];
@@ -132,7 +132,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(this.botName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(this.botName + " " + this.trad('notmod').replace('@', Tools.getGroup('moderator')));
 
 		arg = arg.split(',');
 
@@ -176,7 +176,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(Bot.status.nickName + " " + this.trad('notmod').replace('@', Tools.getGroup('moderator')));
 
 		if (!arg) return this.reply(this.trad('notarg'));
 
@@ -209,7 +209,7 @@ exports.commands = {
 			textHelper = ' (' + tarRoom + ')';
 		}
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
-		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(Bot.status.nickName + " " + this.trad('notmod'));
+		if (!this.isExcepted && !this.botRanked(Tools.getGroup('moderator'))) return this.reply(Bot.status.nickName + " " + this.trad('notmod').replace('@', Tools.getGroup('moderator')));
 
 		if (!arg) return this.reply(this.trad('notarg'));
 
