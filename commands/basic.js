@@ -18,6 +18,12 @@ exports.commands = {
 		this.restrictReply(this.trad('about') + " (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)", 'info');
 	},
 
+	guide: 'help',
+	botguide: 'help',
+	help: function () {
+		this.restrictReply(this.trad('guide') + ': https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md', 'info');
+	},
+
 	bottime: 'time',
 	time: function () {
 		var f = new Date();
@@ -104,48 +110,5 @@ exports.commands = {
 		if (!arg) return;
 		if (!this.can('say')) return;
 		this.reply(Tools.stripCommands(arg));
-	},
-
-	lang: 'language',
-	language: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		var lang = toId(arg);
-		if (!lang.length) return this.reply(this.trad('nolang'));
-		if (!Tools.translations[lang]) return this.reply(this.trad('v') + ': ' + Object.keys(Tools.translations).join(', '));
-		if (!Settings.settings['language']) Settings.settings['language'] = {};
-		Settings.settings['language'][room] = lang;
-		Settings.save();
-		this.reply(this.trad('l'));
-	},
-
-	settings: 'set',
-	set: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
-		var args = arg.split(",");
-		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
-		var perm = toId(args[0]);
-		var rank = args[1].trim();
-		if (!(perm in Settings.permissions)) {
-			return this.reply(this.trad('ps') + ": " + Object.keys(Settings.permissions).sort().join(", "));
-		}
-		if (rank in {'off': 1, 'disable': 1}) {
-			if (!this.canSet(perm, true)) return this.reply(this.trad('denied'));
-			setPermission(room, perm, true);
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('d'));
-		}
-		if (rank in {'on': 1, 'all': 1, 'enable': 1}) {
-			if (!this.canSet(perm, ' ')) return this.reply(this.trad('denied'));
-			setPermission(room, perm, ' ');
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('a'));
-		}
-		if (Config.ranks.indexOf(rank) >= 0) {
-			if (!this.canSet(perm, rank)) return this.reply(this.trad('denied'));
-			setPermission(room, perm, rank);
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('r') + ' ' + rank + " " + this.trad('r2'));
-		} else {
-			return this.reply(this.trad('not1') + " " + rank + " " + this.trad('not2'));
-		}
 	}
 };

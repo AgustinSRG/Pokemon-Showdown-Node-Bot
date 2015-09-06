@@ -6,20 +6,19 @@ Bot commands are in files of this path. If you want to add more commands just ad
 Basic Commands
 ------------
 
-Some commands are basic (info, command settings, etc) referring to basic features.
+Basic features and some information about the bot.
 
  - `about` - Basic bot info, with the link to this repo.
+ - `help` - Get a link to this guide
  - `time` - Current time for Bot
  - `uptime` - Time since the last bot restart
  - `seen [user]` - Latest data from an user
  - `say [text]` - Force to say something
- - `lang [lang]` - Set the language of the room
- - `settings [cmd], [rank]` - Configure command permissions
 
 Dynamic Commands
 ------------
 
-Dynanic commads are commands saved in a JSON, used for commands that are continuously changing, like forum links or usage stats. Commands for using, creating, modifying and deleting dynamic commands are the following:
+Dynamic commads are commands saved in a JSON, used for commands that are continuously changing, like forum links or usage stats. Commands for using, creating, modifying and deleting dynamic commands are the following:
 
  - `dyn [cmd]` - To call a dynamic command
  - `wall [cmd]` - To call a dynamic command (with announce / wall)
@@ -29,52 +28,18 @@ Dynanic commads are commands saved in a JSON, used for commands that are continu
  - `delcmd [cmd]` - Delete a command
  - `dyncmdlist` - Get the list of dynamic commands
 
-Developing Commands
+**NOTE:** You can use a dynamic just with `.command` (command character + command name) if there is not another static command with the same name. So you can use this to create only-text commands with ease.
+
+Chat Plugins
 ------------
 
-Commands for developing (some of these are dangerous)
-
- - `eval` or `js` - Execute arbitrary JavaScript
- - `evalbattle` - Execute arbitrary JavaScript in a battle context
- - `send` - Send anything to the server
- - `custom` - Send anything to current room
- - `join [room1], [room2]...` - Join chat rooms
- - `leave` - Leave chat rooms
- - `joinrooms [official/public/all]` - Join all rooms
- - `ignore [user]` - Bot will ignore an user
- - `unignore [user]` - Stop ignoring an user
- - `reload [commands/config/features/laguages]` - Hotpatch source files
- - `updategit` - Fast forward from git repo
- - `kill` - End the process
-
-Misc Commands
-------------
-
-Other commands for multiple features
+Misc commands for multiple features:
 
  - `pick [option1], [option2], ...` - Choose between multiple options
  - `randomanswer` - Get a random answer
  - `usage` - Get a link to Smogon official usage stats
- - `help` - Get a link to this guide
- - `youtube [on/off]` - Enable / Disable YouTube link recognition
 
-Commands for quotes / jokes
-------------
-
-This is a database of jokes or quotes that can be modified through commands. Then, users can get a random one using **quote** or **joke** command.
-
- - `quote` or `joke` - Get a random quote / joke
- - `addquotes [http://hastebin.com/raw/example]` - Add quotes from a Hastebin document
- - `temp [text]` - Set temp var, to create or modify a quote / joke
- - `setquote [id]` - Create or modify a quote / joke using the **temp** var
- - `delquote [id]` - Remove a quote by Id
- - `viewquote [id]` - View a quote by Id
- - `viewquotes` - Upload quote list to Hastebin
-
-Pokemon Commands
-------------
-
-Commands for getting pokemon info.
+Commands for getting pokemon info:
 
  - `poke` or `randompokemon` - Get a random pokemon
  - `gen [poke]` - Get pokemon, item, etc generation
@@ -85,7 +50,43 @@ Commands for getting pokemon info.
  - `recovery [poke]` - Get recovery moves
  - `hazards [poke]` - Get hazards moves
 
-Moderation Commands
+Commands for managing a database of jokes or quotes. Then, users can get a random one using **quote** or **joke** command:
+
+ - `quote` or `joke` - Get a random quote / joke
+ - `addquotes [http://hastebin.com/raw/example]` - Add quotes from a Hastebin document
+ - `temp [text]` - Set temp var, to create or modify a quote / joke
+ - `setquote [id]` - Create or modify a quote / joke using the **temp** var
+ - `delquote [id]` - Remove a quote by Id
+ - `viewquote [id]` - View a quote by Id
+ - `viewquotes` - Upload quote list to Hastebin
+
+Administrative Commands
+------------
+
+Commands for controlling the bot and command permissions for chat rooms.
+
+ - `custom` - Send anything to current room
+ - `join [room1], [room2]...` - Join chat rooms
+ - `leave` - Leave chat rooms
+ - `joinrooms [official/public/all]` - Join all rooms
+ - `lang [lang]` - Set the language of the room
+ - `settings [cmd], [rank]` - Configure command permissions
+ - `battlesettings [permission], [rank]` - Change permissions for battle rooms
+
+Developing Commands
+------------
+
+Commands for developing (only for excepted users)
+
+ - `eval` or `js` - Execute arbitrary JavaScript
+ - `send` - Send anything to the server
+ - `ignore [user]` - Bot will ignore an user
+ - `unignore [user]` - Stop ignoring an user
+ - `reload [commands/config/features/laguages]` - Hotpatch source files
+ - `updategit` - Fast forward from git repo
+ - `kill` - End the process
+
+Moderation
 ------------
 
 **Mod Settings:** Use `mod (room - optional), [moderation], [on/off]` to enable or disable moderations.
@@ -119,12 +120,13 @@ Moderation Commands
  
 **Note:** Excepted users can use moderation commands in format `command [roomid]Arguments` to set moderation through PM or other room. Example: `ab [lobby]spammer1, spammer2`
 
-Battle Commands
+Battle
 ------------
 
 Commands for battle feature
 
 **Developing**
+ - `evalbattle` - Execute arbitrary JavaScript in a battle context
  - `reloadteams` - Hotpatch teams
  - `reloadbattle` - Hotpatch battle modules
  - `move` - Force a custom move
@@ -153,10 +155,7 @@ Commands for battle feature
  - `team check, [id], (user)` - Challenge with a specific team
  - `teamslist` - Upload teams list to Hastebin to view it.
 
-**Permissions in Battle Rooms**
- - `battlesettings [permission], [rank]` - Change permissions for battle rooms
-
-Tournaments Commands
+Tournaments
 ------------
 
 Commands for Tournaments feature
@@ -166,3 +165,18 @@ Commands for Tournaments feature
  - `tourhelp` - Help for `tour command`
  - `tourstart` - Force start a tornament
  - `tourend` - Force end a tornament
+
+Youtube
+------------
+
+Commands for Youtube link recognition feature
+
+ - `youtube [on/off]` - Enable / Disable YouTube link recognition
+
+Auto-Invite
+------------
+
+Commands for auto-invite feature
+
+  - `reloadroomauth [room]` - Reload roomauth if the autoinvite feature is not working well
+  - `getroomauth [room]` - Upload roomauth to hastebin (dev command)

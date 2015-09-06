@@ -6,6 +6,9 @@
 		about: {
 			'about': 'Ich bin ein **Pokemon Showdown Bot** geschrieben in JavaScript für Node. Von: Spudling.'
 		},
+		help: {
+			'guide': 'Anleitung für die Befehle dieses Bots'
+		},
 		time: {'time': 'Zeit dieses Bots'},
 		uptime: {
 			'week': 'Woche',
@@ -28,6 +31,9 @@
 			'c': 'beim chatten in',
 			'n': 'beim Ändern des Namens in'
 		},
+		/*
+		* Admin Commands
+		*/
 		language: {
 			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
 			'nolang': 'Du musst eine Sprache festlegen',
@@ -37,6 +43,18 @@
 		set: {
 			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
 			'denied': 'Zugriff verweigert',
+			'u1': 'Verwendung',
+			'u2': '[Berechtigung], [Rang]',
+			'ps': 'Berechtigungen',
+			'p': 'Berechtigung',
+			'd': 'ist in diesem Raum jetzt deaktiviert',
+			'a': 'ist in diesem Raum jetzt für alle user verfügbar',
+			'r': 'ist in diesem Raum jetzt für alle user mit Rang ',
+			'r2': 'oder höher verfügbar',
+			'not1': 'Rang',
+			'not2': 'nicht gefunden'
+		},
+		battleset: {
 			'u1': 'Verwendung',
 			'u2': '[Berechtigung], [Rang]',
 			'ps': 'Berechtigungen',
@@ -111,17 +129,6 @@
 		},
 		usage: {
 			'stats': 'Verwendungsstatisiken'
-		},
-		help: {
-			'guide': 'Anleitung für die Befehle dieses Bots'
-		},
-		youtube: {
-			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
-			'u': 'Verwendung',
-			'ae': 'YouTube-Linkerkennung ist für diesen Raum bereits aktiviert',
-			'e': 'YouTube-Linkerkennung ist jetzt für diesen Raum aktiviert',
-			'ad': 'YouTube-Linkerkennung ist für diesen Raum bereits deaktiviert',
-			'd': 'YouTube-Linkerkennung ist jetzt für diesen Raum deaktiviert'
 		},
 		/*
 		* Quotes
@@ -256,18 +263,6 @@
 			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
 			'e1': 'Es gibt kein Tournier in diesem Raum',
 			'e2': 'Fehler: Bot ist keinem Turnier beigetreten'
-		},
-		battleset: {
-			'u1': 'Verwendung',
-			'u2': '[Berechtigung], [Rang]',
-			'ps': 'Berechtigungen',
-			'p': 'Berechtigung',
-			'd': 'ist in diesem Raum jetzt deaktiviert',
-			'a': 'ist in diesem Raum jetzt für alle user verfügbar',
-			'r': 'ist in diesem Raum jetzt für alle user mit Rang ',
-			'r2': 'oder höher verfügbar',
-			'not1': 'Rang',
-			'not2': 'nicht gefunden'
 		},
 		team: {
 			'u1': 'Verwendung',
@@ -478,6 +473,17 @@
 			'notstarted': 'Fehler: Das Turnier ist nicht gestartet, wahrscheinlich weil ich nicht die Berechtigung habe, ein Turnier zu erstellen oder der Befehl wurde geändert.',
 			'param': 'Parameter',
 			'paramhelp': 'nicht gefunden, gelten parameter'
+		},
+		/*
+		* Youtube Commands
+		*/
+		youtube: {
+			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
+			'u': 'Verwendung',
+			'ae': 'YouTube-Linkerkennung ist für diesen Raum bereits aktiviert',
+			'e': 'YouTube-Linkerkennung ist jetzt für diesen Raum aktiviert',
+			'ad': 'YouTube-Linkerkennung ist für diesen Raum bereits deaktiviert',
+			'd': 'YouTube-Linkerkennung ist jetzt für diesen Raum deaktiviert'
 		}
 	},
 

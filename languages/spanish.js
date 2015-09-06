@@ -6,6 +6,9 @@
 		about: {
 			'about': 'Soy un **Bot para Pokemon Showdown** escrito en JavaScript para Node. Por: Ecuacion'
 		},
+		help: {
+			'guide': 'Guía de comandos del bot'
+		},
 		time: {'time': 'Hora del Bot'},
 		uptime: {
 			'week': 'semana',
@@ -28,6 +31,9 @@
 			'c': 'chateando en',
 			'n': 'cambiándose el nick a'
 		},
+		/*
+		* Admin Commands
+		*/
 		language: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'nolang': 'Debes especificar un idioma',
@@ -44,6 +50,18 @@
 			'd': 'ha sido deshabilitado para esta sala',
 			'a': 'ha sido habilitado para todos los usuarios de esta sala',
 			'r': 'en esta sala está disponible para los usuarios de rango',
+			'r2': 'o superior',
+			'not1': 'Rango',
+			'not2': 'no encontrado'
+		},
+		battleset: {
+			'u1': 'Uso Correcto:',
+			'u2': '[permiso], [rango]',
+			'ps': 'Permisos',
+			'p': 'Permiso',
+			'd': 'ha sido deshabilitado para las salas de batalla',
+			'a': 'ha sido habilitado para todos los usuarios en las salas de batalla',
+			'r': 'en las salas de batalla está disponible para los usuarios de rango',
 			'r2': 'o superior',
 			'not1': 'Rango',
 			'not2': 'no encontrado'
@@ -114,17 +132,6 @@
 		},
 		usage: {
 			'stats': 'Estadísticas de uso'
-		},
-		help: {
-			'guide': 'Guía de comandos del bot'
-		},
-		youtube: {
-			'notchat': 'Este comando solo está disponible para las salas de chat',
-			'u': 'Uso correcto',
-			'ae': 'Reconocimiento automático de links de YouTube ya estaba activado para la sala',
-			'e': 'Reconocimiento automático de links de YouTube ha sido activado en esta sala',
-			'ad': 'Reconocimiento automático de links de YouTube no estaba activado para la sala',
-			'd': 'Reconocimiento automático de links de YouTube ha sido desactivado en esta sala'
 		},
 		/*
 		* Quotes
@@ -259,18 +266,6 @@
 			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'e1': 'No hay ningún torneo en esta sala',
 			'e2': 'No estaba participando en el torneo'
-		},
-		battleset: {
-			'u1': 'Uso Correcto:',
-			'u2': '[permiso], [rango]',
-			'ps': 'Permisos',
-			'p': 'Permiso',
-			'd': 'ha sido deshabilitado para las salas de batalla',
-			'a': 'ha sido habilitado para todos los usuarios en las salas de batalla',
-			'r': 'en las salas de batalla está disponible para los usuarios de rango',
-			'r2': 'o superior',
-			'not1': 'Rango',
-			'not2': 'no encontrado'
 		},
 		team: {
 			'u1': 'Uso correcto',
@@ -480,6 +475,17 @@
 			'notstarted': 'Error: El torneo no ha empezado, probablemente por un cambio en los permisos o en los comandos',
 			'param': 'Parámetro',
 			'paramhelp': 'no encontrado, Los parámetros correctos son'
+		},
+		/*
+		* Youtube Commands
+		*/
+		youtube: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
+			'u': 'Uso correcto',
+			'ae': 'Reconocimiento automático de links de YouTube ya estaba activado para la sala',
+			'e': 'Reconocimiento automático de links de YouTube ha sido activado en esta sala',
+			'ad': 'Reconocimiento automático de links de YouTube no estaba activado para la sala',
+			'd': 'Reconocimiento automático de links de YouTube ha sido desactivado en esta sala'
 		}
 	},
 

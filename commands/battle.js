@@ -5,6 +5,132 @@
 Settings.addPermissions(['challenge', 'searchbattle', 'jointour']);
 
 exports.commands = {
+	jsbattle: 'evalbattle',
+	eb: 'evalbattle',
+	evalbattle: function (arg, by, room, cmd) {
+		if (!this.isExcepted) return false;
+		var tarRoom = room;
+		var tarObj = Tools.getTargetRoom(arg);
+		if (tarObj) {
+			arg = tarObj.arg;
+			tarRoom = tarObj.room;
+		}
+		if (!Features['battle'] || !Features['battle'].BattleBot || !Features['battle'].BattleBot.data) return false;
+		if (!Features['battle'].BattleBot.data[tarRoom]) return this.reply('Battle "' + tarRoom + '" not found');
+		var battleContext = {
+			id: tarRoom,
+			room: room,
+			data: Features['battle'].BattleBot.data[tarRoom],
+			request: Features['battle'].BattleBot.data[tarRoom].request,
+			status: Features['battle'].BattleBot.data[tarRoom].statusData,
+			opponentTeamData: Features['battle'].BattleBot.data[tarRoom].oppTeamOffSet,
+			opponentTeam: Features['battle'].BattleBot.data[tarRoom].oppTeam,
+			system: Features['battle'].BattleBot,
+			sendBattle: function (data) {
+				return Bot.say(this.id, data);
+			},
+			report: function (data) {
+				Bot.say(this.room, data);
+				return '';
+			},
+			manual: function (flag) {
+				if (flag === undefined) flag = true;
+				this.data['manual'] = flag;
+				if (flag) this.sendBattle('/undo');
+				return this.data['manual'];
+			},
+			timer: function (flag) {
+				if (flag === undefined) flag = true;
+				if (flag) this.sendBattle('/timer on');
+				else this.sendBattle('/timer off');
+				return !!flag;
+			},
+			decision: function (decision) {
+				var rqid = 0;
+				if (this.request) rqid = parseInt(this.request.rqid);
+				if (decision.length === undefined) decision = [decision];
+				return this.system.sendDecision(this.id, decision, rqid);
+			},
+			moves: function (num) {
+				if (!num) num = 0;
+				if (!this.request.active || !this.request.active[num] || !this.request.active[num].moves) return [];
+				var poke = this.request.active[num];
+				var moves = [];
+				for (var i in poke.moves) {
+					moves.push(poke.moves[i].move);
+				}
+				return moves;
+			},
+			pokemon: function () {
+				var pokes = [];
+				if (this.request && this.request.side && this.request.side.pokemon) {
+					var poke;
+					for (var i = 0; i < this.request.side.pokemon.length; i++) {
+						if (this.request.side.pokemon[i].details.indexOf(",") > -1) poke = this.request.side.pokemon[i].details.substr(0, this.request.side.pokemon[i].details.indexOf(","));
+						else poke = this.request.side.pokemon[i].details;
+						pokes.push(poke);
+					}
+				}
+				return pokes;
+			},
+			move: function (move, mega, target, poke) {
+				if (typeof move === 'string') {
+					var moves = this.moves(poke || 0);
+					for (var i = 0; i < moves.length; i++) moves[i] = toId(moves[i]);
+					return {type: 'move', move: (moves.indexOf(toId(move)) + 1), mega: mega, target: target};
+				} else {
+					return {type: 'move', move: parseInt(move), mega: mega, target: target};
+				}
+			},
+			"switch": function (pokemon) {
+				var side = this.pokemon();
+				for (var i = 0; i < side.length; i++) side[i] = toId(side[i]);
+				if (typeof pokemon === "string" && side.indexOf(toId(pokemon)) >= 0) {
+					return {type: 'switch', switchIn: (side.indexOf(toId(pokemon)) + 1)};
+				} else {
+					return {type: 'switch', switchIn: parseInt(pokemon)};
+				}
+			},
+			pass: function () {
+				return {type: 'pass'};
+			},
+			team: function (team) {
+				return {type: 'team', team: team};
+			},
+			random: function () {
+				return this.system.getRandomMove(this.id);
+			},
+			cancel: function () {
+				this.sendBattle('/undo');
+				return true;
+			},
+			forfeit: function () {
+				this.sendBattle('/forfeit');
+				return '';
+			}
+		};
+		var evalFunction = function (txt) {
+			try {
+				var battle = this;
+
+				/* Fast access methods - decisions */
+				var choose = this.decision.bind(this);
+				var move = this.move.bind(this);
+				var sw = this.switch.bind(this);
+				var pass = this.pass.bind(this);
+				var team = this.team.bind(this);
+				var cancel = this.cancel.bind(this);
+
+				/* Eval */
+				var result = eval(txt.trim());
+				if (result !== '') Bot.say(room, '``' + JSON.stringify(result) + '``');
+			} catch (e) {
+				Bot.say(room, e.name + ": " + e.message);
+			}
+		};
+		evalFunction.call(battleContext, arg);
+	},
+
 	reloadteams: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
 		if (Features['battle'].TeamBuilder.loadTeamList(true)) {
@@ -139,38 +265,5 @@ exports.commands = {
 		if (!Features['battle'].TourManager.tourData[room] || !Features['battle'].TourManager.tourData[room].format) return this.reply(this.trad('e1'));
 		if (!Features['battle'].TourManager.tourData[room].isJoined) return this.reply(this.trad('e2'));
 		this.reply("/tour leave");
-	},
-
-	battlepermissions: 'battleset',
-	battlesettings: 'battleset',
-	battleset: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('admin'))) return false;
-		var setPermission = function (room, perm, rank) {
-			if (!Settings.settings.commands) Settings.settings.commands = {};
-			if (!Settings.settings.commands[room]) Settings.settings.commands[room] = {};
-			Settings.settings.commands[room][perm] = rank;
-			Settings.save();
-		};
-		var args = arg.split(",");
-		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
-		var perm = toId(args[0]);
-		var rank = args[1].trim();
-		if (!(perm in Settings.permissions)) {
-			return this.reply(this.trad('ps') + ": " + Object.keys(Settings.permissions).sort().join(", "));
-		}
-		if (rank in {'off': 1, 'disable': 1}) {
-			setPermission('battle-', perm, true);
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('d'));
-		}
-		if (rank in {'on': 1, 'all': 1, 'enable': 1}) {
-			setPermission('battle-', perm, ' ');
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('a'));
-		}
-		if (Config.ranks.indexOf(rank) >= 0) {
-			setPermission('battle-', perm, rank);
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('r') + ' ' + rank + " " + this.trad('r2'));
-		} else {
-			return this.reply(this.trad('not1') + " " + rank + " " + this.trad('not2'));
-		}
 	}
 };

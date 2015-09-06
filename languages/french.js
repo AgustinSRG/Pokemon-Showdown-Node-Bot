@@ -6,6 +6,9 @@
 		about: {
 			'about': 'Je suis un **Robot de Pokémon Showdown** qui a été écrit en Javascript pour node. Par Ecuacion'
 		},
+		help: {
+			'guide': 'Guide des commandes de bot'
+		},
 		time: {'time': 'Temps de Bot'},
 		uptime: {
 			'week': 'semaine',
@@ -22,12 +25,15 @@
 			's1': 'a été vu la dernière fois il ya',
 			's2': '',
 			'n1': 'L\'utilisateur',
-			'n2': 'n\'a jamais été vu, au moins depuis la dernière réinitialisation de bo',
+			'n2': 'n\'a jamais été vu, au moins depuis la dernière réinitialisation de bot',
 			'j': 'joindre',
 			'l': 'laissant',
 			'c': 'chat in',
 			'n': 'changer de nick à'
 		},
+		/*
+		* Admin Commands
+		*/
 		language: {
 			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
 			'nolang': 'Vous devez spécifier une langue',
@@ -47,6 +53,18 @@
 			'r2': 'ou haut',
 			'not1': 'Rank',
 			'not2': 'non trouvé'
+		},
+		battleset: {
+			'u1': 'Usage',
+			'u2': '[permission], [rang]',
+			'ps': 'Permissions',
+			'p': 'Permission',
+			'd': 'dans des batailles est maintenant désactivé',
+			'a': 'dans des batailles est maintenant disponible pour tous les utilisateurs',
+			'r': 'dans des batailles est maintenant disponible pour les utilisateurs du rang',
+			'r2': 'ou plus',
+			'not1': 'Rang',
+			'not2': 'pas trouvé'
 		},
 		/*
 		* Dyn Commands
@@ -111,17 +129,6 @@
 		},
 		usage: {
 			'stats': 'Statistiques d\'utilisation'
-		},
-		help: {
-			'guide': 'Guide des commandes de bot'
-		},
-		youtube: {
-			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
-			'u': 'Usage',
-			'ae': 'La reconnaissance YouTube est déjà disponible pour la salle',
-			'e': 'La reconnaissance de lien YouTube est  maintenant disponible pour cette salle',
-			'ad': 'La reconnaissance de lien YouTube est  déjà désactivé pour la salle',
-			'd': 'La reconnaissance de lien YouTube  est  maintenant désactivée pour cette salle'
 		},
 		/*
 		* Quotes
@@ -256,18 +263,6 @@
 			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
 			'e1': 'Il n\'y a pas de tournoi dans cette salle',
 			'e2': 'Erreur: Pas encore dans le tournoi'
-		},
-		battleset: {
-			'u1': 'Usage',
-			'u2': '[permission], [rang]',
-			'ps': 'Permissions',
-			'p': 'Permission',
-			'd': 'dans des batailles est maintenant désactivé',
-			'a': 'dans des batailles est maintenant disponible pour tous les utilisateurs',
-			'r': 'dans des batailles est maintenant disponible pour les utilisateurs du rang',
-			'r2': 'ou plus',
-			'not1': 'Rang',
-			'not2': 'pas trouvé'
 		},
 		team: {
 			'u1': 'Usage',
@@ -477,6 +472,17 @@
 			'notstarted': 'Erreur: le tournoi n\'a pas commencé, probablement parce que je n\'ai pas la permission de créer des tournois ou des commandes ont été changées.',
 			'param': 'Paramètre',
 			'paramhelp': 'introuvable, paramètre valide sont'
+		},
+		/*
+		* Youtube Commands
+		*/
+		youtube: {
+			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
+			'u': 'Usage',
+			'ae': 'La reconnaissance YouTube est déjà disponible pour la salle',
+			'e': 'La reconnaissance de lien YouTube est  maintenant disponible pour cette salle',
+			'ad': 'La reconnaissance de lien YouTube est  déjà désactivé pour la salle',
+			'd': 'La reconnaissance de lien YouTube  est  maintenant désactivée pour cette salle'
 		}
 	},
 

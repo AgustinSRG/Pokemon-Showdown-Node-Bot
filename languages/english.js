@@ -6,6 +6,9 @@ exports.translations = {
 		about: {
 			'about': 'I\'m a **Pokemon Showdown Bot** written in JavaScript for Node. By: Ecuacion'
 		},
+		help: {
+			'guide': 'Bot commands guide'
+		},
 		time: {'time': 'Bot Time'},
 		uptime: {
 			'week': 'week',
@@ -28,6 +31,9 @@ exports.translations = {
 			'c': 'chatting in',
 			'n': 'changing nick to'
 		},
+		/*
+		* Admin Commands
+		*/
 		language: {
 			'notchat': 'This command is only available for chat rooms',
 			'nolang': 'You must specify a language',
@@ -44,6 +50,18 @@ exports.translations = {
 			'd': 'in this room is now disabled',
 			'a': 'in this room is now available for all users',
 			'r': 'in this room is now available for users with rank',
+			'r2': 'or higher',
+			'not1': 'Rank',
+			'not2': 'not found'
+		},
+		battleset: {
+			'u1': 'Usage',
+			'u2': '[permission], [rank]',
+			'ps': 'Permissions',
+			'p': 'Permission',
+			'd': 'in battles is now disabled',
+			'a': 'in battles is now available for all users',
+			'r': 'in battles is now available for users with rank',
 			'r2': 'or higher',
 			'not1': 'Rank',
 			'not2': 'not found'
@@ -111,17 +129,6 @@ exports.translations = {
 		},
 		usage: {
 			'stats': 'Usage stats'
-		},
-		help: {
-			'guide': 'Bot commands guide'
-		},
-		youtube: {
-			'notchat': 'This command is only available for chat rooms',
-			'u': 'Usage',
-			'ae': 'YouTube link recognition is already enabled for room',
-			'e': 'YouTube link recognition is now enabled for this room',
-			'ad': 'YouTube link recognition is already disabled for room',
-			'd': 'YouTube link recognition is now disabled for this room'
 		},
 		/*
 		* Quotes
@@ -256,18 +263,6 @@ exports.translations = {
 			'notchat': 'This command is only available for chat rooms',
 			'e1': 'There is no tournament in this room',
 			'e2': 'Error: Not joined'
-		},
-		battleset: {
-			'u1': 'Usage',
-			'u2': '[permission], [rank]',
-			'ps': 'Permissions',
-			'p': 'Permission',
-			'd': 'in battles is now disabled',
-			'a': 'in battles is now available for all users',
-			'r': 'in battles is now available for users with rank',
-			'r2': 'or higher',
-			'not1': 'Rank',
-			'not2': 'not found'
 		},
 		team: {
 			'u1': 'Usage',
@@ -477,6 +472,17 @@ exports.translations = {
 			'notstarted': 'Error: the tournament did not start, probably because I have not permission to create tournaments or commands got changed.',
 			'param': 'Parameter',
 			'paramhelp': 'not found, valid parameter are'
+		},
+		/*
+		* Youtube Commands
+		*/
+		youtube: {
+			'notchat': 'This command is only available for chat rooms',
+			'u': 'Usage',
+			'ae': 'YouTube link recognition is already enabled for room',
+			'e': 'YouTube link recognition is now enabled for this room',
+			'ad': 'YouTube link recognition is already disabled for room',
+			'd': 'YouTube link recognition is now disabled for this room'
 		}
 	},
 

@@ -6,6 +6,9 @@ exports.translations = {
 		about: {
 			'about': '**Pokemon Showdown Bot** scritto in Javascript per Node. da Ecuacion.'
 		},
+		help: {
+			'guide': 'Guida ai comandi del bot'
+		},
 		time: {'time': 'Bot Time'},
 		uptime: {
 			'week': 'settimana',
@@ -28,6 +31,9 @@ exports.translations = {
 			'c': 'chatto in',
 			'n': 'il nuovo nick è'
 		},
+		/*
+		* Admin Commands
+		*/
 		language: {
 			'notchat': 'Questo comando è solo disponibile nelle chat room',
 			'nolang': 'Devi specificare una lingua',
@@ -47,6 +53,18 @@ exports.translations = {
 			'r2': 'o superiore',
 			'not1': 'Rank',
 			'not2': 'non trovato'
+		},
+		battleset: {
+			'u1': 'Usage',
+			'u2': '[permission], [rank]',
+			'ps': 'Permissions',
+			'p': 'Permessi',
+			'd': 'in battle sono disabilitati',
+			'a': 'in battle disponibili a tutti gli user',
+			'r': 'disponibili a tutti gli user della room di grado (+) o superiore',
+			'r2': 'o superiore',
+			'not1': 'Rank',
+			'not2': 'not found'
 		},
 		/*
 		* Dyn Commands
@@ -111,17 +129,6 @@ exports.translations = {
 		},
 		usage: {
 			'stats': 'Usage stats'
-		},
-		help: {
-			'guide': 'Guida ai comandi del bot'
-		},
-		youtube: {
-			'notchat': 'Questo comando è disponibile solo nelle chat rooms',
-			'u': 'Usage',
-			'ae': 'Il riconoscimento dei link YouTube è già abilitato',
-			'e': 'Il riconoscimento dei link YouTube è ora abilitato',
-			'ad': 'Il riconoscimento dei link YouTube è già disabilitato',
-			'd': 'Il riconoscimento dei link YouTube è ora disabilitato'
 		},
 		/*
 		* Quotes
@@ -256,18 +263,6 @@ exports.translations = {
 			'notchat': 'Questo comando è disponibile solo nelle chat',
 			'e1': 'Nessun torneo nella room',
 			'e2': 'Error: Non joinato'
-		},
-		battleset: {
-			'u1': 'Usage',
-			'u2': '[permission], [rank]',
-			'ps': 'Permissions',
-			'p': 'Permessi',
-			'd': 'in battle sono disabilitati',
-			'a': 'in battle disponibili a tutti gli user',
-			'r': 'disponibili a tutti gli user della room di grado (+) o superiore',
-			'r2': 'o superiore',
-			'not1': 'Rank',
-			'not2': 'not found'
 		},
 		team: {
 			'u1': 'Usage',
@@ -477,6 +472,17 @@ exports.translations = {
 			'notstarted': 'Error: il torneo non è iniziato, non hai i permessi o i comandi sono cambiati.',
 			'param': 'Parametro',
 			'paramhelp': 'non trovato, parametro valido sono'
+		},
+		/*
+		* Youtube Commands
+		*/
+		youtube: {
+			'notchat': 'Questo comando è disponibile solo nelle chat rooms',
+			'u': 'Usage',
+			'ae': 'Il riconoscimento dei link YouTube è già abilitato',
+			'e': 'Il riconoscimento dei link YouTube è ora abilitato',
+			'ad': 'Il riconoscimento dei link YouTube è già disabilitato',
+			'd': 'Il riconoscimento dei link YouTube è ora disabilitato'
 		}
 	},
 
