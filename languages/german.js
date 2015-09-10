@@ -460,7 +460,7 @@
 		* Tour Commands
 		*/
 		tourhelp: {'h': 'tour (Format), (Sekunden bis zum Start oder off), (Minuten Inaktivität für automatische Disqualifikation oder off), (maximale Anzahl an Teilnemern oder off), (elimination oder roundrobin). Alle Argumente sind optional.'},
-		tourend: {'err': 'Es gibt kein Turnier in diesem Raum'},
+		tourend: {'err': 'Es gibt kein Turnier in diesem Raum', 'err2': 'Fehler: Turnier ist bereits gestartet'},
 		tournament: {
 			'e1': 'benötigt Moderator-Rang (@) oder höher, um Turniere zu erstellen',
 			'e2': 'Es findet bereits ein Turnier in diesem Raum statt',

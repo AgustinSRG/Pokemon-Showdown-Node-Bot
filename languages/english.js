@@ -459,7 +459,7 @@ exports.translations = {
 		* Tour Commands
 		*/
 		tourhelp: {'h': 'tour (format), (seconds to start or off), (minutes autodq or off), (max Users or off), (elimination or roundrobin). All arguments are optional.'},
-		tourend: {'err': 'There is not a tournament in this room'},
+		tourend: {'err': 'There is not a tournament in this room', 'err2': 'Error: Tournament has already started'},
 		tournament: {
 			'e1': 'requires moderator rank (@) or higher to create tornaments',
 			'e2': 'There is already a tournament in this room',

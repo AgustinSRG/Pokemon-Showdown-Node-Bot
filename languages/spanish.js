@@ -462,7 +462,7 @@
 		* Tour Commands
 		*/
 		tourhelp: {'h': 'tour (formato), (segundos para iniciar u off), (minutos para el autodq u off), (máximo número de users u off), (elimination u roundrobin). Todos los argumentos son opcionales.'},
-		tourend: {'err': 'No hay ningún torneo en esta sala'},
+		tourend: {'err': 'No hay ningún torneo en esta sala', 'err2': 'El torneo ya ha empezado'},
 		tournament: {
 			'e1': 'requiere rango de moderador (@) o superior para crear torneos',
 			'e2': 'Ya hay un torneo en esta sala',

@@ -13,6 +13,7 @@ exports.commands = {
 	tourend: function (arg, by, room, cmd) {
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
 		if (!Features['tours'].tourData[room]) return this.reply(this.trad('err'));
+		if (cmd === 'tourstart' && Features['tours'].tourData[room].isStarted) return this.reply(this.trad('err2'));
 		this.reply("/tournament " + (cmd === 'tourend' ? 'end' : 'start'));
 	},
 
