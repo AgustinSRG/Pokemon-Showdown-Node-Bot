@@ -285,7 +285,7 @@ exports.reloadFeature = function (feature) {
 		if (f.id) {
 			if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
 			Features[f.id] = f;
-			Features[f.id].init();
+			if (typeof Features[f.id].init === "function") Features[f.id].init();
 			info("Feature \"" + f.id + '\" reloaded');
 		} else {
 			return -1;

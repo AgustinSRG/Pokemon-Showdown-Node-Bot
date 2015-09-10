@@ -83,11 +83,6 @@ function startWebHook (secret, port) {
 
 exports.init = function () {
 	for (var i in updates) delete updates[i];
-	return;
-};
-
-exports.parse = function () {
-	return;
 };
 
 exports.destroy = function () {

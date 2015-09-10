@@ -95,7 +95,7 @@ global.reloadFeatures = function () {
 				if (f.id) {
 					if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
 					Features[f.id] = f;
-					Features[f.id].init();
+					if (typeof Features[f.id].init === "function") Features[f.id].init();
 				}
 			} catch (e) {
 				errlog(e.stack);
@@ -200,7 +200,7 @@ Bot.on('connect', function (con) {
 	connected = true;
 	for (var f in Features) {
 		try {
-			Features[f].init();
+			if (typeof Features[f].init === "function") Features[f].init();
 		} catch (e) {
 			errlog(e.stack);
 			error("Feature Crash: " + f + " | " + sys.inspect(e));
@@ -353,14 +353,12 @@ Bot.on('userrename', function (room, old, by) {
 Bot.on('line', function (room, message, isIntro, spl) {
 	for (var f in Features) {
 		try {
-			Features[f].parse(room, message, isIntro, spl);
+			if (typeof Features[f].parse === "function") Features[f].parse(room, message, isIntro, spl);
 		} catch (e) {
 			errlog(e.stack);
 			error("Feature Crash: " + f + " | " + sys.inspect(e));
 			Features[f].disabled = true;
-			Features[f].parse = function () {
-				return true;
-			};
+			Features[f].parse = null;
 			info("Feature " + f + " has been disabled");
 		}
 	}
