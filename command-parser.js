@@ -137,6 +137,7 @@ var Context = exports.Context = (function () {
 		this.arg = opts.arg || '';
 		this.by = opts.by || '';
 		this.room = opts.room || 'lobby';
+		this.cmd = opts.cmd || '';
 		this.handler = opts.handler || '';
 		this.cmdToken = opts.cmdToken || '';
 		this.roomType = (this.room.charAt(0) === ',') ? 'pm' : (Bot.rooms[this.room] ? Bot.rooms[this.room].type : 'chat');
