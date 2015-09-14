@@ -82,7 +82,6 @@ jscsOptions.base = {
 	"disallowMultipleVarDecl": null,
 	"disallowImplicitTypeConversion": null,
 	"requireSpaceAfterLineComment": null,
-	"validateJSDoc": null,
 
 	"disallowMixedSpacesAndTabs": "smart",
 	"requireSpaceAfterKeywords": true,

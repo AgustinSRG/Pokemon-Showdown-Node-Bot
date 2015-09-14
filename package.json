@@ -30,13 +30,13 @@
   "devDependencies": {
     "cache-swap": "~0.2.0",
     "gulp": "~3.9.0",
-    "gulp-cache": "~0.2.8",
+    "gulp-cache": "~0.3.0",
     "gulp-jshint": "~1.11.2",
-    "gulp-jscs": "~1.6.0",
+    "gulp-jscs": "~2.0.0",
     "gulp-replace": "~0.5.1",
     "jshint-stylish": "~2.0.0",
     "lazypipe": "~1.0.1",
-    "merge-stream": "~0.1.7"
+    "merge-stream": "~1.0.0"
   },
   "optionalDependencies": {
     "githubhook": "^1.1.3"
