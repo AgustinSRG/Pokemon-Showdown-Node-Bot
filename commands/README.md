@@ -162,6 +162,12 @@ Commands for Tournaments feature
 
  - `tour` - Start a tournament
  - `tour tier=example, timer=30, users=64, dq=1.5, type=elimination` - Start a tournament with custom and optional parameters
+  - **tier**: Tournament format / tier
+  - **timer**: Max time (in seconds) before starting the tournament
+  - **users**: Max number of users (for singups)
+  - **dq**: Minutes for autodq
+  - **type**: elimination or roundrobin
+  - **scout**: set `scout=off` for enabling scout protection
  - `tourhelp` - Help for `tour command`
  - `tourstart` - Force start a tornament
  - `tourend` - Force end a tornament

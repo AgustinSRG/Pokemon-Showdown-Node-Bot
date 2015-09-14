@@ -261,7 +261,8 @@ exports.tourDefault = {
 	type: 'elimination',
 	maxUsers: null,
 	timeToStart: 30 * 1000,
-	autodq: 1.5
+	autodq: 1.5,
+	scoutProtect: false
 };
 
 /*

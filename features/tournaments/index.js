@@ -21,6 +21,7 @@ var Tournament = exports.Tournament = (function () {
 		this.room = room || 'lobby';
 		this.timeToStart = details.timeToStart || 30 * 1000;
 		this.autodq = details.autodq || false;
+		this.scoutProtect = details.scoutProtect || false;
 	}
 
 	Tournament.prototype.createTour = function () {
@@ -29,6 +30,7 @@ var Tournament = exports.Tournament = (function () {
 	Tournament.prototype.startTimeout = function () {
 		if (!this.timeToStart) return;
 		this.signups = true;
+		if (this.scoutProtect) Bot.say(this.room, '/tournament setscouting disallow');
 		this.startTimer = setTimeout(function () {
 			this.startTour();
 			this.started = true;

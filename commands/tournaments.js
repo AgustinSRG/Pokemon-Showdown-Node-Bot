@@ -46,7 +46,8 @@ exports.commands = {
 				type: null,
 				maxUsers: null,
 				timeToStart: null,
-				autodq: null
+				autodq: null,
+				scout: null
 			};
 			var splArg;
 			for (var i = 0; i < args.length; i++) {
@@ -96,8 +97,14 @@ exports.commands = {
 						case 'type':
 							params.type = valueArg;
 							break;
+						case 'scouting':
+						case 'scout':
+						case 'setscout':
+						case 'setscouting':
+							params.scout = valueArg;
+							break;
 						default:
-							return this.reply(this.trad('param') + ' ' + idArg + ' ' + this.trad('paramhelp') + ": tier, timer, dq, users, type");
+							return this.reply(this.trad('param') + ' ' + idArg + ' ' + this.trad('paramhelp') + ": tier, timer, dq, users, type, scout");
 					}
 				}
 			}
@@ -137,6 +144,11 @@ exports.commands = {
 				var type = toId(params.type);
 				if (type !== 'elimination' && type !== 'roundrobin') return this.reply(this.trad('e7'));
 				details.type = type;
+			}
+			if (params.scout) {
+				var scout = toId(params.scout);
+				if (scout in {'yes': 1, 'on': 1, 'true': 1, 'allow': 1, 'allowed': 1})  details.scoutProtect = false;
+				else details.scoutProtect = true;
 			}
 		}
 		Features['tours'].newTour(room, details);
