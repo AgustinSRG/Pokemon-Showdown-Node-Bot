@@ -107,7 +107,15 @@ exports.commands = {
 	settings: 'set',
 	set: function (arg, by, room, cmd) {
 		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
+		var tarRoom = room;
+		var targetObj = Tools.getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
 		var args = arg.split(",");
 		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		var perm = toId(args[0]);
@@ -117,18 +125,18 @@ exports.commands = {
 		}
 		if (rank in {'off': 1, 'disable': 1}) {
 			if (!this.canSet(perm, true)) return this.reply(this.trad('denied'));
-			setPermission(room, perm, true);
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('d'));
+			setPermission(tarRoom, perm, true);
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('d') + textHelper);
 		}
 		if (rank in {'on': 1, 'all': 1, 'enable': 1}) {
 			if (!this.canSet(perm, ' ')) return this.reply(this.trad('denied'));
-			setPermission(room, perm, ' ');
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('a'));
+			setPermission(tarRoom, perm, ' ');
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('a') + textHelper);
 		}
 		if (Config.ranks.indexOf(rank) >= 0) {
 			if (!this.canSet(perm, rank)) return this.reply(this.trad('denied'));
-			setPermission(room, perm, rank);
-			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('r') + ' ' + rank + " " + this.trad('r2'));
+			setPermission(tarRoom, perm, rank);
+			return this.reply(this.trad('p') + " **" + perm + "** " + this.trad('r') + ' ' + rank + " " + this.trad('r2') + textHelper);
 		} else {
 			return this.reply(this.trad('not1') + " " + rank + " " + this.trad('not2'));
 		}
