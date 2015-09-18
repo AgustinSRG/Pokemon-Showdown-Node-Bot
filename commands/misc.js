@@ -25,5 +25,24 @@ exports.commands = {
 	usagestats: 'usage',
 	usage: function () {
 		this.restrictReply(this.trad('stats') + ': http://www.smogon.com/stats/', 'info');
+	},
+	spr: function (arg, by, room) {
+		if (!this.hasRank('voice')) return false;
+		arg = toId(arg);
+		var values = ['rock', 'paper', 'scissors'];
+		if (values.indexOf(arg) === -1) return this.reply('Please choose either: scissors, paper or rock.');
+		var action = ['You win!', 'You lose', 'It\'s a draw!'][~~(Math.random() * 3)];
+		switch (action) {
+			case 'You win!':
+				var choice = values[values.indexOf(arg) + 2];
+				break;
+			case 'You lose':
+				 choice = values[values.indexOf(arg) + 1];
+				break;
+			case 'It\'s a draw!':
+				 choice = arg;
+				break;
+		}
+		this.reply('/me chose ' + choice + '. **' + action + '**');
 	}
 };
