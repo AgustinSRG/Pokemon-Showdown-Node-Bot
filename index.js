@@ -345,7 +345,8 @@ Bot.on('userleave', function (room, by) {
 });
 
 Bot.on('userrename', function (room, old, by) {
-	Settings.reportSeen(old, room, 'n', [by]);
+	if (!old || !by || toId(old) === toId(by)) return;
+	Settings.reportSeen(" " + old, room, 'n', [by.substr(1)]);
 });
 
 /* Features */

@@ -74,7 +74,6 @@ exports.commands = {
 
 	seen: function (arg, by, room, cmd) {
 		var text = '';
-		var name = arg;
 		arg = toId(arg);
 		if (!arg || arg.length > 18) return this.pmReply(this.trad('inv'));
 		if (arg === toId(Bot.status.nickName)) return this.pmReply(this.trad('bot'));
@@ -83,20 +82,20 @@ exports.commands = {
 			var dSeen = Settings.seen[arg];
 			var lang = Config.language || 'english';
 			if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
-			text += name + ' ' + this.trad('s1') + ' ' + Tools.getTimeAgo(dSeen.time, lang) + (this.trad('s2') ? (' ' + this.trad('s2')) : '');
+			text += '**' + (dSeen.name || arg).trim() + '** ' + this.trad('s1') + ' __' + Tools.getTimeAgo(dSeen.time, lang).trim() + (this.trad('s2') ? ('__ ' + this.trad('s2')) : '__');
 			if (dSeen.room) {
 				switch (dSeen.action) {
 					case 'j':
-						text += ', ' + this.trad('j') + ' ' + dSeen.room;
+						text += ', ' + this.trad('j') + ' <<' + dSeen.room + '>>';
 						break;
 					case 'l':
-						text += ', ' + this.trad('l') + ' ' + dSeen.room;
+						text += ', ' + this.trad('l') + ' <<' + dSeen.room + '>>';
 						break;
 					case 'c':
-						text += ', ' + this.trad('c') + ' ' + dSeen.room;
+						text += ', ' + this.trad('c') + ' <<' + dSeen.room + '>>';
 						break;
 					case 'n':
-						text += ', ' + this.trad('n') + ' ' + dSeen.args[0];
+						text += ', ' + this.trad('n') + ' **' + dSeen.args[0] + '**';
 						break;
 				}
 			}

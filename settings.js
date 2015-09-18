@@ -65,13 +65,14 @@ exports.addPermissions = function (perms) {
 var seen = exports.seen = {};
 var reportSeen = exports.reportSeen = function (user, room, action, args) {
 	if (!args) args = [];
-	user = toId(user);
+	var userid = toId(user);
 	var dSeen = {};
+	dSeen.name = user.substr(1);
 	dSeen.time = Date.now();
 	if (!(room in Config.privateRooms)) {
 		dSeen.room = room;
 		dSeen.action = action;
 		dSeen.args = args;
 	}
-	seen[user] = dSeen;
+	seen[userid] = dSeen;
 };
