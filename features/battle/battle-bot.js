@@ -47,6 +47,10 @@
 		Bot.send(room + "|" + text);
 	},
 
+	rejoin: function (room) {
+		Bot.send(['|/leave ' + room, '|/join ' + room, room + '|/joinbattle']);
+	},
+
 	sendBattleMessage: function (room, type, side, poke) {
 		if (!poke) poke = '';
 		if (Config.battleMessages && Config.battleMessages[type] && Config.battleMessages[type][side] && Config.battleMessages[type][side].length) {
@@ -157,6 +161,12 @@
 	},
 
 	makeDecision: function (room, forceRandom, callback) {
+		if (!this.data[room] || !this.data[room].playing) {
+			if (this.data[room].request) {
+				Bot.sendRoom(room, ["Error: failed to get data from <<" + room + ">> - probably beacause of a hotpatch.", "/forfeit", "/leave"]);
+			}
+			return;
+		}
 		var decision = {};
 		if (!this.data[room]) return;
 		var rqid = 0;
@@ -202,12 +212,12 @@
 			this.sendDecision(room, decision, rqid);
 		} catch (e) {
 			errlog(e.stack);
-			this.send(room, "Fatal Error parsing room [" + room + "] - " + sys.inspect(e));
-			Bot.send([room + "|/forfeit", room + "|/leave"]); //forfeit and leave on fatal error
+			Bot.sendRoom(room, ["Fatal Error parsing room <<" + room + ">> - " + sys.inspect(e), "/forfeit", "/leave"]); //forfeit and leave on fatal error
 		}
 	},
 
 	finishBattle: function (room, win) {
+		if (!this.data[room] || !this.data[room].playing) return;
 		if (win) {
 			var winmsg = Config.winmsg;
 			this.send(room, winmsg[Math.floor(Math.random() * winmsg.length)]);
@@ -216,7 +226,6 @@
 			this.send(room, losemsg[Math.floor(Math.random() * losemsg.length)]);
 		}
 		this.send(room, '/leave');
-		if (this.data[room]) delete this.data[room];
 	},
 
 	getPokemonId: function (data) {
@@ -260,7 +269,32 @@
 			// default to '.' so it evaluates to boolean true
 			kwargs[argstr.substr(1, bracketPos - 1)] = (argstr.substr(bracketPos + 1).trim() || '.');
 		}
-		if (!this.data[room]) this.data[room] = {};
+		if (!this.data[room]) {
+			this.data[room] = {};
+			this.data[room].gametype = 'singles';
+			this.data[room].gen = 6;
+			this.data[room].tier = 'customgame';
+			this.data[room].rules = {};
+			this.data[room].variations = [];
+			this.data[room].self = {};
+			this.data[room].opponent = {};
+			this.data[room].statusData = {
+				self: {
+					side: {},
+					pokemon: [
+						{}
+					]
+				},
+				foe: {
+					side: {},
+					pokemon: [
+						{}
+					]
+				}
+			};
+			this.data[room].oppTeam = [];
+			this.data[room].oppTeamOffSet = {};
+		}
 		//send data to AI module
 		if (this.data[room].tier) {
 			var tier = toId(this.data[room].tier);
@@ -276,7 +310,7 @@
 			}
 		}
 		//Battle messages
-		if (this.data[room].opponent && this.data[room].self) {
+		if (this.data[room].opponent.id && this.data[room].self.id) {
 			if (args.length >= 2) {
 				var argIdent = this.getPokemonId(args[1]);
 				this.sendBattleMessage(room, args[0], (this.data[room].opponent.id === argIdent.sideId) ? 'foe' : 'self', argIdent.pokeId);
@@ -309,6 +343,7 @@
 				if (toId(args[2]) === toId(Bot.status.nickName)) {
 					//self
 					this.data[room].self = {id: args[1], name: args[2], avatar: args[3]};
+					this.data[room].playing = true;
 				} else {
 					//opponent
 					this.data[room].opponent = {id: args[1], name: args[2], avatar: args[3]};
@@ -398,12 +433,12 @@
 				break;
 			case 'start':
 				this.data[room].started = true;
-				this.send(room, '/timer on');
+				if (this.data[room].playing) this.send(room, '/timer on');
 				break;
 			case 'teampreview':
 				this.data[room].teampreview = args[1];
 				if (this.data[room].manual) break;
-				this.send(room, '/timer on');
+				if (this.data[room].playing) this.send(room, '/timer on');
 				this.makeDecision(room, false);
 				break;
 			case 'turn':

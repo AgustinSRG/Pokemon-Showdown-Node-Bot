@@ -104,6 +104,10 @@ exports.commands = {
 				this.sendBattle('/undo');
 				return true;
 			},
+			rejoin: function () {
+				this.system.rejoin(this.id);
+				return '';
+			},
 			forfeit: function () {
 				this.sendBattle('/forfeit');
 				return '';
