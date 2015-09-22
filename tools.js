@@ -296,18 +296,32 @@ exports.reloadFeature = function (feature) {
 	}
 };
 
+var loadLang = exports.loadLang = function (lang, reloading) {
+	var tradObj = {}, cmdsTra = {}, tempObj = {};
+	fs.readdirSync('./languages/' + lang).forEach(function (file) {
+		if (file.substr(-3) !== '.js') return;
+		if (reloading) Tools.uncacheTree('./languages/' + lang + '/' + file);
+		tempObj = require('./languages/' + lang + '/' + file).translations;
+		for (var t in tempObj) {
+			if (t === "commands") Object.merge(cmdsTra, tempObj[t]);
+			else tradObj[t] = tempObj[t];
+		}
+	});
+	tradObj.commands = cmdsTra;
+	return tradObj;
+};
+
 var translations = exports.translations = {};
 var loadTranslations = exports.loadTranslations = function (reloading) {
 	var errs = [];
-	fs.readdirSync('./languages').forEach(function (file) {
-		if (file.substr(-3) === '.js') {
-			if (reloading) Tools.uncacheTree('./languages/' + file);
+	fs.readdirSync('./languages').forEach(function (lang) {
+		if (fs.lstatSync('./languages/' + lang + '/').isDirectory()) {
 			try {
-				translations[toId(file).substr(0, toId(file).length - 2)] = require('./languages/' + file).translations;
+				translations[lang] = loadLang(lang, reloading);
 			} catch (e) {
 				errlog(e.stack);
-				error("Could not import translations file: ./languages/" + file + " | " + sys.inspect(e));
-				errs.push(file);
+				error("Could not import language: ./languages/" + lang + "/ | " + sys.inspect(e));
+				errs.push(lang);
 			}
 		}
 	});
