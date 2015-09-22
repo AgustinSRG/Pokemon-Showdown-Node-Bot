@@ -274,6 +274,8 @@ var parse = exports.parse = function (room, by, msg) {
 	}
 
 	cmd = cmd.toLowerCase();
+	
+	if (Settings.callParseFilters(room, by, cmd, args)) return;
 
 	if (!commands[cmd] && dynCommands[toId(cmd)]) {
 		args = cmd;
