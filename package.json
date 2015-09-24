@@ -4,7 +4,7 @@
   "author": "Ecuacion",
   "scripts": {
     "start": "node index.js",
-	"test": "gulp"
+	"test": "gulp && node index.js -test -config ./config-example.js -data ./test-data/"
   },
   "contributors": [
     "Ecuacion <alajandro5gt01@gmail.com>"

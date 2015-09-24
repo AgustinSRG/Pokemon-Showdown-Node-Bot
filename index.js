@@ -25,21 +25,48 @@ console.log((
 ).yellow);
 
 global.Tools = require('./tools.js');
+var cmdArgs = process.argv.slice(2);
+global.AppOptions = Tools.paseArguments(cmdArgs);
 
-if (!fs.existsSync('./config.js')) {
-	console.log("config.js does not exist - creating one with default settings...");
-	fs.writeFileSync('./config.js', fs.readFileSync('./config-example.js'));
+if (AppOptions.help) {
+	console.log(
+		"Options:\n" +
+		"   [-h/-help] - Gives you this guide\n" +
+		"   [-c/-config] config-file - Set a custom configuratioon file\n" +
+		"   [-dt/-data] data-dir - Set a custom data directory\n" +
+		"   [-p/-production] - Production mode (recommended)\n" +
+		"   [-m/-monitor] - Monitor mode\n" +
+		"   [-d/-debug] - Debug mode\n" +
+		"   [-t/-test] - Test Mode\n"
+	);
+	process.exit();
 }
 
-global.Config = require('./config.js');
+if (!AppOptions.config) AppOptions.config = './config.js';
+if (!AppOptions.data) AppOptions.data = './data/';
+if (AppOptions.data.charAt(AppOptions.data.length - 1) !== '/') AppOptions.data += '/';
+
+if (!fs.existsSync(AppOptions.data)) {
+	console.log(AppOptions.data + " does not exist - creating data directory...");
+	fs.mkdirSync(AppOptions.data);
+}
+
+if (!fs.existsSync(AppOptions.config)) {
+	console.log(AppOptions.config + " does not exist - creating one with default settings...");
+	fs.writeFileSync(AppOptions.config, fs.readFileSync('./config-example.js'));
+}
+
+global.Config = require(AppOptions.config);
 Tools.checkConfig();
 
 global.reloadConfig = function () {
-	Tools.uncacheTree('./config.js');
-	global.Config = require('./config.js');
+	Tools.uncacheTree(AppOptions.config);
+	global.Config = require(AppOptions.config);
 	Tools.checkConfig();
 	CommandParser.reloadTokens();
 };
+
+if (AppOptions.debugmode) info((['Debug', 'Monitor', 'Production'])[AppOptions.debugmode - 1] + ' mode');
 
 info('Loading globals');
 
@@ -55,34 +82,36 @@ global.CommandParser = require('./command-parser.js');
 
 /* Commands */
 
-CommandParser.loadCommands();
+if (!AppOptions.testmode) CommandParser.loadCommands();
 
 /* Languages (translations) */
 
-Tools.loadTranslations();
+if (!AppOptions.testmode) Tools.loadTranslations();
 
 /* Features */
 
 global.Features = {};
 
-var featureList = fs.readdirSync('./features/');
+if (!AppOptions.testmode) {
+	var featureList = fs.readdirSync('./features/');
 
-featureList.forEach(function (feature) {
-	if (fs.existsSync('./features/' + feature + '/index.js')) {
-		try {
-			var f = require('./features/' + feature + '/index.js');
-			if (f.id) {
-				Features[f.id] = f;
-				ok("New feature: " + f.id + ' | ' + f.desc);
-			} else {
+	featureList.forEach(function (feature) {
+		if (fs.existsSync('./features/' + feature + '/index.js')) {
+			try {
+				var f = require('./features/' + feature + '/index.js');
+				if (f.id) {
+					Features[f.id] = f;
+					ok("New feature: " + f.id + ' | ' + f.desc);
+				} else {
+					error("Failed to load feature: " + './features/' + feature);
+				}
+			} catch (e) {
+				errlog(e.stack);
 				error("Failed to load feature: " + './features/' + feature);
 			}
-		} catch (e) {
-			errlog(e.stack);
-			error("Failed to load feature: " + './features/' + feature);
 		}
-	}
-});
+	});
+}
 
 global.reloadFeatures = function () {
 	var featureList = fs.readdirSync('./features/');
@@ -432,11 +461,13 @@ var checkSystem = function () {
 		}
 	}
 };
-var sysChecker = setInterval(checkSystem, 60 * 60 * 1000);
-ok('Global monitor is working');
+if (!AppOptions.testmode) {
+	var sysChecker = setInterval(checkSystem, 60 * 60 * 1000);
+	ok('Global monitor is working');
+}
 
 //CrashGuard
-if (Config.crashguard) {
+if (!AppOptions.testmode && Config.crashguard) {
 	process.on('uncaughtException', function (err) {
 		error(("" + err.message).red);
 		errlog(("" + err.stack).red);
@@ -445,14 +476,14 @@ if (Config.crashguard) {
 }
 
 //WatchConfig
-if (Config.watchconfig) {
-	Tools.watchFile('./config.js', function (curr, prev) {
+if (!AppOptions.testmode && Config.watchconfig) {
+	Tools.watchFile(AppOptions.config, function (curr, prev) {
 		if (curr.mtime <= prev.mtime) return;
 		try {
 			reloadConfig();
-			info('config.js reloaded');
+			info(AppOptions.config + ' reloaded');
 		} catch (e) {
-			error('could not reload config.js');
+			error('could not reload ' + AppOptions.config);
 			errlog(e.stack);
 		}
 	});
@@ -462,6 +493,10 @@ if (Config.watchconfig) {
 console.log("\n-----------------------------------------------\n".yellow);
 
 //Connection
-info('Connecting to server ' + Config.server + ':' + Config.port);
-Bot.connect();
-Bot.startConnectionTimeOut();
+if (AppOptions.testmode) {
+	require('./test.js');
+} else {
+	info('Connecting to server ' + Config.server + ':' + Config.port);
+	Bot.connect();
+	Bot.startConnectionTimeOut();
+}

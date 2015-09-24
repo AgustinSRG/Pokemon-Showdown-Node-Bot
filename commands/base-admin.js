@@ -12,7 +12,7 @@ function setPermission(room, perm, rank) {
 exports.commands = {
 	c: 'custom',
 	custom: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('admin'))) return false;
+		if (!this.isRanked('admin')) return false;
 		var tarRoom;
 		if (arg.indexOf('[') === 0 && arg.indexOf(']') > -1) {
 			tarRoom = toRoomid(arg.slice(1, arg.indexOf(']')));
@@ -22,7 +22,7 @@ exports.commands = {
 	},
 
 	"join": function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('admin'))) return false;
+		if (!this.isRanked('admin')) return false;
 		if (!arg) return;
 		arg = arg.split(',');
 		var cmds = [];
@@ -33,7 +33,7 @@ exports.commands = {
 	},
 
 	leave: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('admin'))) return false;
+		if (!this.isRanked('admin')) return false;
 		if (!arg) {
 			if (this.roomType !== 'pm') this.reply('/leave');
 			return;
@@ -49,7 +49,7 @@ exports.commands = {
 	joinallrooms: 'joinall',
 	joinrooms: 'joinall',
 	joinall: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('admin'))) return false;
+		if (!this.isRanked('admin')) return false;
 		var target = 'all';
 		arg = toId(arg);
 		if (arg.length || cmd === 'joinrooms') {
@@ -93,7 +93,7 @@ exports.commands = {
 
 	lang: 'language',
 	language: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
+		if (!this.isRanked('roomowner')) return false;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		var lang = toId(arg);
 		if (!lang.length) return this.reply(this.trad('nolang'));
@@ -106,7 +106,7 @@ exports.commands = {
 
 	settings: 'set',
 	set: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
+		if (!this.isRanked('roomowner')) return false;
 		var tarRoom = room;
 		var targetObj = Tools.getTargetRoom(arg);
 		var textHelper = '';
@@ -145,7 +145,7 @@ exports.commands = {
 	battlepermissions: 'battleset',
 	battlesettings: 'battleset',
 	battleset: function (arg, by, room, cmd) {
-		if (!this.isRanked(Tools.getGroup('admin'))) return false;
+		if (!this.isRanked('admin')) return false;
 		var setPermission = function (room, perm, rank) {
 			if (!Settings.settings.commands) Settings.settings.commands = {};
 			if (!Settings.settings.commands[room]) Settings.settings.commands[room] = {};

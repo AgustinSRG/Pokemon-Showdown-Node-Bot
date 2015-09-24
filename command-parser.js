@@ -2,7 +2,7 @@
 	Command parser for Pokemon Showdown Bot
 */
 
-const dynCommandsDataFile = './data/commands.json';
+const dynCommandsDataFile = AppOptions.data + 'commands.json';
 const MAX_COMMAND_RECURSION = 10;
 const MAX_CMD_FLOOD = 30;
 const FLOOD_INTERVAL = 45 * 1000;
@@ -274,7 +274,7 @@ var parse = exports.parse = function (room, by, msg) {
 	}
 
 	cmd = cmd.toLowerCase();
-	
+
 	if (Settings.callParseFilters(room, by, cmd, args)) return;
 
 	if (!commands[cmd] && dynCommands[toId(cmd)]) {

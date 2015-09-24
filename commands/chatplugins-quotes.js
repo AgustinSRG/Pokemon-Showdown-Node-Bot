@@ -1,4 +1,4 @@
-const quotesDataFile = './data/quotes.json';
+const quotesDataFile = AppOptions.data + 'quotes.json';
 
 if (!fs.existsSync(quotesDataFile))
 	fs.writeFileSync(quotesDataFile, '{}');
