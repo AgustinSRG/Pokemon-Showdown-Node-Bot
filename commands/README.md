@@ -9,6 +9,8 @@ Basic Commands
 Basic features and some information about the bot.
 
  - `about` - Basic bot info, with the link to this repo.
+ - `git` - Link to this repo
+ - `version` - Bot version
  - `help` - Get a link to this guide
  - `time` - Current time for Bot
  - `uptime` - Time since the last bot restart

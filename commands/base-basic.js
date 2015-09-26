@@ -15,13 +15,23 @@ exports.commands = {
 	credits: 'about',
 	bot: 'about',
 	about: function () {
-		this.restrictReply(this.trad('about') + " (https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot)", 'info');
+		this.restrictReply(this.trad('about') + " (" + Settings.package.homepage + ")", 'info');
+	},
+
+	git: 'github',
+	github: function () {
+		this.restrictReply(Tools.stripCommands(Settings.package.homepage), 'info');
+	},
+
+	botversion: 'version',
+	version: function () {
+		this.restrictReply(Tools.stripCommands(Settings.package.version), 'info');
 	},
 
 	guide: 'help',
 	botguide: 'help',
 	help: function () {
-		this.restrictReply(this.trad('guide') + ': ' + (Config.botguide || "https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md"), 'info');
+		this.restrictReply(this.trad('guide') + ': ' + (Config.botguide || (Settings.package.homepage + "/blob/master/commands/README.md")), 'info');
 	},
 
 	bottime: 'time',
