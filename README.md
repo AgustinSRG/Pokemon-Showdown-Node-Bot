@@ -8,7 +8,17 @@
 
 This is a [Pokemon Showdown](https://github.com/Zarel/Pokemon-Showdown) bot written in JavaScript for [Node](http://nodejs.org/), based on [Pokemon Showdown Bot](https://github.com/TalkTakesTime/Pokemon-Showdown-Bot). 
 
-This bot is based on commands and features, which are explained below. This is intended to ease bot configuration and customization, separating commands in multiple files, multiple features in different folders and merging functions in Global Objects like Bot, CommandParser or Settings.
+This bot is based on commands and features, which are explained below. This is intended to ease bot configuration and customization, separating commands in multiple files, multiple features in different folders and merging functions in Global Objects like Bot, CommandParser or Settings. This bot also works in multiple languages at the same time, useful for language rooms.
+
+Features included in this package:
+ - **Base:** Basic commands for getting basic information, manage command permissions, languages and dynamic commands (only-text commands useful for giving information).
+ - **Chat-Plugins:** This includes a customizable 'quote' command, random answer and pokemon informational commands.
+ - **Moderation:** Automated chat moderation for infractions like spam, flood, caps, stretching, etc  This also includes a blacklist and welcome messages called join-phrases.
+ - **Battle:** Automated battle bot for challenges, ladder and tournaments. This also includes teams management commands. Note that this is not an artificial intelligence, just an improvised algorithm that simulates in-game players (just for fun).
+ - **Chat Logger:** Stores logs of chat rooms and/or pms. This also includes an optional logs server.
+ - **Tournaments:** A single command for creating, starting and set auto-dq of a tournament automatically.
+ - **Auto Invite:** Automatically sends '/invite [room]' to room auth of a private room when they joins other room with a relation. For example if you have a secondary staff room and you want to get invited when you join lobby.
+ - **Youtube link recognition:** If this feature is enabled in a room, when an user send a youtube link, the bot send a message with the title of the video.
 
 Installation
 ------------
@@ -27,7 +37,10 @@ $ npm install --production
 ```
 If you want to use `Gulp` test, install all dependencies with `npm install`
 
-Now, to start the bot use `node index.js`
+Now, to start the bot use:
+```
+$ node index.js
+```
 
 To configure your bot, copy `config-example.js` to `config.js` and edit that file. You can specify bot login credentials among other things. If you don't specify credentials, the bot will log in a random username started by 'Bot'. Read the [Configuration Guide](https://gist.github.com/Ecuacion/351a0a467bc5b057e86f) for more information
 
@@ -103,81 +116,6 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
 **Console Config**
  - `Config.debug`: Specify which console messages are shown
 
-Commands
-------------
-
-Bot commands are in the folder `commands` separated in different files. A command file has the following structure:
-```js
-
-Settings.addPermissions(['permission1', 'permission2', 'permission3']); //Add command permission for 'can' method (optional)
-
-exports.commands = {
-	altcommand1: 'command1', //commands can be references to other commands
-	command1: function (arg, by, room, cmd) { //command are functions
-		//do stuff
-	},
-	
-	command2: function (arg, by, room, cmd) {
-		//do stuff
-	}
-};
-```
-
-Commands have 4 arguments:
- - **arg**: Command argument when you use for example `command [argument]`
- - **by**: User who executed the command
- - **room**: Room where the command has been executed
- - **cmd**: Original command before refrerences. For example if you use `altcommand1`, cmd is `altcommand1` but the function correspond to `command1`
-
-Also, command have a context:
- - `this.arg` - Argument
- - `this.by` - Argument
- - `this.room` - Argument
- - `this.cmd` - Argument
- - `this.handler` - Command function name
- - `this.cmdToken` - Command character used. Example: `.say hi` means this.cmdToken = `.`
- - `this.roomType` - Can be 'chat', 'battle' or 'pm'
- - `this.botName` - Bot username
- - `this.reply (pm)` - Replies in the same room (chat or pm)
- - `this.pmReply (text)` - Replies by pm
- - `this.restrictReply (text, permission)` - Replies by chat if user has permission, by pm otherwise
- - `this.say (room, text)` - Say something to other room
- - `this.isRanked (rank)` - True if ranked equal or above, false if not
- - `this.isRoomRanked (room, rank)` - True if ranked equal or above (in specified room), false if not
- - `this.botRanked (rank)` - True if the bot has this rank or above, false if not
- - `this.isExcepted` - True if the user is excepted, false if not
- - `this.can (permission)` - True if user has permission, false if not
- - `this.canSet (permission, rank)` - Checks if the user has permission to use `set` command
- - `this.hasRank (user, rank, room)` - Similar to `isRoomRanked` but more general
- - `this.getRoom (room)` - Get a room object or null (if the bot is not in that room)
- - `this.getRoomUsers (room)` - Get an array of users who are in a room or null (if the bot is not in that room)
- - `this.getUser (user, room)` - Get an user object or null (if the user or the bot are not in that room)
- - `this.trad (textId)` - Returns a text from the corresponding languages file
- - `this.parse (cmd)` - Parse a message (to call other commands)
-
-Features
-------------
-
-Bot features are complex modules hat fulfill secondary functions, located in the folder `features`. Each feature is a folder that must have an `index.js` main file. That file will be required of bot start and should have the following minimum structure:
-```js
-exports.id = 'featureid';
-exports.desc = 'Simple Feature description';
-
-exports.init = function () {
-	//init function
-};
-
-exports.parse = function (room, message, isIntro, spl) {
-	//data parse
-};
-```
-
-Features must have and **unique id** and two essential functions:
-
- - **init** - Is called on connection to server, to delete residual data or start/restart feature timeouts.
- - **parse** - It will receive all server messages, already separated in lines, each parse call is a new line received.
-
-
 Credits
 -----------
 
@@ -186,8 +124,8 @@ Credits
 Contributors:
 
  - [Irraquated](https://github.com/Irraquated) (Languages and bug fixes)
- - [Spudling](https://github.com/Spudling) (German translation)
  - [panpawn](https://github.com/panpawn) (YouTube feature, fixes)
+ - [Spudling](https://github.com/Spudling) (German translation)
 
 Part of this code is imported from other developments, so credits to:
 		
