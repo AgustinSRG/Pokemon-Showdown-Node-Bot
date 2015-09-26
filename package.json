@@ -1,13 +1,28 @@
 {
   "name": "pokemon-showdown-node-bot",
-  "version": "0.0.1",
-  "author": "Ecuacion",
+  "version": "0.1.1",
+  "author": {
+    "name": "Ecuacion",
+	"email": "alajandro5gt01@gmail.com",
+	"url": "https://github.com/Ecuacion"
+  },
   "scripts": {
     "start": "node index.js",
 	"test": "gulp && node index.js -test -config ./config-example.js -data ./test-data/"
   },
   "contributors": [
-    "Ecuacion <alajandro5gt01@gmail.com>"
+    {
+      "name": "Irraquated",
+      "url": "https://irraquated.github.io"
+    },
+	{
+      "name": "panpawn",
+      "url": "https://github.com/panpawn"
+    },
+	{
+      "name": "Spudling",
+      "url": "https://github.com/Spudling"
+    }
   ],
   "repository": {
     "type": "git",
@@ -21,6 +36,7 @@
   "engines": {
     "node": ">=0.10.0"
   },
+  "private": true,
   "license": "MIT",
   "dependencies": {
     "sugar": "1.4.1",
