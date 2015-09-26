@@ -388,7 +388,7 @@ var translations = exports.translations = {};
 var loadTranslations = exports.loadTranslations = function (reloading) {
 	var errs = [];
 	fs.readdirSync('./languages').forEach(function (lang) {
-		if (fs.lstatSync('./languages/' + lang + '/').isDirectory()) {
+		if (fs.lstatSync('./languages/' + lang).isDirectory()) {
 			try {
 				translations[lang] = loadLang(lang, reloading);
 			} catch (e) {
