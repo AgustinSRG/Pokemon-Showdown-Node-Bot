@@ -4,7 +4,8 @@
 		* Basic Commands
 		*/
 		about: {
-			'about': 'Je suis un **Robot de Pokémon Showdown** qui a été écrit en Javascript pour node. Par Ecuacion'
+			'about': 'Je suis un **Robot de Pokémon Showdown** qui a été écrit en Javascript pour node',
+			'author': 'Auteur'
 		},
 		help: {
 			'guide': 'Guide des commandes de bot'

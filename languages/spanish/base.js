@@ -4,7 +4,8 @@ exports.translations = {
 		* Basic Commands
 		*/
 		about: {
-			'about': 'Soy un **Bot para Pokemon Showdown** escrito en JavaScript para Node. Por: Ecuacion'
+			'about': 'Soy un **Bot para Pokemon Showdown** escrito en JavaScript para Node',
+			'author': 'Autor'
 		},
 		help: {
 			'guide': 'Guía de comandos del bot'

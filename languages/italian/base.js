@@ -4,7 +4,8 @@
 		* Basic Commands
 		*/
 		about: {
-			'about': '**Pokemon Showdown Bot** scritto in Javascript per Node. da Ecuacion.'
+			'about': '**Pokemon Showdown Bot** scritto in Javascript per Node.',
+			'author': 'Autore'
 		},
 		help: {
 			'guide': 'Guida ai comandi del bot'
