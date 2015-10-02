@@ -65,7 +65,7 @@ exports.newGame = function (room, opts) {
 		room: room,
 		title: 'Poke-Hangman',
 		word: randObj.word,
-		clue: randObj.clue		
+		clue: randObj.clue
 	};
 	var temp;
 	for (var i in opts) {

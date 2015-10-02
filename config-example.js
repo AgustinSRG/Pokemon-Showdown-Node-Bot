@@ -97,7 +97,8 @@ exports.permissionExceptions = {
 	'joinphrase': '#',
 	'challenge': '%',
 	'searchbattle': '~',
-	'tournament': '@'
+	'tournament': '@',
+	'games': '#'
 };
 
 exports.botguide = "https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/commands/README.md";

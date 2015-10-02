@@ -19,6 +19,7 @@ Features included in this package:
  - **Tournaments:** A single command for creating, starting and set auto-dq of a tournament automatically.
  - **Auto Invite:** Automatically sends '/invite [room]' to room auth of a private room when they joins other room with a relation. For example if you have a secondary staff room and you want to get invited when you join lobby.
  - **Youtube link recognition:** If this feature is enabled in a room, when an user send a youtube link, the bot send a message with the title of the video.
+ - **Games:** A collection of chat games for your Pokemon Showdown Bot
 
 Installation
 ------------

@@ -188,3 +188,24 @@ Commands for auto-invite feature
 
   - `reloadroomauth [room]` - Reload roomauth if the autoinvite feature is not working well
   - `getroomauth [room]` - Upload roomauth to hastebin (dev command)
+
+Games
+------------
+
+General commands for managing games:
+
+ - `game [Game Name], arg1=value1, arg2=value2...` - Start a game
+ - `endgame` - Force end a game
+
+
+**Poke-Hangman**. Arguments: maxfails (max number of allowed fails, 0 or no specify this argument for infinite). Commands:
+
+ - `g [word/char]` - To guess words or characters
+ - `view` - To view the game status
+ - `end` - To force end the game
+
+**Poke-Anagrams**. Arguments: games (max number of rounds), points (number of ponts for winning), time (time to answer in seconds). Commands:
+
+ - `g [word]` - To guess the words
+ - `view` - To view the game status
+ - `end` - To force end the game

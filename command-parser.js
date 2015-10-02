@@ -249,7 +249,7 @@ var parse = exports.parse = function (room, by, msg) {
 		Bot.say('', '/join ' +  msg.substr(8));
 		return;
 	}
-	
+
 	if (Settings.callParseFilters(room, by, msg)) return;
 
 	var cmdToken = null;
