@@ -118,7 +118,7 @@ var saveDynCmds = exports.saveDinCmds =  function () {
 var commandTokens = exports.commandTokens = [];
 
 var reloadTokens = exports.reloadTokens = function () {
-	commandTokens = [];
+	commandTokens = exports.commandTokens = [];
 	if (Config.commandTokens && Config.commandTokens.length) {
 		for (var i = 0; i < Config.commandTokens.length; i++)
 			commandTokens.push(Config.commandTokens[i]);
@@ -126,7 +126,7 @@ var reloadTokens = exports.reloadTokens = function () {
 	if (typeof Config.commandChar === "string") commandTokens.push(Config.commandChar);
 	if (!commandTokens.length) {
 		error('No command Tokens, using "." by default');
-		commandTokens = ['.'];
+		commandTokens = exports.commandTokens = ['.'];
 	}
 };
 
@@ -249,6 +249,8 @@ var parse = exports.parse = function (room, by, msg) {
 		Bot.say('', '/join ' +  msg.substr(8));
 		return;
 	}
+	
+	if (Settings.callParseFilters(room, by, msg)) return;
 
 	var cmdToken = null;
 
@@ -274,8 +276,6 @@ var parse = exports.parse = function (room, by, msg) {
 	}
 
 	cmd = cmd.toLowerCase();
-
-	if (Settings.callParseFilters(room, by, cmd, args)) return;
 
 	if (!commands[cmd] && dynCommands[toId(cmd)]) {
 		args = cmd;

@@ -63,10 +63,10 @@ exports.addPermissions = function (perms) {
 };
 
 var parserFilters = exports.parserFilters = {};
-exports.callParseFilters = function (room, by, cmd, arg) {
+exports.callParseFilters = function (room, by, msg) {
 	for (var f in parserFilters) {
 		if (typeof parserFilters[f] === "function") {
-			if (parserFilters[f].call(this, room, by, cmd, arg)) return true;
+			if (parserFilters[f].call(this, room, by, msg)) return true;
 		}
 	}
 	return false;
