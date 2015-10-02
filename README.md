@@ -110,6 +110,7 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
  - `Config.defaultPermission`: Default permision set for `this.can` in commands permissions
  - `Config.permissionExceptions`: Exceptions for commands permissions
  - `Config.botguide`: Bot commands guide link
+ - `Config.pmhelp`: Help message said when users pm the bot with no commands
 
 **Language Config**
  - `Config.language`: Set default language
