@@ -171,11 +171,17 @@ module.exports = {
 					break;
 				}
 			}
-			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+			if (!(req.side.pokemon[0].baseAbility in {"moldbreaker": 1, "turboblaze": 1, "teravolt": 1})) {
+				if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+				if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+				if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+				if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+				if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+				if (this.inmune(dataMove, pokemonB)) continue;
+			}
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
 			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
-			if (this.inmune(dataMove, pokemonB) && !(toId(actPoke.baseAbility) in {'moldbreaker': 1, 'teravolt': 1, 'turboblaze': 1})) basePower = 0;
 			basePower *= this.gen6_get_mux(dataMove.type, data2.types, not_inmune);
 			if (data.statusData.self.pokemon[0]['boost']) {
 				if (dataMove.category === "Special" && data.statusData.self.pokemon[0]['boost']['spa']) {
