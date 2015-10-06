@@ -188,7 +188,7 @@
 							this.sendDecision(room, decision, rqid);
 							return;
 						} catch (e) {
-							errlog(e.stack);
+							debug(e.stack);
 						}
 					}
 				}
@@ -202,7 +202,7 @@
 					this.sendDecision(room, decision, rqid);
 					return;
 				} catch (e) {
-					errlog(e.stack);
+					debug(e.stack);
 				}
 			}
 		}
@@ -211,7 +211,7 @@
 			decision = this.getRandomMove(room);
 			this.sendDecision(room, decision, rqid);
 		} catch (e) {
-			errlog(e.stack);
+			debug("FATAL ERR (" + room + "):\n" + e.stack);
 			Bot.sendRoom(room, ["Fatal Error parsing room <<" + room + ">> - " + sys.inspect(e), "/forfeit", "/leave"]); //forfeit and leave on fatal error
 		}
 	},

@@ -48,14 +48,15 @@ module.exports = {
 		}
 		return false;
 	},
-	inmune: function (moveData, pokemonA) {
+	inmune: function (moveData, pokemonA, typealt) {
 		var pokedex = require(POKEDEX_FILE).BattlePokedex;
 		var data1 = pokedex[toId(pokemonA)];
-		if (moveData.type === "Ground" && this.has_ability(pokemonA, ["Levitate"])) return true;
-		if (moveData.type === "Water" && this.has_ability(pokemonA, ["Water Absorb", "Dry Skin", "Storm Drain"])) return true;
-		if (moveData.type === "Fire" && this.has_ability(pokemonA, ["Flash Fire"])) return true;
-		if (moveData.type === "Electric" && this.has_ability(pokemonA, ["Volt Absorb", "Lightning Rod"])) return true;
-		if ((moveData.category in {"Physical": 1, "Special": 1}) && this.gen6_get_mux(moveData.type, data1.types) <= 1 && this.has_ability(pokemonA, ["Wonder Guard"])) return true;
+		if (!typealt) typealt = moveData.type;
+		if (typealt === "Ground" && this.has_ability(pokemonA, ["Levitate"])) return true;
+		if (typealt === "Water" && this.has_ability(pokemonA, ["Water Absorb", "Dry Skin", "Storm Drain"])) return true;
+		if (typealt === "Fire" && this.has_ability(pokemonA, ["Flash Fire"])) return true;
+		if (typealt === "Electric" && this.has_ability(pokemonA, ["Volt Absorb", "Lightning Rod"])) return true;
+		if ((moveData.category in {"Physical": 1, "Special": 1}) && this.gen6_get_mux(typealt, data1.types) <= 1 && this.has_ability(pokemonA, ["Wonder Guard"])) return true;
 		return false;
 	},
 	getBestLead: function (data) {
@@ -145,44 +146,45 @@ module.exports = {
 			}
 			if (typeof dataMove.basePower !== "number" || !dataMove.basePower) continue;
 			if (dataMove.name in blacklistedMoves) continue;
-			switch (req.active[0].baseAbility) {
-				case 'Aerilate':
-					if (dataMove.type === "Normal") dataMove.type = "Flying";
+			var type = dataMove.type;
+			switch (req.side.pokemon[0].baseAbility) {
+				case 'aerilate':
+					if (dataMove.type === "Normal") type = "Flying";
 					break;
-				case 'Pixilate':
-					if (dataMove.type === "Normal") dataMove.type = "Fairy";
+				case 'pixilate':
+					if (dataMove.type === "Normal") type = "Fairy";
 					break;
-				case 'Refrigerate':
-					if (dataMove.type === "Normal") dataMove.type = "Ice";
+				case 'refrigerate':
+					if (dataMove.type === "Normal") type = "Ice";
 					break;
 			}
-			if (dataMove.name === "Judgment") dataMove.type = data1.types[0];
+			if (dataMove.name === "Judgment") type = data1.types[0];
 			if (dataMove.name === "Hyperspace Fury" && data1.name !== 'Hoopa-Unbound') continue;
 			var not_inmune = false;
-			if (req.active[0].baseAbility === "Scrappy" && dataMove.type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
+			if (req.side.pokemon[0].baseAbility === "scrappy" && type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
 			if (dataMove.category === "Special") {
 				basePower = dataMove.basePower * actPoke.stats['spa'];
 			} else {
 				basePower = dataMove.basePower * actPoke.stats['atk'];
 			}
 			for (var l = 0; l < data1.types.length; l++) {
-				if (data1.types[l] === dataMove.type) {
+				if (data1.types[l] === type) {
 					basePower *= 1.5;
 					break;
 				}
 			}
 			if (!(req.side.pokemon[0].baseAbility in {"moldbreaker": 1, "turboblaze": 1, "teravolt": 1})) {
-				if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-				if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
-				if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
-				if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
-				if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
-				if (this.inmune(dataMove, pokemonB)) continue;
+				if (type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+				if (type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+				if (type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+				if (type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+				if (type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+				if (this.inmune(dataMove, pokemonB, type)) continue;
 			}
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
-			basePower *= this.gen6_get_mux(dataMove.type, data2.types, not_inmune);
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
+			basePower *= this.gen6_get_mux(type, data2.types, not_inmune);
 			if (data.statusData.self.pokemon[0]['boost']) {
 				if (dataMove.category === "Special" && data.statusData.self.pokemon[0]['boost']['spa']) {
 					if (data.statusData.self.pokemon[0]['boost']['spa'] > 0) basePower *= (1 + data.statusData.self.pokemon[0]['boost']['spa'] * 0.5);

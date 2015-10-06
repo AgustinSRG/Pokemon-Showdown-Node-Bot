@@ -7,11 +7,11 @@ module.exports = {
 		var typeObj;
 		for (var i = 0; i < typesB.length; i++) {
 			if (typesB[i] === 'Fairy') continue;
-			if (this.TypeChartGen6[typesB[i]].damageTaken[typeA] === 1) {
+			if (this.TypeChartGen5[typesB[i]].damageTaken[typeA] === 1) {
 				mux *= 2;
-			} else if (this.TypeChartGen6[typesB[i]].damageTaken[typeA] === 2) {
+			} else if (this.TypeChartGen5[typesB[i]].damageTaken[typeA] === 2) {
 				mux /= 2;
-			} else if (this.TypeChartGen6[typesB[i]].damageTaken[typeA] === 3) {
+			} else if (this.TypeChartGen5[typesB[i]].damageTaken[typeA] === 3) {
 				if (!not_inmune) mux = 0;
 			}
 		}
@@ -29,14 +29,15 @@ module.exports = {
 		}
 		return false;
 	},
-	inmune: function (moveData, pokemonA) {
+	inmune: function (moveData, pokemonA, altType) {
 		var pokedex = require(POKEDEX_FILE).BattlePokedex;
 		var data1 = pokedex[toId(pokemonA)];
-		if (moveData.type === "Ground" && this.has_ability(pokemonA, ["Levitate"])) return true;
-		if (moveData.type === "Water" && this.has_ability(pokemonA, ["Water Absorb", "Dry Skin", "Storm Drain"])) return true;
-		if (moveData.type === "Fire" && this.has_ability(pokemonA, ["Flash Fire"])) return true;
-		if (moveData.type === "Electric" && this.has_ability(pokemonA, ["Volt Absorb", "Lightning Rod"])) return true;
-		if ((moveData.category in {"Physical": 1, "Special": 1}) && this.oldgen_get_mux(moveData.type, data1.types) <= 1 && this.has_ability(pokemonA, ["Wonder Guard"])) return true;
+		if (!altType) altType = moveData.type;
+		if (altType === "Ground" && this.has_ability(pokemonA, ["Levitate"])) return true;
+		if (altType === "Water" && this.has_ability(pokemonA, ["Water Absorb", "Dry Skin", "Storm Drain"])) return true;
+		if (altType === "Fire" && this.has_ability(pokemonA, ["Flash Fire"])) return true;
+		if (altType === "Electric" && this.has_ability(pokemonA, ["Volt Absorb", "Lightning Rod"])) return true;
+		if ((moveData.category in {"Physical": 1, "Special": 1}) && this.oldgen_get_mux(altType, data1.types) <= 1 && this.has_ability(pokemonA, ["Wonder Guard"])) return true;
 		return false;
 	},
 	gen5_getDisadvantage: function (pokemonA, pokemonB, inverse) {
@@ -235,8 +236,8 @@ module.exports = {
 		var moves = [];
 		var req = data.request;
 		var inverse = (data.tier && toId(data.tier) === 'inversebattle') ? true : false;
-		var pokemonA = data.statusData.self.pokemon[0].species;
-		var pokemonB = data.statusData.foe.pokemon[0].species;
+		var pokemonA = data.statusData.self.pokemon[0].species || '';
+		var pokemonB = data.statusData.foe.pokemon[0].species || '';
 		var dataMove;
 		var pokedex = require(POKEDEX_FILE).BattlePokedex;
 		var movedex = require(MOVEDEX_FILE).BattleMovedex;
@@ -246,39 +247,42 @@ module.exports = {
 			debug("Error - NO DATA -> " + pokemonA + " / " + pokemonB);
 			return [];
 		}
+		var typesA = data1.types, typesB = data2.types;
 		if (parseInt(data.gen) <= 4) {
-			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
-			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
+			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) typesA = ["Electric", "Ghost"];
+			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) typesB = ["Electric", "Ghost"];
 		}
 		for (var i = 0; i < req.active[0].moves.length; i++) {
 			if (req.active[0].moves[i].disabled) continue;
 			dataMove = movedex[toId(req.active[0].moves[i].move)];
 			if (!dataMove) continue;
 			//modify move
+			var type = dataMove.type;
 			switch (req.active[0].baseAbility) {
 				case 'Aerilate':
-					if (dataMove.type === "Normal") dataMove.type = "Flying";
+					if (dataMove.type === "Normal") type = "Flying";
 					break;
 				case 'Pixilate':
-					if (dataMove.type === "Normal") dataMove.type = "Fairy";
+					if (dataMove.type === "Normal") type = "Fairy";
 					break;
 				case 'Refrigerate':
-					if (dataMove.type === "Normal") dataMove.type = "Ice";
+					if (dataMove.type === "Normal") type = "Ice";
 					break;
 			}
-			if (dataMove.name === "Judgment") dataMove.type = data1.types[0];
+			if (dataMove.name === "Judgment") type = typesA[0];
 			var not_inmune = false;
-			if (req.active[0].baseAbility === "Scrappy" && dataMove.type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
+			if (req.active[0].baseAbility === "Scrappy" && type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
 			//discard moves
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
 
 			if (data.statusData.self.pokemon[0]['boost']) {
+				var category;
 				if (parseInt(data.gen) < 4) {
-					if (dataMove.type in {Fire: 1, Water: 1, Grass: 1, Ice: 1, Electric: 1, Dark: 1, Psychic: 1, Dragon: 1}) dataMove.category = "Special";
-					else dataMove.category = "Physical";
+					if (type in {Fire: 1, Water: 1, Grass: 1, Ice: 1, Electric: 1, Dark: 1, Psychic: 1, Dragon: 1}) category = "Special";
+					else category = "Physical";
 				}
-				if (dataMove.category === "Special" && data.statusData.self.pokemon[0]['boost']['spa'] && data.statusData.self.pokemon[0]['boost']['spa'] < -1) continue;
-				if (dataMove.category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] < -1) continue;
+				if (category === "Special" && data.statusData.self.pokemon[0]['boost']['spa'] && data.statusData.self.pokemon[0]['boost']['spa'] < -1) continue;
+				if (category === "Physical" && data.statusData.self.pokemon[0]['boost']['atk'] && data.statusData.self.pokemon[0]['boost']['atk'] < -1) continue;
 			}
 
 			if (dataMove.name === "Rapid Spin") continue;
@@ -290,19 +294,19 @@ module.exports = {
 			}
 
 			if (parseInt(data.gen) >= 3 && !(req.side.pokemon[0].baseAbility in {"moldbreaker": 1, "turboblaze": 1, "teravolt": 1})) {
-				if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-				if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
-				if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
-				if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
-				if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
-				if (this.inmune(dataMove, pokemonB)) continue;
+				if (type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+				if (type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+				if (type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+				if (type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+				if (type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+				if (this.inmune(dataMove, pokemonB, type)) continue;
 			}
 
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
 			//push
-			if (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) > 1 || (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 1 && (dataMove.type === data1.types[0] || req.active[0].baseAbility === "Protean" || (data1.types[1] && dataMove.type === data1.types[1])))) {
+			if (this.oldgen_get_mux(type, typesB, not_inmune, inverse) > 1 || (this.oldgen_get_mux(type, typesB, not_inmune, inverse) === 1 && (type === typesA[0] || req.side.pokemon[0].baseAbility  === "protean" || (typesA[1] && type === typesA[1])))) {
 				moves.push(i + 1);
 			}
 		}
@@ -323,9 +327,10 @@ module.exports = {
 			debug("Error - NO DATA -> " + pokemonA + " / " + pokemonB);
 			return [];
 		}
+		var typesA = data1.types, typesB = data2.types;
 		if (parseInt(data.gen) <= 4) {
-			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
-			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
+			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) typesA = ["Electric", "Ghost"];
+			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) typesB = ["Electric", "Ghost"];
 		}
 		for (var i = 0; i < req.active[0].moves.length; i++) {
 			if (req.active[0].moves[i].disabled) continue;
@@ -337,41 +342,36 @@ module.exports = {
 				continue;
 			}
 			//modify move
-			switch (req.active[0].baseAbility) {
-				case 'Aerilate':
-					if (dataMove.type === "Normal") dataMove.type = "Flying";
+			var type = dataMove.type;
+			switch (req.side.pokemon[0].baseAbility) {
+				case 'aerilate':
+					if (dataMove.type === "Normal") type = "Flying";
 					break;
-				case 'Pixilate':
-					if (dataMove.type === "Normal") dataMove.type = "Fairy";
+				case 'pixilate':
+					if (dataMove.type === "Normal") type = "Fairy";
 					break;
-				case 'Refrigerate':
-					if (dataMove.type === "Normal") dataMove.type = "Ice";
+				case 'refrigerate':
+					if (dataMove.type === "Normal") type = "Ice";
 					break;
 			}
-			if (dataMove.name === "Judgment") dataMove.type = data1.types[0];
+			if (dataMove.name === "Judgment") type = typesA[0];
 			var not_inmune = false;
-			if (req.active[0].baseAbility === "Scrappy" && dataMove.type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
+			if (req.side.pokemon[0].baseAbility === "scrappy" && type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
 			//discard moves
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
 			if (dataMove.name === "Rapid Spin") continue;
-			if (dataMove.name === "Solar Beam") {
-				var solarFlag = false;
-				if (data.weather && toId(data.weather) in {"sunnyday": 1, "desolateland": 1}) solarFlag = true;
-				if (req.side.pokemon[0].item && req.side.pokemon[0].item === "Power Herb") solarFlag = true;
-				if (!solarFlag) continue;
-			}
 			if (parseInt(data.gen) >= 3 && !(req.side.pokemon[0].baseAbility in {"moldbreaker": 1, "turboblaze": 1, "teravolt": 1})) {
-				if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-				if (dataMove.type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
-				if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
-				if (dataMove.type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
-				if (dataMove.type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
-				if (this.inmune(dataMove, pokemonB)) continue;
+				if (type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+				if (type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+				if (type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+				if (type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+				if (type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+				if (this.inmune(dataMove, pokemonB, type)) continue;
 			}
 			if (dataMove.name === "Fake Out" && data.statusData.self.pokemon[0]['lastMove']) continue;
-			if (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
+			if (this.oldgen_get_mux(type, typesB, not_inmune, inverse) === 0) continue;
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
 			//push
 			moves.push(i + 1);
 		}
@@ -575,9 +575,10 @@ module.exports = {
 			debug("Error - NO DATA -> " + pokemonA + " / " + pokemonB);
 			return [];
 		}
+		var typesA = data1.types, typesB = data2.types;
 		if (parseInt(data.gen) <= 4) {
-			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data1.types = ["Electric", "Ghost"];
-			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) data2.types = ["Electric", "Ghost"];
+			if (toId(pokemonA) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) typesA = ["Electric", "Ghost"];
+			if (toId(pokemonB) in {'rotomheat': 1, 'rotomwash': 1, 'rotomfrost': 1, 'rotomfan': 1, 'rotommow': 1}) typesB = ["Electric", "Ghost"];
 		}
 		for (var i = 0; i < req.side.pokemon[idSide].moves.length; i++) {
 			dataMove = movedex[toId(req.side.pokemon[idSide].moves[i])];
@@ -587,20 +588,21 @@ module.exports = {
 				continue;
 			}
 			//modify move
+			var type = dataMove.type;
 			switch (req.side.pokemon[idSide].baseAbility) {
-				case 'Aerilate':
-					if (dataMove.type === "Normal") dataMove.type = "Flying";
+				case 'aerilate':
+					if (dataMove.type === "Normal") type = "Flying";
 					break;
-				case 'Pixilate':
-					if (dataMove.type === "Normal") dataMove.type = "Fairy";
+				case 'pixilate':
+					if (dataMove.type === "Normal") type = "Fairy";
 					break;
-				case 'Refrigerate':
-					if (dataMove.type === "Normal") dataMove.type = "Ice";
+				case 'refrigerate':
+					if (dataMove.type === "Normal") type = "Ice";
 					break;
 			}
-			if (dataMove.name === "Judgment") dataMove.type = data1.types[0];
+			if (dataMove.name === "Judgment") type = typesA[0];
 			var not_inmune = false;
-			if (req.side.pokemon[idSide].baseAbility === "Scrappy" && dataMove.type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
+			if (req.side.pokemon[idSide].baseAbility === "scrappy" && type in {"Normal": 1, "Fighting": 1}) not_inmune = true;
 			//discard moves
 			if (!(dataMove.category in {"Physical": 1, "Special": 1})) continue;
 			if (dataMove.name === "Rapid Spin") {
@@ -614,18 +616,23 @@ module.exports = {
 				}
 				if (isLastPoke) continue;
 			}
-			if (dataMove.type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
-			if (this.oldgen_get_mux(dataMove.type, data2.types, not_inmune, inverse) === 0) continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
-			if (dataMove.type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
-			if (parseInt(data.gen) >= 3 && this.inmune(dataMove, pokemonB) && req.side.pokemon[idSide].baseAbility !== "Mold Breaker") continue;
-
+			if (parseInt(data.gen) >= 3 && !(req.side.pokemon[0].baseAbility in {"moldbreaker": 1, "turboblaze": 1, "teravolt": 1})) {
+				if (type === "Grass" && data.statusData.foe.pokemon[0].ability && data.statusData.foe.pokemon[0].ability === "Sap Sipper") continue;
+				if (type === "Electric" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Lightning Rod" || data.statusData.foe.pokemon[0].ability === "Volt Absorb" || data.statusData.foe.pokemon[0].ability === "Motor Drive")) continue;
+				if (type === "Ground" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Levitate")) continue;
+				if (type === "Fire" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Flash Fire")) continue;
+				if (type === "Water" && data.statusData.foe.pokemon[0].ability && (data.statusData.foe.pokemon[0].ability === "Water Absorb" || data.statusData.foe.pokemon[0].ability === "Dry Skin" || data.statusData.foe.pokemon[0].ability === "Storm Drain")) continue;
+				if (this.inmune(dataMove, pokemonB, type)) continue;
+			}
+			if (this.oldgen_get_mux(type, typesB, not_inmune, inverse) === 0) continue;
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['item'] && data.statusData.foe.pokemon[0]['item'] === "Air Balloon") continue;
+			if (type === "Ground" && data.statusData.foe.pokemon[0]['volatiles'] && data.statusData.foe.pokemon[0]['volatiles']['Magnet Rise']) continue;
 			//push
 			moves.push(i + 1);
 		}
 		return moves;
 	},
-	TypeChartGen6: {
+	TypeChartGen5: {
 		"Bug": {
 			damageTaken: {
 				"Bug": 0,
