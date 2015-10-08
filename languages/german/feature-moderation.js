@@ -154,6 +154,17 @@
 			'in': 'in',
 			'err': 'Fehler beim Hochladen, konnte Beitrittsnachrichtenliste nicht zu Hastebin hochladen'
 		},
+		modexception: {
+			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
+			'all': 'normale Benutzer',
+			'rank': 'rang',
+			'modex-inf1': 'Moderation ausgenommen sind aktiviert',
+			'modex-inf2': 'oder höher in diesem Raum',
+			'modex-set1': 'Moderation Ausnahme wurde aktiviert',
+			'modex-set2': 'oder höher in diesem Raum',
+			'not1': 'Rang',
+			'not2': 'nicht gefunden'
+		},
 		mod: {
 			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
 			'u1': 'Verwendung',

@@ -153,6 +153,17 @@ exports.translations = {
 			'in': 'en',
 			'err': 'Error: no se puede subir la lista de frases de entrada a hastebin'
 		},
+		modexception: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
+			'all': 'usuarios regulares',
+			'rank': 'el rango',
+			'modex-inf1': 'La exención de la moderación está activada para',
+			'modex-inf2': 'y superiores en esta sala',
+			'modex-set1': 'La exención de la moderación ha sido activada para',
+			'modex-set2': 'y superiores en esta sala',
+			'not1': 'Rango',
+			'not2': 'no encontrado'
+		},
 		mod: {
 			'notchat': 'Este comando solo está disponible para las salas de chat',
 			'u1': 'Uso correcto',

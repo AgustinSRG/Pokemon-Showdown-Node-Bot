@@ -153,6 +153,17 @@
 			'in': 'dans',
 			'err': 'Erreur: Je ne peux pas télécharger les phrases de connections sur hastebin'
 		},
+		modexception: {
+			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
+			'all': 'utilisateurs réguliers',
+			'rank': 'rank',
+			'modex-inf1': 'Modération exception est activé pour',
+			'modex-inf2': 'ou haut dans cette salle',
+			'modex-set1': 'Modération exception a été activé pour',
+			'modex-set2': 'ou haut dans cette salle',
+			'not1': 'Rank',
+			'not2': 'non trouvé'
+		},
 		mod: {
 			'notchat': 'Cette commande est avaliable seulement pour les salles de chat',
 			'u1': 'Usage',

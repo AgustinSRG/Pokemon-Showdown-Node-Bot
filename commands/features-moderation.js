@@ -769,6 +769,41 @@ exports.commands = {
 	* Mod Settings
 	***************************/
 
+	modex: 'modexception',
+	modexception: function (arg, by, room, cmd) {
+		var tarRoom = room;
+		var targetObj = Tools.getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
+		if (!arg) {
+			var exceptionSettings = Settings.settings['modexception'] || {};
+			var ex = Config.moderation.modException;
+			if (room in exceptionSettings) ex = exceptionSettings[room];
+			if (ex === ' ') ex = "**" + this.trad('all') + "**";
+			else ex = this.trad('rank') + " **" + ex + "**";
+			return this.restrictReply(this.trad('modex-inf1') + " " + ex + " " + this.trad('modex-inf2') + textHelper, 'info');
+		}
+		if (!this.isRanked(Tools.getGroup('roomowner'))) return false;
+		if (!Settings.settings['modexception']) Settings.settings['modexception'] = {};
+		var rank = arg.trim();
+		if (Config.ranks.indexOf(rank) >= 0) {
+			Settings.settings['modexception'][room] = rank;
+			Settings.save();
+			return this.reply(this.trad('modex-set1') + " " + this.trad('rank') + " **" + rank + "** " + this.trad('modex-set2') + textHelper);
+		} else if (toId(rank) === 'all') {
+			Settings.settings['modexception'][room] = ' ';
+			Settings.save();
+			return this.reply(this.trad('modex-set1') + " **" + this.trad('all') + "** " + this.trad('modex-set2') + textHelper);
+		} else {
+			return this.reply(this.trad('not1') + " " + rank + " " + this.trad('not2'));
+		}
+	},
+
 	setmod: 'mod',
 	modset: 'mod',
 	modsettings: 'mod',

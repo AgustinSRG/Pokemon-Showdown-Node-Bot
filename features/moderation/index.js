@@ -2,6 +2,9 @@
 	Moderation Feature
 */
 
+exports.id = 'moderation';
+exports.desc = 'Automated moderation for chat rooms';
+
 var MOD_CONSTS = {
 	FLOOD_MESSAGE_NUM: 5,
 	FLOOD_PER_MSG_MIN: 500, // this is the minimum time between messages for legitimate spam. It's used to determine what "flooding" is caused by lag
@@ -37,8 +40,11 @@ function getValue (key) {
 	return DEFAULT_MOD_VALUES[key] || 1;
 }
 
-exports.id = 'moderation';
-exports.desc = 'Automated moderation for chat rooms';
+function getModException (room) {
+	if (Settings.settings['modexception'] && typeof Settings.settings['modexception'][room] !== 'undefined') return Settings.settings['modexception'][room];
+	if (Config.moderation && typeof Config.moderation.modException !== 'undefined') return Config.moderation.modException;
+	return Tools.getGroup('driver');
+}
 
 function trad (data, room) {
 	var lang = Config.language || 'english';
@@ -145,7 +151,7 @@ function getServersAds (text) {
 
 function parseChat (room, time, by, message) {
 	var user = toId(by);
-	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
+	if (Tools.equalOrHigherRank(by, getModException(room))) return;
 	var ban = isBanned(room, by);
 	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegExp)' : ''));
 

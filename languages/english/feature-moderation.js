@@ -153,6 +153,17 @@ exports.translations = {
 			'in': 'in',
 			'err': 'upload failure, could not upload joinphrases to hastebin'
 		},
+		modexception: {
+			'notchat': 'This command is only available for chat rooms',
+			'all': 'regular users',
+			'rank': 'rank',
+			'modex-inf1': 'Moderation exception is enabled for',
+			'modex-inf2': 'or higher in this room',
+			'modex-set1': 'Moderation exception was enabled for',
+			'modex-set2': 'or higher in this room',
+			'not1': 'Rank',
+			'not2': 'not found'
+		},
 		mod: {
 			'notchat': 'This command is only available for chat rooms',
 			'u1': 'Usage',
