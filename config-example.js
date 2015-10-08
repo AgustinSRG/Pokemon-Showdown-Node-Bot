@@ -55,8 +55,12 @@ exports.rooms = ['lobby'];
 * exports.rooms = ['room1', 'room2']; //For joining some rooms
 */
 
-exports.privateRooms = {
+exports.privateRooms = { //Rooms listed here will be ignored by seen command
 	//privateroomname: true
+};
+
+exports.ignoreRooms = { //Rooms listed here will be ignored by CommandParser (bot is "asleep" in those rooms)
+	//roomid: true
 };
 
 exports.initCmds = ['|/avatar 120']; // Other commands (avatar, blockchallenges, etc)

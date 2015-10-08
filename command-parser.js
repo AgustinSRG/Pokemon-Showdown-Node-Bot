@@ -257,6 +257,7 @@ var Context = exports.Context = (function () {
 })();
 
 var parse = exports.parse = function (room, by, msg) {
+	if (Config.ignoreRooms && Config.ignoreRooms[room]) return;
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
 	}
