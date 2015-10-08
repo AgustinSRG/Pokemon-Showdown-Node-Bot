@@ -783,7 +783,7 @@ exports.commands = {
 		if (!arg) {
 			var exceptionSettings = Settings.settings['modexception'] || {};
 			var ex = Config.moderation.modException;
-			if (room in exceptionSettings) ex = exceptionSettings[room];
+			if (room in exceptionSettings) ex = exceptionSettings[tarRoom];
 			if (ex === ' ') ex = "**" + this.trad('all') + "**";
 			else ex = this.trad('rank') + " **" + ex + "**";
 			return this.restrictReply(this.trad('modex-inf1') + " " + ex + " " + this.trad('modex-inf2') + textHelper, 'info');
@@ -792,11 +792,11 @@ exports.commands = {
 		if (!Settings.settings['modexception']) Settings.settings['modexception'] = {};
 		var rank = arg.trim();
 		if (Config.ranks.indexOf(rank) >= 0) {
-			Settings.settings['modexception'][room] = rank;
+			Settings.settings['modexception'][tarRoom] = rank;
 			Settings.save();
 			return this.reply(this.trad('modex-set1') + " " + this.trad('rank') + " **" + rank + "** " + this.trad('modex-set2') + textHelper);
 		} else if (toId(rank) === 'all') {
-			Settings.settings['modexception'][room] = ' ';
+			Settings.settings['modexception'][tarRoom] = ' ';
 			Settings.save();
 			return this.reply(this.trad('modex-set1') + " **" + this.trad('all') + "** " + this.trad('modex-set2') + textHelper);
 		} else {
