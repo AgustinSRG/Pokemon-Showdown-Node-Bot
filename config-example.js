@@ -165,6 +165,21 @@ exports.moderation = {
 		MAX_REPEAT: 4
 	},
 
+	values: {
+		'spam-p': 3,
+		'spam': 4,
+		'spam-link': 4,
+		'flood-hard': 3,
+		'flood': 2,
+		'caps': 1,
+		'stretch': 1,
+		'banwords': 2,
+		'inapwords': 2,
+		'servers': 2,
+		'youtube': 2,
+		'spoiler': 2
+	},
+
 	modDefault: {
 		//basic mods
 		'caps': 1,
