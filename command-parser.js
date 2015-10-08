@@ -157,6 +157,9 @@ var Context = exports.Context = (function () {
 		this.roomType = (this.room.charAt(0) === ',') ? 'pm' : (Bot.rooms[this.room] ? Bot.rooms[this.room].type : 'chat');
 		this.botName = Bot.status.nickName;
 		this.isExcepted = Tools.equalOrHigherRank(this.by, true);
+		var lang = Config.language || 'english';
+		if (this.roomType === 'chat' && Settings.settings['language'] && Settings.settings['language'][this.room]) lang = Settings.settings['language'][this.room];
+		this.language = lang;
 	}
 
 	Context.prototype.reply = function (data) {
@@ -244,9 +247,7 @@ var Context = exports.Context = (function () {
 		};
 	};
 	Context.prototype.trad = Context.prototype.tra = function (data) {
-		var lang = Config.language || 'english';
-		if (this.roomType === 'chat' && Settings.settings['language'] && Settings.settings['language'][this.room]) lang = Settings.settings['language'][this.room];
-		return Tools.translateCmd(this.handler, data, lang);
+		return Tools.translateCmd(this.handler, data, this.language);
 	};
 	Context.prototype.parse = function (data) {
 		return exports.parse(this.room, this.by, data);
