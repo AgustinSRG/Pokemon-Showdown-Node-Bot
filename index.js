@@ -26,7 +26,7 @@ console.log((
 
 global.Tools = require('./tools.js');
 var cmdArgs = process.argv.slice(2);
-global.AppOptions = Tools.paseArguments(cmdArgs);
+if (!global.AppOptions) global.AppOptions = Tools.paseArguments(cmdArgs);
 
 if (AppOptions.help) {
 	console.log(
@@ -494,7 +494,7 @@ console.log("\n-----------------------------------------------\n".yellow);
 
 //Connection
 if (AppOptions.testmode) {
-	require('./test.js');
+	ok("Test mode enabled");
 } else {
 	info('Connecting to server ' + Config.server + ':' + Config.port);
 	Bot.connect();

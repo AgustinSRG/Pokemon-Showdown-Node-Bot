@@ -66,6 +66,10 @@ jsHintOptions.base = {
 	"globals": globals
 };
 
+jsHintOptions.test = util._extend(util._extend({}, jsHintOptions.base), {
+	"mocha": true
+});
+
 var jscsOptions = {};
 jscsOptions.base = {
 	"preset": "yandex",
@@ -119,12 +123,16 @@ jscsOptions.config = util._extend(util._extend({}, jscsOptions.base), {
 
 var lintData = [
 	{
-		dirs: ['./command-parser.js', './data-downloader.js', './index.js', './settings.js', './test.js', './tools.js', './commands/*.js', './features/*/*.js', './languages/*/*.js'],
+		dirs: ['./command-parser.js', './data-downloader.js', './index.js', './settings.js', './tools.js', './commands/*.js', './features/*/*.js', './languages/*/*.js'],
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.base
 	}, {
 		dirs: ['./config-example.js'],
 		jsHint: jsHintOptions.base,
+		jscs: jscsOptions.config
+	}, {
+		dirs: ['./test/*.js', './testfiles/*.js'],
+		jsHint: jsHintOptions.test,
 		jscs: jscsOptions.config
 	}
 ];
