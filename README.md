@@ -17,9 +17,11 @@ Features included in this package:
  - **Battle:** Automated battle bot for challenges, ladder and tournaments. This also includes teams management commands. Note that this is not an artificial intelligence, just an improvised algorithm that simulates in-game players (just for fun).
  - **Chat Logger:** Stores logs of chat rooms and/or pms. This also includes an optional logs server.
  - **Tournaments:** A single command for creating, starting and set auto-dq of a tournament automatically.
+ - **Games:** A collection of chat games for your Pokemon Showdown Bot
  - **Auto Invite:** Automatically sends '/invite [room]' to room auth of a private room when they joins other room with a relation. For example if you have a secondary staff room and you want to get invited when you join lobby.
  - **Youtube link recognition:** If this feature is enabled in a room, when an user send a youtube link, the bot send a message with the title of the video.
- - **Games:** A collection of chat games for your Pokemon Showdown Bot
+ - **Group Chats:** Some tools for group chats (temporal rooms) suth as automated joining and automated roomauth promotion.
+ 
 
 Installation
 ------------
@@ -111,6 +113,7 @@ Once copied `config.js` from `config-example.js` you can edit config options to 
  - `Config.permissionExceptions`: Exceptions for commands permissions
  - `Config.botguide`: Bot commands guide link
  - `Config.pmhelp`: Help message said when users pm the bot with no commands
+ - `Config.ignoreRooms:` Room that will be ignored by CommandParser you you can use commands on those rooms. For example if you want to log the room without interfering with other bots commands. 
 
 **Language Config**
  - `Config.language`: Set default language

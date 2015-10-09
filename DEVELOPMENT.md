@@ -50,6 +50,7 @@ Also, command have a context:
  - `this.getRoom (room)` - Get a room object or null (if the bot is not in that room)
  - `this.getRoomUsers (room)` - Get an array of users who are in a room or null (if the bot is not in that room)
  - `this.getUser (user, room)` - Get an user object or null (if the user or the bot are not in that room)
+ - `this.language` - Current room language
  - `this.trad (textId)` - Returns a text from the corresponding languages file
  - `this.parse (cmd)` - Parse a message (to call other commands)
 

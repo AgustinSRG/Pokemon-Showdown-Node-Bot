@@ -93,6 +93,8 @@ Moderation
 
 **Mod Settings:** Use `mod (room - optional), [moderation], [on/off]` to enable or disable moderations.
 
+**Moderation Exception:** Use `modex [rank/all]` to change moderation exception for a room.
+
 **Autoban**
  - `ab [user], [user]...` - Add users to blacklist
  - `unab [user], [user]...` - Remove users from blacklist
@@ -174,21 +176,6 @@ Commands for Tournaments feature
  - `tourstart` - Force start a tornament
  - `tourend` - Force end a tornament
 
-Youtube
-------------
-
-Commands for Youtube link recognition feature
-
- - `youtube [on/off]` - Enable / Disable YouTube link recognition
-
-Auto-Invite
-------------
-
-Commands for auto-invite feature
-
-  - `reloadroomauth [room]` - Reload roomauth if the autoinvite feature is not working well
-  - `getroomauth [room]` - Upload roomauth to hastebin (dev command)
-
 Games
 ------------
 
@@ -209,3 +196,26 @@ General commands for managing games:
  - `g [word]` - To guess the words
  - `view` - To view the game status
  - `end` - To force end the game
+ 
+Youtube
+------------
+
+Commands for Youtube link recognition feature
+
+ - `youtube [on/off]` - Enable / Disable YouTube link recognition
+
+Auto-Invite
+------------
+
+Commands for auto-invite feature
+
+  - `reloadroomauth [room]` - Reload roomauth if the autoinvite feature is not working well
+  - `getroomauth [room]` - Upload roomauth to hastebin (dev command)
+
+Group Chats
+------------
+
+Developing commands for GroupChats feature
+
+ - `ignoregroupchat [groupchat]` - temporarily ignore a groupchat (to leave a groupchat). Then you must edit the config to make it permanent
+ - `unignoregroupchat [groupchat]` - unignore a groupchat

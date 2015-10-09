@@ -8,6 +8,8 @@ Moderation Commands
 
 **Mod Settings:** Use `mod (room - optional), [moderation], [on/off]` to enable or disable moderations.
 
+**Moderation Exception:** Use `modex [rank/all]` to change moderation exception for a room.
+
 **Autoban**
  - `ab [user], [user]...` - Add users to blacklist
  - `unab [user], [user]...` - Remove users from blacklist
@@ -43,6 +45,7 @@ Configuration
  - `modException`- Minimum rank to avoid bot moderation
  - `allowmute` - Enable or disable moderation
  - `disableModNote` - True for disabling the modnote on autoban command
+ - `values` - Moderation values, correspoding to punishments
  - `MOD_CONSTS` - Constants for flood, caps and stretching
  - `modDefault` - Default config for moderation (0 to disable, 1 to enable)
  - `punishments` - Punishments list (warn, mute, hormute, roomban)
@@ -55,6 +58,21 @@ exports.moderation = {
 
 	allowmute: true,
 	disableModNote: false,
+
+	values: {
+		'spam-p': 3,
+		'spam': 4,
+		'spam-link': 4,
+		'flood-hard': 3,
+		'flood': 2,
+		'caps': 1,
+		'stretch': 1,
+		'banwords': 2,
+		'inapwords': 2,
+		'servers': 2,
+		'youtube': 2,
+		'spoiler': 2
+	},
 
 	MOD_CONSTS: {
 		FLOOD_MESSAGE_NUM: 5,
