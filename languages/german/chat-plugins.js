@@ -3,7 +3,7 @@
 		/*
 		* Misc Commands
 		*/
-		pick: {'err': 'Du must mindestens zwei gültige Auswahlmöglichkeiten geben'},
+		pick: {'pick': 'Zufällige Pick', 'err': 'Du must mindestens zwei gültige Auswahlmöglichkeiten geben'},
 		randomanswer: {
 			'answers': [
 				'Alle Zeichen stehen auf Ja.',

@@ -3,7 +3,7 @@
 		/*
 		* Misc Commands
 		*/
-		pick: {'err': 'Devi impostare almeno due opzioni valide'},
+		pick: {'pick': 'Scelta a caso', 'err': 'Devi impostare almeno due opzioni valide'},
 		randomanswer: {
 			'answers': [
 				'Assegna punti a sì',

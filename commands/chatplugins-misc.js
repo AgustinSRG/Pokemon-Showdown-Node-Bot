@@ -11,7 +11,7 @@ exports.commands = {
 		choices = choices.filter(function (i) {return (toId(i) !== '');});
 		if (choices.length < 2) return this.pmReply(this.trad('err'));
 		var choice = choices[Math.floor(Math.random() * choices.length)];
-		this.restrictReply(Tools.stripCommands(choice), 'pick');
+		this.restrictReply("**" + this.trad('pick') + ":** " + Tools.stripCommands(choice), 'pick');
 	},
 
 	'8ball': 'randomanswer',

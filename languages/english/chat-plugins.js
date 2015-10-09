@@ -3,7 +3,7 @@ exports.translations = {
 		/*
 		* Misc Commands
 		*/
-		pick: {'err': 'You must give at least 2 valid choices'},
+		pick: {'pick': 'Random pick', 'err': 'You must give at least 2 valid choices'},
 		randomanswer: {
 			'answers': [
 				'Signs point to yes.',
