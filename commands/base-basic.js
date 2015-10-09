@@ -2,13 +2,6 @@
 	Basic Commands
 */
 
-function setPermission(room, perm, rank) {
-	if (!Settings.settings.commands) Settings.settings.commands = {};
-	if (!Settings.settings.commands[room]) Settings.settings.commands[room] = {};
-	Settings.settings.commands[room][perm] = rank;
-	Settings.save();
-}
-
 Settings.addPermissions(['say']);
 
 exports.commands = {

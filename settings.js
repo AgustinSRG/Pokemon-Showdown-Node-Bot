@@ -62,6 +62,12 @@ exports.addPermissions = function (perms) {
 	}
 };
 
+exports.setPermission = function (room, perm, rank) {
+	if (!settings.commands) settings.commands = {};
+	if (!settings.commands[room]) settings.commands[room] = {};
+	settings.commands[room][perm] = rank;
+};
+
 var parserFilters = exports.parserFilters = {};
 exports.callParseFilters = function (room, by, msg) {
 	for (var f in parserFilters) {
