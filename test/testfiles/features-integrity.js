@@ -19,15 +19,7 @@ describe("Features", function () {
 		var featureList = fs.readdirSync(FEATURES_PATH);
 		featureList.forEach(function (feature) {
 			if (fs.existsSync(FEATURES_PATH + "/" + feature + '/index.js')) {
-				var crash = false;
-				var err = "";
-				try {
-					separatedFeatures[feature] = require("../../" + FEATURES_PATH + "/" + feature + '/index.js');
-				} catch (e) {
-					err = e.stack;
-					crash = true;
-				}
-				assert.strictEqual(crash, false, "feature \"" + feature + "\" crashed on load\n" + err);
+				separatedFeatures[feature] = require("../../" + FEATURES_PATH + "/" + feature + '/index.js');
 			}
 		});
 	});
@@ -41,30 +33,14 @@ describe("Features", function () {
 	it("Should not crash on init", function () {
 		for (var feature in Features) {
 			if (typeof Features[feature].init === "function") {
-				var crash = false;
-				var err = ""
-				try {
-					Features[feature].init()
-				} catch (e) {
-					err = e.stack;
-					crash = true;
-				}
-				assert.strictEqual(crash, false, "feature \"" + feature + "\" crashed on init\n" + err);
+				Features[feature].init()
 			}
 		}
 	});
 	it("Should be destroyed properly", function () {
 		for (var feature in Features) {
 			if (typeof Features[feature].destroy === "function") {
-				var crash = false;
-				var err = "";
-				try {
-					Features[feature].destroy()
-				} catch (e) {
-					err = e.stack;
-					crash = true;
-				}
-				assert.strictEqual(crash, false, "feature \"" + feature + "\" crashed on destroy\n" + err);
+				Features[feature].destroy()
 			} else {
 				delete Features[feature];
 			}

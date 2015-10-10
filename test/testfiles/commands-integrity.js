@@ -15,15 +15,7 @@ describe("Commands", function () {
 	it("Should not crash when loading files", function () {
 		fs.readdirSync(COMMAND_PATH).forEach(function (file) {
 			if (file.substr(-3) === ".js") {
-				var crash = false;
-				var err = "";
-				try {
-					separatedCommands[file] = require("../../" + COMMAND_PATH + "/" + file).commands;
-				} catch (e) {
-					err = e.stack;
-					crash = true;
-				}
-				assert.strictEqual(crash, false, "commands file \"" + file + "\" crashed\n" + err);
+				separatedCommands[file] = require("../../" + COMMAND_PATH + "/" + file).commands;
 			}
 		});
 	});

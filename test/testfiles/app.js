@@ -13,7 +13,7 @@ Bot.rooms = {
 describe("CommandParser", function () {
 	it("Should not return errors on commands loading", function () {
 		var errs = CommandParser.loadCommands();
-		assert.strictEqual(errs.length, 0, errs);
+		assert.strictEqual(errs.length, 0, errs.join(', '));
 	});
 	it("Should try join a room when parsing a \"/invite\" message", function (done) {
 		this.timeout(500);
