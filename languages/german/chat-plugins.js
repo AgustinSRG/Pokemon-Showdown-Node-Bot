@@ -65,6 +65,20 @@
 		/*
 		* Pokemon Commands
 		*/
+		translate: {
+			'u1': 'Verwendung',
+			'u2': '[Wort], (Ausgangssprache), (Zielsprache)',
+			'lnot1': 'Sprache',
+			'lnot2': 'nicht verfügbar. Verfügbare Sprachen',
+			'not1': 'Ability, item, move or nature namens',
+			'not2': 'nicht gefunden oder in Übersetzungen nicht verfügbar',
+			'not3': 'nicht gefunden',
+			'tra': 'Übersetzungen von',
+			'abilities': 'Ability',
+			'items': 'Item',
+			'moves': 'Move',
+			'natures': 'Nature'
+		},
 		randompokemon: {'err': 'Ein Fehler ist aufgetreten. Versuche es später nochmal'},
 		gen: {
 			'err': 'Ein Fehler ist aufgetreten. Versuche es später nochmal',

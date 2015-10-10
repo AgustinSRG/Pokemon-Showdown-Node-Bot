@@ -43,6 +43,7 @@ Misc commands for multiple features:
 
 Commands for getting pokemon info:
 
+ - `translate [move/item/ability/nature], (source lang), (target lang)` - Command for translating pokemon stuff
  - `poke` or `randompokemon` - Get a random pokemon
  - `gen [poke]` - Get pokemon, item, etc generation
  - `viablemoves [poke]` - Get viable moves from a Pokemon

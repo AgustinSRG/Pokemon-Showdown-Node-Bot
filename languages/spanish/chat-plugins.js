@@ -68,6 +68,20 @@ exports.translations = {
 		/*
 		* Pokemon Commands
 		*/
+		translate: {
+			'u1': 'Uso correcto',
+			'u2': '[palabra], (idioma origen), (idioma destino)',
+			'lnot1': 'El idioma',
+			'lnot2': 'no está disponible. Los idiomas disponibles son',
+			'not1': 'Habilidad, objeto, movimiento o naturaleza con nombre',
+			'not2': 'no existe o no está disponible entre las traducciones',
+			'not3': 'no ha sido encontrado',
+			'tra': 'Traducciones de',
+			'abilities': 'Habilidad',
+			'items': 'Objeto',
+			'moves': 'Movimiento',
+			'natures': 'Naturaleza'
+		},
 		randompokemon: {'err': 'Hay un problema, intenta este comando en unos minutos'},
 		gen: {
 			'err': 'Hay un problema, intenta este comando en unos minutos',

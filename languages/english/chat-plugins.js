@@ -65,6 +65,20 @@ exports.translations = {
 		/*
 		* Pokemon Commands
 		*/
+		translate: {
+			'u1': 'Usage',
+			'u2': '[word], (source language), (target language)',
+			'lnot1': 'Language',
+			'lnot2': 'not available. Available languages',
+			'not1': 'Ability, item, move or nature called',
+			'not2': 'not found or not available in translations',
+			'not3': 'not found',
+			'tra': 'Translations of',
+			'abilities': 'Ability',
+			'items': 'Item',
+			'moves': 'Move',
+			'natures': 'Nature'
+		},
 		randompokemon: {'err': 'An error ocurred, try again later'},
 		gen: {
 			'err': 'An error ocurred, try again later',
