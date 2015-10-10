@@ -94,6 +94,7 @@ exports.commands = {
 		if (!Settings.settings['language']) Settings.settings['language'] = {};
 		Settings.settings['language'][room] = lang;
 		Settings.save();
+		this.language = lang;
 		this.reply(this.trad('l'));
 	},
 
