@@ -76,9 +76,6 @@ var cmdParser = exports.cmdParser = function (room, by, msg) {
 			};
 			var context = new Context(opts);
 			try {
-				if (!Tools.equalOrHigherRank(by, true)) {
-					if (CommandParser.resourceMonitor.countcmd(by)) return;
-				}
 				cmdr("game".cyan + " | " + handler + ' | arg: ' + args + ' | by: ' + by + ' | room: ' + room + ' | cmd: ' + cmd);
 				commands[handler].call(context, args, by, room, cmd, Games[room]);
 			} catch (e) {
@@ -117,7 +114,7 @@ exports.newGame = function (room, type, args) {
 	if (!game) return {err: true};
 	if (typeof game === "string") return {err: 'args', info: game};
 	Games[room] = game;
-	Games[room].start();
+	Games[room].init();
 };
 
 exports.deleteGame = function (room) {

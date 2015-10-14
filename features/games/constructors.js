@@ -96,6 +96,10 @@ var Hangman = exports.Hangman = (function () {
 		}
 	};
 
+	Hangman.prototype.init = function () {
+		this.start();
+	};
+
 	Hangman.prototype.start = function () {
 		this.emit('start', null);
 	};
@@ -146,7 +150,11 @@ var Anagrams = exports.Anagrams = (function () {
 		if (typeof this.output === "function") return this.output.call(this, type, data);
 	};
 
-	Anagrams.prototype.start = function (type, data) {
+	Anagrams.prototype.init = function () {
+		this.start();
+	};
+
+	Anagrams.prototype.start = function () {
 		this.status = 1;
 		this.emit('start', null);
 		this.wait();

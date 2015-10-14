@@ -6,7 +6,7 @@ A collection of games for Pokemon Showdown! chat rooms.
  - **Poke-Hangman** - Simplified hangman game with pokemon, moves, abilities, items and natures randomly chosen.
  - **Poke-Anagrams** - Random and pokemon-related disordered words to reorder.
 
-In order to add new games: create a module with **id**, **title**, **aliases** and **commands** properties and **newGame(room, options)** method.
+In order to add new games: create a module with **id**, **title**, **aliases** and **commands** properties and **newGame(room, options)** method. newGame should return an object with a method called **init**, which is called when the game is created.
 
 Then add the file to `gamesList` in games `index.js`
 
