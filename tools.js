@@ -417,11 +417,11 @@ exports.translateCmd = function (cmd, data, lang) {
 };
 
 exports.translateGlobal = function (glob, data, lang) {
-	if (translations[lang] && translations[lang][glob]) {
+	if (translations[lang] && translations[lang][glob] && typeof translations[lang][glob][data] !== "undefined") {
 		return translations[lang][glob][data];
 	} else {
 		lang = 'english';
-		if (!translations[lang] || !translations[lang][glob]) {
+		if (!translations[lang] || !translations[lang][glob || typeof translations[lang][glob][data] === "undefined"]) {
 			return '__(not found)__';
 		} else {
 			return translations[lang][glob][data];
