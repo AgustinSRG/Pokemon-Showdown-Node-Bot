@@ -184,6 +184,7 @@ General commands for managing games:
 
  - `game [Game Name], arg1=value1, arg2=value2...` - Start a game
  - `endgame` - Force end a game
+ - `reloadgames` - Alias of `reload feature, games`
 
 
 **Poke-Hangman**. Arguments: maxfails (max number of allowed fails, 0 or no specify this argument for infinite). Commands:
@@ -196,6 +197,16 @@ General commands for managing games:
 
  - `g [word]` - To guess the words
  - `view` - To view the game status
+ - `end` - To force end the game
+
+**BlackJack**. Arguments: time (time for each turn in seconds), maxplayers (max number of players) Commands:
+
+ - `in` - To join the game. Use `out` to leave
+ - `players` - To view the players list
+ - `start` - To start the game
+ - `hand` - To view your hand
+ - `hit` - To get a new card to your hand
+ - `stand` - To finish your turn
  - `end` - To force end the game
  
 Youtube
