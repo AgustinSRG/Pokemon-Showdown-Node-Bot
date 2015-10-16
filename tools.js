@@ -320,6 +320,9 @@ exports.checkConfig = function () {
 	var issue = function (text) {
 		console.log('issue'.yellow + '\t' + text);
 	};
+	if (Config.server && Config.server.substr(-8) === ".psim.us") {
+		issue('WARNING: YOUR SERVER URL ' + Config.server.red + ' SEEMS A CLIENT URL, NOT A SERVER ONE. USE ' + 'node serverconfig.js'.cyan + ' TO GET THE CORRECT SERVER, PORT AND SERVERID VALUES\n');
+	}
 	if (typeof Config.rooms !== 'string' && (typeof Config.rooms !== 'object' || typeof Config.rooms.length !== 'number')) {
 		issue('Config.rooms is not an array');
 		Config.rooms = [];

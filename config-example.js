@@ -5,8 +5,9 @@
 /*
 * Connection Details
 *
-* If you don't know what is the server, port or serverid
-* run 'node serverconfig.js'
+* NOTE: Do NOT use "[server].psim.us", that is the client url
+* If you don't know what are the server, port or serverid values
+* run 'node serverconfig.js' to get them
 *
 */
 
