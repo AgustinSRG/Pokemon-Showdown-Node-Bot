@@ -155,6 +155,7 @@ exports.commands = {
 		if (normalize(translations[0].from) !== normalize(word)) text += this.trad('not1') + " \"" + word + "\" " + this.trad('not3') + ". ";
 		text += this.trad('tra') + " **" + Tools.toName(translations[0].from) + "** (" + from + " - " + to + "): ";
 		for (var i = 0; i < translations.length; i++) {
+			if (normalize(translations[0].from) !== normalize(translations[i].from)) continue;
 			if (typeof translations[i].to === "string") {
 				text += "**" + Tools.toName(translations[i].to) + "** (" + (this.trad(translations[i].type) || translations[i].type) + ")";
 			} else {
