@@ -35,7 +35,7 @@ function formateHand (hand, total, str1) {
 
 exports.id = 'blackjack';
 
-exports.title = 'Black Jack';
+exports.title = 'BlackJack';
 
 exports.aliases = ['bj', '21'];
 
