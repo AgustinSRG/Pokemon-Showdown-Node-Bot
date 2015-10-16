@@ -119,11 +119,17 @@ exports.newGame = function (room, opts) {
 			case 'time':
 				temp = parseFloat(opts[i]) || 0;
 				if (temp) temp *= 1000;
-				if (temp && temp < (5 * 1000)) return "time ( seconds, >= 5 )";
-				generatorOpts.answerTime = temp;
+				if (temp < (5 * 1000)) return "time ( seconds, >= 5 ), maxplayers";
+				generatorOpts.turnTime = temp;
+				break;
+			case 'players':
+			case 'maxplayers':
+				temp = parseInt(opts[i]);
+				if (!temp || temp < 1) return "time, maxplayers ( > 0 )";
+				generatorOpts.maxPlayers = temp;
 				break;
 			default:
-				return "time";
+				return "time, maxplayers";
 		}
 	}
 	var game = new BlackJack(generatorOpts, parser);
