@@ -16,6 +16,37 @@
 	},
 
 	games: {
+		hangman: {
+			'help': 'Usa __$TOKENg [palabra/letra]__ para jugar',
+			'grats1': 'Feliciades a',
+			'grats2': 'por ganar el juego de Hangman! La palabra era',
+			'lose1': '**El juego ha terminado!** Se ha excedido el máximo numero de fallos y',
+			'lose2': 'fue ahorcado! La palabra era',
+			'end': 'El juego de Hangman ha sido finalizado. La palabra era'
+		},
+		anagrams: {
+			'and': 'y',
+			'start': 'Un nuevo juego de **Anagrams** ha sido creado!',
+			'maxgames1': 'Serán un máximo de',
+			'maxgames2': 'rondas',
+			'maxpoints1': 'Si alguien consigue',
+			'maxpoints2': 'puntos, gana',
+			'timer1': 'Teneis',
+			'timer2': 'segundos para adivinar cada palabra',
+			'help': 'Usa __$TOKENg [palabra]__ para adivinar las palabras',
+			'point2': 'por adivinar la palabra',
+			'point3': 'Puntuación',
+			'timeout': '**El tiempo ha terminado!** La palabra era',
+			'lose': '**El juego de Anagrams ha terminado!** Sin embargo nadie ha conseguido ningún punto, por lo que no hay ganadores',
+			'end': 'El juego de Anagrams ha terminado!',
+			'grats1': 'Felicidades a',
+			'grats2': 'por ganar el juego con',
+			'points': 'puntos',
+			'tie1': 'El resultado es un empate a',
+			'tie2': 'entre',
+			'forceend1': 'El juego de Anagrams ha sido finalizado!',
+			'forceend2': 'La palabra era'
+		},
 		pokehangman: {
 			'help': 'Usa __$TOKENg [palabra/letra]__ para jugar',
 			'grats1': 'Feliciades a',

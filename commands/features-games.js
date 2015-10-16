@@ -10,6 +10,8 @@ exports.commands = {
 	bj: 'blackjack',
 
 	/* Specific generators */
+	hangman: 'execgame',
+	anagrams: 'execgame',
 	pokehangman: 'execgame',
 	pokeanagrams: 'execgame',
 	blackjack: 'execgame',

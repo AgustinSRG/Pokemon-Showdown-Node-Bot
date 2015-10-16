@@ -16,6 +16,37 @@ exports.translations = {
 	},
 
 	games: {
+		hangman: {
+			'help': 'Use __$TOKENg [word/char]__ to play',
+			'grats1': 'Congratulations to',
+			'grats2': 'for winning the Hangman game! The word was',
+			'lose1': '**Game over!** Max number of failures was exceeded and',
+			'lose2': 'was hanged! The word was',
+			'end': 'The Hangman game was terminated. The word was'
+		},
+		anagrams: {
+			'and': 'and',
+			'start': 'A new **Poke-Anagrams** game was created!',
+			'maxgames1': 'It will be a max of',
+			'maxgames2': 'games',
+			'maxpoints1': 'If someone gets',
+			'maxpoints2': 'points, he/she wins',
+			'timer1': 'You have',
+			'timer2': 'seconds to guess each word',
+			'help': 'Use __$TOKENg [word]__ to guess the words',
+			'point2': 'for guessing the word',
+			'point3': 'Current score',
+			'timeout': '**Time is up!** The word was',
+			'lose': '**The Anagrams game ended!** But no one got any points so there are no winners',
+			'end': 'The Anagrams game ended!',
+			'grats1': 'Congratulations to',
+			'grats2': 'for winning the game with',
+			'points': 'points',
+			'tie1': 'The result is a draw at',
+			'tie2': 'between',
+			'forceend1': 'The Anagrams game was terminated!',
+			'forceend2': 'The word was'
+		},
 		pokehangman: {
 			'help': 'Use __$TOKENg [word/char]__ to play',
 			'grats1': 'Congratulations to',

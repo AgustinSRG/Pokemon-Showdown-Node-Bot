@@ -16,6 +16,9 @@ test-data
 logs
 *.log
 
+#Games
+!data/games-words-example.js
+
 # Runtime data
 pids
 *.pid
