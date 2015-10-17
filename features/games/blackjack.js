@@ -19,7 +19,7 @@ function joinArray (arr, str1) {
 	var txt = "**" + arr[0] + "**";
 	if (arr.length > 1) {
 		for (var i = 1; i < arr.length - 1; i++) txt += ", **" + arr[i] + "**";
-		txt += " " + str1 + " " + "**" + arr[0] + "**";
+		txt += " " + str1 + " " + "**" + arr[arr.length - 1] + "**";
 	}
 	return txt;
 }
