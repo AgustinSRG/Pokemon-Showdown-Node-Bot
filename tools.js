@@ -424,7 +424,7 @@ exports.translateGlobal = function (glob, data, lang) {
 		return translations[lang][glob][data];
 	} else {
 		lang = 'english';
-		if (!translations[lang] || !translations[lang][glob || typeof translations[lang][glob][data] === "undefined"]) {
+		if (!translations[lang] || !translations[lang][glob] || typeof translations[lang][glob][data] === "undefined") {
 			return '__(not found)__';
 		} else {
 			return translations[lang][glob][data];
