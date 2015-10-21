@@ -10,7 +10,7 @@ This is a [Pokemon Showdown](https://github.com/Zarel/Pokemon-Showdown) bot writ
 
 This bot is based on commands and features, which are explained [here](https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/blob/master/DEVELOPMENT.md). This is intended to ease bot configuration and customization, separating commands in multiple files, multiple features in different folders and merging functions in Global Objects like Bot, CommandParser or Settings. This bot also works in multiple languages at the same time, useful for language rooms.
 
-[![Version](https://img.shields.io/badge/version-0.1.4--beta-blue.svg)](https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot#pokemon-showdown-bot-for-node)
+[![Version](https://img.shields.io/badge/version-0.1.5--beta-blue.svg)](https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot#pokemon-showdown-bot-for-node)
 
 Features included in this package:
  - **Base:** Basic commands for getting basic information, manage command permissions, languages and dynamic commands (only-text commands useful for giving information).
@@ -130,6 +130,7 @@ Credits
  
 Contributors:
 
+ - [Freigeist](https://github.com/Freigeist) (Languages/Translation feature and bug fixes)
  - [Irraquated](https://github.com/Irraquated) (Languages and bug fixes)
  - [panpawn](https://github.com/panpawn) (YouTube feature, fixes)
  - [Spudling](https://github.com/Spudling) (German translation)

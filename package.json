@@ -1,6 +1,6 @@
 {
   "name": "pokemon-showdown-node-bot",
-  "version": "0.1.4-beta",
+  "version": "0.1.5-beta",
   "author": {
     "name": "Ecuacion",
 	"email": "alajandro5gt01@gmail.com",
@@ -12,6 +12,10 @@
   },
   "contributors": [
     {
+      "name": "Freigeist",
+      "url": "https://github.com/Freigeist"
+    },
+	{
       "name": "Irraquated",
       "url": "https://irraquated.github.io"
     },
