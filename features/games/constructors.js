@@ -206,9 +206,11 @@ var Anagrams = exports.Anagrams = (function () {
 	};
 
 	Anagrams.prototype.guess = function (user, str) {
+		if (this.status !== 2) return;
 		str = normalize(str);
 		var userid = toId(user);
 		if (toWordId(str) === this.wordId) {
+			this.status = 1;
 			if (this.timer) {
 				clearTimeout(this.timer);
 				this.timer = null;

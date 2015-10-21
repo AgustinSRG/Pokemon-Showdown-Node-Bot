@@ -26,7 +26,7 @@ exports.translations = {
 		},
 		anagrams: {
 			'and': 'and',
-			'start': 'A new **Poke-Anagrams** game was created!',
+			'start': 'A new **Anagrams** game was created!',
 			'maxgames1': 'It will be a max of',
 			'maxgames2': 'games',
 			'maxpoints1': 'If someone gets',
