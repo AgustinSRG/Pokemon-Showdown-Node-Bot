@@ -1172,7 +1172,7 @@ exports.translations.natures = {
 
 /* Pokemon names */
 
-{
+exports.translations.pokemon = {
 	"bulbasaur": "Bulbizarre",
 	"ivysaur": "Herbizarre",
 	"venusaur": "Florizarre",
@@ -2007,5 +2007,6 @@ exports.translations.natures = {
 	"hoopa": "Hoopa",
 	"hoopaunbound": "", //TODO
 	"volcanion": "Volcanion",
-	"missingno": "", //TODO
+	"missingno": "" //TODO
 };
+

@@ -2007,3 +2007,4 @@ exports.translations.pokemon = {
 	"volcanion": "Volcanion",
 	"missingno": "Missingno."
 };
+

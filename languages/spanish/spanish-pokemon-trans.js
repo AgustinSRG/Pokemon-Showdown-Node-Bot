@@ -2007,5 +2007,6 @@ exports.translations.pokemon = {
 	"hoopa": "Hoopa",
 	"hoopaunbound": "", //TODO
 	"volcanion": "Volcanion",
-	"missingno": "", //TODO
+	"missingno": "" //TODO
 };
+
