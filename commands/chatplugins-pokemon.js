@@ -84,7 +84,7 @@ function getTranslations (from, to, word) {
 	var results = [];
 	var toLangData = Tools.translations[to];
 	if (!toLangData) return null;
-	var ids = searchInLanguage(from, word, ['abilities', 'items', 'moves', 'natures']);
+	var ids = searchInLanguage(from, word, ['abilities', 'items', 'moves', 'natures', 'pokemon']);
 	if (!ids || !ids.length) return null;
 	var type, id;
 	for (var i = 0; i < ids.length; i++) {
