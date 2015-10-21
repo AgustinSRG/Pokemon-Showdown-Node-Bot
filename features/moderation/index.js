@@ -392,7 +392,7 @@ function parseChat (room, time, by, message) {
 	if (modSettings['multiple'] !== 0) {
 		if (infractions.length >= 2) {
 			pointVal = totalPointVal;
-			muteMessage = ', ' + trad('mult', room) + ': ' + infractions.join(", ");
+			muteMessage = ', ' + trad('automod', room) + '. ' + trad('mult', room) + ': ' + infractions.join(", ");
 		}
 	}
 
