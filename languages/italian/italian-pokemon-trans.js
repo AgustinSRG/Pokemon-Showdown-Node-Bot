@@ -1,7 +1,7 @@
 /*
 * Pokemon Data translations
 
-*TODO: deltastream, desolateland, primordialsea, mountaineer, rebound, persistent, aggronite, alakazite, altarianite, assaultvest, audinite, banettite, beedrillite, cameruptite, diancite, fairygem, galladite, garchompite, glalitite, heracronite, houndoominite, keeberry, latiasite, latiosite, lopunnite, luminousmoss, mail, manectite, marangaberry, metagrossite, mewtwonitex, mewtwonitey, pidgeotite, pokeball, roseliberry, sablenite, safetygoggles, salamencite, sceptilite, scizorite, sharpedonite, slowbronite, snowball, steelixite, swampertite, tyranitarite, weaknesspolicy, dragonascent, hiddenpowerbug, hiddenpowerdark, hiddenpowerdragon, hiddenpowerelectric, hiddenpowerfighting, hiddenpowerfire, hiddenpowerflying, hiddenpowerghost, hiddenpowergrass, hiddenpowerground, hiddenpowerice, hiddenpowerpoison, hiddenpowerpsychic, hiddenpowerrock, hiddenpowersteel, hiddenpowerwater, hyperspacefury, originpulse, precipiceblades, paleowave, shadowstrike, magikarpsrevenge
+*TODO: mountaineer, rebound, persistent, fairygem, mail, snowball, paleowave, shadowstrike, magikarpsrevenge
 */
 
 exports.translations = {};
@@ -38,8 +38,8 @@ exports.translations.abilities = {
 	"darkaura": "Auratetra",
 	"defeatist": "Sconforto",
 	"defiant": "Agonismo",
-	"deltastream": "", //TODO
-	"desolateland": "", //TODO
+	"deltastream": "Flusso Delta",
+	"desolateland": "Terra Estrema",
 	"download": "Download",
 	"drizzle": "Piovischio",
 	"drought": "Siccità",
@@ -124,7 +124,7 @@ exports.translations.abilities = {
 	"poisontouch": "Velentocco",
 	"prankster": "Burla",
 	"pressure": "Pressione",
-	"primordialsea": "", //TODO
+	"primordialsea": "Mare Primordiale",
 	"protean": "Mutatipo",
 	"purepower": "Forzapura",
 	"quickfeet": "Piedisvelti",
@@ -213,20 +213,20 @@ exports.translations.items = {
 	"absorbbulb": "Bulbo",
 	"adamantorb": "Adamasfera",
 	"aerodactylite": "Aerodactylite",
-	"aggronite": "", //TODO
+	"aggronite": "Aggronite",
 	"aguavberry": "Baccaguava",
 	"airballoon": "Palloncino",
-	"alakazite": "", //TODO
-	"altarianite": "", //TODO
+	"alakazite": "Alakazamite",
+	"altarianite": "Altarianite",
 	"ampharosite": "Ampharosite",
 	"apicotberry": "Baccacocca",
 	"armorfossil": "Fossilscudo",
 	"aspearberry": "Baccaperina",
-	"assaultvest": "", //TODO
-	"audinite": "", //TODO
+	"assaultvest": "Corpetto Assalto",
+	"audinite": "Audinite",
 	"babiriberry": "Baccababiri",
-	"banettite": "", //TODO
-	"beedrillite": "", //TODO
+	"banettite": "Banettite",
+	"beedrillite": "Beedrillite",
 	"belueberry": "Baccartillo",
 	"berryjuice": "Succodibacca",
 	"bigroot": "Granradice",
@@ -241,7 +241,7 @@ exports.translations.items = {
 	"brightpowder": "Luminpolvere",
 	"buggem": "Bijoucoleot.",
 	"burndrive": "Piromodulo",
-	"cameruptite": "", //TODO
+	"cameruptite": "Cameruptite",
 	"cellbattery": "Ricaripila",
 	"charcoal": "Carbonella",
 	"charizarditex": "Charizardite X",
@@ -267,7 +267,7 @@ exports.translations.items = {
 	"deepseascale": "Squamabissi",
 	"deepseatooth": "Dente Abissi",
 	"destinyknot": "Destincomune",
-	"diancite": "", //TODO
+	"diancite": "Diancite",
 	"diveball": "Sub Ball",
 	"domefossil": "Domofossile",
 	"dousedrive": "Idromodulo",
@@ -300,13 +300,13 @@ exports.translations.items = {
 	"focussash": "Focalnastro",
 	"friendball": "Friend Ball",
 	"fullincense": "Gonfioaroma",
-	"galladite": "", //TODO
+	"galladite": "Galladite",
 	"ganlonberry": "Baccalongan",
-	"garchompite": "", //TODO
+	"garchompite": "Garchonpite",
 	"gardevoirite": "Gardevoirite",
 	"gengarite": "Gengarite",
 	"ghostgem": "Bijouspettro",
-	"glalitite": "", //TODO
+	"glalitite": "Glalite",
 	"grassgem": "Bijouerba",
 	"greatball": "Mega Ball",
 	"grepaberry": "Baccauva",
@@ -320,9 +320,9 @@ exports.translations.items = {
 	"heatrock": "Rocciacalda",
 	"heavyball": "Peso Ball",
 	"helixfossil": "Helixfossile",
-	"heracronite": "", //TODO
+	"heracronite": "Heracrossite",
 	"hondewberry": "Baccamelon",
-	"houndoominite": "", //TODO
+	"houndoominite": "Houndoomite",
 	"iapapaberry": "Baccapaia",
 	"icegem": "Bijoughiac.",
 	"icicleplate": "Lastragelo",
@@ -333,14 +333,14 @@ exports.translations.items = {
 	"jabocaberry": "Baccajaba",
 	"kasibberry": "Baccacitrus",
 	"kebiaberry": "Baccakebia",
-	"keeberry": "", //TODO
+	"keeberry": "Baccalighia",
 	"kelpsyberry": "Baccalga",
 	"kangaskhanite": "Kangaskhanite",
 	"kingsrock": "Roccia Di Re",
 	"laggingtail": "Rallentocoda",
 	"lansatberry": "Baccalangsa",
-	"latiasite": "", //TODO
-	"latiosite": "", //TODO
+	"latiasite": "Latiasite",
+	"latiosite": "Latiosite",
 	"laxincense": "Distraroma",
 	"leftovers": "Avanzi",
 	"leppaberry": "Baccamela",
@@ -349,12 +349,12 @@ exports.translations.items = {
 	"lifeorb": "Assorbisfera",
 	"lightball": "Elettropalla",
 	"lightclay": "Creta Luce",
-	"lopunnite": "", //TODO
+	"lopunnite": "Lopunnite",
 	"loveball": "Love Ball",
 	"lucarionite": "Lucarite",
 	"luckypunch": "Fortunpugno",
 	"lumberry": "Baccaprugna",
-	"luminousmoss": "", //TODO
+	"luminousmoss": "Muschioluce",
 	"lureball": "Esca Ball",
 	"lustrousorb": "Splendisfera",
 	"luxuryball": "Chic Ball",
@@ -363,19 +363,19 @@ exports.translations.items = {
 	"magoberry": "Baccamango",
 	"magostberry": "Baccagostan",
 	"mail": "", //TODO
-	"manectite": "", //TODO
-	"marangaberry": "", //TODO
+	"manectite": "Manectricite",
+	"marangaberry": "Baccapane",
 	"masterball": "Master Ball",
 	"mawilite": "Mawilite",
 	"meadowplate": "Lastraprato",
 	"medichamite": "Medichamite",
 	"mentalherb": "Mentalerba",
-	"metagrossite": "", //TODO
+	"metagrossite": "Metagrossite",
 	"metalcoat": "Metalcoperta",
 	"metalpowder": "Metalpolvere",
 	"metronome": "Metronomo",
-	"mewtwonitex": "", //TODO
-	"mewtwonitey": "", //TODO
+	"mewtwonitex": "Mewtwoite X",
+	"mewtwonitey": "Mewtwoite Y",
 	"micleberry": "Baccaracolo",
 	"mindplate": "Lastramente",
 	"miracleseed": "Miracolseme",
@@ -399,14 +399,14 @@ exports.translations.items = {
 	"pechaberry": "Baccapesca",
 	"persimberry": "Baccaki",
 	"petayaberry": "Baccapitaya",
-	"pidgeotite": "", //TODO
+	"pidgeotite": "Pidgeotite",
 	"pinapberry": "Baccananas",
 	"pinsirite": "Pinsirite",
 	"pixieplate": "Lastraspiritello",
 	"plumefossil": "Fossilpiuma",
 	"poisonbarb": "Velenaculeo",
 	"poisongem": "Bijouveleno",
-	"pokeball": "", //TODO
+	"pokeball": "Poké Ball",
 	"pomegberry": "Baccagrana",
 	"powerherb": "Vigorerba",
 	"premierball": "Premier Ball",
@@ -431,19 +431,19 @@ exports.translations.items = {
 	"rockyhelmet": "Bitorzolelmo",
 	"rootfossil": "Radifossile",
 	"roseincense": "Rosaroma",
-	"roseliberry": "", //TODO
+	"roseliberry": "Baccarcadè",
 	"rowapberry": "Baccaroam",
-	"sablenite": "", //TODO
+	"sablenite": "Sableyeite",
 	"safariball": "Safari Ball",
-	"safetygoggles": "", //TODO
+	"safetygoggles": "Visierantisabbia",
 	"salacberry": "Baccasalak",
-	"salamencite": "", //TODO
-	"sceptilite": "", //TODO
-	"scizorite": "", //TODO
+	"salamencite": "Salamencite",
+	"sceptilite": "Sceptilite",
+	"scizorite": "Scizorite",
 	"scopelens": "Mirino",
 	"seaincense": "Marearoma",
 	"sharpbeak": "Beccaffilato",
-	"sharpedonite": "", //TODO
+	"sharpedonite": "Sharpedite",
 	"shedshell": "Disfoguscio",
 	"shellbell": "Conchinella",
 	"shockdrive": "Voltmodulo",
@@ -453,7 +453,7 @@ exports.translations.items = {
 	"sitrusberry": "Baccacedro",
 	"skullfossil": "Fossilcranio",
 	"skyplate": "Lastracielo",
-	"slowbronite": "", //TODO
+	"slowbronite": "Slowbroite",
 	"smoothrock": "Roccialiscia",
 	"snowball": "", //TODO
 	"softsand": "Sabbia Soff.",
@@ -464,12 +464,12 @@ exports.translations.items = {
 	"spookyplate": "Lastratetra",
 	"sportball": "Gara Ball",
 	"starfberry": "Baccambola",
-	"steelixite": "", //TODO
+	"steelixite": "Steelixite",
 	"steelgem": "Bijouacciaio",
 	"stick": "Gambo",
 	"stickybarb": "Vischiopunta",
 	"stoneplate": "Lastrapietra",
-	"swampertite": "", //TODO
+	"swampertite": "Swampertite",
 	"tamatoberry": "Baccamodoro",
 	"tangaberry": "Baccaitan",
 	"thickclub": "Ossospesso",
@@ -477,14 +477,14 @@ exports.translations.items = {
 	"toxicorb": "Tossicsfera",
 	"toxicplate": "Lastrafiele",
 	"twistedspoon": "Cucch. Torto",
-	"tyranitarite": "", //TODO
+	"tyranitarite": "Tyranitarite",
 	"ultraball": "Ultra Ball",
 	"venusaurite": "Venusaurite",
 	"wacanberry": "Baccaparmen",
 	"watergem": "Bijouacqua",
 	"watmelberry": "Baccacomero",
 	"waveincense": "Ondaroma",
-	"weaknesspolicy": "", //TODO
+	"weaknesspolicy": "Vulneropolizza",
 	"wepearberry": "Baccapera",
 	"whiteherb": "Erbachiara",
 	"widelens": "Grandelente",
@@ -620,7 +620,7 @@ exports.translations.moves = {
 	"doubleslap": "Doppiasberla",
 	"doubleteam": "Doppioteam",
 	"dracometeor": "Dragobolide",
-	"dragonascent": "", //TODO
+	"dragonascent": "Ascesa del Drago",
 	"dragonbreath": "Dragospiro",
 	"dragonclaw": "Dragartigli",
 	"dragondance": "Dragodanza",
@@ -747,22 +747,22 @@ exports.translations.moves = {
 	"helpinghand": "Altruismo",
 	"hex": "Sciagura",
 	"hiddenpower": "Introforza",
-	"hiddenpowerbug": "", //TODO
-	"hiddenpowerdark": "", //TODO
-	"hiddenpowerdragon": "", //TODO
-	"hiddenpowerelectric": "", //TODO
-	"hiddenpowerfighting": "", //TODO
-	"hiddenpowerfire": "", //TODO
-	"hiddenpowerflying": "", //TODO
-	"hiddenpowerghost": "", //TODO
-	"hiddenpowergrass": "", //TODO
-	"hiddenpowerground": "", //TODO
-	"hiddenpowerice": "", //TODO
-	"hiddenpowerpoison": "", //TODO
-	"hiddenpowerpsychic": "", //TODO
-	"hiddenpowerrock": "", //TODO
-	"hiddenpowersteel": "", //TODO
-	"hiddenpowerwater": "", //TODO
+	"hiddenpowerbug": "Introforza Coleottero",
+	"hiddenpowerdark": "Introforza Buio",
+	"hiddenpowerdragon": "Introforza Drago",
+	"hiddenpowerelectric": "Introforza Elettro",
+	"hiddenpowerfighting": "Introforza Lotta",
+	"hiddenpowerfire": "Introforza Fuoco",
+	"hiddenpowerflying": "Introforza Volante",
+	"hiddenpowerghost": "Introforza Spettro",
+	"hiddenpowergrass": "Introforza Erba",
+	"hiddenpowerground": "Introforza Terra",
+	"hiddenpowerice": "Introforza Ghiaccio",
+	"hiddenpowerpoison": "Introforza Veleno",
+	"hiddenpowerpsychic": "Introforza Psico",
+	"hiddenpowerrock": "Introforza Roccia",
+	"hiddenpowersteel": "Introforza Acciaio",
+	"hiddenpowerwater": "Introforza Acqua",
 	"highjumpkick": "Calcinvolo",
 	"holdback": "Riguardo",
 	"holdhands": "Mano nella Mano",
@@ -776,7 +776,7 @@ exports.translations.moves = {
 	"hydropump": "Idropompa",
 	"hyperbeam": "Iper Raggio",
 	"hyperfang": "Iperzanna",
-	"hyperspacefury": "", //TODO
+	"hyperspacefury": "Urtodimensionale",
 	"hyperspacehole": "Forodimensionale",
 	"hypervoice": "Granvoce",
 	"hypnosis": "Ipnosi",
@@ -880,7 +880,7 @@ exports.translations.moves = {
 	"octazooka": "Octazooka",
 	"odorsleuth": "Segugio",
 	"ominouswind": "Funestovento",
-	"originpulse": "", //TODO
+	"originpulse": "Primopulsar",
 	"outrage": "Oltraggio",
 	"overheat": "Vampata",
 	"painsplit": "Malcomune",
@@ -912,7 +912,7 @@ exports.translations.moves = {
 	"powertrick": "Ingannoforza",
 	"poweruppunch": "Crescipugno",
 	"powerwhip": "Vigorcolpo",
-	"precipiceblades": "", //TODO
+	"precipiceblades": "Spade Telluriche",
 	"present": "Regalino",
 	"protect": "Protezione",
 	"psybeam": "Psicoraggio",
