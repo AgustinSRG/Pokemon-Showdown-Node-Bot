@@ -78,6 +78,32 @@
 			'forceend1': 'El juego de Poke-Anagrams ha sido finalizado!',
 			'forceend2': 'La palabra era'
 		},
+		trivia: {
+			'and': 'y',
+			'start': 'Un nuevo juego de **Trivia** ha sido creado!',
+			'maxgames1': 'Serán un máximo de',
+			'maxgames2': 'rondas',
+			'maxpoints1': 'Si alguien consigue',
+			'maxpoints2': 'puntos, gana',
+			'timer1': 'Teneis',
+			'timer2': 'segundos para responder cada pregunta',
+			'help': 'Usa __$TOKENta [respuesta]__ para responder a las preguntas',
+			'correct': 'Correcto',
+			'point1': 'respondió a la pregunta correctamente',
+			'point2': 'Puntuación',
+			'timeout': '**El tiempo ha terminado!**',
+			'timeout2': 'La respuesta era',
+			'timeout3': 'Las respuestas posibles eran',
+			'lose': '**El juego de Trivia ha terminado!** Sin embargo nadie ha conseguido ningún punto, por lo que no hay ganadores',
+			'end': 'El juego de Trivia ha terminado!',
+			'grats1': 'Felicidades a',
+			'grats2': 'por ganar el juego con',
+			'points': 'puntos',
+			'tie1': 'El resultado es un empate a',
+			'tie2': 'entre',
+			'forceend1': 'El juego de Trivia ha sido finalizado!',
+			'forceend2': 'Respuestas'
+		},
 		blackjack: {
 			'and': 'y',
 			'total': 'Total',
@@ -110,6 +136,30 @@
 			'yourhand': 'Mano',
 			'noplayers': 'No hay ningún jugador apuntado al juego',
 			'players': 'Jugadores'
+		},
+		kunc: {
+			'and': 'y',
+			'q': 'Adivina el Pokemon con los siguientes movimientos',
+			'start': 'Un nuevo juego de **Kunc** ha sido creado!',
+			'maxgames1': 'Serán un máximo de',
+			'maxgames2': 'rondas',
+			'maxpoints1': 'Si alguien consigue',
+			'maxpoints2': 'puntos, gana',
+			'timer1': 'Teneis',
+			'timer2': 'segundos para adivinar cada palabra',
+			'help': 'Usa __$TOKENg [pokemon]__ para jugar',
+			'point2': 'por adivinar el pokemon',
+			'point3': 'Puntuación',
+			'timeout': '**El tiempo ha terminado!** El pokemon era',
+			'lose': '**El juego de Kunc ha terminado!** Sin embargo nadie ha conseguido ningún punto, por lo que no hay ganadores',
+			'end': 'El juego de Kunc ha terminado!',
+			'grats1': 'Felicidades a',
+			'grats2': 'por ganar el juego con',
+			'points': 'puntos',
+			'tie1': 'El resultado es un empate a',
+			'tie2': 'entre',
+			'forceend1': 'El juego de Kunc ha sido finalizado!',
+			'forceend2': 'El pokemon era'
 		}
 	}
 };

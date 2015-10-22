@@ -78,6 +78,32 @@ exports.translations = {
 			'forceend1': 'The Poke-Anagrams game was terminated!',
 			'forceend2': 'The word was'
 		},
+		trivia: {
+			'and': 'and',
+			'start': 'A new **Trivia** game was created!',
+			'maxgames1': 'It will be a max of',
+			'maxgames2': 'games',
+			'maxpoints1': 'If someone gets',
+			'maxpoints2': 'points, he/she wins',
+			'timer1': 'You have',
+			'timer2': 'seconds to answer each question',
+			'help': 'Use __$TOKENta [answer]__ to answer the questions',
+			'correct': 'Correct',
+			'point1': 'answered the question correctly',
+			'point2': 'Current score',
+			'timeout': '**Time is up!**',
+			'timeout2': 'The answer was',
+			'timeout3': 'The valid answers were',
+			'lose': '**The Trivia game ended!** But no one got any points so there are no winners',
+			'end': 'The Trivia game ended!',
+			'grats1': 'Congratulations to',
+			'grats2': 'for winning the game with',
+			'points': 'points',
+			'tie1': 'The result is a draw at',
+			'tie2': 'between',
+			'forceend1': 'The Trivia game was terminated!',
+			'forceend2': 'Answers'
+		},
 		blackjack: {
 			'and': 'and',
 			'total': 'Total',
@@ -110,6 +136,30 @@ exports.translations = {
 			'yourhand': 'Your hand',
 			'noplayers': 'There are no players participating in this game',
 			'players': 'Players'
+		},
+		kunc: {
+			'and': 'and',
+			'q': 'Guess the pokemon with the following moves',
+			'start': 'A new **Kunc** game was created!',
+			'maxgames1': 'It will be a max of',
+			'maxgames2': 'games',
+			'maxpoints1': 'If someone gets',
+			'maxpoints2': 'points, he/she wins',
+			'timer1': 'You have',
+			'timer2': 'seconds to guess each pokemon',
+			'help': 'Use __$TOKENg [pokemon]__ to play',
+			'point2': 'for guessing the pokemon',
+			'point3': 'Current score',
+			'timeout': '**Time is up!** The pokemon was',
+			'lose': '**The Kunc game ended!** But no one got any points so there are no winners',
+			'end': 'The Kunc game ended!',
+			'grats1': 'Congratulations to',
+			'grats2': 'for winning the game with',
+			'points': 'points',
+			'tie1': 'The result is a draw at',
+			'tie2': 'between',
+			'forceend1': 'The Kunc game was terminated!',
+			'forceend2': 'The pokemon was'
 		}
 	}
 };

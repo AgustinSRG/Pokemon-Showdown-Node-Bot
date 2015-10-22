@@ -1,9 +1,9 @@
 /*
-	Anagrams
+	Trivia
 */
 
-var Anagrams = require('./constructors.js').Anagrams;
-var RandomGenerator = require('./wordrand.js');
+var Trivia = require('./constructors.js').Trivia;
+var RandomGenerator = require('./trivia-rand.js');
 
 function send (room, str) {
 	Bot.say(room, str);
@@ -12,7 +12,7 @@ function send (room, str) {
 function trans (data, room) {
 	var lang = Config.language || 'english';
 	if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
-	return Tools.translateGlobal('games', 'anagrams', lang)[data];
+	return Tools.translateGlobal('games', 'trivia', lang)[data];
 }
 
 function parseWinners (winners, room) {
@@ -29,9 +29,9 @@ function parseWinners (winners, room) {
 	return res;
 }
 
-exports.id = 'anagrams';
+exports.id = 'trivia';
 
-exports.title = 'Anagrams';
+exports.title = 'Trivia';
 
 exports.aliases = [];
 
@@ -46,13 +46,13 @@ var parser = function (type, data) {
 			send(this.room, txt);
 			break;
 		case 'show':
-			send(this.room, "**" + exports.title + ": [" + this.clue + "]** " + this.randomizedChars.join(', '));
+			send(this.room, "**" + exports.title + ":** " + this.clue);
 			break;
 		case 'point':
-			send(this.room, trans('grats1', this.room) + " **" + data.user + "** " + trans('point2', this.room) + " __" + this.word + "__. " + trans('point3', this.room) + ": " + data.points + " " + trans('points', this.room));
+			send(this.room, trans('correct', this.room) + "! **" + data.user + "** " + trans('point1', this.room) + ": __" + data.word + "__. " + trans('point2', this.room) + ": " + data.points + " " + trans('points', this.room));
 			break;
 		case 'timeout':
-			send(this.room, trans('timeout', this.room) + " __" + this.word.trim() + "__");
+			send(this.room, trans('timeout', this.room) + " " + (this.validAnswers.length === 1 ? trans('timeout2', this.room) : trans('timeout3', this.room)) + " __" + this.validAnswers.join(', ') + "__");
 			break;
 		case 'end':
 			send(this.room, trans('lose', this.room));
@@ -71,7 +71,7 @@ var parser = function (type, data) {
 			send(this.room, txt);
 			break;
 		case 'forceend':
-			send(this.room, trans('forceend1', this.room) + (this.status === 2 ? (" " + trans('forceend2', this.room) + " __" + this.word.trim() + "__") : ''));
+			send(this.room, trans('forceend1', this.room) + (this.status === 2 ? (" " + trans('forceend2', this.room) + ": __" + this.validAnswers.join(', ') + "__") : ''));
 			break;
 		case 'error':
 			send(this.room, "**" + exports.title + ": Error (could not fetch a word)");
@@ -127,7 +127,7 @@ exports.newGame = function (room, opts) {
 		}
 	}
 	if (!generatorOpts.maxGames && !generatorOpts.maxPoints) generatorOpts.maxGames = 5;
-	var game = new Anagrams(generatorOpts, parser);
+	var game = new Trivia(generatorOpts, parser);
 	if (!game) return null;
 	game.generator = exports.id;
 	return game;
@@ -136,15 +136,18 @@ exports.newGame = function (room, opts) {
 exports.commands = {
 	gword: 'g',
 	guess: 'g',
+	ta: 'g',
+	answer: 'g',
+	triviaanswer: 'g',
 	g: function (arg, by, room, cmd, game) {
 		game.guess(by.substr(1), arg);
 	},
 	view: function (arg, by, room, cmd, game) {
 		if (game.status < 2) return;
-		this.restrictReply("**" + exports.title + ": [" + game.clue + "]** " + game.randomizedChars.join(', '), 'games');
+		this.restrictReply("**" + exports.title + ":** " + game.clue, 'games');
 	},
-	end: 'endanagrams',
-	endanagrams: function (arg, by, room, cmd, game) {
+	end: 'endtrivia',
+	endtrivia: function (arg, by, room, cmd, game) {
 		if (!this.can('games')) return;
 		game.end(true);
 	}

@@ -139,9 +139,8 @@ exports.commands = {
 	g: function (arg, by, room, cmd, game) {
 		game.guess(by.substr(1), arg);
 	},
-	v: 'view',
 	view: function (arg, by, room, cmd, game) {
-		if (this.status < 2) return;
+		if (game.status < 2) return;
 		this.restrictReply("**" + exports.title + ": [" + game.clue + "]** " + game.randomizedChars.join(', '), 'games');
 	},
 	end: 'endanagrams',

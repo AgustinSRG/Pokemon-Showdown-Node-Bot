@@ -14,7 +14,9 @@ exports.commands = {
 	anagrams: 'execgame',
 	pokehangman: 'execgame',
 	pokeanagrams: 'execgame',
+	trivia: 'execgame',
 	blackjack: 'execgame',
+	kunc: 'execgame',
 
 	/* General commands for games */
 	games: 'game',

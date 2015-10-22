@@ -78,6 +78,32 @@
 			'forceend1': 'Das Spiel des Poke-Anagrams wurde abgebrochen!',
 			'forceend2': 'Das Wort war'
 		},
+		trivia: {
+			'and': 'und',
+			'start': 'Eine neue **Trivia** spiel wurde erstellt!',
+			'maxgames1': 'Es wird eine max sein',
+			'maxgames2': 'spiele',
+			'maxpoints1': 'Wenn jemand',
+			'maxpoints2': 'punkte, er / sie gewinnt',
+			'timer1': 'Sie haben',
+			'timer2': 'sekunden, um jede Frage zu beantworten',
+			'help': 'Verwenden __$TOKENta [antwort]__ um die Fragen zu beantworten',
+			'correct': 'Correct',
+			'point1': 'richtig beantwortet die Frage',
+			'point2': 'Zwischenstand',
+			'timeout': '**Die Zeit ist um!**',
+			'timeout2': 'Die Antwort war',
+			'timeout3': 'Die gültigen Antworten waren',
+			'lose': '**Der Trivia spiel endete!** Aber niemand keine Punkte, so gibt es keine Gewinner',
+			'end': 'Der Trivia spiel endete!',
+			'grats1': 'Glückwünsche an',
+			'grats2': 'für das Spiel zu gewinnen mit',
+			'points': 'punkte',
+			'tie1': 'Das ergebnis ist ein unentschieden bei',
+			'tie2': 'zwischen',
+			'forceend1': 'Das Spiel des Trivia wurde abgebrochen!',
+			'forceend2': 'Antworten'
+		},
 		blackjack: {
 			'and': 'und',
 			'total': 'Gesamt',
@@ -110,6 +136,30 @@
 			'yourhand': 'Deine Hand',
 			'noplayers': 'Es gibt keine Spieler, die an diesem Spiel',
 			'players': 'Spieler'
+		},
+		kunc: {
+			'and': 'und',
+			'q': 'Erraten Sie das pokemon mit folgenden Züge',
+			'start': 'Eine neue **Kunc** spiel wurde erstellt!',
+			'maxgames1': 'Es wird eine max sein',
+			'maxgames2': 'spiele',
+			'maxpoints1': 'Wenn jemand',
+			'maxpoints2': 'punkte, er / sie gewinnt',
+			'timer1': 'Sie haben',
+			'timer2': 'sekunden, um jedes wort zu erraten',
+			'help': 'Verwenden __$TOKENg [pokemon]__ die pokemon erraten',
+			'point2': 'zu erraten das pokemon',
+			'point3': 'Zwischenstand',
+			'timeout': '**Die Zeit ist um!** Das pokemon war',
+			'lose': '**Der Kunc spiel endete!** Aber niemand keine Punkte, so gibt es keine Gewinner',
+			'end': 'Der Kunc spiel endete!',
+			'grats1': 'Glückwünsche an',
+			'grats2': 'für das Spiel zu gewinnen mit',
+			'points': 'punkte',
+			'tie1': 'Das ergebnis ist ein unentschieden bei',
+			'tie2': 'zwischen',
+			'forceend1': 'Das Spiel des Kunc wurde abgebrochen!',
+			'forceend2': 'Das pokemon war'
 		}
 	}
 };

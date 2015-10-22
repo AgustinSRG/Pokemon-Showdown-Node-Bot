@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Words for Hangman and Anagrams
 *
 * Rename this file to games-words.js

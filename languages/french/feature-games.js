@@ -78,6 +78,32 @@
 			'forceend1': 'Le jeu Poke-Anagrams a été résilié!',
 			'forceend2': 'Le mot était'
 		},
+		trivia: {
+			'and': 'et',
+			'start': 'Un nouveau jeu de **Trivia** a été créé!',
+			'maxgames1': 'Ce sera un max de',
+			'maxgames2': 'jeux',
+			'maxpoints1': 'Si quelqu\'un obtient',
+			'maxpoints2': 'points, il / elle gagne',
+			'timer1': 'Vous avez',
+			'timer2': 'secondes pour répondre à chaque question',
+			'help': 'Utiliser __$TOKENta [answer]__ pour répondre aux questions',
+			'correct': 'Correct',
+			'point1': 'a répondu correctement à la question',
+			'point2': 'Score actuel',
+			'timeout': '**Le temps s\'est écoulé!**',
+			'timeout2': 'La réponse était',
+			'timeout3': 'Les réponses valides étaient',
+			'lose': '**Le jeu Trivia terminé!** Mais personne n\'a eu aucun point donc il n\'y a pas de gagnants',
+			'end': 'Le jeu Trivia terminé!',
+			'grats1': 'Félicitations à',
+			'grats2': 'pour gagner le jeu avec',
+			'points': 'points',
+			'tie1': 'Le résultat est un match nul à',
+			'tie2': 'entre',
+			'forceend1': 'Le jeu Poke-Anagrams a été résilié!',
+			'forceend2': 'Réponses'
+		},
 		blackjack: {
 			'and': 'et',
 			'total': 'Total',
@@ -110,6 +136,30 @@
 			'yourhand': 'Ta main',
 			'noplayers': 'Il n\'y a pas les joueurs participant à ce jeu',
 			'players': 'Joueurs'
+		},
+		kunc: {
+			'and': 'et',
+			'q': 'Devinez le pokemon avec les mouvements suivants',
+			'start': 'Un nouveau jeu de **Kunc** a été créé!',
+			'maxgames1': 'Ce sera un max de',
+			'maxgames2': 'jeux',
+			'maxpoints1': 'Si quelqu\'un obtient',
+			'maxpoints2': 'points, il / elle gagne',
+			'timer1': 'Vous avez',
+			'timer2': 'secondes pour deviner chaque mot',
+			'help': 'Utiliser __$TOKENg [pokemon]__ pour jouer',
+			'point2': 'pour deviner le pokemon',
+			'point3': 'Score actuel',
+			'timeout': '**Le temps s\'est écoulé!** Le pokemon était',
+			'lose': '**Le jeu Kunc terminé!** Mais personne n\'a eu aucun point donc il n\'y a pas de gagnants',
+			'end': 'Le jeu Kunc terminé!',
+			'grats1': 'Félicitations à',
+			'grats2': 'pour gagner le jeu avec',
+			'points': 'points',
+			'tie1': 'Le résultat est un match nul à',
+			'tie2': 'entre',
+			'forceend1': 'Le jeu Kunc a été résilié!',
+			'forceend2': 'Le pokemon était'
 		}
 	}
 };

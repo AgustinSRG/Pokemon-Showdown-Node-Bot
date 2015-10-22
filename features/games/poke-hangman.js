@@ -92,7 +92,6 @@ exports.commands = {
 	g: function (arg, by, room, cmd, game) {
 		game.guess(by.substr(1), arg);
 	},
-	v: 'view',
 	view: function (arg, by, room, cmd, game) {
 		this.restrictReply("**" + exports.title + ":** " + generateHang(game.status) + " | **" + game.clue + "** | " + game.said.sort().join(' '), 'games');
 	},

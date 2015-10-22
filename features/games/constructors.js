@@ -250,6 +250,138 @@ var Anagrams = exports.Anagrams = (function () {
 	return Anagrams;
 })();
 
+var Trivia = exports.Trivia = (function () {
+	function Trivia (opts, output) {
+		this.output = output;
+		this.room = opts.room || '';
+		this.title = opts.title || 'Trivia';
+		this.wordGenerator = opts.wordGenerator || (function () {return {id: 0, question: 'default word', answers: ['answer']};});
+		this.recentWords = [];
+		this.maxRecentWordsLength = opts.maxRecentWordsLength || 10;
+		this.maxGames = opts.maxGames || 0;
+		this.maxPoints = opts.maxPoints || 0;
+		this.ngame = 0;
+		this.points = {};
+		this.names = {};
+		this.timer = null;
+		this.waitTime = opts.waitTime || 2000;
+		this.answerTime = opts.answerTime || 30000;
+		this.status = 0; //0-created, 1-waiting for new game, 2-waiting for responses
+		this.validAnswers = [];
+		this.validAnswersIds = [];
+		this.clue = '';
+	}
+
+	Trivia.prototype.emit = function (type, data) {
+		if (typeof this.output === "function") return this.output.call(this, type, data);
+	};
+
+	Trivia.prototype.init = function () {
+		this.start();
+	};
+
+	Trivia.prototype.start = function () {
+		this.status = 1;
+		this.emit('start', null);
+		this.wait();
+	};
+
+	Trivia.prototype.wait = function () {
+		this.timer = setTimeout(function () {
+			this.timer = null;
+			this.nextGame();
+		}.bind(this), this.waitTime);
+	};
+
+	Trivia.prototype.startAnswerTimer = function () {
+		this.timer = setTimeout(function () {
+			this.timer = null;
+			this.answerTimeout();
+		}.bind(this), this.answerTime);
+	};
+
+	Trivia.prototype.nextGame = function () {
+		this.ngame++;
+		if (this.maxGames && this.ngame > this.maxGames) return this.end();
+		if (this.maxPoints) {
+			for (var u in this.points) {
+				if (this.points[u] >= this.maxPoints) return this.end();
+			}
+		}
+		var dt = this.wordGenerator.call(this, this.recentWords);
+		if (!dt) return this.emit('error', null);
+		this.validAnswers = [];
+		this.validAnswersIds = [];
+		for (var i = 0; i < dt.answers.length; i++) {
+			this.validAnswers.push(dt.answers[i]);
+			this.validAnswersIds.push(toWordId(normalize(dt.answers[i])));
+		}
+		this.clue = dt.question;
+		this.status = 2;
+		this.recentWords.push(dt.id);
+		if (this.recentWords.length > this.maxRecentWordsLength) this.recentWords.shift();
+		this.emit('show', null);
+		this.startAnswerTimer();
+	};
+
+	Trivia.prototype.answerTimeout = function () {
+		this.status = 1;
+		this.emit('timeout', null);
+		this.wait();
+	};
+
+	Trivia.prototype.guess = function (user, str) {
+		if (this.status !== 2) return;
+		str = normalize(str);
+		var userid = toId(user);
+		if (this.validAnswersIds.indexOf(toWordId(str)) >= 0) {
+			this.status = 1;
+			var wordAnswered = toWordId(str);
+			for (var i = 0; i < this.validAnswersIds.length; i++) {
+				if (toWordId(str) === this.validAnswersIds[i]) {
+					wordAnswered = this.validAnswers[i];
+					break;
+				}
+			}
+			if (this.timer) {
+				clearTimeout(this.timer);
+				this.timer = null;
+			}
+			if (!this.points[userid]) this.points[userid] = 0;
+			this.points[userid]++;
+			this.names[userid] = user;
+			this.emit('point', {word: wordAnswered, user: user, points: this.points[userid]});
+			this.wait();
+		}
+	};
+
+	Trivia.prototype.end = function (forced) {
+		if (forced) return this.emit('forceend');
+		this.status = 0;
+		var winners = [], points = 0;
+		for (var i in this.points) {
+			if (this.points[i] === points) {
+				winners.push(this.names[i]);
+			} else if (this.points[i] > points) {
+				points = this.points[i];
+				winners = [];
+				winners.push(this.names[i]);
+			}
+		}
+		if (!points) return this.emit('end', null);
+		this.emit('win', {winners: winners, points: points});
+	};
+
+	Trivia.prototype.clearTimers = function () {
+		if (this.timer) {
+			clearTimeout(this.timer);
+			this.timer = null;
+		}
+	};
+
+	return Trivia;
+})();
+
 function generateDeck () {
 	var deck = [];
 	var cards = ['\u2660', '\u2663', '\u2665', '\u2666'];
@@ -440,4 +572,128 @@ var BlackJack = exports.BlackJack = (function () {
 	};
 
 	return BlackJack;
+})();
+
+var Kunc = exports.Kunc = (function () {
+	function Kunc (opts, output) {
+		this.output = output;
+		this.room = opts.room || '';
+		this.title = opts.title || 'Kunc';
+		this.wordGenerator = opts.wordGenerator || (function () {return {id: 0, species: 'Arceus', moves: ["Swords Dance", "Extreme Speed", "Earthquake", "Stone Edge"]};});
+		this.recentWords = [];
+		this.maxRecentWordsLength = opts.maxRecentWordsLength || 10;
+		this.maxGames = opts.maxGames || 0;
+		this.maxPoints = opts.maxPoints || 0;
+		this.ngame = 0;
+		this.points = {};
+		this.names = {};
+		this.timer = null;
+		this.waitTime = opts.waitTime || 2000;
+		this.answerTime = opts.answerTime || 30000;
+		this.status = 0; //0-created, 1-waiting for new game, 2-waiting for responses
+		this.pokemon = '';
+		this.pokemonId = '';
+		this.moves = [];
+		this.tierclue = '';
+	}
+
+	Kunc.prototype.emit = function (type, data) {
+		if (typeof this.output === "function") return this.output.call(this, type, data);
+	};
+
+	Kunc.prototype.init = function () {
+		this.start();
+	};
+
+	Kunc.prototype.start = function () {
+		this.status = 1;
+		this.emit('start', null);
+		this.wait();
+	};
+
+	Kunc.prototype.wait = function () {
+		this.timer = setTimeout(function () {
+			this.timer = null;
+			this.nextGame();
+		}.bind(this), this.waitTime);
+	};
+
+	Kunc.prototype.startAnswerTimer = function () {
+		this.timer = setTimeout(function () {
+			this.timer = null;
+			this.answerTimeout();
+		}.bind(this), this.answerTime);
+	};
+
+	Kunc.prototype.nextGame = function () {
+		this.ngame++;
+		if (this.maxGames && this.ngame > this.maxGames) return this.end();
+		if (this.maxPoints) {
+			for (var u in this.points) {
+				if (this.points[u] >= this.maxPoints) return this.end();
+			}
+		}
+		var dt = this.wordGenerator.call(this, this.recentWords);
+		if (!dt) return this.emit('error', null);
+		this.pokemon = dt.species;
+		this.pokemonId = toWordId(normalize(dt.species));
+		this.moves = [];
+		for (var i = 0; i < dt.moves.length; i++) this.moves.push(dt.moves[i]);
+		this.tierclue = dt.tier || '';
+		this.status = 2;
+		this.recentWords.push(dt.id);
+		if (this.recentWords.length > this.maxRecentWordsLength) this.recentWords.shift();
+		this.emit('show', null);
+		this.startAnswerTimer();
+	};
+
+	Kunc.prototype.answerTimeout = function () {
+		this.status = 1;
+		this.emit('timeout', null);
+		this.wait();
+	};
+
+	Kunc.prototype.guess = function (user, str) {
+		if (this.status !== 2) return;
+		str = normalize(str);
+		var userid = toId(user);
+		if (this.pokemonId === toWordId(str)) {
+			this.status = 1;
+			if (this.timer) {
+				clearTimeout(this.timer);
+				this.timer = null;
+			}
+			if (!this.points[userid]) this.points[userid] = 0;
+			this.points[userid]++;
+			this.names[userid] = user;
+			this.emit('point', {word: this.pokemon, user: user, points: this.points[userid]});
+			this.wait();
+		}
+	};
+
+	Kunc.prototype.end = function (forced) {
+		if (forced) return this.emit('forceend');
+		this.status = 0;
+		var winners = [], points = 0;
+		for (var i in this.points) {
+			if (this.points[i] === points) {
+				winners.push(this.names[i]);
+			} else if (this.points[i] > points) {
+				points = this.points[i];
+				winners = [];
+				winners.push(this.names[i]);
+			}
+		}
+		if (!points) return this.emit('end', null);
+		this.emit('win', {winners: winners, points: points});
+	};
+
+	Kunc.prototype.clearTimers = function () {
+		if (this.timer) {
+			clearTimeout(this.timer);
+			this.timer = null;
+		}
+	};
+
+	return Kunc;
 })();

@@ -1,9 +1,9 @@
 /*
-	Anagrams
+	Kunc
 */
 
-var Anagrams = require('./constructors.js').Anagrams;
-var RandomGenerator = require('./wordrand.js');
+var Kunc = require('./constructors.js').Kunc;
+var RandomGenerator = require('./kunc-rand.js');
 
 function send (room, str) {
 	Bot.say(room, str);
@@ -12,7 +12,7 @@ function send (room, str) {
 function trans (data, room) {
 	var lang = Config.language || 'english';
 	if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
-	return Tools.translateGlobal('games', 'anagrams', lang)[data];
+	return Tools.translateGlobal('games', 'kunc', lang)[data];
 }
 
 function parseWinners (winners, room) {
@@ -29,9 +29,9 @@ function parseWinners (winners, room) {
 	return res;
 }
 
-exports.id = 'anagrams';
+exports.id = 'kunc';
 
-exports.title = 'Anagrams';
+exports.title = 'Kunc';
 
 exports.aliases = [];
 
@@ -46,13 +46,13 @@ var parser = function (type, data) {
 			send(this.room, txt);
 			break;
 		case 'show':
-			send(this.room, "**" + exports.title + ": [" + this.clue + "]** " + this.randomizedChars.join(', '));
+			send(this.room, "**" + exports.title + ":** " + trans('q', this.room) + ": __" + this.moves.join(', ') + "__" + (this.tierclue ? (" | Tier: " + this.tierclue) : ''));
 			break;
 		case 'point':
-			send(this.room, trans('grats1', this.room) + " **" + data.user + "** " + trans('point2', this.room) + " __" + this.word + "__. " + trans('point3', this.room) + ": " + data.points + " " + trans('points', this.room));
+			send(this.room, trans('grats1', this.room) + " **" + data.user + "** " + trans('point2', this.room) + " __" + this.pokemon + "__. " + trans('point3', this.room) + ": " + data.points + " " + trans('points', this.room));
 			break;
 		case 'timeout':
-			send(this.room, trans('timeout', this.room) + " __" + this.word.trim() + "__");
+			send(this.room, trans('timeout', this.room) + " __" + this.pokemon.trim() + "__");
 			break;
 		case 'end':
 			send(this.room, trans('lose', this.room));
@@ -71,7 +71,7 @@ var parser = function (type, data) {
 			send(this.room, txt);
 			break;
 		case 'forceend':
-			send(this.room, trans('forceend1', this.room) + (this.status === 2 ? (" " + trans('forceend2', this.room) + " __" + this.word.trim() + "__") : ''));
+			send(this.room, trans('forceend1', this.room) + (this.status === 2 ? (" " + trans('forceend2', this.room) + " __" + this.pokemon.trim() + "__") : ''));
 			break;
 		case 'error':
 			send(this.room, "**" + exports.title + ": Error (could not fetch a word)");
@@ -127,7 +127,7 @@ exports.newGame = function (room, opts) {
 		}
 	}
 	if (!generatorOpts.maxGames && !generatorOpts.maxPoints) generatorOpts.maxGames = 5;
-	var game = new Anagrams(generatorOpts, parser);
+	var game = new Kunc(generatorOpts, parser);
 	if (!game) return null;
 	game.generator = exports.id;
 	return game;
@@ -137,14 +137,22 @@ exports.commands = {
 	gword: 'g',
 	guess: 'g',
 	g: function (arg, by, room, cmd, game) {
+		if (cmd !== 'gword') {
+			try {
+				var aliases = require("./../../data/aliases.js").BattleAliases;
+				if (aliases[toId(arg)]) arg = aliases[toId(arg)];
+			} catch (e) {
+				debug(e.stack);
+			}
+		}
 		game.guess(by.substr(1), arg);
 	},
 	view: function (arg, by, room, cmd, game) {
 		if (game.status < 2) return;
-		this.restrictReply("**" + exports.title + ": [" + game.clue + "]** " + game.randomizedChars.join(', '), 'games');
+		this.restrictReply("**" + exports.title + ":** " + trans('q', this.room) + ": __" + game.moves.join(', ') + "__" + (game.tierclue ? (" | Tier: " + game.tierclue) : ''), 'games');
 	},
-	end: 'endanagrams',
-	endanagrams: function (arg, by, room, cmd, game) {
+	end: 'endkunc',
+	endkunc: function (arg, by, room, cmd, game) {
 		if (!this.can('games')) return;
 		game.end(true);
 	}
