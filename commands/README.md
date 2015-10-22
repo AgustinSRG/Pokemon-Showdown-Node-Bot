@@ -198,6 +198,12 @@ General commands for managing games:
  - `g [word]` - To guess the words
  - `view` - To view the game status
  - `end` - To force end the game
+ 
+**Trivia**. Arguments: games (max number of rounds), points (number of ponts for winning), time (time to answer in seconds). Commands:
+
+ - `ta [answer]` - To answer the questions
+ - `view` - To view the game status
+ - `end` - To force end the game
 
 **BlackJack**. Arguments: time (time for each turn in seconds), maxplayers (max number of players) Commands:
 
@@ -208,7 +214,13 @@ General commands for managing games:
  - `hit` - To get a new card to your hand
  - `stand` - To finish your turn
  - `end` - To force end the game
- 
+
+**Kunc**. Arguments: games (max number of rounds), points (number of ponts for winning), time (time to answer in seconds). Commands:
+
+ - `g [pokemon]` - To guess the pokemon
+ - `view` - To view the game status
+ - `end` - To force end the game
+
 Youtube
 ------------
 

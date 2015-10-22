@@ -7,9 +7,13 @@ A collection of games for Pokemon Showdown! chat rooms.
  - **Anagrams** - Random and disordered words to reorder.
  - **Poke-Hangman** - Simplified hangman game with pokemon, moves, abilities, items and natures randomly chosen.
  - **Poke-Anagrams** - Random and pokemon-related disordered words to reorder.
+ - **Trivia** - Classic game of questions and answers
  - **BlackJack** - Cards game. You play against dealer, your goal is to get a value higher than the dealer but less or equal to 21.
+ - **Kunc** - A game from IRC. Guess the pokemon given the moveset.
 
 Hangaman and Anagrams data: `/data/games-words.js`
+Kunc data: `/data/kunc-sets.js`
+Trivia data: `/data/trivia-data.js`
 
 Development
 ------------
