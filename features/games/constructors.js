@@ -123,6 +123,12 @@ var Hangman = exports.Hangman = (function () {
 * Anagrams
 */
 
+var getRoomLang = function (room) {
+	var lang = Config.language || 'english';
+	if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
+	return lang;
+};
+
 var Anagrams = exports.Anagrams = (function () {
 	function Anagrams (opts, output) {
 		this.output = output;
@@ -144,6 +150,7 @@ var Anagrams = exports.Anagrams = (function () {
 		this.wordId = '';
 		this.randomizedChars = [];
 		this.clue = '';
+		this.language = opts.language || '';
 	}
 
 	Anagrams.prototype.emit = function (type, data) {
@@ -182,7 +189,7 @@ var Anagrams = exports.Anagrams = (function () {
 				if (this.points[u] >= this.maxPoints) return this.end();
 			}
 		}
-		var dt = this.wordGenerator.call(this, this.recentWords);
+		var dt = this.wordGenerator.call(this, this.recentWords, this.language || getRoomLang(this.room));
 		if (!dt) return this.emit('error', null);
 		this.word = dt.word;
 		this.clue = dt.clue;

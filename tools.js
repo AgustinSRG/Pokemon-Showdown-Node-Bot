@@ -432,6 +432,15 @@ exports.translateGlobal = function (glob, data, lang) {
 	}
 };
 
+exports.tryTranslate = function (type, name, lang) {
+	if (!lang) return name;
+	var id = toId(name);
+	if (translations[lang] && translations[lang][type] && translations[lang][type][id]) {
+		return translations[lang][type][id];
+	}
+	return name;
+};
+
 exports.parseAliases = function (format) {
 	format = toId(format);
 	var aliases = Config.formatAliases || {};
