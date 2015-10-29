@@ -87,13 +87,13 @@ function isBotRanked (room, rank) {
 	return false;
 }
 
-function isBanned (room, user) {
+function isBanned (room, user, noregexp) {
 	user = toId(user);
 	if (Settings.settings['autoban'] && Settings.settings['autoban'][room] && Settings.settings['autoban'][room][user]) return true;
-	if (Settings.settings['regexautoban'] && Settings.settings['regexautoban'][room]) {
-		for (var i = 0; i < Settings.settings['regexautoban'][room].length; i++) {
+	if (!noregexp && Settings.settings['regexautoban'] && Settings.settings['regexautoban'][room]) {
+		for (var i in Settings.settings['regexautoban'][room]) {
 			try {
-				var regexObj = new RegExp(i, 'i');
+				var regexObj = new RegExp(i.substr(1, i.length - 3), 'i');
 				if (regexObj.test(user)) return '#range';
 			} catch (e) {}
 		}
