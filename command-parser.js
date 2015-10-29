@@ -257,7 +257,6 @@ var Context = exports.Context = (function () {
 })();
 
 var parse = exports.parse = function (room, by, msg) {
-	if (Config.ignoreRooms && Config.ignoreRooms[room]) return;
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
 	}
@@ -295,6 +294,8 @@ var parse = exports.parse = function (room, by, msg) {
 	}
 
 	cmd = cmd.toLowerCase();
+
+	if (room.charAt(0) !== ',' && ['unsleep', 'wake'].indexOf(cmd) < 0 && Settings.isSleeping(room)) return;
 
 	if (!commands[cmd] && dynCommands[toId(cmd)]) {
 		args = cmd;

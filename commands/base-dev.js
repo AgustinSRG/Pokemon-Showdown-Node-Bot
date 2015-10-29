@@ -39,6 +39,53 @@ exports.commands = {
 		}
 	},
 
+	sleep: function (arg, by, room) {
+		if (!this.isExcepted) return false;
+		var roomObj = this.getRoom(toRoomid(arg) || room);
+		if (!roomObj) {
+			if (!arg) return this.reply("Usage: " + this.cmdToken + this.cmd + " [room]");
+			return this.reply("Room \"" + arg + "\" not found");
+		}
+		if (Settings.sleepRoom(roomObj.id)) this.reply("Status for room <<" + roomObj.id + ">> is now ``Sleeping``");
+		else this.reply("The <<" + roomObj.id + ">> room status was already ``Sleeping``");
+	},
+
+	wake: 'unsleep',
+	unsleep: function (arg, by, room) {
+		if (!this.isExcepted) return false;
+		var roomObj = this.getRoom(toRoomid(arg) || room);
+		if (!roomObj) {
+			if (!arg) return this.reply("Usage: " + this.cmdToken + this.cmd + " [room]");
+			return this.reply("Room \"" + arg + "\" not found");
+		}
+		if (Settings.unsleepRoom(roomObj.id)) this.reply("Status for room <<" + roomObj.id + ">> is now ``Ready``");
+		else this.reply("The <<" + roomObj.id + ">> room status was already ``Ready``");
+	},
+
+	roomstatus: 'status',
+	status: function (arg, by, room) {
+		if (!this.isExcepted) return false;
+		if (this.cmd === "roomstatus") {
+			if (room.charAt(0) !== ',') arg = arg || room;
+			else if (!arg) return this.reply("Usage: " + this.cmdToken + this.cmd + " [room]");
+		}
+		if (!arg) {
+			var rooms = "", roomArr = [];
+			for (var i in Bot.rooms) {
+				var botIdent = Bot.rooms[i].users[toId(Bot.status.nickName)] || " ";
+				roomArr.push("<<" + i + ">> (" + Bot.rooms[i].type.charAt(0).toLowerCase() + (Settings.isSleeping(i) ? "s" : "r") + (botIdent.charAt(0) !== " " ? botIdent.charAt(0) : "u") + (Config.privateRooms[i] ? "h" : "p") + ")");
+			}
+			if (roomArr.length) rooms = roomArr.join(', ');
+			return this.reply("**Bot status** | Username: ``" + Bot.status.nickName + "`` | Rooms: " + (rooms || "(none)"));
+		}
+		var tarRoom = toRoomid(arg);
+		var roomObj = this.getRoom(tarRoom);
+		if (!roomObj) return this.reply("Room \"" + tarRoom + "\" not found");
+		var sleep = Settings.isSleeping(tarRoom) ? "Sleeping" : "Ready";
+		var botIdent = Bot.rooms[roomObj.id].users[toId(Bot.status.nickName)] || " ";
+		this.reply("**" + roomObj.title + "** <<" + roomObj.id + ">> | Type: ``" + roomObj.type + "``" + (Config.privateRooms[roomObj.id] ? " (Hidden)" : "") + " | Users: ``" + roomObj.users.length + "`` | Bot group: ``" + (botIdent.charAt(0) !== " " ? botIdent.charAt(0) : "(regular user)") + "`` | Status: ``" + sleep + "``");
+	},
+
 	hotpatch: 'reload',
 	reload: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;

@@ -87,6 +87,26 @@ exports.deleteParseFilter = function (id) {
 	return true;
 };
 
+var isSleeping = exports.isSleeping = function (room) {
+	if (settings.sleep && typeof settings.sleep[room] === "boolean") return settings.sleep[room];
+	if (Config.ignoreRooms) return !!Config.ignoreRooms[room];
+	return false;
+};
+exports.sleepRoom = function (room) {
+	if (isSleeping(room)) return false;
+	if (!settings.sleep) settings.sleep = {};
+	settings.sleep[room] = true;
+	save();
+	return true;
+};
+exports.unsleepRoom = function (room) {
+	if (!isSleeping(room)) return false;
+	if (!settings.sleep) settings.sleep = {};
+	settings.sleep[room] = false;
+	save();
+	return true;
+};
+
 var seen = exports.seen = {};
 var reportSeen = exports.reportSeen = function (user, room, action, args) {
 	if (!args) args = [];
