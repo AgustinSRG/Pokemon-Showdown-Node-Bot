@@ -13,7 +13,7 @@ exports.commands = {
 
 	git: 'github',
 	github: function () {
-		this.restrictReply(Tools.stripCommands(Settings.package.homepage), 'info');
+		if (Settings.package.repository) this.restrictReply(Tools.stripCommands(Settings.package.repository.url), 'info');
 	},
 
 	botversion: 'version',
