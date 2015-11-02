@@ -1,7 +1,5 @@
 /*
 * Pokemon Data translations
-
-*TODO: venusaurmega, charizardmegax, charizardmegay, blastoisemega, beedrillmega, pidgeotmega, pikachucosplay, pikachurockstar, pikachubelle, pikachupopstar, pikachuphd, pikachulibre, nidoranf, nidoranm, alakazammega, slowbromega, gengarmega, kangaskhanmega, pinsirmega, gyaradosmega, aerodactylmega, mewtwomegax, mewtwomegay, pichuspikyeared, ampharosmega, steelixmega, scizormega, heracrossmega, houndoommega, tyranitarmega, sceptilemega, blazikenmega, swampertmega, gardevoirmega, sableyemega, mawilemega, aggronmega, medichammega, manectricmega, sharpedomega, cameruptmega, altariamega, castformsunny, castformrainy, castformsnowy, banettemega, absolmega, glaliemega, salamencemega, metagrossmega, latiasmega, latiosmega, kyogreprimal, groudonprimal, rayquazamega, deoxysattack, deoxysdefense, deoxysspeed, wormadamsandy, wormadamtrash, cherrimsunshine, lopunnymega, garchompmega, lucariomega, abomasnowmega, gallademega, rotomheat, rotomwash, rotomfrost, rotomfan, rotommow, giratinaorigin, shayminsky, arceusbug, arceusdark, arceusdragon, arceuselectric, arceusfairy, arceusfighting, arceusfire, arceusflying, arceusghost, arceusgrass, arceusground, arceusice, arceuspoison, arceuspsychic, arceusrock, arceussteel, arceuswater, audinomega, basculinbluestriped, darmanitanzen, tornadustherian, thundurustherian, landorustherian, kyuremblack, kyuremwhite, keldeoresolute, meloettapirouette, genesectdouse, genesectshock, genesectburn, genesectchill, flabebe, floetteeternalflower, meowsticf, aegislashblade, pumpkaboosmall, pumpkaboolarge, pumpkaboosuper, gourgeistsmall, gourgeistlarge, gourgeistsuper, dianciemega, hoopaunbound, missingno
 */
 
 exports.translations = {};
@@ -620,7 +618,7 @@ exports.translations.moves = {
 	"doubleslap": "Doble Bofetón",
 	"doubleteam": "Doble Equipo",
 	"dracometeor": "Cometa Draco",
-	"dragonascent": "Ascenso Draco", //TODO
+	"dragonascent": "Ascenso Draco",
 	"dragonbreath": "Dragoaliento",
 	"dragonclaw": "Garra Dragón",
 	"dragondance": "Danza Dragón",
@@ -1107,7 +1105,7 @@ exports.translations.moves = {
 	"vinewhip": "Látigo Cepa",
 	"vitalthrow": "Tiro Vital",
 	"voltswitch": "Voltiocambio",
-	"volttackle": "Placaje Eléc",
+	"volttackle": "Placaje Eléctrico",
 	"wakeupslap": "Espabila",
 	"watergun": "Pistola Agua",
 	"waterpledge": "Voto Agua",
@@ -1176,27 +1174,27 @@ exports.translations.pokemon = {
 	"bulbasaur": "Bulbasaur",
 	"ivysaur": "Ivysaur",
 	"venusaur": "Venusaur",
-	"venusaurmega": "", //TODO
+	"venusaurmega": "Venusaur-Mega",
 	"charmander": "Charmander",
 	"charmeleon": "Charmeleon",
 	"charizard": "Charizard",
-	"charizardmegax": "", //TODO
-	"charizardmegay": "", //TODO
+	"charizardmegax": "Charizard-Mega-X",
+	"charizardmegay": "Charizard-Mega-Y",
 	"squirtle": "Squirtle",
 	"wartortle": "Wartortle",
 	"blastoise": "Blastoise",
-	"blastoisemega": "", //TODO
+	"blastoisemega": "Blastoise-Mega",
 	"caterpie": "Caterpie",
 	"metapod": "Metapod",
 	"butterfree": "Butterfree",
 	"weedle": "Weedle",
 	"kakuna": "Kakuna",
 	"beedrill": "Beedrill",
-	"beedrillmega": "", //TODO
+	"beedrillmega": "Beedrill-Mega",
 	"pidgey": "Pidgey",
 	"pidgeotto": "Pidgeotto",
 	"pidgeot": "Pidgeot",
-	"pidgeotmega": "", //TODO
+	"pidgeotmega": "Pidgeot-Mega",
 	"rattata": "Rattata",
 	"raticate": "Raticate",
 	"spearow": "Spearow",
@@ -1204,19 +1202,19 @@ exports.translations.pokemon = {
 	"ekans": "Ekans",
 	"arbok": "Arbok",
 	"pikachu": "Pikachu",
-	"pikachucosplay": "", //TODO
-	"pikachurockstar": "", //TODO
-	"pikachubelle": "", //TODO
-	"pikachupopstar": "", //TODO
-	"pikachuphd": "", //TODO
-	"pikachulibre": "", //TODO
+	"pikachucosplay": "Pikachu Coqueta",
+	"pikachurockstar": "Pikachu Roquera",
+	"pikachubelle": "Pikachu Aristócrata",
+	"pikachupopstar": "Pikachu Superstar",
+	"pikachuphd": "Pikachu Erudita",
+	"pikachulibre": "Pikachu Enmascarada",
 	"raichu": "Raichu",
 	"sandshrew": "Sandshrew",
 	"sandslash": "Sandslash",
-	"nidoranf": "", //TODO
+	"nidoranf": "Nidoran-Hembra",
 	"nidorina": "Nidorina",
 	"nidoqueen": "Nidoqueen",
-	"nidoranm": "", //TODO
+	"nidoranm": "Nidoran-Macho",
 	"nidorino": "Nidorino",
 	"nidoking": "Nidoking",
 	"clefairy": "Clefairy",
@@ -1250,7 +1248,7 @@ exports.translations.pokemon = {
 	"abra": "Abra",
 	"kadabra": "Kadabra",
 	"alakazam": "Alakazam",
-	"alakazammega": "", //TODO
+	"alakazammega": "Alakazam-Mega",
 	"machop": "Machop",
 	"machoke": "Machoke",
 	"machamp": "Machamp",
@@ -1266,7 +1264,7 @@ exports.translations.pokemon = {
 	"rapidash": "Rapidash",
 	"slowpoke": "Slowpoke",
 	"slowbro": "Slowbro",
-	"slowbromega": "", //TODO
+	"slowbromega": "Slowbro-Mega",
 	"magnemite": "Magnemite",
 	"magneton": "Magneton",
 	"farfetchd": "Farfetch'd",
@@ -1281,7 +1279,7 @@ exports.translations.pokemon = {
 	"gastly": "Gastly",
 	"haunter": "Haunter",
 	"gengar": "Gengar",
-	"gengarmega": "", //TODO
+	"gengarmega": "Gengar-Mega",
 	"onix": "Onix",
 	"drowzee": "Drowzee",
 	"hypno": "Hypno",
@@ -1303,7 +1301,7 @@ exports.translations.pokemon = {
 	"chansey": "Chansey",
 	"tangela": "Tangela",
 	"kangaskhan": "Kangaskhan",
-	"kangaskhanmega": "", //TODO
+	"kangaskhanmega": "Kangaskhan-Mega",
 	"horsea": "Horsea",
 	"seadra": "Seadra",
 	"goldeen": "Goldeen",
@@ -1316,11 +1314,11 @@ exports.translations.pokemon = {
 	"electabuzz": "Electabuzz",
 	"magmar": "Magmar",
 	"pinsir": "Pinsir",
-	"pinsirmega": "", //TODO
+	"pinsirmega": "Pinsir-Mega",
 	"tauros": "Tauros",
 	"magikarp": "Magikarp",
 	"gyarados": "Gyarados",
-	"gyaradosmega": "", //TODO
+	"gyaradosmega": "Gyarados-Mega",
 	"lapras": "Lapras",
 	"ditto": "Ditto",
 	"eevee": "Eevee",
@@ -1333,7 +1331,7 @@ exports.translations.pokemon = {
 	"kabuto": "Kabuto",
 	"kabutops": "Kabutops",
 	"aerodactyl": "Aerodactyl",
-	"aerodactylmega": "", //TODO
+	"aerodactylmega": "Aerodactyl-Mega",
 	"snorlax": "Snorlax",
 	"articuno": "Articuno",
 	"zapdos": "Zapdos",
@@ -1342,8 +1340,8 @@ exports.translations.pokemon = {
 	"dragonair": "Dragonair",
 	"dragonite": "Dragonite",
 	"mewtwo": "Mewtwo",
-	"mewtwomegax": "", //TODO
-	"mewtwomegay": "", //TODO
+	"mewtwomegax": "Mewtwo-Mega-X",
+	"mewtwomegay": "Mewtwo-Mega-Y",
 	"mew": "Mew",
 	"chikorita": "Chikorita",
 	"bayleef": "Bayleef",
@@ -1366,7 +1364,7 @@ exports.translations.pokemon = {
 	"chinchou": "Chinchou",
 	"lanturn": "Lanturn",
 	"pichu": "Pichu",
-	"pichuspikyeared": "", //TODO
+	"pichuspikyeared": "Pichu Picoreja",
 	"cleffa": "Cleffa",
 	"igglybuff": "Igglybuff",
 	"togepi": "Togepi",
@@ -1376,7 +1374,7 @@ exports.translations.pokemon = {
 	"mareep": "Mareep",
 	"flaaffy": "Flaaffy",
 	"ampharos": "Ampharos",
-	"ampharosmega": "", //TODO
+	"ampharosmega": "Ampharos-Mega",
 	"bellossom": "Bellossom",
 	"marill": "Marill",
 	"azumarill": "Azumarill",
@@ -1404,15 +1402,15 @@ exports.translations.pokemon = {
 	"dunsparce": "Dunsparce",
 	"gligar": "Gligar",
 	"steelix": "Steelix",
-	"steelixmega": "", //TODO
+	"steelixmega": "Steelix-Mega",
 	"snubbull": "Snubbull",
 	"granbull": "Granbull",
 	"qwilfish": "Qwilfish",
 	"scizor": "Scizor",
-	"scizormega": "", //TODO
+	"scizormega": "Scizor-Mega",
 	"shuckle": "Shuckle",
 	"heracross": "Heracross",
-	"heracrossmega": "", //TODO
+	"heracrossmega": "Heracross-Mega",
 	"sneasel": "Sneasel",
 	"teddiursa": "Teddiursa",
 	"ursaring": "Ursaring",
@@ -1428,7 +1426,7 @@ exports.translations.pokemon = {
 	"skarmory": "Skarmory",
 	"houndour": "Houndour",
 	"houndoom": "Houndoom",
-	"houndoommega": "", //TODO
+	"houndoommega": "Houndoom-Mega",
 	"kingdra": "Kingdra",
 	"phanpy": "Phanpy",
 	"donphan": "Donphan",
@@ -1448,22 +1446,22 @@ exports.translations.pokemon = {
 	"larvitar": "Larvitar",
 	"pupitar": "Pupitar",
 	"tyranitar": "Tyranitar",
-	"tyranitarmega": "", //TODO
+	"tyranitarmega": "Tyranitar-Mega",
 	"lugia": "Lugia",
 	"hooh": "Ho-Oh",
 	"celebi": "Celebi",
 	"treecko": "Treecko",
 	"grovyle": "Grovyle",
 	"sceptile": "Sceptile",
-	"sceptilemega": "", //TODO
+	"sceptilemega": "Sceptile-Mega",
 	"torchic": "Torchic",
 	"combusken": "Combusken",
 	"blaziken": "Blaziken",
-	"blazikenmega": "", //TODO
+	"blazikenmega": "Blaziken-Mega",
 	"mudkip": "Mudkip",
 	"marshtomp": "Marshtomp",
 	"swampert": "Swampert",
-	"swampertmega": "", //TODO
+	"swampertmega": "Swampert-Mega",
 	"poochyena": "Poochyena",
 	"mightyena": "Mightyena",
 	"zigzagoon": "Zigzagoon",
@@ -1486,7 +1484,7 @@ exports.translations.pokemon = {
 	"ralts": "Ralts",
 	"kirlia": "Kirlia",
 	"gardevoir": "Gardevoir",
-	"gardevoirmega": "", //TODO
+	"gardevoirmega": "Gardevoir-Mega",
 	"surskit": "Surskit",
 	"masquerain": "Masquerain",
 	"shroomish": "Shroomish",
@@ -1507,19 +1505,19 @@ exports.translations.pokemon = {
 	"skitty": "Skitty",
 	"delcatty": "Delcatty",
 	"sableye": "Sableye",
-	"sableyemega": "", //TODO
+	"sableyemega": "Sableye-Mega",
 	"mawile": "Mawile",
-	"mawilemega": "", //TODO
+	"mawilemega": "Mawile-Mega",
 	"aron": "Aron",
 	"lairon": "Lairon",
 	"aggron": "Aggron",
-	"aggronmega": "", //TODO
+	"aggronmega": "Aggron-Mega",
 	"meditite": "Meditite",
 	"medicham": "Medicham",
-	"medichammega": "", //TODO
+	"medichammega": "Medicham-Mega",
 	"electrike": "Electrike",
 	"manectric": "Manectric",
-	"manectricmega": "", //TODO
+	"manectricmega": "Manectric-Mega",
 	"plusle": "Plusle",
 	"minun": "Minun",
 	"volbeat": "Volbeat",
@@ -1529,12 +1527,12 @@ exports.translations.pokemon = {
 	"swalot": "Swalot",
 	"carvanha": "Carvanha",
 	"sharpedo": "Sharpedo",
-	"sharpedomega": "", //TODO
+	"sharpedomega": "Sharpedo-Mega",
 	"wailmer": "Wailmer",
 	"wailord": "Wailord",
 	"numel": "Numel",
 	"camerupt": "Camerupt",
-	"cameruptmega": "", //TODO
+	"cameruptmega": "Camerupt-Mega",
 	"torkoal": "Torkoal",
 	"spoink": "Spoink",
 	"grumpig": "Grumpig",
@@ -1546,7 +1544,7 @@ exports.translations.pokemon = {
 	"cacturne": "Cacturne",
 	"swablu": "Swablu",
 	"altaria": "Altaria",
-	"altariamega": "", //TODO
+	"altariamega": "Altaria-Mega",
 	"zangoose": "Zangoose",
 	"seviper": "Seviper",
 	"lunatone": "Lunatone",
@@ -1564,23 +1562,23 @@ exports.translations.pokemon = {
 	"feebas": "Feebas",
 	"milotic": "Milotic",
 	"castform": "Castform",
-	"castformsunny": "", //TODO
-	"castformrainy": "", //TODO
-	"castformsnowy": "", //TODO
+	"castformsunny": "Castform-Sol",
+	"castformrainy": "Castform-Lluvia",
+	"castformsnowy": "Castform-Nieve",
 	"kecleon": "Kecleon",
 	"shuppet": "Shuppet",
 	"banette": "Banette",
-	"banettemega": "", //TODO
+	"banettemega": "Banette-Mega",
 	"duskull": "Duskull",
 	"dusclops": "Dusclops",
 	"tropius": "Tropius",
 	"chimecho": "Chimecho",
 	"absol": "Absol",
-	"absolmega": "", //TODO
+	"absolmega": "Absol-Mega",
 	"wynaut": "Wynaut",
 	"snorunt": "Snorunt",
 	"glalie": "Glalie",
-	"glaliemega": "", //TODO
+	"glaliemega": "Glalie-Mega",
 	"spheal": "Spheal",
 	"sealeo": "Sealeo",
 	"walrein": "Walrein",
@@ -1592,29 +1590,29 @@ exports.translations.pokemon = {
 	"bagon": "Bagon",
 	"shelgon": "Shelgon",
 	"salamence": "Salamence",
-	"salamencemega": "", //TODO
+	"salamencemega": "Salamence-Mega",
 	"beldum": "Beldum",
 	"metang": "Metang",
 	"metagross": "Metagross",
-	"metagrossmega": "", //TODO
+	"metagrossmega": "Metagross-Mega",
 	"regirock": "Regirock",
 	"regice": "Regice",
 	"registeel": "Registeel",
 	"latias": "Latias",
-	"latiasmega": "", //TODO
+	"latiasmega": "Latias-Mega",
 	"latios": "Latios",
-	"latiosmega": "", //TODO
+	"latiosmega": "Latios-Mega",
 	"kyogre": "Kyogre",
-	"kyogreprimal": "", //TODO
+	"kyogreprimal": "Kyogre Primigenio",
 	"groudon": "Groudon",
-	"groudonprimal": "", //TODO
+	"groudonprimal": "Groudon Primigenio",
 	"rayquaza": "Rayquaza",
-	"rayquazamega": "", //TODO
+	"rayquazamega": "Rayquaza-Mega",
 	"jirachi": "Jirachi",
 	"deoxys": "Deoxys",
-	"deoxysattack": "", //TODO
-	"deoxysdefense": "", //TODO
-	"deoxysspeed": "", //TODO
+	"deoxysattack": "Deoxys-Ataque",
+	"deoxysdefense": "Deoxys-Defensa",
+	"deoxysspeed": "Deoxys-Velocidad",
 	"turtwig": "Turtwig",
 	"grotle": "Grotle",
 	"torterra": "Torterra",
@@ -1642,8 +1640,8 @@ exports.translations.pokemon = {
 	"bastiodon": "Bastiodon",
 	"burmy": "Burmy",
 	"wormadam": "Wormadam",
-	"wormadamsandy": "", //TODO
-	"wormadamtrash": "", //TODO
+	"wormadamsandy": "Wormadam-Arena",
+	"wormadamtrash": "Wormadam-Basura",
 	"mothim": "Mothim",
 	"combee": "Combee",
 	"vespiquen": "Vespiquen",
@@ -1652,7 +1650,7 @@ exports.translations.pokemon = {
 	"floatzel": "Floatzel",
 	"cherubi": "Cherubi",
 	"cherrim": "Cherrim",
-	"cherrimsunshine": "", //TODO
+	"cherrimsunshine": "Cherrim-Soleado",
 	"shellos": "Shellos",
 	"gastrodon": "Gastrodon",
 	"ambipom": "Ambipom",
@@ -1660,7 +1658,7 @@ exports.translations.pokemon = {
 	"drifblim": "Drifblim",
 	"buneary": "Buneary",
 	"lopunny": "Lopunny",
-	"lopunnymega": "", //TODO
+	"lopunnymega": "Lopunny-Mega",
 	"mismagius": "Mismagius",
 	"honchkrow": "Honchkrow",
 	"glameow": "Glameow",
@@ -1678,11 +1676,11 @@ exports.translations.pokemon = {
 	"gible": "Gible",
 	"gabite": "Gabite",
 	"garchomp": "Garchomp",
-	"garchompmega": "", //TODO
+	"garchompmega": "Garchomp-Mega",
 	"munchlax": "Munchlax",
 	"riolu": "Riolu",
 	"lucario": "Lucario",
-	"lucariomega": "", //TODO
+	"lucariomega": "Lucario-Mega",
 	"hippopotas": "Hippopotas",
 	"hippowdon": "Hippowdon",
 	"skorupi": "Skorupi",
@@ -1695,7 +1693,7 @@ exports.translations.pokemon = {
 	"mantyke": "Mantyke",
 	"snover": "Snover",
 	"abomasnow": "Abomasnow",
-	"abomasnowmega": "", //TODO
+	"abomasnowmega": "Abomasnow-Mega",
 	"weavile": "Weavile",
 	"magnezone": "Magnezone",
 	"lickilicky": "Lickilicky",
@@ -1711,16 +1709,16 @@ exports.translations.pokemon = {
 	"mamoswine": "Mamoswine",
 	"porygonz": "Porygon-Z",
 	"gallade": "Gallade",
-	"gallademega": "", //TODO
+	"gallademega": "Gallade-Mega",
 	"probopass": "Probopass",
 	"dusknoir": "Dusknoir",
 	"froslass": "Froslass",
 	"rotom": "Rotom",
-	"rotomheat": "", //TODO
-	"rotomwash": "", //TODO
-	"rotomfrost": "", //TODO
-	"rotomfan": "", //TODO
-	"rotommow": "", //TODO
+	"rotomheat": "Rotom-Calor",
+	"rotomwash": "Rotom-Lavado",
+	"rotomfrost": "Rotom-Frío",
+	"rotomfan": "Rotom-Ventilador",
+	"rotommow": "Rotom-Corte",
 	"uxie": "Uxie",
 	"mesprit": "Mesprit",
 	"azelf": "Azelf",
@@ -1729,31 +1727,31 @@ exports.translations.pokemon = {
 	"heatran": "Heatran",
 	"regigigas": "Regigigas",
 	"giratina": "Giratina",
-	"giratinaorigin": "", //TODO
+	"giratinaorigin": "Giratina-Origen",
 	"cresselia": "Cresselia",
 	"phione": "Phione",
 	"manaphy": "Manaphy",
 	"darkrai": "Darkrai",
 	"shaymin": "Shaymin",
-	"shayminsky": "", //TODO
+	"shayminsky": "Shaymin-Cielo",
 	"arceus": "Arceus",
-	"arceusbug": "", //TODO
-	"arceusdark": "", //TODO
-	"arceusdragon": "", //TODO
-	"arceuselectric": "", //TODO
-	"arceusfairy": "", //TODO
-	"arceusfighting": "", //TODO
-	"arceusfire": "", //TODO
-	"arceusflying": "", //TODO
-	"arceusghost": "", //TODO
-	"arceusgrass": "", //TODO
-	"arceusground": "", //TODO
-	"arceusice": "", //TODO
-	"arceuspoison": "", //TODO
-	"arceuspsychic": "", //TODO
-	"arceusrock": "", //TODO
-	"arceussteel": "", //TODO
-	"arceuswater": "", //TODO
+	"arceusbug": "Arceus-Bicho",
+	"arceusdark": "Arceus-Siniestro",
+	"arceusdragon": "Arceus-Dragón",
+	"arceuselectric": "Arceus-Eléctrico",
+	"arceusfairy": "Arceus-Hada",
+	"arceusfighting": "Arceus-Lucha",
+	"arceusfire": "Arceus-Fuego",
+	"arceusflying": "Arceus-Volador",
+	"arceusghost": "Arceus-Fantasma",
+	"arceusgrass": "Arceus-Planta",
+	"arceusground": "Arceus-Tierra",
+	"arceusice": "Arceus-Hielo",
+	"arceuspoison": "Arceus-Veneno",
+	"arceuspsychic": "Arceus-Psíquico",
+	"arceusrock": "Arceus-Roca",
+	"arceussteel": "Arceus-Acero",
+	"arceuswater": "Arceus-Agua",
 	"victini": "Victini",
 	"snivy": "Snivy",
 	"servine": "Servine",
@@ -1792,7 +1790,7 @@ exports.translations.pokemon = {
 	"drilbur": "Drilbur",
 	"excadrill": "Excadrill",
 	"audino": "Audino",
-	"audinomega": "", //TODO
+	"audinomega": "Audino-Mega",
 	"timburr": "Timburr",
 	"gurdurr": "Gurdurr",
 	"conkeldurr": "Conkeldurr",
@@ -1812,13 +1810,13 @@ exports.translations.pokemon = {
 	"petilil": "Petilil",
 	"lilligant": "Lilligant",
 	"basculin": "Basculin",
-	"basculinbluestriped": "", //TODO
+	"basculinbluestriped": "Basculin-Rayas-Azules",
 	"sandile": "Sandile",
 	"krokorok": "Krokorok",
 	"krookodile": "Krookodile",
 	"darumaka": "Darumaka",
 	"darmanitan": "Darmanitan",
-	"darmanitanzen": "", //TODO
+	"darmanitanzen": "Darmanitan-Daruma",
 	"maractus": "Maractus",
 	"dwebble": "Dwebble",
 	"crustle": "Crustle",
@@ -1905,25 +1903,25 @@ exports.translations.pokemon = {
 	"terrakion": "Terrakion",
 	"virizion": "Virizion",
 	"tornadus": "Tornadus",
-	"tornadustherian": "", //TODO
+	"tornadustherian": "Tornadus-Totem",
 	"thundurus": "Thundurus",
-	"thundurustherian": "", //TODO
+	"thundurustherian": "Thundurus-Totem",
 	"reshiram": "Reshiram",
 	"zekrom": "Zekrom",
 	"landorus": "Landorus",
-	"landorustherian": "", //TODO
+	"landorustherian": "Landorus-Totem",
 	"kyurem": "Kyurem",
-	"kyuremblack": "", //TODO
-	"kyuremwhite": "", //TODO
+	"kyuremblack": "Kyurem-Negro",
+	"kyuremwhite": "Kyurem-Blanco",
 	"keldeo": "Keldeo",
-	"keldeoresolute": "", //TODO
+	"keldeoresolute": "Keldeo-Brío",
 	"meloetta": "Meloetta",
-	"meloettapirouette": "", //TODO
+	"meloettapirouette": "Meloetta-Danza",
 	"genesect": "Genesect",
-	"genesectdouse": "", //TODO
-	"genesectshock": "", //TODO
-	"genesectburn": "", //TODO
-	"genesectchill": "", //TODO
+	"genesectdouse": "Genesect-HidroROM",
+	"genesectshock": "Genesect-FulgoROM",
+	"genesectburn": "Genesect-PiroROM",
+	"genesectchill": "Genesect-CrioROM",
 	"chespin": "Chespin",
 	"quilladin": "Quilladin",
 	"chesnaught": "Chesnaught",
@@ -1943,9 +1941,9 @@ exports.translations.pokemon = {
 	"vivillon": "Vivillon",
 	"litleo": "Litleo",
 	"pyroar": "Pyroar",
-	"flabebe": "", //TODO
+	"flabebe": "Flabébé",
 	"floette": "Floette",
-	"floetteeternalflower": "", //TODO
+	"floetteeternalflower": "Floette-Flor-Eterna",
 	"florges": "Florges",
 	"skiddo": "Skiddo",
 	"gogoat": "Gogoat",
@@ -1954,11 +1952,11 @@ exports.translations.pokemon = {
 	"furfrou": "Furfrou",
 	"espurr": "Espurr",
 	"meowstic": "Meowstic",
-	"meowsticf": "", //TODO
+	"meowsticf": "Meowstic-Hembra",
 	"honedge": "Honedge",
 	"doublade": "Doublade",
 	"aegislash": "Aegislash",
-	"aegislashblade": "", //TODO
+	"aegislashblade": "Aegislash-Filo",
 	"spritzee": "Spritzee",
 	"aromatisse": "Aromatisse",
 	"swirlix": "Swirlix",
@@ -1988,13 +1986,13 @@ exports.translations.pokemon = {
 	"phantump": "Phantump",
 	"trevenant": "Trevenant",
 	"pumpkaboo": "Pumpkaboo",
-	"pumpkaboosmall": "", //TODO
-	"pumpkaboolarge": "", //TODO
-	"pumpkaboosuper": "", //TODO
+	"pumpkaboosmall": "Pumpkaboo-Pequeño",
+	"pumpkaboolarge": "Pumpkaboo-Grande",
+	"pumpkaboosuper": "Pumpkaboo-Extragrande",
 	"gourgeist": "Gourgeist",
-	"gourgeistsmall": "", //TODO
-	"gourgeistlarge": "", //TODO
-	"gourgeistsuper": "", //TODO
+	"gourgeistsmall": "Gourgeist-Pequeño",
+	"gourgeistlarge": "Gourgeist-Grande",
+	"gourgeistsuper": "Gourgeist-Extragrande",
 	"bergmite": "Bergmite",
 	"avalugg": "Avalugg",
 	"noibat": "Noibat",
@@ -2003,10 +2001,10 @@ exports.translations.pokemon = {
 	"yveltal": "Yveltal",
 	"zygarde": "Zygarde",
 	"diancie": "Diancie",
-	"dianciemega": "", //TODO
+	"dianciemega": "Diancie-Mega",
 	"hoopa": "Hoopa",
-	"hoopaunbound": "", //TODO
+	"hoopaunbound": "Hoopa-Desatado",
 	"volcanion": "Volcanion",
-	"missingno": "" //TODO
+	"missingno": "MissingNo."
 };
 
