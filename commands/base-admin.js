@@ -87,15 +87,23 @@ exports.commands = {
 	lang: 'language',
 	language: function (arg, by, room, cmd) {
 		if (!this.isRanked('roomowner')) return false;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
+		var tarRoom = room;
+		var targetObj = Tools.getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
 		var lang = toId(arg);
-		if (!lang.length) return this.reply(this.trad('nolang'));
+		if (!lang.length) return this.reply(this.trad('nolang') + ". " + this.trad('v') + ': ' + Object.keys(Tools.translations).join(', '));
 		if (!Tools.translations[lang]) return this.reply(this.trad('v') + ': ' + Object.keys(Tools.translations).join(', '));
 		if (!Settings.settings['language']) Settings.settings['language'] = {};
-		Settings.settings['language'][room] = lang;
+		Settings.settings['language'][tarRoom] = lang;
 		Settings.save();
 		this.language = lang;
-		this.reply(this.trad('l'));
+		this.reply(this.trad('l') + textHelper);
 	},
 
 	settings: 'set',
