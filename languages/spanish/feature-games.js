@@ -12,6 +12,17 @@
 			'nogame': 'No hay ningún juego en esta sala',
 			'del1': 'El juego de',
 			'del2': 'ha sido finalizado'
+		},
+		rps: {
+			'err': 'Por favor elige piedra, papel o tijeras',
+			'r': 'Piedra',
+			'p': 'Papel',
+			's': 'Tijeras',
+			'win': 'Has ganado',
+			'lose': 'Has perdido',
+			'tie': 'Es un empate',
+			'chosen': 'eligió',
+			'aliases': {'piedra': 'r', 'papel': 'p', 'tijeras': 's'}
 		}
 	},
 

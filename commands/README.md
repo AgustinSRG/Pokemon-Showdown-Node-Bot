@@ -189,7 +189,6 @@ General commands for managing games:
  - `endgame` - Force end a game
  - `reloadgames` - Alias of `reload feature, games`
 
-
 **Hangman** and **Poke-Hangman**. Arguments: maxfails (max number of allowed fails, 0 or no specify this argument for infinite), lang (optional only for Poke-Hangman to change the language of the pokemon stuff). Commands:
 
  - `g [word/char]` - To guess words or characters
@@ -223,6 +222,8 @@ General commands for managing games:
  - `g [pokemon]` - To guess the pokemon
  - `view` - To view the game status
  - `end` - To force end the game
+ 
+**Rock, paper, scissors**. Single command game: `rps [rock/paper/scissors]`
 
 Youtube
 ------------

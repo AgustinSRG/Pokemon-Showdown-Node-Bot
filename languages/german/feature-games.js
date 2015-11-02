@@ -12,6 +12,17 @@
 			'nogame': 'Es gibt keine Spiele in diesem Raum',
 			'del1': 'Das Spiel des',
 			'del2': 'wurde abgebrochen'
+		},
+		rps: {
+			'err': 'Bitte wählen Sie Stein, Papier oder Schere',
+			'r': 'Stein',
+			'p': 'Papier',
+			's': 'Schere',
+			'win': 'Du gewinnst',
+			'lose': 'Du verlierst',
+			'tie': 'Es ist eine Krawatte',
+			'chosen': 'wählte',
+			'aliases': {'stein': 'r', 'papier': 'p', 'schere': 's'}
 		}
 	},
 

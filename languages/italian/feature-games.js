@@ -12,6 +12,17 @@
 			'nogame': 'Non ci sono giochi in questa room',
 			'del1': 'Il gioco del',
 			'del2': 'è stata terminata'
+		},
+		rps: {
+			'err': 'Scegliere roccia, carta o forbici',
+			'r': 'Roccia',
+			'p': 'Carta',
+			's': 'Forbici',
+			'win': 'Hai vinto',
+			'lose': 'Hai perso',
+			'tie': 'È un pareggio',
+			'chosen': 'scelto',
+			'aliases': {'roccia': 'r', 'carta': 'p', 'forbici': 's'}
 		}
 	},
 

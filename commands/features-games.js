@@ -56,6 +56,49 @@ exports.commands = {
 		this.reply(this.trad('del1') + " " + gametype + " " + this.trad('del2'));
 	},
 
+	/* Single-Command games */
+
+	spr: 'rps',
+	rps: function (arg) {
+		var values = ['r', 'p', 's'];
+		var gameTable = {
+			r: {r: 3, p: 2, s: 1},
+			p: {r: 1, p: 3, s: 2},
+			s: {r: 2, p: 1, s: 3}
+		};
+		//1 - win, 2 - lose, 3 - tie
+		var text = "";
+		var aliases = {
+			'rock': 'r',
+			'paper': 'p',
+			'scissors': 's'
+		};
+		var langAliases = this.trad('aliases');
+		if (langAliases) Object.merge(aliases, langAliases);
+		var chosenByUser = toId(arg);
+		if (aliases[chosenByUser]) chosenByUser = aliases[chosenByUser];
+		if (values.indexOf(chosenByUser) < 0) return this.restrictReply(this.trad('err'), 'games');
+		var chosenByBot = values[Math.floor(Math.random() * values.length)];
+		var result = gameTable[chosenByUser][chosenByBot];
+		text += "/me " + this.trad('chosen') + " " + this.trad(chosenByBot) + ". ";
+		switch (result) {
+			case 1:
+				text += "**" + this.trad('win') + "!**";
+				break;
+			case 2:
+				text += "**" + this.trad('lose') + "**";
+				break;
+			case 3:
+				text += "**" + this.trad('tie') + "!**";
+				break;
+			default:
+				return this.restrictReply(this.trad('err'), 'games');
+		}
+		this.restrictReply(text, 'games');
+	},
+
+	/* Development */
+
 	execgame: function (arg, by, room, cmd) {
 		this.parse(this.cmdToken + "game " + cmd + "," + arg);
 	},

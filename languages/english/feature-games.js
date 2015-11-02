@@ -12,6 +12,17 @@ exports.translations = {
 			'nogame': 'There are no games in this room',
 			'del1': 'The game of',
 			'del2': 'was terminated'
+		},
+		rps: {
+			'err': 'Please choose rock, paper or scissors',
+			'r': 'Rock',
+			'p': 'Paper',
+			's': 'Scissors',
+			'win': 'You win',
+			'lose': 'You lose',
+			'tie': 'It\'s a draw',
+			'chosen': 'chose',
+			'aliases': {}
 		}
 	},
 

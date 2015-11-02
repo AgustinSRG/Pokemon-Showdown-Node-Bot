@@ -12,6 +12,17 @@
 			'nogame': 'Il n\'y a pas de jeux dans cette salle',
 			'del1': 'Le jeu de',
 			'del2': 'a été résilié'
+		},
+		rps: {
+			'err': 'S\'il vous plaît choisir roche, papier ou ciseaux',
+			'r': 'Roche',
+			'p': 'Papier',
+			's': 'Ciseaux',
+			'win': 'Tu as gagné',
+			'lose': 'Tu as perdu',
+			'tie': 'C\'est une cravate',
+			'chosen': 'choisi',
+			'aliases': {'roche': 'r', 'papier': 'p', 'ciseaux': 's'}
 		}
 	},
 
