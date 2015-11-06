@@ -171,6 +171,27 @@
 			'tie2': 'entre',
 			'forceend1': 'Le jeu Kunc a été résilié!',
 			'forceend2': 'Le pokemon était'
+		},
+		ambush: {
+			'init': '**Un nouveau jeu de Ambush a été créé!** Utiliser **$in** pour participer et **$start** pour lancer le jeu',
+			'noplayers': 'Il n\'y a pas assez de joueurs participant à ce jeu',
+			'round': 'Round',
+			'players': 'Joueurs',
+			'help': 'Utiliser **$fire [user]** pour tuer d\'autres joueurs',
+			'end1': '**Le jeu Ambush terminé!** Félicitations à',
+			'end2': 'pour gagner le jeu!',
+			'forceend': 'Le jeu Ambush a été résilié!'
+		},
+		passthebomb: {
+			'init': '**Un nouveau jeu de Pass-The-Bomb a été créé!** Utiliser **$in** pour participer et **$start** pour lancer le jeu',
+			'noplayers': 'Il n\'y a pas assez de joueurs participant à ce jeu',
+			'round': 'est remis la bombe!',
+			'players': 'Joueurs',
+			'help': 'Utiliser **$pass [user]** pour passer la bombe à un autre joueur!',
+			'lose': 'se éliminé!',
+			'end1': '**Le jeu Pass-The-Bomb terminé!** Félicitations à',
+			'end2': 'pour gagner le jeu!',
+			'forceend': 'Le jeu Pass-The-Bomb a été résilié!'
 		}
 	}
 };

@@ -225,6 +225,22 @@ General commands for managing games:
  
 **Rock, paper, scissors**. Single command game: `rps [rock/paper/scissors]`
 
+**Ambush**. Arguments: roundtime (time per round). Commands:
+
+ - `in` - To join the game. Use `out` to leave
+ - `players` - To view the players list
+ - `start` - To start the game
+ - `fire [user]` - To kill other players
+ - `end` - To force end the game
+
+**Pass-The-Bomb**. Arguments: maxplayers (max number of players). Commands:
+
+ - `in` - To join the game. Use `out` to leave
+ - `players` - To view the players list
+ - `start` - To start the game
+ - `pass [user]` - To pass the bomb to another user
+ - `end` - To force end the game
+
 Youtube
 ------------
 

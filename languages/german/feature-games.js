@@ -171,6 +171,27 @@
 			'tie2': 'zwischen',
 			'forceend1': 'Das Spiel des Kunc wurde abgebrochen!',
 			'forceend2': 'Das pokemon war'
+		},
+		ambush: {
+			'init': '**Ein neues Spiel von Ambush erstellt wurde!** Verwenden **$in** zu beteiligen und **$start** um das Spiel zu starten',
+			'noplayers': 'Es gibt nicht genügend Spieler, die an diesem Spiel',
+			'round': 'Runde',
+			'players': 'Spieler',
+			'help': 'Verwenden **$fire [user]** an andere Spieler zu töten',
+			'end1': '**Der Ambush spiel endete!** Glückwünsche an',
+			'end2': 'für das Spiel zu gewinnen!',
+			'forceend': 'Das Spiel des Ambush wurde abgebrochen!'
+		},
+		passthebomb: {
+			'init': '**Ein neues Spiel von Pass-The-Bomb erstellt wurde!** Verwenden **$in** zu beteiligen und **$start** um das Spiel zu starten',
+			'noplayers': 'Es gibt nicht genügend Spieler, die an diesem Spiel',
+			'round': 'wird die Bombe übergeben!',
+			'players': 'Spieler',
+			'help': 'Verwenden **$pass [user]**, die Bombe an einen anderen Spieler weitergeben!',
+			'lose': 'wurde beseitigt!',
+			'end1': '**Der Pass-The-Bomb spiel endete!** Glückwünsche an',
+			'end2': 'für das Spiel zu gewinnen!',
+			'forceend': 'Das Spiel des Pass-The-Bomb wurde abgebrochen!'
 		}
 	}
 };

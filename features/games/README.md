@@ -10,6 +10,8 @@ A collection of games for Pokemon Showdown! chat rooms.
  - **Trivia** - Classic game of questions and answers
  - **BlackJack** - Cards game. You play against dealer, your goal is to get a value higher than the dealer but less or equal to 21.
  - **Kunc** - A game from IRC. Guess the pokemon given the moveset.
+ - **Ambush** - A shooting game where there can only be one winner
+ - **Pass-The-Bomb** - Pass the bomb until it explodes
 
 Hangaman and Anagrams data: `/data/games-words.js`
 Kunc data: `/data/kunc-sets.js`
