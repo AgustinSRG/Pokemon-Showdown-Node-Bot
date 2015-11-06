@@ -7,7 +7,14 @@ const MAX_COMMAND_RECURSION = 10;
 exports.id = 'games';
 exports.desc = 'A collection of chat games';
 
-var gamesList = ['hangman.js', 'anagrams.js', 'poke-hangman.js', 'poke-anagrams.js', 'trivia.js', 'blackjack.js', 'kunc.js'];
+var gamesList = [
+	'hangman.js', 'poke-hangman.js',
+	'anagrams.js', 'poke-anagrams.js',
+	'trivia.js', 'kunc.js',
+	'blackjack.js',
+	'ambush.js',
+	'passthebomb.js'
+];
 
 var Builders = exports.Builders = {};
 var Games = exports.Games = {};

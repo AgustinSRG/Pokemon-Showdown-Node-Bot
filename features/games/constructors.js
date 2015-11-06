@@ -14,6 +14,12 @@ function toWordId (str) {
 	return str.toLowerCase().replace(/[^a-z0-9ñ]/g, '');
 }
 
+var getRoomLang = function (room) {
+	var lang = Config.language || 'english';
+	if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
+	return lang;
+};
+
 function normalize_init () {
 	var str1 = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑÇç";
 	var str2 = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuuñcc";
@@ -122,12 +128,6 @@ var Hangman = exports.Hangman = (function () {
 /*
 * Anagrams
 */
-
-var getRoomLang = function (room) {
-	var lang = Config.language || 'english';
-	if (Settings.settings['language'] && Settings.settings['language'][room]) lang = Settings.settings['language'][room];
-	return lang;
-};
 
 var Anagrams = exports.Anagrams = (function () {
 	function Anagrams (opts, output) {
@@ -256,6 +256,10 @@ var Anagrams = exports.Anagrams = (function () {
 
 	return Anagrams;
 })();
+
+/*
+* Trivia
+*/
 
 var Trivia = exports.Trivia = (function () {
 	function Trivia (opts, output) {
@@ -389,6 +393,10 @@ var Trivia = exports.Trivia = (function () {
 	return Trivia;
 })();
 
+/*
+* BlackJack
+*/
+
 function generateDeck () {
 	var deck = [];
 	var cards = ['\u2660', '\u2663', '\u2665', '\u2666'];
@@ -478,6 +486,7 @@ var BlackJack = exports.BlackJack = (function () {
 	};
 
 	BlackJack.prototype.start = function () {
+		if (this.status !== 1) return;
 		var players = [];
 		for (var i in this.users) {
 			players.push({id: i, name: this.users[i].substr(1), hand: []});
@@ -580,6 +589,10 @@ var BlackJack = exports.BlackJack = (function () {
 
 	return BlackJack;
 })();
+
+/*
+* Kunc
+*/
 
 var Kunc = exports.Kunc = (function () {
 	function Kunc (opts, output) {
@@ -703,4 +716,201 @@ var Kunc = exports.Kunc = (function () {
 	};
 
 	return Kunc;
+})();
+
+/*
+* Ambush
+*/
+
+var Ambush = exports.Ambush = (function () {
+	function Ambush (opts, output) {
+		this.output = output;
+		this.room = opts.room || '';
+		this.title = opts.title || 'Ambush';
+		this.roundTime = opts.roundTime || 9500;
+		this.status = 0; // 0 - off, 1 - singups, 2 - started
+		this.players = {};
+		this.timer = null;
+		this.round = 0;
+	}
+
+	Ambush.prototype.emit = function (type, data) {
+		if (typeof this.output === "function") return this.output.call(this, type, data);
+	};
+
+	Ambush.prototype.init = function () {
+		this.singups();
+	};
+
+	Ambush.prototype.singups = function () {
+		this.clearTimers();
+		this.status = 1;
+		this.players = {};
+		this.emit('singups');
+	};
+
+	Ambush.prototype.userJoin = function (user) {
+		if (this.status !== 1) return;
+		this.players[toId(user)] = user;
+	};
+
+	Ambush.prototype.userLeave = function (user) {
+		if (this.status !== 1) return;
+		if (this.players[toId(user)]) delete this.players[toId(user)];
+	};
+
+	Ambush.prototype.start = function () {
+		if (this.status !== 1) return;
+		if (Object.keys(this.players).length < 2) return;
+		this.status = 2;
+		this.round = 0;
+		this.reportRound();
+		this.timer = setInterval(this.reportRound.bind(this), this.roundTime);
+	};
+
+	Ambush.prototype.reportRound = function () {
+		if (this.status !== 2) return;
+		this.round++;
+		var players = [];
+		for (var p in this.players) players.push(this.players[p]);
+		if (players.length < 2) return;
+		this.emit('round', {round: this.round, players: players});
+	};
+
+	Ambush.prototype.fire = function (killer, victim) {
+		if (this.status !== 2) return;
+		killer = toId(killer);
+		victim = toId(victim);
+		if (!this.players[killer] || !this.players[victim]) return;
+		delete this.players[victim];
+		if (Object.keys(this.players).length < 2) this.end(this.players[killer]);
+	};
+
+	Ambush.prototype.end = function (winner) {
+		this.clearTimers();
+		this.status = 0;
+		this.emit('end', winner);
+	};
+
+	Ambush.prototype.forceend = function () {
+		this.clearTimers();
+		this.status = 0;
+		this.emit('forceend');
+	};
+
+	Ambush.prototype.clearTimers = function () {
+		if (this.timer) {
+			clearInterval(this.timer);
+			this.timer = null;
+		}
+	};
+
+	return Ambush;
+})();
+
+/*
+* Pass The Bomb
+*/
+
+var PassTheBomb = exports.PassTheBomb = (function () {
+	function PassTheBomb (opts, output) {
+		this.output = output;
+		this.room = opts.room || '';
+		this.title = opts.title || 'Ambush';
+		this.status = 0; // 0 - off, 1 - singups, 2 - started but waiting, 3 - active bomb
+		this.players = {};
+		this.maxPlayers = opts.maxPlayers || 0;
+		this.timer = null;
+		this.waitTime = opts.waitTime || 2000;
+	}
+
+	PassTheBomb.prototype.emit = function (type, data) {
+		if (typeof this.output === "function") return this.output.call(this, type, data);
+	};
+
+	PassTheBomb.prototype.init = function () {
+		this.singups();
+	};
+
+	PassTheBomb.prototype.singups = function () {
+		this.clearTimers();
+		this.status = 1;
+		this.players = {};
+		this.emit('singups');
+	};
+
+	PassTheBomb.prototype.userJoin = function (user) {
+		if (this.status !== 1) return;
+		this.players[toId(user)] = user;
+		if (this.maxPlayers && Object.keys(this.players).length >= this.maxPlayers) this.start();
+	};
+
+	PassTheBomb.prototype.userLeave = function (user) {
+		if (this.status !== 1) return;
+		if (this.players[toId(user)]) delete this.players[toId(user)];
+	};
+
+	PassTheBomb.prototype.start = function () {
+		if (this.status !== 1) return;
+		if (Object.keys(this.players).length < 2) return;
+		this.status = 2;
+		this.newRound();
+	};
+
+	PassTheBomb.prototype.wait = function () {
+		this.status = 2;
+		this.timer = setTimeout(this.newRound.bind(this), this.waitTime);
+	};
+
+	PassTheBomb.prototype.newRound = function () {
+		if (this.status !== 2) return;
+		this.clearTimers();
+		var players = [];
+		for (var p in this.players) players.push(this.players[p]);
+		if (players.length < 2) return this.end(players[0]);
+		this.emit('players', players);
+		var playersIds = Object.keys(this.players);
+		this.playerWithBomb = playersIds[Math.floor(Math.random() * playersIds.length)];
+		this.status = 3;
+		this.emit('round', this.players[this.playerWithBomb]);
+		this.timer = setTimeout(this.bomb.bind(this), Math.floor(Math.random() * 8000) + 16000);
+	};
+
+	PassTheBomb.prototype.bomb = function () {
+		this.clearTimers();
+		this.status = 2;
+		this.emit('bomb', this.players[this.playerWithBomb]);
+		delete this.players[this.playerWithBomb];
+		this.wait();
+	};
+
+	PassTheBomb.prototype.pass = function (user1, user2) {
+		if (this.status !== 3) return;
+		user1 = toId(user1);
+		user2 = toId(user2);
+		if (this.playerWithBomb !== user1) return;
+		if (!this.players[user1] || !this.players[user2]) return;
+		this.playerWithBomb = user2;
+	};
+
+	PassTheBomb.prototype.end = function (winner) {
+		this.clearTimers();
+		this.status = 0;
+		this.emit('end', winner);
+	};
+
+	PassTheBomb.prototype.forceend = function () {
+		this.clearTimers();
+		this.status = 0;
+		this.emit('forceend');
+	};
+
+	PassTheBomb.prototype.clearTimers = function () {
+		if (this.timer) {
+			clearTimeout(this.timer);
+			this.timer = null;
+		}
+	};
+
+	return PassTheBomb;
 })();

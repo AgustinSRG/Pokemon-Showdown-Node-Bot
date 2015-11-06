@@ -17,6 +17,8 @@ exports.commands = {
 	trivia: 'execgame',
 	blackjack: 'execgame',
 	kunc: 'execgame',
+	ambush: 'execgame',
+	passthebomb: 'execgame',
 
 	/* General commands for games */
 	games: 'game',
