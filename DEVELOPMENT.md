@@ -52,6 +52,7 @@ Also, command have a context:
  - `this.getUser (user, room)` - Get an user object or null (if the user or the bot are not in that room)
  - `this.language` - Current room language
  - `this.trad (textId)` - Returns a text from the corresponding languages file
+ - `this.splitReply (text)` - Returns an array with tour reply splitted in multiple messages with a max of 300 characters
  - `this.parse (cmd)` - Parse a message (to call other commands)
 
 Features

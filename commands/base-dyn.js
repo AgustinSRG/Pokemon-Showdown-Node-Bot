@@ -36,7 +36,7 @@ exports.commands = {
 			if (!arg) {
 				var list = getCmdList();
 				if (!list) return this.pmReply(this.trad('nocmds'));
-				return this.pmReply(this.trad('list') + ': ' + list);
+				return this.pmReply(this.splitReply(this.trad('list') + ': ' + list));
 			}
 			if (CommandParser.dynCommands[dcmd]) {
 				return this.pmReply(CommandParser.dynCommands[dcmd]);
@@ -47,7 +47,7 @@ exports.commands = {
 			if (!arg) {
 				var list = getCmdList();
 				if (!list) return this.reply(this.trad('nocmds'));
-				return this.reply(this.trad('list') + ': ' + list);
+				return this.reply(this.splitReply(this.trad('list') + ': ' + list));
 			}
 			if (CommandParser.dynCommands[dcmd]) {
 				if (perm === 'wall') return this.reply('/announce ' + CommandParser.dynCommands[dcmd]);

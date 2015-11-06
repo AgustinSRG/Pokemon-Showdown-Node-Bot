@@ -162,11 +162,28 @@ var Context = exports.Context = (function () {
 		this.language = lang;
 	}
 
-	Context.prototype.reply = function (data) {
-		Bot.say(this.room, data);
+	Context.prototype.send = function (arg1, arg2, interval) {
+		if (!interval) interval = 2000;
+		if (!arg2) {
+			Bot.send(arg1, interval);
+		} else if (arg1.charAt(0) !== ',') {
+			Bot.sendRoom(arg1, arg2, interval);
+		} else {
+			if (!(arg2 instanceof Array)) {
+				arg2 = [arg2.toString()];
+			}
+			for (var i = 0; i < arg2.length; i++) arg2[i] = "|/pm " + arg1.substr(1) + "," + arg2[i];
+			Bot.send(arg2, interval);
+		}
+	};
+	Context.prototype.sendPM = function (targetUser, data) {
+		this.send("," + targetUser, data);
+	};
+	Context.prototype.sendReply = Context.prototype.reply = function (data) {
+		this.send(this.room, data);
 	};
 	Context.prototype.pmReply = function (data) {
-		Bot.pm(this.by, data);
+		this.send("," + this.by, data);
 	};
 	Context.prototype.restrictReply = function (data, perm) {
 		if (!this.can(perm)) {
@@ -176,7 +193,7 @@ var Context = exports.Context = (function () {
 		}
 	};
 	Context.prototype.say = function (targetRoom, data) {
-		Bot.say(targetRoom, data);
+		this.send(targetRoom, data);
 	};
 	Context.prototype.isRanked = function (rank) {
 		return Tools.equalOrHigherRank(this.by, rank);
@@ -245,6 +262,16 @@ var Context = exports.Context = (function () {
 			name: Bot.rooms[targetRoom].users[user].substr(1),
 			rank: Bot.rooms[targetRoom].users[user].charAt(0)
 		};
+	};
+	Context.prototype.splitReply = function (str, maxMessageLength) {
+		if (!maxMessageLength) maxMessageLength = 300;
+		var msgs = [];
+		while (str.length > maxMessageLength) {
+			msgs.push(str.substr(0, maxMessageLength));
+			str = str.substr(maxMessageLength);
+		}
+		msgs.push(str);
+		return msgs;
 	};
 	Context.prototype.trad = Context.prototype.tra = function (data) {
 		return Tools.translateCmd(this.handler, data, this.language);
