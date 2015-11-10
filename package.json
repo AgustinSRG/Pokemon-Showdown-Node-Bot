@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node index.js",
-	"test": "gulp && mocha"
+    "test": "gulp && mocha"
   },
   "contributors": [
     {
