@@ -142,7 +142,6 @@ exports.debug = {
 	sent: false
 };
 
-
 /*
 * Configuration for specific
 * commands and features

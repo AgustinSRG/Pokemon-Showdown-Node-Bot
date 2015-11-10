@@ -43,7 +43,8 @@ function lint (jsHintOptions, jscsOptions) {
 	}
 	return lazypipe()
 		.pipe(cachedJsHint)
-		.pipe(jscs.bind(jscs, jscsOptions))();
+		.pipe(jscs.bind(jscs, {configPath: jscsOptions}))
+		.pipe(jscs.reporter.bind(jscs.reporter))();
 }
 
 var jsHintOptions = {};
@@ -71,55 +72,9 @@ jsHintOptions.test = util._extend(util._extend({}, jsHintOptions.base), {
 });
 
 var jscsOptions = {};
-jscsOptions.base = {
-	"preset": "yandex",
+jscsOptions.base = "./test/.jscsrc";
+jscsOptions.config = "./test/.jscsrc";
 
-	"requireCurlyBraces": null,
-
-	"maximumLineLength": null,
-	"validateIndentation": '\t',
-	"validateQuoteMarks": null,
-	"disallowYodaConditions": null,
-	"disallowQuotedKeysInObjects": null,
-	"requireDotNotation": null,
-
-	"disallowMultipleVarDecl": null,
-	"disallowImplicitTypeConversion": null,
-	"requireSpaceAfterLineComment": null,
-
-	"disallowMixedSpacesAndTabs": "smart",
-	"requireSpaceAfterKeywords": true,
-
-	"disallowSpacesInFunctionDeclaration": null,
-	"requireSpacesInFunctionDeclaration": {
-		"beforeOpeningCurlyBrace": true
-	},
-	"requireSpacesInAnonymousFunctionExpression": {
-		"beforeOpeningRoundBrace": true,
-		"beforeOpeningCurlyBrace": true
-	},
-	"disallowSpacesInNamedFunctionExpression": null,
-	"requireSpacesInNamedFunctionExpression": {
-		"beforeOpeningCurlyBrace": true
-	},
-	"validateParameterSeparator": ", ",
-
-	"requireBlocksOnNewline": 1,
-	"disallowPaddingNewlinesInBlocks": true,
-
-	"requireOperatorBeforeLineBreak": true,
-	"disallowTrailingComma": true,
-
-	"requireCapitalizedConstructors": true,
-
-	"validateLineBreaks": require('os').EOL === '\n' ? 'LF' : null,
-	"disallowMultipleLineBreaks": null,
-
-	"esnext": true
-};
-jscsOptions.config = util._extend(util._extend({}, jscsOptions.base), {
-	"disallowTrailingComma": null
-});
 
 var lintData = [
 	{

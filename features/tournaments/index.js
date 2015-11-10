@@ -5,7 +5,6 @@
 exports.id = 'tours';
 exports.desc = 'A tool to ease tournaments creation';
 
-
 var tournaments = exports.tournaments = {};
 var tourData = exports.tourData = {};
 

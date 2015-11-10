@@ -1,6 +1,5 @@
 ﻿/* Games Constructors */
 
-
 /*
 * Auxiliar functions
 */

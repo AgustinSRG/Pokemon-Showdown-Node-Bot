@@ -1,6 +1,6 @@
 {
   "name": "pokemon-showdown-node-bot",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Ecuacion",
 	"email": "alajandro5gt01@gmail.com",
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node index.js",
-	"test": "gulp && mocha --reporter=spec"
+	"test": "gulp && mocha"
   },
   "contributors": [
     {
@@ -50,9 +50,9 @@
   "devDependencies": {
     "cache-swap": "~0.2.0",
     "gulp": "~3.9.0",
-    "gulp-cache": "~0.3.0",
-    "gulp-jshint": "~1.11.2",
-    "gulp-jscs": "~2.0.0",
+    "gulp-cache": "~0.4.0",
+    "gulp-jshint": "~1.12.0",
+    "gulp-jscs": "~3.0.2",
     "gulp-replace": "~0.5.1",
     "jshint-stylish": "~2.0.0",
     "lazypipe": "~1.0.1",
