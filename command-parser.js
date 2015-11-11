@@ -89,42 +89,17 @@ var loadCommands = exports.loadCommands = function (reloading) {
 	return errs;
 };
 
-if (!fs.existsSync(dynCommandsDataFile))
-	fs.writeFileSync(dynCommandsDataFile, '{}');
+var dynCommandsFFM = exports.dynCommandsFFM = new Settings.FlatFileManager(dynCommandsDataFile);
 
 try {
-	dynCommands = exports.dynCommands = JSON.parse(fs.readFileSync(dynCommandsDataFile).toString());
+	dynCommands = exports.dynCommands = dynCommandsFFM.readObj();
 } catch (e) {
 	errlog(e.stack);
 	error("Could not import dynamic commands: " + sys.inspect(e));
 }
 
-var writing = exports.writing = false;
-var writePending = exports.writePending = false;
-var saveDynCmds = exports.saveDinCmds =  function () {
-	var data = JSON.stringify(dynCommands);
-	var finishWriting = function () {
-		writing = false;
-		if (writePending) {
-			writePending = false;
-			saveDynCmds();
-		}
-	};
-	if (writing) {
-		writePending = true;
-		return;
-	}
-	fs.writeFile(dynCommandsDataFile + '.0', data, function () {
-		// rename is atomic on POSIX, but will throw an error on Windows
-		fs.rename(dynCommandsDataFile + '.0', dynCommandsDataFile, function (err) {
-			if (err) {
-				// This should only happen on Windows.
-				fs.writeFile(dynCommandsDataFile, data, finishWriting);
-				return;
-			}
-			finishWriting();
-		});
-	});
+var saveDynCmds = exports.saveDynCmds =  function () {
+	dynCommandsFFM.writeObj(dynCommands);
 };
 
 /* Parser */

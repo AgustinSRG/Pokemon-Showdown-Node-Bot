@@ -64,7 +64,7 @@ exports.commands = {
 		var dcmd = toId(arg);
 		if (CommandParser.dynCommands[dcmd]) {
 			delete CommandParser.dynCommands[dcmd];
-			CommandParser.saveDinCmds();
+			CommandParser.saveDynCmds();
 			this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('d'));
 		} else {
 			this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('n'));
@@ -85,7 +85,7 @@ exports.commands = {
 			text = this.trad('c') + ' "' + dcmd + '" ' + this.trad('created');
 		}
 		CommandParser.dynCommands[dcmd] = CommandParser.tempVar;
-		CommandParser.saveDinCmds();
+		CommandParser.saveDynCmds();
 		this.reply(text);
 	},
 
@@ -100,7 +100,7 @@ exports.commands = {
 		if (!CommandParser.dynCommands[dcmd]) return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('n'));
 		if (CommandParser.dynCommands[dcmd].substr(0, 4) === "/ref") return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('already'));
 		CommandParser.dynCommands[alias] = '/ref ' + dcmd;
-		CommandParser.saveDinCmds();
+		CommandParser.saveDynCmds();
 		this.reply(this.trad('c') + ' "' + alias + '" ' + this.trad('alias') + ' "' + dcmd + '"');
 	},
 

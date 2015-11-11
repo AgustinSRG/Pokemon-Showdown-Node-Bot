@@ -1,43 +1,18 @@
 const quotesDataFile = AppOptions.data + 'quotes.json';
 
-if (!fs.existsSync(quotesDataFile))
-	fs.writeFileSync(quotesDataFile, '{}');
+var quotesFFM = new Settings.FlatFileManager(quotesDataFile);
 
 var quotes = {};
 
 try {
-	quotes = JSON.parse(fs.readFileSync(quotesDataFile).toString());
+	quotes = quotesFFM.readObj();
 } catch (e) {
 	errlog(e.stack);
 	error("Could not import quotes: " + sys.inspect(e));
 }
 
-var writing = false;
-var writePending = false;
 var saveQuotes = function () {
-	var data = JSON.stringify(quotes);
-	var finishWriting = function () {
-		writing = false;
-		if (writePending) {
-			writePending = false;
-			saveQuotes();
-		}
-	};
-	if (writing) {
-		writePending = true;
-		return;
-	}
-	fs.writeFile(quotesDataFile + '.0', data, function () {
-		// rename is atomic on POSIX, but will throw an error on Windows
-		fs.rename(quotesDataFile + '.0', quotesDataFile, function (err) {
-			if (err) {
-				// This should only happen on Windows.
-				fs.writeFile(quotesDataFile, data, finishWriting);
-				return;
-			}
-			finishWriting();
-		});
-	});
+	quotesFFM.writeObj(quotes);
 };
 
 Settings.addPermissions(['quote']);
