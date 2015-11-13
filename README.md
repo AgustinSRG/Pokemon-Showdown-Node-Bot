@@ -13,7 +13,7 @@ This bot is based on commands and features, which are explained [here](https://g
 
 Features included in this package:
  - **Base:** Basic commands for getting basic information, manage command permissions, languages and dynamic commands (only-text commands useful for giving information).
- - **Chat-Plugins:** This includes a customizable 'quote' command, random answer and pokemon informational commands.
+ - **Chat-Plugins:** This includes a customizable database of jokes and quotes, random answer and pokemon informational commands. This also includes a 'translate' command for pokemon stuff.
  - **Moderation:** Automated chat moderation for infractions like spam, flood, caps, stretching, etc  This also includes a blacklist and welcome messages called join-phrases.
  - **Battle:** Automated battle bot for challenges, ladder and tournaments. This also includes teams management commands. Note that this is not an artificial intelligence, just an improvised algorithm that simulates in-game players (just for fun).
  - **Chat Logger:** Stores logs of chat rooms and/or pms. This also includes an optional logs server.

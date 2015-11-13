@@ -35,35 +35,41 @@ exports.translations = {
 			'stats': 'Estadísticas de uso'
 		},
 		/*
-		* Quotes
+		* Quotes & Jokes
 		*/
 		quote: {
-			'nodata': 'La base de datos está vacía'
-		},
-		setquote: {
-			'notemp': 'No hay datos en temp, usa el comando **stemp** antes de hacer esto',
-			'q': 'Cita',
-			'modified': 'ha sido modificada',
-			'created': 'ha sido creada'
-		},
-		delquote: {
-			'q': 'Cita',
-			'd': 'ha sido eliminada',
-			'n': 'no existe'
-		},
-		viewquotes: {
-			'q': 'Cita',
+			'u1': 'Uso correcto',
+			'u2': '[id], [cita]',
+			'empty': 'La base de datos está vacía',
+			'noid': 'Debes especificar un id correcto',
+			'quote': 'Cita',
 			'n': 'no existe',
-			'empty': 'La lista de citas está vacía',
-			'list': 'Lista de citas',
-			'err': 'Error: No se han podido subir las citas a Hastebin'
+			'd': 'ha sido eliminado',
+			'already': 'ya existe',
+			'modified': 'ha sido modificado',
+			'created': 'ha sido creado'
 		},
-		addquotes: {
-			'notfound': 'Error: Documento no encontrado',
-			'd': 'Descargando documento de Hastebin',
-			'add': 'Agregadas',
-			'q': 'citas',
-			'err': 'Error: no se ha podido establecer la conexión con hastebin'
+		listquotes: {
+			'empty': 'La base de datos está vacía',
+			'list': 'Lista de citas',
+			'err': 'Error: no se pudo subir la lista de citas a Hastebin'
+		},
+		joke: {
+			'u1': 'Uso correcto',
+			'u2': '[id], [joke]',
+			'empty': 'La base de datos está vacía',
+			'noid': 'Debes especificar un id correcto',
+			'joke': 'El chiste',
+			'n': 'no existe',
+			'd': 'ha sido eliminado',
+			'already': 'ya existe',
+			'modified': 'ha sido modificado',
+			'created': 'ha sido creado'
+		},
+		listjokes: {
+			'empty': 'La base de datos está vacía',
+			'list': 'Lista de chistes',
+			'err': 'Error: no se pudo subir la lista de chistes a Hastebin'
 		},
 		/*
 		* Pokemon Commands

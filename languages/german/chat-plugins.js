@@ -32,35 +32,41 @@
 			'stats': 'Verwendungsstatisiken'
 		},
 		/*
-		* Quotes
+		* Quotes & Jokes
 		*/
 		quote: {
-			'nodata': 'Datenbank ist leer'
-		},
-		setquote: {
-			'notemp': 'Es gibt keinen temporären Ausdruck zum setzen, verwende **stemp** bevor du das hier machst',
-			'q': 'Zitat',
+			'u1': 'Usage',
+			'u2': '[id], [zitat]',
+			'empty': 'Datenbank ist leer',
+			'noid': 'müssen Sie eine gültige ID angeben',
+			'quote': 'Zitat',
+			'n': 'existiert nicht',
+			'd': 'wurde erfolgreich gelöscht',
+			'already': 'ist bereits vorhanden',
 			'modified': 'wurde erfolgreich geändert',
-			'created': 'wurde erfolgreich erstellt'
+			'created': 'erfolgreich erstellt wurde'
 		},
-		delquote: {
-			'q': 'Zitat',
+		listquotes: {
+			'empty': 'Liste der Zitate ist leer',
+			'list': 'Liste der Zitate',
+			'err': 'Fehler: Fehler beim Anführungszeichen hochladen, um Hastebin'
+		},
+		joke: {
+			'u1': 'Usage',
+			'u2': '[id], [witz]',
+			'empty': 'Datenbank ist leer',
+			'noid': 'müssen Sie eine gültige ID angeben',
+			'joke': 'Witz',
 			'n': 'existiert nicht',
-			'd': 'wurde erfolgreich gelöscht'
+			'd': 'wurde erfolgreich gelöscht',
+			'already': 'ist bereits vorhanden',
+			'modified': 'wurde erfolgreich geändert',
+			'created': 'erfolgreich erstellt wurde'
 		},
-		viewquotes: {
-			'q': 'Zitat',
-			'n': 'existiert nicht',
-			'empty': 'Zitatliste ist leer',
-			'list': 'Zitatliste',
-			'err': 'Fehler: Hochladen der Zitate zu Hastebin fehlgeschlagen'
-		},
-		addquotes: {
-			'notfound': 'Fehler: Dokument nicht gefunden',
-			'd': 'Lade Hastebin-Dokument herunter',
-			'add': 'hinzugefügt',
-			'q': 'Zitate',
-			'err': 'Fehler: Laden der Zitate von Hastebin fehlgeschlagen'
+		listjokes: {
+			'empty': 'Liste von Witzen ist leer',
+			'list': 'Liste von Witzen',
+			'err': 'Fehler: Fehler beim Witze hochladen, um Hastebin'
 		},
 		/*
 		* Pokemon Commands

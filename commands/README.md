@@ -40,6 +40,8 @@ Misc commands for multiple features:
  - `pick [option1], [option2], ...` - Choose between multiple options
  - `randomanswer` - Get a random answer
  - `usage` - Get a link to Smogon official usage stats
+ - `joke` - Get a random joke from the local database
+ - `quote` - Get a random quote from the local database
 
 Commands for getting pokemon info:
 
@@ -53,15 +55,14 @@ Commands for getting pokemon info:
  - `recovery [poke]` - Get recovery moves
  - `hazards [poke]` - Get hazards moves
 
-Commands for managing a database of jokes or quotes. Then, users can get a random one using **quote** or **joke** command:
+Commands for managing the local database of jokes and quotes:
 
- - `quote` or `joke` - Get a random quote / joke
- - `addquotes [http://hastebin.com/raw/example]` - Add quotes from a Hastebin document
- - `temp [text]` - Set temp var, to create or modify a quote / joke
- - `setquote [id]` - Create or modify a quote / joke using the **temp** var
- - `delquote [id]` - Remove a quote by Id
- - `viewquote [id]` - View a quote by Id
- - `viewquotes` - Upload quote list to Hastebin
+ - `addquote [id], [text]` - Add a new quote
+ - `delquote [id]` - Delete an existing quote
+ - `listquotes` - Upload quotes to hastebin
+ - `addjoke [id], [text]` - Add a new joke
+ - `deljoke [id]` - Delete an existing joke
+ - `listjokes` - Upload jokes to hastebin
 
 Administrative Commands
 ------------

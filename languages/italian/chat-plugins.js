@@ -32,35 +32,41 @@
 			'stats': 'Usage stats'
 		},
 		/*
-		* Quotes
+		* Quotes & Jokes
 		*/
 		quote: {
-			'nodata': 'Database vuoto'
-		},
-		setquote: {
-			'notemp': 'Non ci sono string temporanee da settare, usa **stemp** prima di ciò',
-			'q': 'Citazione',
-			'modified': 'has been successfully modified',
-			'created': 'has been successfully created'
-		},
-		delquote: {
-			'q': 'Citazione',
-			'd': 'rimosso con successo',
-			'n': 'non esiste'
-		},
-		viewquotes: {
-			'q': 'Citazione',
+			'u1': 'Usage',
+			'u2': '[id], [citazione]',
+			'empty': 'Database è vuoto',
+			'noid': 'È necessario specificare un documento d\'identità valido',
+			'quote': 'Citazione',
 			'n': 'non esiste',
-			'empty': 'Elenco di citazioni è vuoto',
-			'list': 'Elenco di citazioni',
-			'err': 'upload fallito, impossibile caricare su hastebin'
+			'd': 'è stato eliminato con successo',
+			'already': 'esiste già',
+			'modified': 'è stato modificato con successo',
+			'created': 'è stato creato con successo'
 		},
-		addquotes: {
-			'notfound': 'Error: Document not found',
-			'd': 'Il download del documento Hastebin',
-			'add': 'aggiunti',
-			'q': 'citaziones',
-			'err': 'Error: impossibile caricare su hastebin'
+		listquotes: {
+			'empty': 'Elenco di citazioni è vuota',
+			'list': 'Lista di citazioni',
+			'err': 'Errore: non è riuscito a caricare le virgolette per Hastebin'
+		},
+		joke: {
+			'u1': 'Usage',
+			'u2': '[id], [battuta]',
+			'empty': 'Database è vuoto',
+			'noid': 'È necessario specificare un documento d\'identità valido',
+			'joke': 'Battuta',
+			'n': 'non esiste',
+			'd': 'è stato eliminato con successo',
+			'already': 'esiste già',
+			'modified': 'è stato modificato con successo',
+			'created': 'è stato creato con successo'
+		},
+		listjokes: {
+			'empty': 'Elenco di battute è vuota',
+			'list': 'Elenco di battute',
+			'err': 'Errore: non è riuscito a caricare scherzi a Hastebin'
 		},
 		/*
 		* Pokemon Commands

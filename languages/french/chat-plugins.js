@@ -32,35 +32,41 @@
 			'stats': 'Statistiques d\'utilisation'
 		},
 		/*
-		* Quotes
+		* Quotes & Jokes
 		*/
 		quote: {
-			'nodata': 'Base de données est vide'
-		},
-		setquote: {
-			'notemp': 'Il n\'y a aucune chaîne temporaire pour définir, utiliser **stemp** avant de faire cela',
-			'q': 'Citation',
-			'modified': 'a été modifié',
-			'created': 'a été créé'
-		},
-		delquote: {
-			'q': 'Citation',
+			'u1': 'Usage',
+			'u2': '[id], [quote]',
+			'empty': 'Base de données est vide',
+			'noid': 'Vous devez spécifier un identifiant valide',
+			'quote': 'Quote',
 			'n': 'n\'existe pas',
-			'd': 'a été supprimé'
+			'd': 'a été supprimé avec succès',
+			'already': 'existe déjà',
+			'modified': 'a été modifié avec succès',
+			'created': 'a été créé avec succès'
 		},
-		viewquotes: {
-			'q': 'Citation',
+		listquotes: {
+			'empty': 'Liste des quotes est vide',
+			'list': 'Liste des quotes',
+			'err': 'Erreur : Je ne peux pas télécharger les quotes sur hastebin'
+		},
+		joke: {
+			'u1': 'Usage',
+			'u2': '[id], [blague]',
+			'empty': 'Base de données est vide',
+			'noid': 'Vous devez spécifier un identifiant valide',
+			'joke': 'Blague',
 			'n': 'n\'existe pas',
-			'empty': 'Liste des citations est vide',
-			'list': 'Liste des citations',
-			'err': 'Erreur : Je ne peux pas télécharger les citations sur hastebin'
+			'd': 'a été supprimé avec succès',
+			'already': 'existe déjà',
+			'modified': 'a été modifié avec succès',
+			'created': 'a été créé avec succès'
 		},
-		addquotes: {
-			'notfound': 'Error: Document not found',
-			'd': 'Télécharger le document Hastebin',
-			'add': 'ajoutés',
-			'q': 'citations',
-			'err': 'Erreur : Je ne peux pas télécharger les citations sur hastebin'
+		listjokes: {
+			'empty': 'Liste des blagues est vide',
+			'list': 'Liste des blagues',
+			'err': 'Erreur : Je ne peux pas télécharger les blagues sur hastebin'
 		},
 		/*
 		* Pokemon Commands

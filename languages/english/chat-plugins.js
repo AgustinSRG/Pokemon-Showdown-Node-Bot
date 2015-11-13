@@ -32,35 +32,41 @@ exports.translations = {
 			'stats': 'Usage stats'
 		},
 		/*
-		* Quotes
+		* Quotes & Jokes
 		*/
 		quote: {
-			'nodata': 'Database is empty'
-		},
-		setquote: {
-			'notemp': 'There is no temp string to set, use **stemp** before doing this',
-			'q': 'Quote',
+			'u1': 'Usage',
+			'u2': '[id], [quote]',
+			'empty': 'Database is empty',
+			'noid': 'You must specify a valid id',
+			'quote': 'Quote',
+			'n': 'does not exist',
+			'd': 'has been successfully deleted',
+			'already': 'already exists',
 			'modified': 'has been successfully modified',
 			'created': 'has been successfully created'
 		},
-		delquote: {
-			'q': 'Quote',
-			'n': 'does not exist',
-			'd': 'has been successfully deleted'
-		},
-		viewquotes: {
-			'q': 'Quote',
-			'n': 'does not exist',
+		listquotes: {
 			'empty': 'List of quotes is empty',
 			'list': 'List of quotes',
 			'err': 'Error: failed to upload quotes to Hastebin'
 		},
-		addquotes: {
-			'notfound': 'Error: Document not found',
-			'd': 'Downloading Hastebin document',
-			'add': 'Added',
-			'q': 'quotes',
-			'err': 'Error: failed to get quotes from Hastebin'
+		joke: {
+			'u1': 'Usage',
+			'u2': '[id], [joke]',
+			'empty': 'Database is empty',
+			'noid': 'You must specify a valid id',
+			'joke': 'Joke',
+			'n': 'does not exist',
+			'd': 'has been successfully deleted',
+			'already': 'already exists',
+			'modified': 'has been successfully modified',
+			'created': 'has been successfully created'
+		},
+		listjokes: {
+			'empty': 'List of jokes is empty',
+			'list': 'List of jokes',
+			'err': 'Error: failed to upload jokes to Hastebin'
 		},
 		/*
 		* Pokemon Commands
