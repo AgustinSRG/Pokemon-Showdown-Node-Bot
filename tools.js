@@ -1,13 +1,79 @@
+/*
+* Tools file
+*/
 
-/* Globals */
+/* String utils */
 
-global.toId = function (text) {
+global.toId = exports.toId = function (text) {
 	return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 };
 
-global.toRoomid = function (roomid) {
+global.toRoomid = exports.toRoomid = function (roomid) {
 	return roomid.replace(/[^a-zA-Z0-9-]+/g, '').toLowerCase();
 };
+
+exports.toName = function (text) {
+	if (!text) return '';
+	return text.trim();
+};
+
+exports.addLeftZero = function (num, nz) {
+	var str = num.toString();
+	while (str.length < nz) str = "0" + str;
+	return str;
+};
+
+exports.escapeHTML = function (str) {
+	if (!str) return '';
+	return ('' + str).escapeHTML();
+};
+
+exports.generateRandomNick = function (numChars) {
+	var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	var str = '';
+	for (var i = 0, l = chars.length; i < numChars; i++) {
+		str += chars.charAt(~~(Math.random() * l));
+	}
+	return str;
+};
+
+exports.levenshtein = function (s, t, l) { // s = string 1, t = string 2, l = limit
+	// Original levenshtein distance function by James Westgate, turned out to be the fastest
+	var d = []; // 2d matrix
+	// Step 1
+	var n = s.length;
+	var m = t.length;
+	if (n === 0) return m;
+	if (m === 0) return n;
+	if (l && Math.abs(m - n) > l) return Math.abs(m - n);
+	// Create an array of arrays in javascript (a descending loop is quicker)
+	for (var i = n; i >= 0; i--) d[i] = [];
+	// Step 2
+	for (var i = n; i >= 0; i--) d[i][0] = i;
+	for (var j = m; j >= 0; j--) d[0][j] = j;
+	// Step 3
+	for (var i = 1; i <= n; i++) {
+		var s_i = s.charAt(i - 1);
+		// Step 4
+		for (var j = 1; j <= m; j++) {
+			// Check the jagged ld total so far
+			if (i === j && d[i][j] > 4) return n;
+			var t_j = t.charAt(j - 1);
+			var cost = (s_i === t_j) ? 0 : 1; // Step 5
+			// Calculate the minimum
+			var mi = d[i - 1][j] + 1;
+			var b = d[i][j - 1] + 1;
+			var c = d[i - 1][j - 1] + cost;
+			if (b < mi) mi = b;
+			if (c < mi) mi = c;
+			d[i][j] = mi; // Step 6
+		}
+	}
+	// Step 7
+	return d[n][m];
+};
+
+/* Console reporting */
 
 global.ok = function (str) {
 	if (AppOptions.debugmode) {
@@ -117,7 +183,7 @@ global.monitor = function (str, type, flag) {
 	}
 };
 
-/* Tools */
+/* Process arguments */
 
 exports.paseArguments = function (arr) {
 	var opts = {};
@@ -167,38 +233,10 @@ exports.paseArguments = function (arr) {
 	return opts;
 };
 
-exports.toName = function (text) {
-	if (!text) return '';
-	return text.trim();
-};
+/* Commands and Permissions */
 
 exports.stripCommands = function (text) {
 	return ((text.trim().charAt(0) === '/') ? '/' : ((text.trim().charAt(0) === '!') ? ' ' : '')) + text.trim();
-};
-
-exports.addLeftZero = function (num, nz) {
-	var str = num.toString();
-	while (str.length < nz) str = "0" + str;
-	return str;
-};
-
-exports.escapeHTML = function (str) {
-	if (!str) return '';
-	return ('' + str).escapeHTML();
-};
-
-exports.getDateString = function () {
-	var date = new Date();
-	return (Tools.addLeftZero(date.getDate(), 2) + '/' + Tools.addLeftZero(date.getMonth() + 1, 2) + '/' + Tools.addLeftZero(date.getFullYear(), 4) + ' ' + Tools.addLeftZero(date.getHours(), 2) + ':' + Tools.addLeftZero(date.getMinutes(), 2) + ':' + Tools.addLeftZero(date.getSeconds(), 2));
-};
-
-exports.generateRandomNick = function (numChars) {
-	var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-	var str = '';
-	for (var i = 0, l = chars.length; i < numChars; i++) {
-		str += chars.charAt(~~(Math.random() * l));
-	}
-	return str;
 };
 
 exports.getTargetRoom = function (arg) {
@@ -237,6 +275,13 @@ exports.getGroup = function (perm) {
 	return globalPermissions[perm] || true;
 };
 
+/* Time and Dates */
+
+exports.getDateString = function () {
+	var date = new Date();
+	return (Tools.addLeftZero(date.getDate(), 2) + '/' + Tools.addLeftZero(date.getMonth() + 1, 2) + '/' + Tools.addLeftZero(date.getFullYear(), 4) + ' ' + Tools.addLeftZero(date.getHours(), 2) + ':' + Tools.addLeftZero(date.getMinutes(), 2) + ':' + Tools.addLeftZero(date.getSeconds(), 2));
+};
+
 exports.getTimeAgo = function (time, lang) {
 	time = Date.now() - time;
 	time = Math.round(time / 1000); // rounds to nearest second
@@ -266,6 +311,8 @@ exports.getTimeAgo = function (time, lang) {
 	return times.join(', ');
 };
 
+/* File system utils */
+
 exports.watchFile = function () {
 	try {
 		return fs.watchFile.apply(fs, arguments);
@@ -292,6 +339,8 @@ exports.uncacheTree = function (root) {
 		uncache = newuncache;
 	} while (uncache.length > 0);
 };
+
+/* Http utils */
 
 exports.httpGet = function (url, callback) {
 	if (typeof callback !== "function") return;
@@ -335,61 +384,7 @@ exports.uploadToHastebin = function (toUpload, callback) {
 	req.end();
 };
 
-exports.checkConfig = function () {
-	var issue = function (text) {
-		console.log('issue'.yellow + '\t' + text);
-	};
-	if (Config.server && Config.server.substr(-8) === ".psim.us") {
-		issue('WARNING: YOUR SERVER URL ' + Config.server.red + ' SEEMS A CLIENT URL, NOT A SERVER ONE. USE ' + 'node serverconfig.js'.cyan + ' TO GET THE CORRECT SERVER, PORT AND SERVERID VALUES\n');
-	}
-	if (typeof Config.rooms !== 'string' && (typeof Config.rooms !== 'object' || typeof Config.rooms.length !== 'number')) {
-		issue('Config.rooms is not an array');
-		Config.rooms = [];
-	}
-	if (typeof Config.privateRooms !== 'object') {
-		issue('Config.privateRooms is not an object');
-		Config.privateRooms = {};
-	}
-	if (typeof Config.initCmds !== 'object' || typeof Config.initCmds.length !== 'number') {
-		issue('Config.initCmds is not an array');
-		Config.initCmds = [];
-	}
-	if (typeof Config.exceptions !== 'object') {
-		issue('Config.exceptions is not an object');
-		Config.exceptions = {};
-	}
-	if (typeof Config.ranks !== 'object' || typeof Config.ranks.length !== 'number') {
-		issue('Config.ranks is not an array');
-		Config.ranks = [];
-	}
-	if (typeof Config.permissionExceptions !== 'object') {
-		issue('Config.permissionExceptions is not an object');
-		Config.permissionExceptions = {};
-	}
-	if (typeof Config.debug !== 'object') {
-		issue('Config.debug is not an object');
-		Config.debug = {};
-	}
-};
-
-exports.reloadFeature = function (feature) {
-	try {
-		if (!fs.existsSync('./features/' + feature + '/index.js')) return -1;
-		Tools.uncacheTree('./features/' + feature + '/index.js');
-		var f = require('./features/' + feature + '/index.js');
-		if (f.id) {
-			if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
-			Features[f.id] = f;
-			if (typeof Features[f.id].init === "function") Features[f.id].init();
-			info("Feature \"" + f.id + '\" reloaded');
-		} else {
-			return -1;
-		}
-		return false;
-	} catch (e) {
-		return e;
-	}
-};
+/* Languages */
 
 var loadLang = exports.loadLang = function (lang, reloading) {
 	var tradObj = {}, cmdsTra = {}, tempObj = {};
@@ -460,6 +455,8 @@ exports.tryTranslate = function (type, name, lang) {
 	return name;
 };
 
+/* Battle formats and data */
+
 exports.parseAliases = function (format) {
 	format = toId(format);
 	var aliases = Config.formatAliases || {};
@@ -497,433 +494,9 @@ var BattleStatNames = exports.BattleStatNames = {
 	spe: 'Spe'
 };
 
-var BattleTypeChart = exports.BattleTypeChart = {
-	"Bug": {
-		damageTaken: {
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 0,
-			"Fighting": 2,
-			"Fire": 1,
-			"Flying": 1,
-			"Ghost": 0,
-			"Grass": 2,
-			"Ground": 2,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 1,
-			"Steel": 0,
-			"Water": 0
-		},
-		HPivs: {"atk":30, "def":30, "spd":30}
-	},
-	"Dark": {
-		damageTaken: {
-			"Bug": 1,
-			"Dark": 2,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 1,
-			"Fighting": 1,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 2,
-			"Grass": 0,
-			"Ground": 0,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 3,
-			"Rock": 0,
-			"Steel": 0,
-			"Water": 0
-		},
-		HPivs: {}
-	},
-	"Dragon": {
-		damageTaken: {
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 1,
-			"Electric": 2,
-			"Fairy": 1,
-			"Fighting": 0,
-			"Fire": 2,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 2,
-			"Ground": 0,
-			"Ice": 1,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 0,
-			"Water": 2
-		},
-		HPivs: {"atk":30}
-	},
-	"Electric": {
-		damageTaken: {
-			par: 3,
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 2,
-			"Fairy": 0,
-			"Fighting": 0,
-			"Fire": 0,
-			"Flying": 2,
-			"Ghost": 0,
-			"Grass": 0,
-			"Ground": 1,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 2,
-			"Water": 0
-		},
-		HPivs: {"spa":30}
-	},
-	"Fairy": {
-		damageTaken: {
-			"Bug": 2,
-			"Dark": 2,
-			"Dragon": 3,
-			"Electric": 0,
-			"Fairy": 0,
-			"Fighting": 2,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 0,
-			"Ground": 0,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 1,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 1,
-			"Water": 0
-		}
-	},
-	"Fighting": {
-		damageTaken: {
-			"Bug": 2,
-			"Dark": 2,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 1,
-			"Fighting": 0,
-			"Fire": 0,
-			"Flying": 1,
-			"Ghost": 0,
-			"Grass": 0,
-			"Ground": 0,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 1,
-			"Rock": 2,
-			"Steel": 0,
-			"Water": 0
-		},
-		HPivs: {"def":30, "spa":30, "spd":30, "spe":30}
-	},
-	"Fire": {
-		damageTaken: {
-			brn: 3,
-			"Bug": 2,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 2,
-			"Fighting": 0,
-			"Fire": 2,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 2,
-			"Ground": 1,
-			"Ice": 2,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 1,
-			"Steel": 2,
-			"Water": 1
-		},
-		HPivs: {"atk":30, "spa":30, "spe":30}
-	},
-	"Flying": {
-		damageTaken: {
-			"Bug": 2,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 1,
-			"Fairy": 0,
-			"Fighting": 2,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 2,
-			"Ground": 3,
-			"Ice": 1,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 1,
-			"Steel": 0,
-			"Water": 0
-		},
-		HPivs: {"hp":30, "atk":30, "def":30, "spa":30, "spd":30}
-	},
-	"Ghost": {
-		damageTaken: {
-			trapped: 3,
-			"Bug": 2,
-			"Dark": 1,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 0,
-			"Fighting": 3,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 1,
-			"Grass": 0,
-			"Ground": 0,
-			"Ice": 0,
-			"Normal": 3,
-			"Poison": 2,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 0,
-			"Water": 0
-		},
-		HPivs: {"def":30, "spd":30}
-	},
-	"Grass": {
-		damageTaken: {
-			powder: 3,
-			"Bug": 1,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 2,
-			"Fairy": 0,
-			"Fighting": 0,
-			"Fire": 1,
-			"Flying": 1,
-			"Ghost": 0,
-			"Grass": 2,
-			"Ground": 2,
-			"Ice": 1,
-			"Normal": 0,
-			"Poison": 1,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 0,
-			"Water": 2
-		},
-		HPivs: {"atk":30, "spa":30}
-	},
-	"Ground": {
-		damageTaken: {
-			sandstorm: 3,
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 3,
-			"Fairy": 0,
-			"Fighting": 0,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 1,
-			"Ground": 0,
-			"Ice": 1,
-			"Normal": 0,
-			"Poison": 2,
-			"Psychic": 0,
-			"Rock": 2,
-			"Steel": 0,
-			"Water": 1
-		},
-		HPivs: {"spa":30, "spd":30}
-	},
-	"Ice": {
-		damageTaken: {
-			hail: 3,
-			frz: 3,
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 0,
-			"Fighting": 1,
-			"Fire": 1,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 0,
-			"Ground": 0,
-			"Ice": 2,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 1,
-			"Steel": 1,
-			"Water": 0
-		},
-		HPivs: {"atk":30, "def":30}
-	},
-	"Normal": {
-		damageTaken: {
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 0,
-			"Fighting": 1,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 3,
-			"Grass": 0,
-			"Ground": 0,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 0,
-			"Water": 0
-		}
-	},
-	"Poison": {
-		damageTaken: {
-			psn: 3,
-			tox: 3,
-			"Bug": 2,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 2,
-			"Fighting": 2,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 2,
-			"Ground": 1,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 2,
-			"Psychic": 1,
-			"Rock": 0,
-			"Steel": 0,
-			"Water": 0
-		},
-		HPivs: {"def":30, "spa":30, "spd":30}
-	},
-	"Psychic": {
-		damageTaken: {
-			"Bug": 1,
-			"Dark": 1,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 0,
-			"Fighting": 2,
-			"Fire": 0,
-			"Flying": 0,
-			"Ghost": 1,
-			"Grass": 0,
-			"Ground": 0,
-			"Ice": 0,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 2,
-			"Rock": 0,
-			"Steel": 0,
-			"Water": 0
-		},
-		HPivs: {"atk":30, "spe":30}
-	},
-	"Rock": {
-		damageTaken: {
-			sandstorm: 3,
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 0,
-			"Fairy": 0,
-			"Fighting": 1,
-			"Fire": 2,
-			"Flying": 2,
-			"Ghost": 0,
-			"Grass": 1,
-			"Ground": 1,
-			"Ice": 0,
-			"Normal": 2,
-			"Poison": 2,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 1,
-			"Water": 1
-		},
-		HPivs: {"def":30, "spd":30, "spe":30}
-	},
-	"Steel": {
-		damageTaken: {
-			psn: 3,
-			tox: 3,
-			sandstorm: 3,
-			"Bug": 2,
-			"Dark": 0,
-			"Dragon": 2,
-			"Electric": 0,
-			"Fairy": 2,
-			"Fighting": 1,
-			"Fire": 1,
-			"Flying": 2,
-			"Ghost": 0,
-			"Grass": 2,
-			"Ground": 1,
-			"Ice": 2,
-			"Normal": 2,
-			"Poison": 3,
-			"Psychic": 2,
-			"Rock": 2,
-			"Steel": 2,
-			"Water": 0
-		},
-		HPivs: {"spd":30}
-	},
-	"Water": {
-		damageTaken: {
-			"Bug": 0,
-			"Dark": 0,
-			"Dragon": 0,
-			"Electric": 1,
-			"Fairy": 0,
-			"Fighting": 0,
-			"Fire": 2,
-			"Flying": 0,
-			"Ghost": 0,
-			"Grass": 1,
-			"Ground": 0,
-			"Ice": 2,
-			"Normal": 0,
-			"Poison": 0,
-			"Psychic": 0,
-			"Rock": 0,
-			"Steel": 2,
-			"Water": 2
-		},
-		HPivs: {"atk":30, "def":30, "spa":30}
-	}
-};
+var BattleTypeChart = exports.BattleTypeChart = require('./data/typechart.js');
+
+/* Teams - Pokemon Showdown format */
 
 var teamToJSON = exports.teamToJSON = function (text) {
 	text = text.split("\n");
@@ -1374,38 +947,60 @@ exports.exportTeam = function (team) {
 	return text;
 };
 
-exports.levenshtein = function (s, t, l) { // s = string 1, t = string 2, l = limit
-	// Original levenshtein distance function by James Westgate, turned out to be the fastest
-	var d = []; // 2d matrix
-	// Step 1
-	var n = s.length;
-	var m = t.length;
-	if (n === 0) return m;
-	if (m === 0) return n;
-	if (l && Math.abs(m - n) > l) return Math.abs(m - n);
-	// Create an array of arrays in javascript (a descending loop is quicker)
-	for (var i = n; i >= 0; i--) d[i] = [];
-	// Step 2
-	for (var i = n; i >= 0; i--) d[i][0] = i;
-	for (var j = m; j >= 0; j--) d[0][j] = j;
-	// Step 3
-	for (var i = 1; i <= n; i++) {
-		var s_i = s.charAt(i - 1);
-		// Step 4
-		for (var j = 1; j <= m; j++) {
-			// Check the jagged ld total so far
-			if (i === j && d[i][j] > 4) return n;
-			var t_j = t.charAt(j - 1);
-			var cost = (s_i === t_j) ? 0 : 1; // Step 5
-			// Calculate the minimum
-			var mi = d[i - 1][j] + 1;
-			var b = d[i][j - 1] + 1;
-			var c = d[i - 1][j - 1] + cost;
-			if (b < mi) mi = b;
-			if (c < mi) mi = c;
-			d[i][j] = mi; // Step 6
-		}
+/* Other tools */
+
+exports.checkConfig = function () {
+	var issue = function (text) {
+		console.log('issue'.yellow + '\t' + text);
+	};
+	if (Config.server && Config.server.substr(-8) === ".psim.us") {
+		issue('WARNING: YOUR SERVER URL ' + Config.server.red + ' SEEMS A CLIENT URL, NOT A SERVER ONE. USE ' + 'node serverconfig.js'.cyan + ' TO GET THE CORRECT SERVER, PORT AND SERVERID VALUES\n');
 	}
-	// Step 7
-	return d[n][m];
+	if (typeof Config.rooms !== 'string' && (typeof Config.rooms !== 'object' || typeof Config.rooms.length !== 'number')) {
+		issue('Config.rooms is not an array');
+		Config.rooms = [];
+	}
+	if (typeof Config.privateRooms !== 'object') {
+		issue('Config.privateRooms is not an object');
+		Config.privateRooms = {};
+	}
+	if (typeof Config.initCmds !== 'object' || typeof Config.initCmds.length !== 'number') {
+		issue('Config.initCmds is not an array');
+		Config.initCmds = [];
+	}
+	if (typeof Config.exceptions !== 'object') {
+		issue('Config.exceptions is not an object');
+		Config.exceptions = {};
+	}
+	if (typeof Config.ranks !== 'object' || typeof Config.ranks.length !== 'number') {
+		issue('Config.ranks is not an array');
+		Config.ranks = [];
+	}
+	if (typeof Config.permissionExceptions !== 'object') {
+		issue('Config.permissionExceptions is not an object');
+		Config.permissionExceptions = {};
+	}
+	if (typeof Config.debug !== 'object') {
+		issue('Config.debug is not an object');
+		Config.debug = {};
+	}
+};
+
+exports.reloadFeature = function (feature) {
+	try {
+		if (!fs.existsSync('./features/' + feature + '/index.js')) return -1;
+		Tools.uncacheTree('./features/' + feature + '/index.js');
+		var f = require('./features/' + feature + '/index.js');
+		if (f.id) {
+			if (Features[f.id] && typeof Features[f.id].destroy === "function") Features[f.id].destroy();
+			Features[f.id] = f;
+			if (typeof Features[f.id].init === "function") Features[f.id].init();
+			info("Feature \"" + f.id + '\" reloaded');
+		} else {
+			return -1;
+		}
+		return false;
+	} catch (e) {
+		return e;
+	}
 };

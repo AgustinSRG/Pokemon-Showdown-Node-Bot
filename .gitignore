@@ -16,6 +16,9 @@ test-data
 logs
 *.log
 
+#Data
+!data/typechart.js
+
 #Games
 !data/games-words-example.js
 !data/trivia-data-example.js
