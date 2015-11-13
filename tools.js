@@ -293,6 +293,25 @@ exports.uncacheTree = function (root) {
 	} while (uncache.length > 0);
 };
 
+exports.httpGet = function (url, callback) {
+	if (typeof callback !== "function") return;
+	var http = require("http");
+	http.get(url, function (res) {
+		var data = '';
+		res.on('data', function (part) {
+			data += part;
+		});
+		res.on('end', function () {
+			callback(data);
+		});
+		res.on('error', function (e) {
+			callback(null, e);
+		});
+	}).on('error', function (e) {
+		callback(null, e);
+	});
+};
+
 exports.uploadToHastebin = function (toUpload, callback) {
 	var reqOpts = {
 		hostname: "hastebin.com",

@@ -24,6 +24,42 @@ exports.commands = {
 
 	usagestats: 'usage',
 	usage: function () {
-		this.restrictReply(this.trad('stats') + ': http://www.smogon.com/stats/', 'info');
+		var generateUsageLink = function (monthmod) {
+			var now = new Date();
+			var year = now.getFullYear();
+			var month = now.getMonth();
+			if (monthmod) month += monthmod;
+			while (month < 0) {
+				month += 11;
+				year--;
+			}
+			while (month > 11) {
+				month -= 11;
+				year++;
+			}
+			return "http://www.smogon.com/stats/" + Tools.addLeftZero(year, 4) + "-" + Tools.addLeftZero(month + 1, 2) + "/";
+		};
+		var getUsageLink = function (callback) {
+			var realLink = generateUsageLink(-1);
+			var currLink = Settings.settings.usagelink;
+			if (currLink !== realLink) {
+				Tools.httpGet(realLink, function (data, err) {
+					if (!err && data.indexOf("<title>404 Not Found</title>") < 0) {
+						Settings.settings.usagelink = realLink;
+						Settings.save();
+						debug("Usage link updated: " + Settings.settings.usagelink);
+						callback(realLink);
+					} else {
+						callback(currLink);
+					}
+				});
+			} else {
+				callback(currLink);
+			}
+		};
+		getUsageLink(function (link) {
+			if (!link) link = generateUsageLink(-2);
+			return this.restrictReply(this.trad('stats') + ': ' + link, 'info');
+		}.bind(this));
 	}
 };
