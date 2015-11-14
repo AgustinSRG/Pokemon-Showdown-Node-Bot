@@ -27,25 +27,13 @@ function parseDeinit (room) {
 }
 
 function parseJoin (room, by) {
-	if (!Config.groupchats[room].roomAuth) return;
-	var user = toId(by);
-	if (user === toId(Bot.status.nickName)) return;
-	for (var group in Config.groupchats[room].roomAuth) {
-		if (!Config.groupchats[room].roomAuth[group] || !Config.groupchats[room].roomAuth[group].length) continue;
-		for (var i = 0; i < Config.groupchats[room].roomAuth[group].length; i++) {
-			if (typeof Config.groupchats[room].roomAuth[group][i] === "string") {
-				if (user === Config.groupchats[room].roomAuth[group][i]) {
-					if (!Tools.equalOrHigherRank(by.charAt(0), group)) Bot.say(room, "/roompromote " + user + "," + group);
-					return;
-				}
-			} else if (typeof Config.groupchats[room].roomAuth[group][i] === "object" && (Config.groupchats[room].roomAuth[group][i] instanceof RegExp)) {
-				if (Config.groupchats[room].roomAuth[group][i].test(user)) {
-					if (!Tools.equalOrHigherRank(by.charAt(0), group)) Bot.say(room, "/roompromote " + user + "," + group);
-					return;
-				}
-			}
-		}
-	}
+	if (!Settings.settings.autopromote) return;
+	if (!Settings.settings.autopromote[room]) return;
+	var autoPromotion = Settings.settings.autopromote[room];
+	if (!autoPromotion.enabled) return;
+	var userid = toId(by);
+	if (autoPromotion.users && autoPromotion.users[userid] && !Tools.equalOrHigherRank(by.charAt(0), autoPromotion.users[userid])) return Bot.say(room, '/roompromote ' + userid + "," + autoPromotion.users[userid]);
+	if (autoPromotion.all && !Tools.equalOrHigherRank(by.charAt(0), autoPromotion.all)) return Bot.say(room, '/roompromote ' + userid + "," + autoPromotion.all);
 }
 
 var intervalJoin = exports.intervalJoin = function () {
@@ -71,16 +59,11 @@ exports.init = function () {
 };
 
 exports.parse = function (room, message, isIntro, spl) {
-	if (!isConfigured(room)) return;
 	if (exports.ignored[room]) return;
-	if (spl[0] === 'init') parseInit(room);
-	if (spl[0] === 'deinit') parseDeinit(room);
-	if (isIntro) return;
-	switch (spl[0]) {
-		case 'J': case 'j':
-			parseJoin(room, spl[1]);
-			break;
-	}
+	if (!isIntro && spl[0] === 'J' || spl[0] === 'j') return parseJoin(room, spl[1]);
+	if (!isConfigured(room)) return;
+	if (spl[0] === 'init') return parseInit(room);
+	if (spl[0] === 'deinit') return parseDeinit(room);
 };
 
 exports.destroy = function () {

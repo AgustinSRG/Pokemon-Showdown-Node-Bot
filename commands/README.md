@@ -260,6 +260,13 @@ Commands for auto-invite feature
 Group Chats
 ------------
 
+Automated Promotion
+
+ - `setautorank [on/off]` - Enable or disable automated promotion in a room
+ - `autorank [rank/off]` - Set the autopromotion rank for all users when joining the room
+ - `autorank [user], [rank/deauth]` - Set the autopromotion rank for a single user
+ - `listautorank` - Upload the autopromotion list to Hastebin
+
 Developing commands for GroupChats feature
 
  - `ignoregroupchat [groupchat]` - temporarily ignore a groupchat (to leave a groupchat). Then you must edit the config to make it permanent
