@@ -156,5 +156,7 @@ var reportSeen = exports.reportSeen = function (user, room, action, args) {
 	seen[userid] = dSeen;
 };
 
+exports.lockdown = false;
+
 exports.package = require('./package.json');
 ok('Loaded Settings. Bot version: ' + exports.package.version);

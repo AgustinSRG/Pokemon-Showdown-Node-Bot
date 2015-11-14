@@ -47,6 +47,11 @@ exports.parse = function (room, message, isIntro, spl) {
 	}
 };
 
+exports.readyToDie = function () {
+	var battles = Object.keys(BattleBot.data);
+	if (battles.length) throw new Error("There are " + battles.length + " battles in progress");
+};
+
 exports.destroy = function () {
 	LadderManager.destroy();
 	if (Features[exports.id]) delete Features[exports.id];

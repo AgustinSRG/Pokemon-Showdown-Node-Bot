@@ -76,7 +76,7 @@ exports.commands = {
 				roomArr.push("<<" + i + ">> (" + Bot.rooms[i].type.charAt(0).toLowerCase() + (Settings.isSleeping(i) ? "s" : "r") + (botIdent.charAt(0) !== " " ? botIdent.charAt(0) : "u") + (Config.privateRooms[i] ? "h" : "p") + ")");
 			}
 			if (roomArr.length) rooms = roomArr.join(', ');
-			return this.pmReply(this.splitReply("**Bot status** | Username: ``" + Bot.status.nickName + "`` | Rooms: " + (rooms || "(none)")));
+			return this.pmReply(this.splitReply("**Bot status** |" + (Settings.lockdown ? " **Lockdown** |" : "") + " Username: ``" + Bot.status.nickName + "`` | Rooms: " + (rooms || "(none)")));
 		}
 		var tarRoom = toRoomid(arg);
 		var roomObj = this.getRoom(tarRoom);
@@ -198,10 +198,39 @@ exports.commands = {
 		});
 	},
 
-	exit: 'kill',
+	endlockdown: 'lockdown',
+	lockdown: function (arg, by, room, cmd) {
+		if (!this.isExcepted) return false;
+		if (cmd === 'endlockdown') {
+			if (!Settings.lockdown) return this.reply("Not in lockdown mode");
+			Settings.lockdown = false;
+			this.reply("The lockdown was canceled");
+		} else {
+			if (Settings.lockdown) return this.reply("Already in lockdown mode");
+			Settings.lockdown = true;
+			this.reply("Bot is now in lockdown mode");
+		}
+	},
+
+	forcekill: 'kill',
 	kill: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
-		console.log('Forced Exit. By: ' + by);
-		process.exit();
+		if (cmd === "forcekill") {
+			console.log('Forced Kill. By: ' + by);
+			process.exit();
+		} else {
+			if (!Settings.lockdown) return this.reply("To kill the process you must use ``" + this.cmdToken + "lockdown`` first");
+			for (var f in Features) {
+				if (typeof Features[f].readyToDie === "function") {
+					try {
+						Features[f].readyToDie();
+					} catch (e) {
+						return this.reply("Feature \"" + f + "\" not ready | " + sys.inspect(e) + " | Use ``" + this.cmdToken + "forcekill`` if you want to kill the process anyway");
+					}
+				}
+			}
+			console.log('Kill. By: ' + by);
+			process.exit();
+		}
 	}
 };

@@ -20,7 +20,7 @@ exports.parse = function (room, message, isIntro, spl) {
 			if (canChallenge(i, nBattles)) {
 				var format = exports.challenges.challengesFrom[i];
 
-				if (!(format in Formats) || !Formats[format].chall) {
+				if (Settings.lockdown || !(format in Formats) || !Formats[format].chall) {
 					Bot.say('', '/reject ' + i);
 					continue;
 				}

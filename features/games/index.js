@@ -109,6 +109,7 @@ exports.getTitle = function (id) {
 };
 
 exports.newGame = function (room, type, args) {
+	if (Settings.lockdown) return {err: true};
 	if (Games[room]) return {err: true};//Another game is already started
 	var builder = null;
 	for (var i in Builders) {
@@ -139,6 +140,11 @@ exports.init = function () {
 };
 
 exports.parse = null;
+
+exports.readyToDie = function () {
+	var gamesKeys = Object.keys(Games);
+	if (gamesKeys.length) throw new Error("Active games in: " + gamesKeys.join(', '));
+};
 
 exports.destroy = function () {
 	Settings.deleteParseFilter("games");
