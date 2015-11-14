@@ -84,14 +84,22 @@ Commands for developing (only for excepted users)
 
  - `eval` or `js` - Execute arbitrary JavaScript
  - `send` - Send anything to the server
+ - `reload [commands/config/features/laguages]` - Hotpatch source files
+ - `updategit` - Fast forward from git repo
+
+CommandParser developing commands
+
  - `ignore [user]` - Bot will ignore an user
  - `unignore [user]` - Stop ignoring an user
  - `sleep [room]` - Change the room status to `Sleeping`, to disable bot commands in a room
  - `wake [room]` - Change the room status to `Ready`, to re-enable bot  commands in a room
  - `status` or `roomstatus [room]` - Show the current status. Abbreviations: [c - chat, b - battle][r - ready, s - sleeping][Bot group][p - public, h - hidden]. Example: crup = chat, ready, user, private
- - `reload [commands/config/features/laguages]` - Hotpatch source files
- - `updategit` - Fast forward from git repo
- - `kill` - End the process
+
+Commands for terminating the process (for restarting the bot)
+
+ - `lockdown` - Set lockdown mode, use `endlockdown` to revert it
+ - `kill` - End the process after using lockdown
+ - `forcekill` - Kill the process
 
 Moderation
 ------------
