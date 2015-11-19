@@ -44,7 +44,8 @@ function lint (jsHintOptions, jscsOptions) {
 	return lazypipe()
 		.pipe(cachedJsHint)
 		.pipe(jscs.bind(jscs, {configPath: jscsOptions}))
-		.pipe(jscs.reporter.bind(jscs.reporter))();
+		.pipe(jscs.reporter.bind(jscs.reporter))
+		.pipe(jscs.reporter.bind(jscs.reporter, 'fail'))();
 }
 
 var jsHintOptions = {};
@@ -82,7 +83,7 @@ var lintData = [
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.base
 	}, {
-		dirs: ['./config-example.js'],
+		dirs: ['./config-example.js', './data/*-example.js'],
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.config
 	}, {

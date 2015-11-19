@@ -1,7 +1,7 @@
 /*
 * Pokemon movesets for Kunc game
-* 
-* This file was automatically generated from 
+*
+* This file was automatically generated from
 * battle factory sets (Pokemon Showdown)
 * https://raw.githubusercontent.com/Zarel/Pokemon-Showdown/master/data/factory-sets.json
 */

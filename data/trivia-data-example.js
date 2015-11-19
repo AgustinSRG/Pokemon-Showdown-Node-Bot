@@ -5,7 +5,7 @@
 * Add here your questions (q) and answers (a) in the same format as the example
 *
 * Questions (q) must be strings
-* Answers (a) can be strings for single answers 
+* Answers (a) can be strings for single answers
 * or Arrays (For example ["answer1", "answer2"]) for multiple answers
 */
 
@@ -165,5 +165,5 @@ exports.questions = [
 	{q: "Name one of the 3 starters in the Unova Region.", a: ["Snivy", "Oshawott", "Tepig"]},
 	{q: "Name one of Hoenn's Psychic type gym leaders", a: ["Tate", "Liza"]},
 	{q: "Name a Pokemon that has a BST of 590", a: ["Alakazam Mega", "Altaria Mega", "Kangaskhan Mega", "Slowbro Mega", "Mega Alakazam", "Mega Altaria", "Mega Kangaskhan", "Mega Slowbro"]},
-	{q: "What's the first pokemon ever created?", a: "Rhydon"},
+	{q: "What's the first pokemon ever created?", a: "Rhydon"}
 ];

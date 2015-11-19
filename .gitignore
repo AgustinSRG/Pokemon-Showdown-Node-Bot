@@ -20,9 +20,7 @@ logs
 !data/typechart.js
 
 #Games
-!data/games-words-example.js
-!data/trivia-data-example.js
-!data/kunc-sets-example.js
+!data/*-example.js
 
 # Runtime data
 pids
