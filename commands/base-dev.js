@@ -223,7 +223,8 @@ exports.commands = {
 			for (var f in Features) {
 				if (typeof Features[f].readyToDie === "function") {
 					try {
-						Features[f].readyToDie();
+						var err = Features[f].readyToDie();
+						if (err) return this.reply("Feature \"" + f + "\" not ready | " + err + " | Use ``" + this.cmdToken + "forcekill`` if you want to kill the process anyway");
 					} catch (e) {
 						return this.reply("Feature \"" + f + "\" not ready | " + sys.inspect(e) + " | Use ``" + this.cmdToken + "forcekill`` if you want to kill the process anyway");
 					}

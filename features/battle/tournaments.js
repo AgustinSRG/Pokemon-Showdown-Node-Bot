@@ -31,7 +31,7 @@ exports.parse = function (room, message, isIntro, spl) {
 			} catch (e){}
 			break;
 		case 'updateEnd':
-			if (Settings.settings['jointours'] && Settings.settings['jointours'][room] && tourData[room].format && !tourData[room].isJoined && !tourData[room].isStarted) {
+			if (!Settings.lockdown && Settings.settings['jointours'] && Settings.settings['jointours'][room] && tourData[room].format && !tourData[room].isJoined && !tourData[room].isStarted) {
 				var format = toId(tourData[room].format);
 				if (Formats[format] && !Formats[format].team) {
 					Bot.say(room, '/tour join');
@@ -39,13 +39,13 @@ exports.parse = function (room, message, isIntro, spl) {
 					if (Features['battle'].TeamBuilder.hasTeam(tourData[room].format)) Bot.say(room, '/tour join');
 				}
 			}
-			if (tourData[room].challenges && tourData[room].challenges.length) {
+			if (!Settings.lockdown && tourData[room].challenges && tourData[room].challenges.length) {
 				if (canSendCommands(room)) {
 					var team = Features['battle'].TeamBuilder.getTeam(tourData[room].format);
 					if (team) Bot.say(room, '/useteam ' + team);
 					for (var i = 0; i < tourData[room].challenges.length; i++) Bot.say(room, '/tour challenge ' + tourData[room].challenges[i]);
 				}
-			} else if (tourData[room].challenged) {
+			} else if (!Settings.lockdown && tourData[room].challenged) {
 				if (canSendCommands(room)) {
 					var team = Features['battle'].TeamBuilder.getTeam(tourData[room].format);
 					if (team) Bot.say(room, '/useteam ' + team);

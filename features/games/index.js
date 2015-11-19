@@ -143,7 +143,7 @@ exports.parse = null;
 
 exports.readyToDie = function () {
 	var gamesKeys = Object.keys(Games);
-	if (gamesKeys.length) throw new Error("Active games in: " + gamesKeys.join(', '));
+	if (gamesKeys.length) return ("Active games in: " + gamesKeys.join(', '));
 };
 
 exports.destroy = function () {

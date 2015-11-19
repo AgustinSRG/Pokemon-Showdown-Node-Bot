@@ -203,6 +203,7 @@ exports.commands = {
 	sb: 'searchbattle',
 	searchbattle: function (arg, by, room, cmd) {
 		if (!this.can('searchbattle')) return false;
+		if (Settings.lockdown) return;
 		if (!arg || !arg.length) return this.reply(this.trad('e1'));
 		var format = Tools.parseAliases(arg);
 		if (!Formats[format] || !Formats[format].ladder) return this.reply(this.trad('e21') + ' ' + format + ' ' + this.trad('e22'));
@@ -233,6 +234,7 @@ exports.commands = {
 	chall: 'challenge',
 	challenge: function (arg, by, room, cmd) {
 		if (!this.can('challenge')) return false;
+		if (Settings.lockdown) return;
 		var args = arg.split(",");
 		if (cmd in {'challme': 1, 'challengeme': 1}) {
 			args = [by, arg];
@@ -253,6 +255,7 @@ exports.commands = {
 	jt: 'jointour',
 	jointour: function (arg, by, room, cmd) {
 		if (!this.can('jointour')) return false;
+		if (Settings.lockdown) return;
 		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
 		if (!Features['battle'].TourManager.tourData[room] || !Features['battle'].TourManager.tourData[room].format) return this.reply(this.trad('e1'));
 		if (cmd === 'checktour') return this.say(room, '/tour getupdate');
