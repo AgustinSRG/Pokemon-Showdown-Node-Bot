@@ -17,7 +17,7 @@ exports.port = 8000;
 
 exports.serverid = 'showdown';
 ```
- - Maybe you want to use a [Registered Server](http://pokemonshowdown.com/servers/), then open a shell console, use cd to reach the directory of your bot and run `node serverconfig.js` to get the **server**, **port** and **serverid** paramenters.
+ - Maybe you want to use a [Registered Server](http://pokemonshowdown.com/servers/), then open a shell console, use cd to reach the directory of your bot and run `node getserver.js` to get the **server**, **port** and **serverid** paramenters.
  - Or, you want to use an unregistered server, then you must edit manually the parameters.
 
 
@@ -73,11 +73,14 @@ Giving yourself full access is a crucial step, because only if you have full acc
 To do this, in `exports.exceptions` you must add your user id (Your PS name without any character except numbers and lowercase letters), like in this example:
 ```js
 exports.exceptions = {
-	'ecuacion': true
+	'ecuacion': true,
+	'excepteduser': true
 };
 ```
 
 If the Pokemon Showdown server for your bot has custom ranks, edit `exports.ranks` adding them. If a symbol is not in that array, it is interpreted as regular user.
+
+Edit `exports.globalPermissions` if the server has custom symbols for basic groups (Administrator, Room Owner, Moderator, Driver, Voice)
 
 Commands configuration
 ------------
@@ -86,18 +89,24 @@ Commands configuration
 
 `exports.defaultPermission` is the default rank for configurable commands permissions.
 
-You can also configure that permissions adding exceptions for each command in `exports.permissionExceptions`
+You can configure that permissions adding exceptions for each command in `exports.permissionExceptions`
+
+You can use a custom botguide (for `guide` command) editting `exports.botguide` option
+
+When you pm the bot but don't use a command, it replies you the string `exports.pmhelp`, useful for moderation bots because the users may not know that it's a bot. Example:
+```js
+exports.pmhelp = "Hi, I'm a bot. Use .help to view a command guide. Contact other staff member for any request";
+```
 
 Language
 ------------
 
-You can change bot language changing `exports.language`. Note that the language file in `./languages/` must exist.
+You can change bot language changing `exports.language`. Note that the language folder in `./languages/` must exist.
 
 Configuration for console messages
 ------------
 
-With `exports.debug` you can choose which console messages are shown and which are not. Anyway there are 4 basic modes for this:
- - Producction mode (only show important messages)
+With `exports.debug` you can choose which console messages are shown and which are not.
 ```js
 exports.debug = {
 	/* Basic messages - Production Mode */
@@ -121,78 +130,6 @@ exports.debug = {
 	sent: false
 };
 ```
- - Monitoring mode (also show monitor and status messages)
-```js
-exports.debug = {
-	/* Basic messages - Production Mode */
-	error: true,
-	ok: true,
-	errlog: true,
-	info: true,
-	room: true,
-
-	/* Monitoring */
-	monitor: true,
-	battle: true,
-	status: true,
-
-	/* Debug Mode */
-	debug: false,
-	cmdr: false,
-
-	/* Low Level */
-	recv: false,
-	sent: false
-};
-```
- - Debug mode (recommended for deveopment)
-```js
-exports.debug = {
-	/* Basic messages - Production Mode */
-	error: true,
-	ok: true,
-	errlog: true,
-	info: true,
-	room: true,
-
-	/* Monitoring */
-	monitor: true,
-	battle: true,
-	status: true,
-
-	/* Debug Mode */
-	debug: true,
-	cmdr: true,
-
-	/* Low Level */
-	recv: false,
-	sent: false
-};
-```
- - Low level mode (show all messages)
-```js
-exports.debug = {
-	/* Basic messages - Production Mode */
-	error: true,
-	ok: true,
-	errlog: true,
-	info: true,
-	room: true,
-
-	/* Monitoring */
-	monitor: true,
-	battle: true,
-	status: true,
-
-	/* Debug Mode */
-	debug: true,
-	cmdr: true,
-
-	/* Low Level */
-	recv: true,
-	sent: true
-};
-```
 
 Moderation (Optional)
 ------------
@@ -202,6 +139,7 @@ With `exports.moderation` you can configure the moderation feature
 - **allowmute**: Enable or disable automated moderation feature
 - **disableModNote**: Disable `/modnote` for autoban commands
 - **MOD_CONSTS**: Constants for caps, flodding and stretching
+- **values**: Mod values for each infraction (corresponding to punishments levels)
 - **modDefault**: Default config for moderation options. `true` or `1` to enable and `false` or `0` to disable them.
 - **punishments**: Array of punishments commands, for example `warn`, `mute`, `hourmute` and `roomban`.
 - **psServersExcepts**: Servers ids excepted from Pokemon showdown private servers moderation. Include your server id if you are uning the bot in other server.
