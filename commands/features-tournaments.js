@@ -2,7 +2,12 @@
 	Tournaments Commands
 */
 
-Settings.addPermissions(['tournament']);
+Settings.addPermissions(['tournament', 'rank']);
+
+function tryGetRoomName (room) {
+	if (!Bot.rooms[room]) return room;
+	return Bot.rooms[room].title;
+}
 
 exports.commands = {
 	tourhelp: function (arg, by, room, cmd) {
@@ -158,5 +163,83 @@ exports.commands = {
 				delete Features['tours'].tournaments[room];
 			}
 		}.bind(this), 2500);
+	},
+
+	rank: 'leaderboard',
+	ranking: 'leaderboard',
+	top: 'leaderboard',
+	leaderboards: 'leaderboard',
+	leaderboard: function (arg, by, room, cmd) {
+		var args = arg.split(",");
+		var opt = cmd;
+		if (cmd in {leaderboards: 1, leaderboard: 1}) {
+			opt = toId(args.shift());
+			cmd += " " + opt + ",";
+		}
+		switch (opt) {
+			case "rank":
+			case "ranking":
+				var tarRoom = room;
+				if (this.roomType !== "chat" && args.length < 2) return this.restrictReply("Usage: " + this.cmdToken + cmd + " [room], [user]", "rank");
+				if (args.length > 1) tarRoom = toRoomid(args.shift());
+				if (!tarRoom) return this.restrictReply("Usage: " + this.cmdToken + cmd + " [room], [user]", "rank");
+				if (!Features['tours'].Leaderboards.isConfigured(tarRoom)) return this.restrictReply("Leaderboards is not enabled for room " + tarRoom, "rank");
+				var target = toId(args[0] || by);
+				if (target.length > 18) return this.restrictReply("Invalid username");
+				var rank = Features['tours'].Leaderboards.getPoints(tarRoom, target);
+				var txt = "Ranking of **" + Tools.toName(rank.name) + "** in __" + Tools.toName(tryGetRoomName(tarRoom)) + "__ | ";
+				txt += "Points: " + rank.points + " | ";
+				txt += "Winner: " + rank.wins + " times, " + "Finalist: " + rank.finals + " times, Semifinalist: " + rank.semis + " times. ";
+				txt += "Total: " + rank.tours + " tours played, " + rank.battles + " battles won.";
+				this.restrictReply(txt, "rank");
+				break;
+			case "top":
+				var tarRoom = room;
+				if (this.roomType !== "chat") return this.restrictReply("Usage: " + this.cmdToken + cmd + " [room]", "rank");
+				if (args.length > 0) tarRoom = toRoomid(args[0]) || room;
+				if (!Features['tours'].Leaderboards.isConfigured(tarRoom)) return this.restrictReply("Leaderboards is not enabled for room " + tarRoom, "rank");
+				var top = Features['tours'].Leaderboards.getTop(tarRoom);
+				if (!top || !top.length) return this.restrictReply("There are not regsitered tornaments yet for room " + tarRoom, "rank");
+				var topResults = [];
+				for (var i = 0; i < 5 && i < top.length; i++) {
+					topResults.push("__#" + (i + 1) + "__ **" + Tools.toName(top[i][0]) + "** (" + top[i][6] + ")");
+				}
+				this.restrictReply("**" + Tools.toName(tryGetRoomName(tarRoom)) + "** | " + topResults.join(", "), "rank");
+				break;
+			case "table":
+				if (!this.isRanked('roomowner')) return false;
+				var tarRoom = room;
+				if (this.roomType !== "chat") return this.reply("Usage: " + this.cmdToken + cmd + " [room]");
+				if (args.length) tarRoom = toRoomid(args[0]) || room;
+				if (!tarRoom) return this.reply("Usage: " + this.cmdToken + cmd + " [room]");
+				if (!Features['tours'].Leaderboards.isConfigured(tarRoom)) return this.reply("Leaderboards is not enabled for room " + tarRoom);
+				var size = args[1] ? parseInt(args[1]) : 100;
+				if (!size || size < 0) return this.reply("Usage: " + this.cmdToken + cmd + " [room], [size]");
+				var table = Features['tours'].Leaderboards.getTable(tarRoom, size);
+				if (!table) return this.reply("There are not regsitered tornaments yet for room " + tarRoom);
+				Tools.uploadToHastebin(table, function (r, link) {
+					if (r) return this.pmReply("Leaderboards table ("  + tarRoom + '): ' + link);
+					else this.pmReply("Error uploading leaderboards table to Hastebin");
+				}.bind(this));
+				break;
+			case "reset":
+				if (!this.isExcepted) return false;
+				if (args.length < 1 || !toId(args[0])) return this.reply("Usage: " + this.cmdToken + cmd + " [room]");
+				var tarRoom = toRoomid(args[0]);
+				var code = Features['tours'].Leaderboards.getResetHashCode(tarRoom);
+				if (!code) return this.reply("There are not regsitered tornaments yet for room " + tarRoom);
+				this.reply("Use ``" + this.cmdToken + this.handler + " confirmreset, " + code + "`` to confirm the leaderboars data reset for room " + room);
+				break;
+			case "confirmreset":
+				if (!this.isExcepted) return false;
+				if (args.length < 1 || !toId(args[0])) return this.reply("Usage: " + this.cmdToken + cmd + " [hashcode]");
+				var code = args[0].trim();
+				var r =  Features['tours'].Leaderboards.execResetHashCode(code);
+				if (!r) return this.reply("Invalid hashcode");
+				this.reply("Leaderboars data for room __" + r + "__ " + "was resetted");
+				break;
+			default:
+				this.restrictReply("Unknown option. Usage: " + this.cmdToken + this.handler + " [rank/top/table/reset]", "rank");
+		}
 	}
 };
