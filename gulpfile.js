@@ -13,9 +13,8 @@ var jshintStylish = require('jshint-stylish');
 
 var globals = {};
 var globalList = [
-	'Bot', 'CommandParser', 'Config', 'DataDownloader', 'Features', 'Formats', 'Settings', 'Tools',
-	'colors', 'sys', 'fs', 'path', 'PSClient',
-	'AppOptions', 'reloadConfig', 'reloadFeatures',
+	'Bot', 'AppOptions', 'CommandParser', 'Config', 'DataDownloader', 'Features', 'Formats', 'Settings', 'Tools',
+	'colors', 'sys', 'fs', 'path', 'PSClient', 'reloadFeatures',
 	'toId', 'toRoomid', 'ok', 'info', 'error', 'errlog', 'debug', 'cmdr', 'recv', 'sent', 'monitor'
 ];
 globalList.forEach(function (identifier) {globals[identifier] = false;});

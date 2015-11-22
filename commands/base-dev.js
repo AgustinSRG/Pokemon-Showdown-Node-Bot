@@ -146,9 +146,18 @@ exports.commands = {
 				this.reply('Data files reloaded');
 				break;
 			case 'config':
-				reloadConfig();
-				this.reply('config.js reloaded');
-				info('config.js reloaded');
+				try {
+					Tools.uncacheTree(AppOptions.config);
+					global.Config = require(AppOptions.config);
+					Tools.checkConfig();
+					CommandParser.reloadTokens();
+					this.reply(AppOptions.config + ' reloaded');
+					info(AppOptions.config + ' reloaded');
+				} catch (e) {
+					error('could not reload ' + AppOptions.config);
+					errlog(e.stack);
+					this.reply("Error: " + 'could not reload ' + AppOptions.config);
+				}
 				break;
 			case 'lang':
 			case 'languages':

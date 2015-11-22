@@ -59,13 +59,6 @@ if (!fs.existsSync(AppOptions.config)) {
 global.Config = require(AppOptions.config);
 Tools.checkConfig();
 
-global.reloadConfig = function () {
-	Tools.uncacheTree(AppOptions.config);
-	global.Config = require(AppOptions.config);
-	Tools.checkConfig();
-	CommandParser.reloadTokens();
-};
-
 if (AppOptions.debugmode) info((['Debug', 'Monitor', 'Production'])[AppOptions.debugmode - 1] + ' mode');
 
 info('Loading globals');
@@ -480,7 +473,10 @@ if (!AppOptions.testmode && Config.watchconfig) {
 	Tools.watchFile(AppOptions.config, function (curr, prev) {
 		if (curr.mtime <= prev.mtime) return;
 		try {
-			reloadConfig();
+			Tools.uncacheTree(AppOptions.config);
+			global.Config = require(AppOptions.config);
+			Tools.checkConfig();
+			CommandParser.reloadTokens();
 			info(AppOptions.config + ' reloaded');
 		} catch (e) {
 			error('could not reload ' + AppOptions.config);
