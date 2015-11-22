@@ -17,6 +17,30 @@
 			'notstarted': 'Erreur: le tournoi n\'a pas commencé, probablement parce que je n\'ai pas la permission de créer des tournois ou des commandes ont été changées.',
 			'param': 'Paramètre',
 			'paramhelp': 'introuvable, paramètre valide sont'
+		},
+		leaderboard: {
+			'usage': 'Usage',
+			'invuser': 'Nom d\'utilisateur invalide',
+			'rank': 'Classement des',
+			'in': 'dans',
+			'points': 'Points',
+			'w': 'Gagnant',
+			'f': 'Finaliste',
+			'sf': 'Demi-finaliste',
+			'times': 'fois',
+			'total': 'Total',
+			'tours': 'tours joués',
+			'bwon': 'batailles gagnées',
+			'not': 'Classements est pas activé pour la salle',
+			'empty': 'Il n\'y a pas encore inscrit tournois salle',
+			'table': 'Table Leaderboards',
+			'err': 'Erreur téléchargement table classements à Hastebin',
+			'use': 'Utilisez',
+			'confirm': 'pour confirmer les données de leaderboars réinitialisés salle',
+			'invhash': 'Code de hachage non valide',
+			'data': 'Données Leaderboard pour la salle',
+			'del': 'a été remis à zéro',
+			'unknown': 'Option inconnue'
 		}
 	}
 };

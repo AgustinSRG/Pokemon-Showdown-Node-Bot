@@ -17,6 +17,30 @@
 			'notstarted': 'Error: il torneo non è iniziato, non hai i permessi o i comandi sono cambiati.',
 			'param': 'Parametro',
 			'paramhelp': 'non trovato, parametro valido sono'
+		},
+		leaderboard: {
+			'usage': 'Usage',
+			'invuser': 'Nome utente non valido',
+			'rank': 'Ranking di',
+			'in': 'in',
+			'points': 'Punti',
+			'w': 'Vincitore',
+			'f': 'Finalista',
+			'sf': 'Semifinalista',
+			'times': 'volte',
+			'total': 'Totale',
+			'tours': 'tour giocati',
+			'bwon': 'battaglie vinte',
+			'not': 'Classifiche non è abilitato per la room',
+			'empty': 'Non ci sono ancora i tornei registrati per room',
+			'table': 'Tavolo classifiche',
+			'err': 'Errore caricamento di tabella classifiche per Hastebin',
+			'use': 'Utilizzare',
+			'confirm': 'per confermare resettare i dati leaderboars per room',
+			'invhash': 'Codice hash non valido',
+			'data': 'Dati leaderboard per la room',
+			'del': 'è stato resettato',
+			'unknown': 'Opzione sconosciuta'
 		}
 	}
 };

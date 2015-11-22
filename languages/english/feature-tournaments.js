@@ -17,6 +17,30 @@ exports.translations = {
 			'notstarted': 'Error: the tournament did not start, probably because I have not permission to create tournaments or commands got changed.',
 			'param': 'Parameter',
 			'paramhelp': 'not found, valid parameter are'
+		},
+		leaderboard: {
+			'usage': 'Usage',
+			'invuser': 'Invalid username',
+			'rank': 'Ranking of',
+			'in': 'in',
+			'points': 'Points',
+			'w': 'Winner',
+			'f': 'Finalist',
+			'sf': 'Semifinalist',
+			'times': 'times',
+			'total': 'Total',
+			'tours': 'tours played',
+			'bwon': 'battles won',
+			'not': 'Leaderboards is not enabled for room',
+			'empty': 'There are not registered tournaments yet for room',
+			'table': 'Leaderboards table',
+			'err': 'Error uploading leaderboards table to Hastebin',
+			'use': 'Use',
+			'confirm': 'to confirm the leaderboars data reset for room',
+			'invhash': 'Invalid hashcode',
+			'data': 'Leaderboars data for room',
+			'del': 'was resetted',
+			'unknown': 'Unknown option'
 		}
 	}
 };

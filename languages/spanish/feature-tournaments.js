@@ -17,6 +17,30 @@ exports.translations = {
 			'notstarted': 'Error: El torneo no ha empezado, probablemente por un cambio en los permisos o en los comandos',
 			'param': 'Parámetro',
 			'paramhelp': 'no encontrado, Los parámetros correctos son'
+		},
+		leaderboard: {
+			'usage': 'Uso correcto',
+			'invuser': 'Nombre de usuario no válido',
+			'rank': 'Ranking de',
+			'in': 'en',
+			'points': 'Puntos',
+			'w': 'Ganador',
+			'f': 'Finalista',
+			'sf': 'Semifinalista',
+			'times': 'veces',
+			'total': 'Total',
+			'tours': 'torneos jugados',
+			'bwon': 'batlalas ganadas',
+			'not': 'La funcion Leaderboards no esta disponibe para la sala',
+			'empty': 'No hay ningún torneo registrado aún para la sala',
+			'table': 'Tabla del leaderboards',
+			'err': 'Error subiendo la tabla del leaderboards a Hastebin',
+			'use': 'Usa',
+			'confirm': 'para conformar el borrado de los datos de leaderboards en la sala',
+			'invhash': 'Código no válido',
+			'data': 'Datos del Leaderboars de la sala',
+			'del': 'borrados',
+			'unknown': 'Opción desconocida'
 		}
 	}
 };
