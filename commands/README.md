@@ -189,6 +189,13 @@ Commands for Tournaments feature
  - `tourstart` - Force start a tornament
  - `tourend` - Force end a tornament
 
+Commands for leaderboards system
+
+ - `rank (user)` - View users's ranking (points, wins, finals, semifinals, etc)
+ - `top` - View the Top5 in the leaderboard
+ - `leaderboards table, [room]` - Upload the leaderboard table to Hastebin
+ - `leaderboards reset, [room]` - Reset leaderboards data
+
 Games
 ------------
 

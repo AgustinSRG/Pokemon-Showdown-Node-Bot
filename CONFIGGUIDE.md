@@ -160,7 +160,7 @@ Configure the ladder feature with `exports.ladderCheckInterval` (the time to che
 Tournaments (Optional)
 ------------
 
-You can specify tournament values by default, so if you don't specify them in `` command, it will be taken from this values.
+You can specify tournament values by default, so if you don't specify them in `tour` command, it will be taken from this values.
 
 ```js
 exports.tourDefault = {
@@ -169,6 +169,17 @@ exports.tourDefault = {
 	maxUsers: null,
 	timeToStart: 30 * 1000,
 	autodq: 1.5
+};
+```
+
+Optionally you can enable the leaderboards system for one or more rooms.
+
+```js
+exports.leaderboards['tournaments'] = {
+	winnerPoints: 5,
+	finalistPoints: 3,
+	semiFinalistPoints: 1,
+	battlePoints: 0
 };
 ```
 

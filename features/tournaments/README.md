@@ -18,3 +18,14 @@ exports.tourDefault = {
 	autodq: 1.5
 };
 ```
+
+This feature also includes a leaderboards system. You can enable it for a room adding in `config.js` the following:
+
+```js
+exports.leaderboards['Room Id here'] = {
+	winnerPoints: 5,
+	finalistPoints: 3,
+	semiFinalistPoints: 1,
+	battlePoints: 0
+};
+```

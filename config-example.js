@@ -298,6 +298,17 @@ exports.tourDefault = {
 	scoutProtect: false
 };
 
+exports.leaderboards = {};
+
+/* Leaderboard example:
+exports.leaderboards['tournaments'] = {
+	winnerPoints: 5,
+	finalistPoints: 3,
+	semiFinalistPoints: 1,
+	battlePoints: 0
+};
+*/
+
 /*
 * Youtube
 */
