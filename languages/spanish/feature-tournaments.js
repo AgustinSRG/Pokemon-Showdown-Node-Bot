@@ -36,7 +36,7 @@ exports.translations = {
 			'table': 'Tabla del leaderboards',
 			'err': 'Error subiendo la tabla del leaderboards a Hastebin',
 			'use': 'Usa',
-			'confirm': 'para conformar el borrado de los datos de leaderboards en la sala',
+			'confirm': 'para confirmar el borrado de los datos de leaderboards en la sala',
 			'invhash': 'Código no válido',
 			'data': 'Datos del Leaderboars de la sala',
 			'del': 'borrados',

@@ -180,23 +180,24 @@ exports.commands = {
 			case "rank":
 			case "ranking":
 				var tarRoom = room;
-				if (this.roomType !== "chat" && args.length < 2) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [user]", "rank");
+				if (this.roomType !== "chat") tarRoom = toRoomid(args.shift());
 				if (args.length > 1) tarRoom = toRoomid(args.shift());
 				if (!tarRoom) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [user]", "rank");
 				if (!Features['tours'].Leaderboards.isConfigured(tarRoom)) return this.restrictReply(this.trad('not') + " " + tarRoom, "rank");
 				var target = toId(args[0] || by);
 				if (target.length > 18) return this.restrictReply(this.trad('invuser'));
 				var rank = Features['tours'].Leaderboards.getPoints(tarRoom, target);
-				var txt = this.trad('invuser') + " **" + Tools.toName(rank.name) + "** " + this.trad('invuser') + " __" + Tools.toName(tryGetRoomName(tarRoom)) + "__ | ";
-				txt += this.trad('rank') + ": " + rank.points + " | ";
+				var txt = this.trad('rank') + " **" + Tools.toName(rank.name) + "** " + this.trad('in') + " __" + Tools.toName(tryGetRoomName(tarRoom)) + "__ | ";
+				txt += this.trad('points') + ": " + rank.points + " | ";
 				txt += this.trad('w') + ": " + rank.wins + " " + this.trad('times') + ", " + this.trad('f') + ": " + rank.finals + " " + this.trad('times') + ", " + this.trad('sf') + ": " + rank.semis + " " + this.trad('times') + ". ";
 				txt += this.trad('total') + ": " + rank.tours + " " + this.trad('tours') + ", " + rank.battles + " " + this.trad('bwon') + ".";
 				this.restrictReply(txt, "rank");
 				break;
 			case "top":
-				var tarRoom = room;
-				if (this.roomType !== "chat") return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]", "rank");
-				if (args.length > 0) tarRoom = toRoomid(args[0]) || room;
+				var tarRoom;
+				if (args.length > 0) tarRoom = toRoomid(args[0]);
+				if (!tarRoom && this.roomType === "chat") tarRoom = room;
+				if (!tarRoom) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]", "rank");
 				if (!Features['tours'].Leaderboards.isConfigured(tarRoom)) return this.restrictReply(this.trad('not') + " " + tarRoom, "rank");
 				var top = Features['tours'].Leaderboards.getTop(tarRoom);
 				if (!top || !top.length) return this.restrictReply(this.trad('empty') + " " + tarRoom, "rank");
@@ -208,9 +209,9 @@ exports.commands = {
 				break;
 			case "table":
 				if (!this.isRanked('roomowner')) return false;
-				var tarRoom = room;
-				if (this.roomType !== "chat") return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
-				if (args.length) tarRoom = toRoomid(args[0]) || room;
+				var tarRoom;
+				if (args.length > 0) tarRoom = toRoomid(args[0]);
+				if (!tarRoom && this.roomType === "chat") tarRoom = room;
 				if (!tarRoom) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
 				if (!Features['tours'].Leaderboards.isConfigured(tarRoom)) return this.reply(this.trad('not') + " " + tarRoom);
 				var size = args[1] ? parseInt(args[1]) : 100;
