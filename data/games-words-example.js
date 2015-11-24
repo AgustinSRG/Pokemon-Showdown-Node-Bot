@@ -7,5 +7,5 @@
 
 exports.words = {
 	"Colors": ['Red', 'Orange', 'Blue', 'Yellow', 'Pink', 'Black', 'White'],
-	"Days of Week": ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fryday', 'Saturday', 'Sunday']
+	"Days of Week": ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 };
