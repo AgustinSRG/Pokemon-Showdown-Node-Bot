@@ -69,7 +69,9 @@ Administrative Commands
 
 Commands for controlling the bot and command permissions for chat rooms.
 
- - `custom` - Send anything to current room
+ - `custom [text]` - Send something to current room
+ - `custom [room] [text]` - Send something to a chat room. Brackets are obligatory if you specify the room. Example of usage: `custom [lobby] Some text here`
+ - `pm [user], [text]` - Send a private message
  - `join [room1], [room2]...` - Join chat rooms
  - `leave` - Leave chat rooms
  - `joinrooms [official/public/all]` - Join all rooms

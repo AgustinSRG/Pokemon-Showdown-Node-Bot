@@ -14,6 +14,17 @@ exports.commands = {
 		this.say(tarRoom || room, arg);
 	},
 
+	sendpm: 'pm',
+	pm: function (arg, by, room, cmd) {
+		if (!this.isRanked('admin')) return false;
+		var args = arg.split(",");
+		if (args.length < 2) return this.reply("Usage: " + this.cmdToken + cmd + " [user], [message]");
+		var targetUser = toId(args.shift());
+		var msg = args.join(",").trim();
+		if (!targetUser || !msg) return this.reply("Usage: " + this.cmdToken + cmd + " [user], [message]");
+		this.sendPM(targetUser, msg);
+	},
+
 	"join": function (arg, by, room, cmd) {
 		if (!this.isRanked('admin')) return false;
 		if (!arg) return;
