@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Pokemon movesets for Kunc game
 *
 * This file was automatically generated from

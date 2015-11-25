@@ -1,4 +1,4 @@
-/*
+﻿/*
 	config.js - Configuration File
 */
 
