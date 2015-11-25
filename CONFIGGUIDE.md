@@ -34,7 +34,7 @@ Keep `exports.watchconfig = true;` if you want `config.js` to be automatically r
 Login Deatails
 ------------
 
-Choose Bot's nickname and, if it is registered, specify the password. If you do not specify a nickname or the password is wrong, the bot will log in a randon username starded by `bot`
+Choose Bot's nickname and, if it is registered, specify the password. If you do not specify a nickname or the password is wrong, the bot will log in a random username started by `bot`
 
 Example:
 ```js
@@ -231,3 +231,22 @@ exports.autoInvite = [
 ];
 ```
 In this example, in a server there is a private room with modjoin called `Admins Room` where all admins are room owners. With that feature if the bot is in both rooms, when an admin join lobby, it is automatically invited to Admins Room.
+
+GoupChats (Optional)
+------------
+
+You can use this feature to set events (arrays of commands to be sent on certain circunstances). For example:
+
+```js
+exports.groupchats['groupchat-ecuacion-test'] = {
+	toJoin: ['/join groupchat-ecuacion-test'],
+	onJoin: ['Hi guys!'],
+	onLeave: []
+};
+```
+
+**toJoin:** This is sent every 60 seconds if the bot is not in the room. You can use it to create a groupchat with `/makegroupchat` or joining an existing one after it expires.
+
+**onJoin:** This is sent when the bot joins the room. For example for setting the modchat, roomintro, etc or just a greeting.
+
+**toJoin:** This is sent when the bot leaves the room. For example for recreating the groupchat after it expires.
