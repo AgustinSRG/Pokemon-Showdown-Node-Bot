@@ -76,3 +76,31 @@ Features must have and **unique id** and two essential functions:
 
  - **init** - Is called on connection to server, to delete residual data or start/restart feature timeouts.
  - **parse** - It will receive all server messages, already separated in lines, each parse call is a new line received.
+
+Keeping your bot updated
+------------
+
+If you know all about [Git](https://git-scm.com/book/en/v1/Getting-Started) you don't need to read this. This is just for people who want to make changes in their bots, but still want to keep them updated regarding this repo.
+
+First, fork this repo. You can do it with the button `Fork`
+
+Second, clone your repo in your computer, you can do it with GitHub desktop Client for [Windows](https://windows.github.com/) or [Mac](https://mac.github.com/) or with a shell console:
+```
+$ git clone <your own fork> <My-Bot-Example-Folder>
+```
+
+Third, create a remote to get the updates (first use `cd` to reach the directory of your bot):
+```
+$ git remote add upstream https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot.git
+```
+
+Now, you can make changes, and commit them.
+
+When you want to update, you can follow these steps:
+ - Open a shell console and use `cd` to reach the directory of your bot
+ - If you have uncommited changes use `git add --all` and `git commit -m "Your commit message"`
+ - Use `git fetch upstream` to update your base version of Pokemon-Showdown-Node-Bot
+ - Use `git checkout master` an then `git merge remotes/upstream/master`
+ - If you get conflicts, solve them and use `git commit -a`
+ - Once merged, your bot is updated
+ 
