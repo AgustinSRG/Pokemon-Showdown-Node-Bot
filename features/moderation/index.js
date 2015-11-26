@@ -421,7 +421,7 @@ function parseChat (room, time, by, message) {
 			}
 		}
 
-		var cmd = Config.moderation.punishments[pointVal - 1];
+		cmd = Config.moderation.punishments[pointVal - 1];
 
 		if (cmd  === 'roomban' && !isBotRanked(room, Tools.getGroup('moderator'))) cmd = 'hourmute'; //Bot is not a moderator
 		if ((room in Config.privateRooms) && cmd === 'warn') cmd = 'mute'; //can't warn in private rooms
@@ -463,16 +463,17 @@ exports.parse = function (room, message, isIntro, spl) {
 	if (isIntro) return;
 	if (!Bot.rooms[room] || Bot.rooms[room].type !== "chat") return;
 	if (!Config.moderation) Config.moderation = {};
+	var by, timeOff;
 	switch (spl[0]) {
 		case 'c':
-			var by = spl[1];
-			var timeOff = Date.now();
+			by = spl[1];
+			timeOff = Date.now();
 			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|").length));
 			break;
 
 		case 'c:':
-			var by = spl[2];
-			var timeOff = parseInt(spl[1]) * 1000;
+			by = spl[2];
+			timeOff = parseInt(spl[1]) * 1000;
 			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|" + spl[2] + "|").length));
 			break;
 

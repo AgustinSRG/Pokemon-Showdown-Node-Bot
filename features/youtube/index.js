@@ -70,16 +70,16 @@ function parseChat (room, time, by, msg) {
 exports.parse = function (room, message, isIntro, spl) {
 	if (isIntro) return;
 	if (!Bot.rooms[room] || Bot.rooms[room].type !== "chat") return;
+	var by, timeOff;
 	switch (spl[0]) {
 		case 'c':
-			var by = spl[1];
-			var timeOff = Date.now();
+			by = spl[1];
+			timeOff = Date.now();
 			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|").length));
 			break;
-
 		case 'c:':
-			var by = spl[2];
-			var timeOff = parseInt(spl[1]) * 1000;
+			by = spl[2];
+			timeOff = parseInt(spl[1]) * 1000;
 			parseChat(room, timeOff, by, message.substr(("|" + spl[0] + "|" + spl[1] + "|" + spl[2] + "|").length));
 			break;
 	}

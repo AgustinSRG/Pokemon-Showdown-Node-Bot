@@ -36,9 +36,10 @@ exports.title = 'Anagrams';
 exports.aliases = [];
 
 var parser = function (type, data) {
+	var txt;
 	switch (type) {
 		case 'start':
-			var txt = trans('start', this.room);
+			txt = trans('start', this.room);
 			if (this.maxGames) txt += ". " + trans('maxgames1', this.room) + " __" + this.maxGames + " " + trans('maxgames2', this.room) + "__";
 			if (this.maxPoints) txt += ". " + trans('maxpoints1', this.room) + " __" + this.maxPoints + " " + trans('maxpoints2', this.room) + "__";
 			txt += ". " + trans('timer1', this.room) + " __" + Math.floor(this.answerTime / 1000).toString() + " " + trans('timer2', this.room) + "__";
@@ -59,7 +60,7 @@ var parser = function (type, data) {
 			break;
 		case 'win':
 			var t = parseWinners(data.winners, this.room);
-			var txt = "**" + trans('end', this.room) + "** ";
+			txt = "**" + trans('end', this.room) + "** ";
 			switch (t.type) {
 				case 'win':
 					txt += trans('grats1', this.room) + " " + t.text + " " + trans('grats2', this.room) + " __" + data.points + " " + trans('points', this.room) + "__!";

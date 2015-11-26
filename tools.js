@@ -890,7 +890,7 @@ exports.exportTeam = function (team) {
 		if (curSet.nature) {
 			text += '' + curSet.nature + ' Nature' + "\n";
 		}
-		var first = true;
+		first = true;
 		if (curSet.ivs) {
 			var defaultIvs = true;
 			var hpType = false;

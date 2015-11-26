@@ -172,6 +172,7 @@ exports.commands = {
 	leaderboard: function (arg, by, room, cmd) {
 		var args = arg.split(",");
 		var opt = cmd;
+		var tarRoom;
 		if (cmd in {leaderboards: 1, leaderboard: 1}) {
 			opt = toId(args.shift());
 			cmd += " " + opt + ",";
@@ -179,7 +180,7 @@ exports.commands = {
 		switch (opt) {
 			case "rank":
 			case "ranking":
-				var tarRoom = room;
+				tarRoom = room;
 				if (this.roomType !== "chat") tarRoom = toRoomid(args.shift());
 				if (args.length > 1) tarRoom = toRoomid(args.shift());
 				if (!tarRoom) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [user]", "rank");
@@ -194,7 +195,6 @@ exports.commands = {
 				this.restrictReply(txt, "rank");
 				break;
 			case "top":
-				var tarRoom;
 				if (args.length > 0) tarRoom = toRoomid(args[0]);
 				if (!tarRoom && this.roomType === "chat") tarRoom = room;
 				if (!tarRoom) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]", "rank");
@@ -209,7 +209,6 @@ exports.commands = {
 				break;
 			case "table":
 				if (!this.isRanked('roomowner')) return false;
-				var tarRoom;
 				if (args.length > 0) tarRoom = toRoomid(args[0]);
 				if (!tarRoom && this.roomType === "chat") tarRoom = room;
 				if (!tarRoom) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
@@ -226,7 +225,7 @@ exports.commands = {
 			case "reset":
 				if (!this.isExcepted) return false;
 				if (args.length < 1 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
-				var tarRoom = toRoomid(args[0]);
+				tarRoom = toRoomid(args[0]);
 				var code = Features['tours'].Leaderboards.getResetHashCode(tarRoom);
 				if (!code) return this.reply(this.trad('empty') + " " + tarRoom);
 				this.reply(this.trad('use') + " ``" + this.cmdToken + this.handler + " confirmreset, " + code + "`` " + this.trad('confirm') + " " + room);
@@ -234,8 +233,8 @@ exports.commands = {
 			case "confirmreset":
 				if (!this.isExcepted) return false;
 				if (args.length < 1 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [hashcode]");
-				var code = args[0].trim();
-				var r =  Features['tours'].Leaderboards.execResetHashCode(code);
+				var _code = args[0].trim();
+				var r =  Features['tours'].Leaderboards.execResetHashCode(_code);
 				if (!r) return this.reply(this.trad('invhash'));
 				this.reply(this.trad('data') + " __" + r + "__ " + this.trad('del'));
 				break;

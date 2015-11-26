@@ -40,6 +40,7 @@ exports.title = 'BlackJack';
 exports.aliases = ['bj', '21'];
 
 var parser = function (type, data) {
+	var handval;
 	switch (type) {
 		case 'singups':
 			send(this.room, trans("init", this.room).replace(/[$]/g, CommandParser.commandTokens[0]));
@@ -57,7 +58,7 @@ var parser = function (type, data) {
 			} else if (data.type === "hit") {
 				send(this.room, "**" + exports.title + ":** " + this.currPlayer.name + " " + trans("hit", this.room) + ": " + formateHand(this.currPlayer.hand, this.getHandValue(this.currPlayer.hand), trans("total", this.room)));
 			}
-			var handval = this.getHandValue(this.currPlayer.hand);
+			handval = this.getHandValue(this.currPlayer.hand);
 			if (handval === 21) {
 				send(this.room, "**" + exports.title + ":** " + this.currPlayer.name + " " + trans("bj", this.room) + "!");
 			} else if (handval > 21) {
@@ -66,7 +67,7 @@ var parser = function (type, data) {
 			break;
 		case 'timeout':
 			send(this.room, "**" + exports.title + ":** " + trans("timeout1", this.room) + " " + data.name + "" + trans("timeout2", this.room));
-			var handval = this.getHandValue(data.hand);
+			handval = this.getHandValue(data.hand);
 			if (handval === 21) {
 				send(this.room, "**" + exports.title + ":** " + data.name + " " + trans("bj", this.room) + "!");
 			} else if (handval > 21) {
@@ -81,7 +82,7 @@ var parser = function (type, data) {
 			} else if (data.type === "turn") {
 				return send(this.room, "**" + exports.title + ":** " + trans("dhand", this.room) + ": " + formateHand(this.dealerHand, this.getHandValue(this.dealerHand), trans("total", this.room)));
 			}
-			var handval = this.getHandValue(this.dealerHand);
+			handval = this.getHandValue(this.dealerHand);
 			if (handval === 21) {
 				send(this.room, "**" + exports.title + ":** " + trans("dbj", this.room));
 			} else if (handval > 21) {
