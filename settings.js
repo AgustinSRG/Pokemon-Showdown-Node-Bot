@@ -141,6 +141,15 @@ exports.unsleepRoom = function (room) {
 	return true;
 };
 
+exports.applyConfig = function () {
+	Bot.opts.server = Config.server;
+	Bot.opts.port = Config.port;
+	Bot.opts.loginServer = 'https://play.pokemonshowdown.com/~~' + Config.serverid + '/action.php';
+	Bot.opts.serverid = Config.serverid;
+	Bot.opts.connectionTimeout = Config.connectionTimeout;
+	Bot.opts.showErrors = Bot.opts.debug = (Config.debug ? Config.debug.debug : true);
+};
+
 var seen = exports.seen = {};
 var reportSeen = exports.reportSeen = function (user, room, action, args) {
 	if (!args) args = [];

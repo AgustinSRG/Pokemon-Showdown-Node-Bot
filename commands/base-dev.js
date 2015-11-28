@@ -150,6 +150,7 @@ exports.commands = {
 					Tools.uncacheTree(AppOptions.config);
 					global.Config = require(AppOptions.config);
 					Tools.checkConfig();
+					Settings.applyConfig();
 					CommandParser.reloadTokens();
 					this.reply(AppOptions.config + ' reloaded');
 					info(AppOptions.config + ' reloaded');

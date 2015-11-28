@@ -509,6 +509,7 @@ if (!AppOptions.testmode && Config.watchconfig) {
 			Tools.uncacheTree(AppOptions.config);
 			global.Config = require(AppOptions.config);
 			Tools.checkConfig();
+			Settings.applyConfig();
 			CommandParser.reloadTokens();
 			info(AppOptions.config + ' reloaded');
 		} catch (e) {
