@@ -245,15 +245,14 @@ exports.aceptAll = false;
 
 exports.maxBattles = 1;
 
+exports.initBattleMsg = ['gl hf'];
+
 exports.winmsg = ['GG', 'g_g'];
 
 exports.losemsg = ['gg', 'wp'];
 
 exports.battleMessages = {
 	/* Examples of battle messages:
-	'tier': {
-		'self': [] //Example: ['gl hf', 'Hi, I\'m a Bot', 'gl']
-	},
 	'-crit': {
 		'self': [], //Example: ['lol that hax', 'stop haxing pls']
 		'foe': [] //Example: ['sorry', 'wow sorry for that', 'get critted']

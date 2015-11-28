@@ -216,14 +216,20 @@
 		}
 	},
 
+	sendWelcomeMessage: function (room) {
+		if (!this.data[room] || !this.data[room].playing) return;
+		var wmsg = Config.initBattleMsg;
+		if (wmsg && wmsg.length) this.send(room, wmsg[Math.floor(Math.random() * wmsg.length)]);
+	},
+
 	finishBattle: function (room, win) {
 		if (!this.data[room] || !this.data[room].playing) return;
 		if (win) {
 			var winmsg = Config.winmsg;
-			this.send(room, winmsg[Math.floor(Math.random() * winmsg.length)]);
+			if (winmsg && winmsg.length) this.send(room, winmsg[Math.floor(Math.random() * winmsg.length)]);
 		} else {
 			var losemsg = Config.losemsg;
-			this.send(room, losemsg[Math.floor(Math.random() * losemsg.length)]);
+			if (losemsg && losemsg.length) this.send(room, losemsg[Math.floor(Math.random() * losemsg.length)]);
 		}
 		this.send(room, '/leave');
 	},
@@ -332,7 +338,6 @@
 			case 'title':
 				if (!this.data[room]) this.data[room] = {};
 				this.data[room].title = args[1];
-				//welcome message if needed
 				break;
 			case 'deinit':
 				//deallocate
@@ -414,6 +419,7 @@
 				break;
 			case 'tier':
 				this.data[room].tier = args[1];
+				this.sendWelcomeMessage(room);
 				break;
 			case 'rule':
 				if (!this.data[room].rules) this.data[room].rules = {};
