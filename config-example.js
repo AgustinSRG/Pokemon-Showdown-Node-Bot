@@ -263,6 +263,8 @@ exports.battleMessages = {
 	*/
 };
 
+exports.abandonedBattleAutojoin = true;
+
 exports.ladderCheckInterval = 10 * 1000;
 
 exports.ladderNumberOfBattles = 1;

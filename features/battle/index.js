@@ -47,6 +47,10 @@ exports.parse = function (room, message, isIntro, spl) {
 	}
 };
 
+exports.getInitCmds = function () {
+	return BattleBot.tryJoinAbandonedBattles();
+};
+
 exports.readyToDie = function () {
 	var battles = Object.keys(BattleBot.data);
 	if (battles.length) return ("There are " + battles.length + " battles in progress");

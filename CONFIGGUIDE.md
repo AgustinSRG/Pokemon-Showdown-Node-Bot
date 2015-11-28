@@ -153,6 +153,8 @@ Battles (Optional)
 
 Specify in `exports.winmsg` all possible phrases for saying when bot wins, same with `exports.losemsg` but when bot loses, the same with `exports.initBattleMsg` but when the bot joins the battle. You can also specify other messages in `exports.battleMessages`.
 
+Set `exports.abandonedBattleAutojoin = true;` if you want to store battle ids in a JSON file to rejoin them in case of crash or forced restart.
+
 Configure the ladder feature with `exports.ladderCheckInterval` (the time to check for battles) and `exports.ladderNumberOfBattles` (Max number of ladder battles at the same time when you use `ladderstart` command).
 
 **Important!** You can configure format aliases in `exports.formatAliases` for all battle and tournaments commands.

@@ -1,4 +1,6 @@
-﻿module.exports = {
+﻿const battleAutojoinFile = AppOptions.data + "battle-autojoin-tmp.json";
+
+module.exports = {
 	/* Data and modules */
 	battlesCount: 0,
 	data: {},
@@ -35,6 +37,9 @@
 				this.aiModules[i] = require(this.aiModList[i]);
 			} catch (e) {error(e.stack);}
 		}
+		try {
+			this.autoJoinData = this.autojoinFFM.readObj();
+		} catch (e) {error(e.stack);}
 		return;
 	},
 
@@ -45,6 +50,36 @@
 
 	send: function (room, text) {
 		Bot.send(room + "|" + text);
+	},
+
+	autojoinFFM: new Settings.FlatFileManager(battleAutojoinFile),
+	autoJoinData: {},
+
+	tryJoinAbandonedBattles: function () {
+		debug("Try");
+		if (!Config.abandonedBattleAutojoin) return;
+		var cmds = [];
+		for (var i in this.autoJoinData) {
+			if (!this.data[i]) {
+				cmds.push('|/join ' + i);
+				cmds.push(i + '|/joinbattle');
+			}
+			delete this.autoJoinData[i];
+		}
+		this.autojoinFFM.writeObj(this.autoJoinData);
+		debug(JSON.stringify(cmds));
+		return cmds;
+	},
+
+	updateBattleAutojoin: function () {
+		if (!Config.abandonedBattleAutojoin) return;
+		for (var i in this.autoJoinData) {
+			delete this.autoJoinData[i];
+		}
+		for (var room in this.data) {
+			if (this.data[room].playing) this.autoJoinData[room] = 1;
+		}
+		this.autojoinFFM.writeObj(this.autoJoinData);
 	},
 
 	rejoin: function (room) {
@@ -344,6 +379,7 @@
 				if (this.data[room]) delete this.data[room];
 				this.battlesCount--;
 				if (this.battlesCount < 0) this.battlesCount = 0;
+				this.updateBattleAutojoin();
 				break;
 			case 'player':
 				if (!args[1] || !args[2]) return;
@@ -351,6 +387,7 @@
 					//self
 					this.data[room].self = {id: args[1], name: args[2], avatar: args[3]};
 					this.data[room].playing = true;
+					this.updateBattleAutojoin();
 				} else {
 					//opponent
 					this.data[room].opponent = {id: args[1], name: args[2], avatar: args[3]};
