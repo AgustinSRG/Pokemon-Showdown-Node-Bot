@@ -137,11 +137,22 @@ function botAfterConnect () {
 		joinByQueryRequest(Config.rooms);
 	} else {
 		var cmds = [];
+		var featureInitCmds;
 		for (var i = 0; i < Config.rooms.length; i++) {
 			cmds.push('|/join ' + Config.rooms[i]);
 		}
 		for (var i = 0; i < Config.initCmds.length; i++) {
 			cmds.push(Config.initCmds[i]);
+		}
+		for (var f in Features) {
+			if (typeof Features[f].getInitCmds === "function") {
+				try {
+					featureInitCmds = Features[f].getInitCmds();
+					if (featureInitCmds) cmds = cmds.concat(featureInitCmds);
+				} catch (e) {
+					errlog(e.stack);
+				}
+			}
 		}
 		Bot.send(cmds, 2000);
 	}
@@ -156,8 +167,19 @@ function joinByQueryRequest(target) {
 	} else {
 		error('Config.rooms, as a string must be "official", "public" or "all"');
 		var cmds = [];
+		var featureInitCmds;
 		for (var i = 0; i < Config.initCmds.length; i++) {
 			cmds.push(Config.initCmds[i]);
+		}
+		for (var f in Features) {
+			if (typeof Features[f].getInitCmds === "function") {
+				try {
+					featureInitCmds = Features[f].getInitCmds();
+					if (featureInitCmds) cmds = cmds.concat(featureInitCmds);
+				} catch (e) {
+					errlog(e.stack);
+				}
+			}
 		}
 		Bot.send(cmds, 2000);
 		return;
@@ -168,6 +190,7 @@ function joinByQueryRequest(target) {
 			data.splice(0, 1);
 			var str = data.join('|');
 			var cmds = [];
+			var featureInitCmds;
 			try {
 				var rooms = JSON.parse(str);
 				var offRooms = [], publicRooms = [];
@@ -190,6 +213,16 @@ function joinByQueryRequest(target) {
 			} catch (e) {}
 			for (var i = 0; i < Config.initCmds.length; i++) {
 				cmds.push(Config.initCmds[i]);
+			}
+			for (var f in Features) {
+				if (typeof Features[f].getInitCmds === "function") {
+					try {
+						featureInitCmds = Features[f].getInitCmds();
+						if (featureInitCmds) cmds = cmds.concat(featureInitCmds);
+					} catch (e) {
+						errlog(e.stack);
+					}
+				}
 			}
 			Bot.send(cmds, 2000);
 			Bot.on('queryresponse', function () {return;});
