@@ -49,7 +49,15 @@ function askUrl () {
 				if (index !== -1) {
 					var data = str.substr(index);
 					data = data.substr(search.length, data.indexOf(';') - search.length);
-					data = JSON.parse(data);
+					while (typeof data === "string") {
+						try {
+							data = JSON.parse(data);
+						} catch (e) {
+							console.log(e.message);
+							console.log(e.stack);
+							break;
+						}
+					}
 					console.log('---------------');
 					console.log('server: ' + data.host);
 					console.log('port: ' + data.port);
