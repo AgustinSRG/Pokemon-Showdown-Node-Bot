@@ -28,8 +28,33 @@ exports.translations = {
 				'Don\'t count on it.'
 			]
 		},
+		/*
+		* Smogon
+		*/
 		usage: {
-			'stats': 'Usage stats'
+			'in': 'in',
+			'stats': 'Usage stats',
+			'data': 'Usage data',
+			'usage': 'Usage',
+			'tiererr1': 'Tier or format',
+			'tiererr2': 'not found',
+			'tiererr3': 'not available',
+			'err': 'Could not get usage data from',
+			'busy': 'Downloading the usage data. Try again in a few seconds',
+			'pokeerr1': 'Pokemon',
+			'pokeerr2': 'not avaliable in',
+			'pokeerr3': 'usage data',
+			'pokeerr4': 'usage stats',
+			'notfound': 'Data not found for',
+			'usagedata1': '',
+			'usagedata2': '\'s #NAME',
+			'pokeusage': 'Usage',
+			'pokeraw': 'Raw',
+			'abilities': 'Abilities',
+			'items': 'Items',
+			'moves': 'Moves',
+			'spreads': 'Spreads',
+			'teammates': 'Teammates'
 		},
 		/*
 		* Quotes & Jokes
