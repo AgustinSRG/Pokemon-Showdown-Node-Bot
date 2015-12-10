@@ -1,25 +1,23 @@
-data/*.js
-data/*.json
+# Config
+config
 config.js
 
-#private files
-config
+# Private files
 commands/private.js
 
-#gulp
-gulp-cache
-
-#test
+# Test
 test-data
+gulp-cache
 
 # Logs
 logs
 *.log
 
-#Data
+# Data
+data/*.js
+data/*.json
+data/_temp
 !data/typechart.js
-
-#Games
 !data/*-example.js
 
 # Runtime data

@@ -1,4 +1,4 @@
-﻿const battleAutojoinFile = AppOptions.data + "battle-autojoin-tmp.json";
+﻿const battleAutojoinFile = AppOptions.data + "_temp/" + "battle-autojoin-tmp.json";
 
 module.exports = {
 	/* Data and modules */

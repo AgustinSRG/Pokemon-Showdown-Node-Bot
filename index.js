@@ -51,6 +51,11 @@ if (!fs.existsSync(AppOptions.data)) {
 	fs.mkdirSync(AppOptions.data);
 }
 
+if (!fs.existsSync(AppOptions.data + "_temp/")) {
+	console.log(AppOptions.data + "_temp/" + " does not exist - creating temp directory...");
+	fs.mkdirSync(AppOptions.data + "_temp/");
+}
+
 if (!fs.existsSync(AppOptions.config)) {
 	console.log(AppOptions.config + " does not exist - creating one with default settings...");
 	fs.writeFileSync(AppOptions.config, fs.readFileSync('./config-example.js'));
