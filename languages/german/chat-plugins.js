@@ -28,8 +28,33 @@
 				'Darauf solltest du dich nicht verlassen.'
 			]
 		},
+		/*
+		* Smogon
+		*/
 		usage: {
-			'stats': 'Verwendungsstatisiken'
+			'in': 'im',
+			'stats': 'Nutzungsstatistiken',
+			'data': 'Nutzungsdaten',
+			'usage': 'Verwendung',
+			'tiererr1': 'Tier oder Format',
+			'tiererr2': 'nicht gefunden',
+			'tiererr3': 'nicht verfügbar',
+			'err': 'Nutzungsdaten von konnte nicht abgerufen werden',
+			'busy': 'Herunterladen der Nutzungsdaten. Versuchen Sie es erneut in ein paar Sekunden',
+			'pokeerr1': 'Pokemon',
+			'pokeerr2': 'in nicht verfügbar',
+			'pokeerr3': 'nutzungsdaten',
+			'pokeerr4': 'nutzungsstatistiken',
+			'notfound': 'Daten nicht gefunden',
+			'usagedata1': '',
+			'usagedata2': ' #NAME',
+			'pokeusage': 'Verwendung',
+			'pokeraw': 'Raw',
+			'abilities': 'Abilities',
+			'items': 'Items',
+			'moves': 'Moves',
+			'spreads': 'Spreads',
+			'teammates': 'Teammates'
 		},
 		/*
 		* Quotes & Jokes

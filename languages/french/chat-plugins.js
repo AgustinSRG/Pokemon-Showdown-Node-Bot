@@ -28,8 +28,33 @@
 				'Ne pas compter sur elle.'
 			]
 		},
+		/*
+		* Smogon
+		*/
 		usage: {
-			'stats': 'Statistiques d\'utilisation'
+			'in': 'dans',
+			'stats': 'Statistiques d\'utilisation',
+			'data': 'Des données d\'utilisation',
+			'usage': 'Usage',
+			'tiererr1': 'Tier ou format',
+			'tiererr2': 'pas trouvé',
+			'tiererr3': 'indisponible',
+			'err': 'Impossible d\'obtenir les données d\'utilisation de',
+			'busy': 'Téléchargement des données d\'utilisation. Essayez à nouveau dans quelques secondes',
+			'pokeerr1': 'Pokemon',
+			'pokeerr2': 'pas disponible en',
+			'pokeerr3': '(des données d\'utilisation)',
+			'pokeerr4': '(statistiques d\'utilisation)',
+			'notfound': 'Données non trouvé pour',
+			'usagedata1': '#NAME de ',
+			'usagedata2': '',
+			'pokeusage': 'Usage',
+			'pokeraw': 'Raw',
+			'abilities': 'Talents',
+			'items': 'Objets',
+			'moves': 'Capacités',
+			'spreads': 'Spreads',
+			'teammates': 'Coéquipiers'
 		},
 		/*
 		* Quotes & Jokes

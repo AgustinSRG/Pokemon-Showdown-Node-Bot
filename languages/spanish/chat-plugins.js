@@ -31,8 +31,33 @@ exports.translations = {
 				'No cuentes con ello.'
 			]
 		},
+		/*
+		* Smogon
+		*/
 		usage: {
-			'stats': 'Estadísticas de uso'
+			'in': 'en',
+			'stats': 'Estadísticas de uso',
+			'data': 'Datos de uso',
+			'usage': 'Uso correcto',
+			'tiererr1': 'Tier o formato',
+			'tiererr2': 'no encontrado',
+			'tiererr3': 'no disponible',
+			'err': 'No se pudieron descargar datos desde',
+			'busy': 'Descargando los datos. Intenta este comando de nuevo en unos minutos',
+			'pokeerr1': 'Pokemon',
+			'pokeerr2': 'no disponible en',
+			'pokeerr3': ' (estadísticas de uso)',
+			'pokeerr4': ' (datos de uso)',
+			'notfound': 'No se encontraron datos para',
+			'usagedata1': '#NAME de ',
+			'usagedata2': '',
+			'pokeusage': 'Uso',
+			'pokeraw': 'Raw',
+			'abilities': 'Habilidades',
+			'items': 'Objetos',
+			'moves': 'Movimientos',
+			'spreads': 'Spreads',
+			'teammates': 'Compañeros'
 		},
 		/*
 		* Quotes & Jokes

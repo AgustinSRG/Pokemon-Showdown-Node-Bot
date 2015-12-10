@@ -2,6 +2,8 @@
 	Smogon related commads
 */
 
+const ALIASES_FILE = './../data/aliases.js';
+
 function generateUsageLink (monthmod) {
 	var now = new Date();
 	var year = now.getFullYear();
@@ -71,6 +73,12 @@ exports.commands = {
 			if (this.cmd === "usagedata") {
 				if (args.length < 2) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [pokemon], [moves / items / abilities / spreads / teammates], (tier)", 'usage');
 				poke = toId(args[0]);
+				try {
+					var aliases = require(ALIASES_FILE).BattleAliases;
+					if (aliases[poke]) poke = toId(aliases[poke]);
+				} catch (e) {
+					debug("Could not fetch aliases. Cmd: " + this.cmd + " " + arg + " | Room: " + this.room + " | By: " + this.by);
+				}
 				dataType = toId(args[1]);
 				if (!(dataType in {"moves": 1, "items": 1, "abilities": 1, "teammates": 1, "spreads": 1})) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [pokemon], [moves / items / abilities / spreads / teammates], (tier)", 'usage');
 				if (args[2]) {

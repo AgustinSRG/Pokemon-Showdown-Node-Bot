@@ -28,8 +28,33 @@
 				'Non contarci.'
 			]
 		},
+		/*
+		* Smogon
+		*/
 		usage: {
-			'stats': 'Usage stats'
+			'in': 'in',
+			'stats': 'Statistiche di utilizzo',
+			'data': 'Dati di utilizzo',
+			'usage': 'Uso corretto',
+			'tiererr1': 'Tier o formato',
+			'tiererr2': 'non trovato',
+			'tiererr3': 'non disponibile',
+			'err': 'Impossibile ottenere i dati di utilizzo di',
+			'busy': 'Download dei dati di utilizzo. Riprovare in pochi secondi',
+			'pokeerr1': 'Pokemon',
+			'pokeerr2': 'non disponibile in',
+			'pokeerr3': 'dati di utilizzo',
+			'pokeerr4': 'statistiche di utilizzo',
+			'notfound': 'I dati non trovato per',
+			'usagedata1': '#NAME di ',
+			'usagedata2': '',
+			'pokeusage': 'Uso',
+			'pokeraw': 'Raw',
+			'abilities': 'Abilità',
+			'items': 'Strumenti',
+			'moves': 'Mosse',
+			'spreads': 'Spreads',
+			'teammates': 'Compagne'
 		},
 		/*
 		* Quotes & Jokes

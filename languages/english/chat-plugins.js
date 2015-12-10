@@ -42,7 +42,7 @@ exports.translations = {
 			'err': 'Could not get usage data from',
 			'busy': 'Downloading the usage data. Try again in a few seconds',
 			'pokeerr1': 'Pokemon',
-			'pokeerr2': 'not avaliable in',
+			'pokeerr2': 'not available in',
 			'pokeerr3': 'usage data',
 			'pokeerr4': 'usage stats',
 			'notfound': 'Data not found for',
