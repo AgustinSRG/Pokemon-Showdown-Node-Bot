@@ -56,6 +56,21 @@ exports.translations = {
 			'spreads': 'Spreads',
 			'teammates': 'Teammates'
 		},
+		suspect: {
+			'tiererr1': 'Tier',
+			'tiererr2': 'not found',
+			'in': 'in',
+			'nosuspect': 'No suspect test data found for tier',
+			'aux1': 'Use',
+			'aux2': 'to set the suspect data'
+		},
+		setsuspect: {
+			'usage': 'Usage',
+			'tier': 'Tier',
+			'notfound': 'not found',
+			'd1': 'Suspect test data for tier',
+			'd2': 'has been removed'
+		},
 		/*
 		* Quotes & Jokes
 		*/

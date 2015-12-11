@@ -56,6 +56,21 @@
 			'spreads': 'Spreads',
 			'teammates': 'Teammates'
 		},
+		suspect: {
+			'tiererr1': 'Tier',
+			'tiererr2': 'nicht gefunden',
+			'in': 'im',
+			'nosuspect': 'Keine suspect test daten gefunden',
+			'aux1': 'Verwenden',
+			'aux2': 'ir die suspect datensatz'
+		},
+		setsuspect: {
+			'usage': 'Verwendung',
+			'tier': 'Tier',
+			'notfound': 'nicht gefunden',
+			'd1': 'Suspect test daten für tier',
+			'd2': 'wurde entfernt'
+		},
 		/*
 		* Quotes & Jokes
 		*/

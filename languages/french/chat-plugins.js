@@ -56,6 +56,21 @@
 			'spreads': 'Spreads',
 			'teammates': 'Coéquipiers'
 		},
+		suspect: {
+			'tiererr1': 'Tier',
+			'tiererr2': 'pas trouvé',
+			'in': 'dans',
+			'nosuspect': 'Pas de données de suspect test trouvés pour tier',
+			'aux1': 'Utiliser',
+			'aux2': 'pour définir les données suspect'
+		},
+		setsuspect: {
+			'usage': 'Usage',
+			'tier': 'Tier',
+			'notfound': 'pas trouvé',
+			'd1': 'Suspect test données pour tier',
+			'd2': 'a été retiré'
+		},
 		/*
 		* Quotes & Jokes
 		*/

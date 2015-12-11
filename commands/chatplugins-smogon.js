@@ -4,6 +4,8 @@
 
 const ALIASES_FILE = './../data/aliases.js';
 
+/* Usage utils */
+
 function generateUsageLink (monthmod) {
 	var now = new Date();
 	var year = now.getFullYear();
@@ -52,9 +54,55 @@ function markDownload (link, b) {
 	}
 }
 
+/* Commands */
+
 Settings.addPermissions(['usage']);
 
 exports.commands = {
+	delsuspect: 'setsuspect',
+	setsuspect: function (arg) {
+		if (!this.isRanked('admin')) return false;
+		if (!Settings.settings.suspect) Settings.settings.suspect = {};
+		if (this.cmd === "delsuspect") {
+			if (!arg) return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [tier]");
+			arg = Tools.parseAliases(arg);
+			if (!Settings.settings.suspect[arg]) return this.reply(this.trad('d1') + " \"" + arg + "\" " + this.trad('notfound'));
+			delete Settings.settings.suspect[arg];
+			Settings.save();
+			this.reply(this.trad('d1') + " \"" + arg + " " + this.trad('d2'));
+		} else {
+			var args = arg.split(",");
+			var tier, poke, link;
+			if (args.length < 3) return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [tier], [pokemon], [link]");
+			tier = Tools.parseAliases(args.shift());
+			if (!Formats[tier]) return this.reply(this.trad('tier') + " \"" + tier + "\" " + this.trad('notfound'));
+			link = args.pop().trim();
+			poke = args.join(",");
+			Settings.settings.suspect[tier] = {
+				poke: poke,
+				link: link
+			};
+			Settings.save();
+			this.parse(this.cmdToken + "suspect " + tier);
+		}
+	},
+
+	suspecttest: 'suspect',
+	suspect: function (arg) {
+		var tier = "ou";
+		if (arg) {
+			tier = Tools.parseAliases(arg);
+			if (!Formats[tier]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
+		}
+		if (Settings.settings.suspect && Settings.settings.suspect[tier]) {
+			//Suspect
+			this.restrictReply("Suspect test " + this.trad('in') + " **" + Formats[tier].name + "**: **" + Tools.toName(Settings.settings.suspect[tier].poke) + "**. " + Settings.settings.suspect[tier].link, "info");
+		} else {
+			//No suspect
+			this.restrictReply(this.trad('nosuspect') + " " + Formats[tier].name + (this.isRanked('admin') ? (". " + this.trad('aux1') + " ``" + this.cmdToken + "setsuspect`` " + this.trad('aux2')) : ""), "info");
+		}
+	},
+
 	usagedata: 'usage',
 	usagestats: 'usage',
 	usagelink: 'usage',
