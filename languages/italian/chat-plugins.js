@@ -71,6 +71,13 @@
 			'd1': 'Suspect test i dati di secondo tier',
 			'd2': 'è stato rimosso'
 		},
+		deftier: {
+			'usage': 'Uso corretto',
+			'notchat': 'Questo comando è solo disponibile nelle chat room',
+			'tiererr1': 'Tier',
+			'tiererr2': 'non trovato',
+			'set': 'Tier di default per questa room è ora'
+		},
 		/*
 		* Quotes & Jokes
 		*/

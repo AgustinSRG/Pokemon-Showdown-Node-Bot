@@ -4,6 +4,13 @@
 
 const ALIASES_FILE = './../data/aliases.js';
 
+/* Default tier */
+
+function getDefaultTier (room) {
+	if (Settings.settings.deftier && Settings.settings.deftier[room]) return Settings.settings.deftier[room];
+	return "ou";
+}
+
 /* Usage utils */
 
 function generateUsageLink (monthmod) {
@@ -59,6 +66,27 @@ function markDownload (link, b) {
 Settings.addPermissions(['usage']);
 
 exports.commands = {
+	defaulttier: 'deftier',
+	deftier: function (arg, by, room, cmd) {
+		if (!this.isRanked('roomowner')) return false;
+		var tarRoom = room;
+		var targetObj = Tools.getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
+		var tier = toId(arg);
+		if (!tier) return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [tier]");
+		if (!Formats[tier]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
+		if (!Settings.settings.deftier) Settings.settings.deftier = {};
+		Settings.settings.deftier[tarRoom] = tier;
+		Settings.save();
+		this.reply(this.trad('set') + " **" + Formats[tier].name + "**" + textHelper);
+	},
+
 	delsuspect: 'setsuspect',
 	setsuspect: function (arg) {
 		if (!this.isRanked('admin')) return false;
@@ -89,7 +117,7 @@ exports.commands = {
 
 	suspecttest: 'suspect',
 	suspect: function (arg) {
-		var tier = "ou";
+		var tier = getDefaultTier(this.room);
 		if (arg) {
 			tier = Tools.parseAliases(arg);
 			if (!Formats[tier]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
@@ -113,7 +141,7 @@ exports.commands = {
 				return this.restrictReply(this.trad((this.cmd === "usagedata" ? "data" : "stats")) + ': ' + link + (this.cmd === "usagedata" ? "moveset/" : ""), 'usage');
 			}
 			var poke = "garchomp";
-			var tier = "ou";
+			var tier = getDefaultTier(this.room);
 			var dataType = "";
 			var ladderType = 1630;
 			var args = arg.split(",");

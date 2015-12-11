@@ -71,6 +71,13 @@ exports.translations = {
 			'd1': 'Suspect test data for tier',
 			'd2': 'has been removed'
 		},
+		deftier: {
+			'usage': 'Usage',
+			'notchat': 'This command is only available for chat rooms',
+			'tiererr1': 'Tier',
+			'tiererr2': 'not found',
+			'set': 'Default tier for this room is now'
+		},
 		/*
 		* Quotes & Jokes
 		*/

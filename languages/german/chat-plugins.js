@@ -71,6 +71,13 @@
 			'd1': 'Suspect test daten für tier',
 			'd2': 'wurde entfernt'
 		},
+		deftier: {
+			'usage': 'Verwendung',
+			'notchat': 'Dieser Befehl kann nur in Chaträumen verwendet werden',
+			'tiererr1': 'Tier',
+			'tiererr2': 'nicht gefunden',
+			'set': 'Standard tier für dieses Chaträumen ist jetzt'
+		},
 		/*
 		* Quotes & Jokes
 		*/

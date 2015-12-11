@@ -71,6 +71,13 @@
 			'd1': 'Suspect test données pour tier',
 			'd2': 'a été retiré'
 		},
+		deftier: {
+			'usage': 'Usage',
+			'notchat': 'Cette commande est disponible seulement pour les salles de chat',
+			'tiererr1': 'Tier',
+			'tiererr2': 'pas trouvé',
+			'set': 'Tier par défaut pour cette salle est maintenant'
+		},
 		/*
 		* Quotes & Jokes
 		*/

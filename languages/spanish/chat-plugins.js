@@ -74,6 +74,13 @@ exports.translations = {
 			'd1': 'Información del suspect test de la tier',
 			'd2': 'eliminada'
 		},
+		deftier: {
+			'usage': 'Uso correcto',
+			'notchat': 'Este comando solo está disponible para las salas de chat',
+			'tiererr1': 'Tier',
+			'tiererr2': 'no encontrada',
+			'set': 'La tier por defecto de esta sala es ahora'
+		},
 		/*
 		* Quotes & Jokes
 		*/
