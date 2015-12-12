@@ -37,11 +37,12 @@ Chat Plugins
 
 Misc commands for multiple features:
 
- - `pick [option1], [option2], ...` - Choose between multiple options
+ - `pick [option1], [option2], [...]` - Choose between multiple options
  - `randomanswer` - Get a random answer
- - `usage` - Get a link to Smogon official usage stats
  - `joke` - Get a random joke from the local database
  - `quote` - Get a random quote from the local database
+ - `regdate (username)` - Get the register date of a Pokemon Showdown account
+ - `regtime (username)` - Get the age of a Pokemon Showdown account, useful for check if an account is autoconfirmed
 
 Commands for getting pokemon info:
 
@@ -54,6 +55,15 @@ Commands for getting pokemon info:
  - `boosting [poke]` - Get boosting moves
  - `recovery [poke]` - Get recovery moves
  - `hazards [poke]` - Get hazards moves
+ 
+Smogon-related commands:
+
+ - `usage` - Get a link to Smogon official usage stats
+ - `usage [pokemon], (tier)` - Get usage stats of a pokemon
+ - `usagedata [pokemon], [], (tier)` - Get usage data (common moves, items, spreads, etc) of a pokemon
+ - `suspect (tier)` - Get information about a suspect test
+ - `setsuspect [tier], [pokemon being suspected, ...], [link to Smogon]` - Set suspect information
+ - `deftier [tier]` - Set default tier for `usage` and `suspect` commands
 
 Commands for managing the local database of jokes and quotes:
 
@@ -72,8 +82,8 @@ Commands for controlling the bot and command permissions for chat rooms.
  - `custom [text]` - Send something to current room
  - `custom [room] [text]` - Send something to a chat room. Brackets are obligatory if you specify the room. Example of usage: `custom [lobby] Some text here`
  - `pm [user], [text]` - Send a private message
- - `join [room1], [room2]...` - Join chat rooms
- - `leave` - Leave chat rooms
+ - `join [room1], [room2], [...]` - Join chat rooms
+ - `leave [room1], [room2], [...]` - Leave chat rooms
  - `joinrooms [official/public/all]` - Join all rooms
  - `lang [lang]` - Set the language of the room
  - `settings [cmd], [rank]` - Configure command permissions
@@ -111,16 +121,16 @@ Moderation
 **Moderation Exception:** Use `modex [rank/all]` to change moderation exception for a room.
 
 **Autoban**
- - `ab [user], [user]...` - Add users to blacklist
- - `unab [user], [user]...` - Remove users from blacklist
+ - `ab [user1], [user2], [...]` - Add users to blacklist
+ - `unab [user1], [user2], [...]` - Remove users from blacklist
  - `rab [regex]` - Regex ban
  - `unrab [regex]` - Remove a regex ban
  - `vab` - View blacklist
 
 **Zero Tolerance**
  - `0tol [user]` - Checks if an user is in the zero tolerance list
- - `0tol add, [user1]:[level1], [user2]:[level2]...` - Add users to zero tolerance list
- - `0tol delete, [user1], [user2]...` - Removeusers from zero tolerance list
+ - `0tol add, [user1]:[level1], [user2]:[level2], [...]` - Add users to zero tolerance list
+ - `0tol delete, [user1], [user2], [...]` - Removeusers from zero tolerance list
  - `vzt` - Upload zero tolerance list to hastebin
 
 **Banwords and InapropiateWords:** Saying this words means automute. InapropiateWords requires that words are separated.
