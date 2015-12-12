@@ -64,6 +64,7 @@ exports.commands = {
 			}
 			quotes[id] = content;
 			saveQuotes();
+			this.sclog();
 			this.reply(text);
 		} else if (cmd === "delquote") {
 			if (!this.isRanked('admin')) return false;
@@ -72,6 +73,7 @@ exports.commands = {
 			if (!quotes[id]) return this.reply(this.trad('quote') + ' "' + id + '" ' + this.trad('n'));
 			delete quotes[id];
 			saveQuotes();
+			this.sclog();
 			this.reply(this.trad('quote') + ' "' + id + '" ' + this.trad('d'));
 		} else if (cmd === "getquote") {
 			var id = toId(arg);
@@ -122,6 +124,7 @@ exports.commands = {
 			}
 			jokes[id] = content;
 			saveJokes();
+			this.sclog();
 			this.reply(text);
 		} else if (cmd === "deljoke") {
 			if (!this.isRanked('admin')) return false;
@@ -130,6 +133,7 @@ exports.commands = {
 			if (!jokes[id]) return this.reply(this.trad('joke') + ' "' + id + '" ' + this.trad('n'));
 			delete jokes[id];
 			saveJokes();
+			this.sclog();
 			this.reply(this.trad('joke') + ' "' + id + '" ' + this.trad('d'));
 		} else if (cmd === "getjoke") {
 			var id = toId(arg);

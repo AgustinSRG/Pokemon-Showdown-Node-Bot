@@ -23,6 +23,7 @@ exports.commands = {
 				if (Settings.settings['ytlinks'][tarRoom]) return this.reply(this.trad('ae') + ' ' + tarRoom);
 				Settings.settings['ytlinks'][tarRoom] = 1;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('e') + textHelper);
 				break;
 			case 'off':
@@ -30,6 +31,7 @@ exports.commands = {
 				if (Settings.settings['ytlinks'][tarRoom] === 0) return this.reply(this.trad('ad') + ' ' + tarRoom);
 				Settings.settings['ytlinks'][tarRoom] = 0;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('d') + textHelper);
 				break;
 			default:

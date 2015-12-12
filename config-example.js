@@ -29,6 +29,12 @@ exports.connectionTimeout = 2 * 60 * 1000;
 exports.crashguard = true;
 
 /*
+* Security log
+*/
+
+exports.securityLog = {ageOfLogs: 7};
+
+/*
 * Watch Config
 */
 

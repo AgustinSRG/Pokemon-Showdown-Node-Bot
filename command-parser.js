@@ -44,11 +44,14 @@ var resourceMonitor = exports.resourceMonitor = {
 			this.cmdusage[user]++;
 			if (this.cmdusage[user] < MAX_CMD_FLOOD && this.cmdusage[user] % 10 === 0 && duration < 12 * 1000) {
 				monitor('User ' + user + ' has used ' + this.cmdusage[user] + ' commands in the last ' + duration.duration());
+				SecurityLog.log('User ' + user + ' has used ' + this.cmdusage[user] + ' commands in the last ' + duration.duration());
 			} else if (this.cmdusage[user] < MAX_CMD_FLOOD && this.cmdusage[user] % 20 === 0 && duration < 24 * 1000) {
 				monitor('User ' + user + ' has used ' + this.cmdusage[user] + ' commands in the last ' + duration.duration());
+				SecurityLog.log('User ' + user + ' has used ' + this.cmdusage[user] + ' commands in the last ' + duration.duration());
 			} else if (this.cmdusage[user] >= MAX_CMD_FLOOD) {
 				this.lock(user);
 				monitor('User ' + user + ' has been ignored (command flood: ' + this.cmdusage[user] + ' commands in the last ' + duration.duration() + ')');
+				SecurityLog.log('User ' + user + ' has been ignored (command flood: ' + this.cmdusage[user] + ' commands in the last ' + duration.duration() + ')');
 				return true;
 			}
 		} else {
@@ -151,15 +154,19 @@ var Context = exports.Context = (function () {
 			Bot.send(arg2, interval);
 		}
 	};
+
 	Context.prototype.sendPM = function (targetUser, data) {
 		this.send("," + targetUser, data);
 	};
+
 	Context.prototype.sendReply = Context.prototype.reply = function (data) {
 		this.send(this.room, data);
 	};
+
 	Context.prototype.pmReply = function (data) {
 		this.send("," + this.by, data);
 	};
+
 	Context.prototype.restrictReply = function (data, perm) {
 		if (!this.can(perm)) {
 			this.pmReply(data);
@@ -167,12 +174,15 @@ var Context = exports.Context = (function () {
 			this.reply(data);
 		}
 	};
+
 	Context.prototype.say = function (targetRoom, data) {
 		this.send(targetRoom, data);
 	};
+
 	Context.prototype.isRanked = function (rank) {
 		return Tools.equalOrHigherRank(this.by, rank);
 	};
+
 	Context.prototype.isRoomRanked = function (targetRoom, rank) {
 		if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
 			var userIdent = Bot.rooms[targetRoom].users[toId(this.by)] || this.by;
@@ -180,10 +190,12 @@ var Context = exports.Context = (function () {
 		}
 		return this.isRanked(rank);
 	};
+
 	Context.prototype.can = function (permission) {
 		if (this.roomType === 'battle') return Settings.userCan('battle-', this.by, permission);
 		else return Settings.userCan(this.room, this.by, permission);
 	};
+
 	Context.prototype.canSet = function (permission, rank) {
 		var rankSet;
 		if (!Settings.settings['commands'] || !Settings.settings['commands'][this.room] || typeof Settings.settings['commands'][this.room][permission] === "undefined") {
@@ -195,12 +207,14 @@ var Context = exports.Context = (function () {
 		if (Tools.equalOrHigherRank(this.by, rankSet) && Tools.equalOrHigherRank(this.by, rank)) return true;
 		return false;
 	};
+
 	Context.prototype.botRanked = function (rank) {
 		if (!Bot.rooms[this.room]) return false;
 		var ident = Bot.rooms[this.room].users[toId(Bot.status.nickName)];
 		if (ident) return Tools.equalOrHigherRank(ident, rank);
 		return false;
 	};
+
 	Context.prototype.hasRank = function (user, rank, targetRoom) {
 		if (!targetRoom) targetRoom = this.room;
 		if (Bot.rooms && Bot.rooms[targetRoom] && Bot.rooms[targetRoom].users) {
@@ -209,6 +223,7 @@ var Context = exports.Context = (function () {
 		}
 		return Tools.equalOrHigherRank(user, rank);
 	};
+
 	Context.prototype.getRoom = function (targetRoom) {
 		if (!Bot.rooms[targetRoom]) return null;
 		var roomObj = {};
@@ -218,6 +233,7 @@ var Context = exports.Context = (function () {
 		roomObj.users = this.getRoomUsers(targetRoom);
 		return roomObj;
 	};
+
 	Context.prototype.getRoomUsers = function (targetRoom) {
 		if (!Bot.rooms[targetRoom]) return null;
 		var users = [];
@@ -226,6 +242,7 @@ var Context = exports.Context = (function () {
 		}
 		return users;
 	};
+
 	Context.prototype.getUser = function (user, targetRoom) {
 		if (!Bot.rooms[targetRoom]) return null;
 		user = toId(user);
@@ -238,6 +255,7 @@ var Context = exports.Context = (function () {
 			rank: Bot.rooms[targetRoom].users[user].charAt(0)
 		};
 	};
+
 	Context.prototype.splitReply = function (str, maxMessageLength) {
 		if (!maxMessageLength) maxMessageLength = 300;
 		var msgs = [];
@@ -248,11 +266,21 @@ var Context = exports.Context = (function () {
 		msgs.push(str);
 		return msgs;
 	};
+
 	Context.prototype.trad = Context.prototype.tra = function (data) {
 		return Tools.translateCmd(this.handler, data, this.language);
 	};
+
 	Context.prototype.parse = function (data) {
 		return exports.parse(this.room, this.by, data);
+	};
+
+	Context.prototype.sclog = function (data) {
+		if (data) {
+			SecurityLog.log("[" + this.room + "] [" + this.by + "] [" + this.handler + "] " + data);
+		} else {
+			SecurityLog.log("[" + this.room + "] [" + this.by + "] [" + this.handler + "] " + "Command: " + this.cmdToken + this.cmd + " " + this.arg);
+		}
 	};
 
 	return Context;
@@ -329,6 +357,7 @@ var parse = exports.parse = function (room, by, msg) {
 			} catch (e) {
 				errlog(e.stack);
 				error("Command crash: " + cmd + ' | by: ' + by + ' | room: ' + room + ' | ' + sys.inspect(e));
+				SecurityLog.log("COMMAND CRASH: " + e.message + "\ncmd: " + cmd + " | by: " + by + " | room: " + room + "\n" + e.stack);
 				Bot.say(room, 'The command crashed: ' + sys.inspect(e).toString().split('\n').join(' '));
 			}
 		} else {

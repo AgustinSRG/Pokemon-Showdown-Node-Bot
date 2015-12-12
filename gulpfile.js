@@ -14,7 +14,7 @@ var jshintStylish = require('jshint-stylish');
 var globals = {};
 var globalList = [
 	'Bot', 'AppOptions', 'CommandParser', 'Config', 'DataDownloader', 'Features', 'Formats', 'Settings', 'Tools',
-	'colors', 'sys', 'fs', 'path', 'PSClient', 'reloadFeatures',
+	'colors', 'sys', 'fs', 'path', 'PSClient', 'reloadFeatures', 'SecurityLog',
 	'toId', 'toRoomid', 'ok', 'info', 'error', 'errlog', 'debug', 'cmdr', 'recv', 'sent', 'monitor'
 ];
 globalList.forEach(function (identifier) {globals[identifier] = false;});
@@ -78,7 +78,7 @@ jscsOptions.config = "./test/.jscsrc";
 
 var lintData = [
 	{
-		dirs: ['./command-parser.js', './data-downloader.js', './index.js', './settings.js', './tools.js', './commands/*.js', './features/*/*.js', './languages/*/*.js'],
+		dirs: ['./command-parser.js', './data-downloader.js', './index.js', './security-log.js', './settings.js', './tools.js', './commands/*.js', './features/*/*.js', './languages/*/*.js'],
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.base
 	}, {

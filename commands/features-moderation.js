@@ -102,6 +102,7 @@ exports.commands = {
 				continue;
 			}
 			this.say(tarRoom, '/roomban ' + tarUser + ', ' + this.trad('bu'));
+			this.sclog("Blacklisted: " + tarUser);
 			added.push(tarUser);
 		}
 
@@ -152,6 +153,7 @@ exports.commands = {
 				continue;
 			}
 			this.say(tarRoom, '/roomunban ' + tarUser);
+			this.sclog("Un-Blacklisted: " + tarUser);
 			removed.push(tarUser);
 		}
 
@@ -193,6 +195,7 @@ exports.commands = {
 		var regex = '/' + arg + '/i';
 		if (!blacklistRegex(regex, tarRoom)) return this.reply('/' + regex + '/ ' + this.trad('already'));
 		Settings.save();
+		this.sclog("Blacklisted RegExp: " + regex);
 		if (!Config.moderation || !Config.moderation.disableModNote) this.say(tarRoom, '/modnote ' + this.trad('re') + ' ' + regex + ' ' + this.trad('addby') + ' ' + user + '.');
 		this.reply(this.trad('re') + ' ' + regex + ' ' + this.trad('add'));
 	},
@@ -215,8 +218,8 @@ exports.commands = {
 
 		arg = '/' + arg.replace(/\\\\/g, '\\') + '/i';
 		if (!unblacklistRegex(arg, tarRoom)) return this.reply(this.trad('re') + ' ' + arg + ' ' + this.trad('notpresent'));
-
 		Settings.save();
+		this.sclog("Un-Blacklisted RegExp: " + arg);
 		if (!Config.moderation || !Config.moderation.disableModNote) this.say(tarRoom, '/modnote ' + this.trad('re') + ' ' + arg + ' ' + this.trad('rby') + ' ' + user + '.');
 		this.reply(this.trad('re') + ' ' + arg + ' ' + this.trad('r'));
 	},
@@ -350,6 +353,7 @@ exports.commands = {
 						}
 						if (addZeroTolUser(user, level)) {
 							added.push(user);
+							this.sclog("0tol user: " + user + "; Level: " + level);
 						} else {
 							alreadyAdded.push(user);
 						}
@@ -378,6 +382,7 @@ exports.commands = {
 						var user = toId(args[i]);
 						if (removeZeroTolUser(user)) {
 							removed.push(user);
+							this.sclog("Un-0tol user: " + user);
 						} else {
 							notFound.push(user);
 						}
@@ -436,6 +441,7 @@ exports.commands = {
 		bannedPhrases[arg] = 1;
 
 		Settings.save();
+		this.sclog();
 		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('ban') + textHelper);
 	},
 
@@ -475,6 +481,7 @@ exports.commands = {
 		}
 
 		Settings.save();
+		this.sclog();
 		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('unban') + textHelper);
 	},
 
@@ -555,6 +562,7 @@ exports.commands = {
 		bannedPhrases[arg] = 1;
 
 		Settings.save();
+		this.sclog();
 		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('ban') + textHelper);
 	},
 
@@ -594,6 +602,7 @@ exports.commands = {
 		}
 
 		Settings.save();
+		this.sclog();
 		this.reply(this.trad('phrase') + ' "' + arg + '" ' + this.trad('unban') + textHelper);
 	},
 
@@ -672,6 +681,7 @@ exports.commands = {
 			if (Settings.settings['jpdisable'][tarRoom]) delete Settings.settings['jpdisable'][tarRoom];
 			else return this.reply(this.trad('ae') + textHelper);
 			Settings.save();
+			this.sclog();
 			return this.reply(this.trad('e') + textHelper);
 		}
 
@@ -681,6 +691,7 @@ exports.commands = {
 			if (!Settings.settings['jpdisable'][tarRoom]) Settings.settings['jpdisable'][tarRoom] = 1;
 			else return this.reply(this.trad('ad') + textHelper);
 			Settings.save();
+			this.sclog();
 			return this.reply(this.trad('d') + textHelper);
 		}
 
@@ -709,6 +720,7 @@ exports.commands = {
 				if (!Settings.settings['joinphrases'][tarRoom]) Settings.settings['joinphrases'][tarRoom] = {};
 				Settings.settings['joinphrases'][tarRoom][user] = Tools.stripCommands(arg);
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('jpfor') + " " + user + ' ' + this.trad('modified') + ' ' + ((tarRoom === 'global') ? this.trad('globally') : (this.trad('forthis') + textHelper)));
 				break;
 			case 'delete':
@@ -716,6 +728,7 @@ exports.commands = {
 				if (!Settings.settings['joinphrases'][tarRoom][user]) return this.reply(this.trad('jpfor') + " " + user + " " + this.trad('not') + " " + ((tarRoom === 'global') ? this.trad('globally') : (this.trad('forthis') + textHelper)));
 				delete Settings.settings['joinphrases'][tarRoom][user];
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('jpfor') + " " + user + ' ' + this.trad('del') + ' ' + ((tarRoom === 'global') ? this.trad('globally') : (this.trad('forthis') + textHelper)));
 				break;
 			default:
@@ -795,10 +808,12 @@ exports.commands = {
 		if (Config.ranks.indexOf(rank) >= 0) {
 			Settings.settings['modexception'][tarRoom] = rank;
 			Settings.save();
+			this.sclog();
 			return this.reply(this.trad('modex-set1') + " " + this.trad('rank') + " **" + rank + "** " + this.trad('modex-set2') + textHelper);
 		} else if (toId(rank) === 'all') {
 			Settings.settings['modexception'][tarRoom] = ' ';
 			Settings.save();
+			this.sclog();
 			return this.reply(this.trad('modex-set1') + " **" + this.trad('all') + "** " + this.trad('modex-set2') + textHelper);
 		} else {
 			return this.reply(this.trad('not1') + " " + rank + " " + this.trad('not2'));
@@ -845,6 +860,7 @@ exports.commands = {
 			} else {
 				Settings.settings['modding'][tarRoom][mod] = 1;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('e') + ' ' + tarRoom);
 			}
 		} else {
@@ -853,6 +869,7 @@ exports.commands = {
 			} else {
 				Settings.settings['modding'][tarRoom][mod] = 0;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('mod') + " **" + mod + "** " + this.trad('d') + ' ' + tarRoom);
 			}
 		}
