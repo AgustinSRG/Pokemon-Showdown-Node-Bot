@@ -507,7 +507,7 @@ var teamToJSON = exports.teamToJSON = function (text) {
 		if (line === '' || line === '---') {
 			curSet = null;
 		} else if (!curSet) {
-			curSet = {name: '', species: '', gender: ''};
+			curSet = {name: '', species: '', gender: '', item: '', ability: '', nature: ''};
 			team.push(curSet);
 			var atIndex = line.lastIndexOf(' @ ');
 			if (atIndex !== -1) {
