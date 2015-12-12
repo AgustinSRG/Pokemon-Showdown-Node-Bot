@@ -28,6 +28,16 @@
 				'Ne pas compter sur elle.'
 			]
 		},
+		regdate: {
+			'inv': 'Nom d\'utilisateur invalide',
+			'busy': 'Actuellement télécharger les données, essayez de nouveau dans quelques secondes',
+			'err': 'Impossible d\'obtenir les données de',
+			'user': 'Utilisateur',
+			'not': 'est pas enregistrée',
+			'regtime1': 'a été enregistré il ya',
+			'regtime2': '',
+			'regdate': 'a été enregistrée le'
+		},
 		/*
 		* Smogon
 		*/

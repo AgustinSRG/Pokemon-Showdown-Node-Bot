@@ -28,6 +28,16 @@
 				'Darauf solltest du dich nicht verlassen.'
 			]
 		},
+		regdate: {
+			'inv': 'Ungültiger Benutzername',
+			'busy': 'Derzeit Herunterladen der Daten, versuchen Sie es erneut in ein paar Sekunden',
+			'err': 'Daten konnten nicht abgerufen werden',
+			'user': 'Benutzer',
+			'not': 'ist nicht registriert',
+			'regtime1': 'wurde vor',
+			'regtime2': 'registered',
+			'regdate': 'wurde am eingetragenen'
+		},
 		/*
 		* Smogon
 		*/

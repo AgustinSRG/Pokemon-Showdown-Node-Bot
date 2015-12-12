@@ -28,6 +28,16 @@ exports.translations = {
 				'Don\'t count on it.'
 			]
 		},
+		regdate: {
+			'inv': 'Invalid username',
+			'busy': 'Currently downloading the data, try again in a few seconds',
+			'err': 'Could not get data from',
+			'user': 'User',
+			'not': 'is not registered',
+			'regtime1': 'was registered',
+			'regtime2': 'ago',
+			'regdate': 'was registered on'
+		},
 		/*
 		* Smogon
 		*/

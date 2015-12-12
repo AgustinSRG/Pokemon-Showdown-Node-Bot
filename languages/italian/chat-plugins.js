@@ -28,6 +28,16 @@
 				'Non contarci.'
 			]
 		},
+		regdate: {
+			'inv': 'Nome utente non valido',
+			'busy': 'Al momento di scaricare i dati, provare di nuovo in pochi secondi',
+			'err': 'Impossibile ottenere i dati da',
+			'user': 'Utente',
+			'not': 'non è registrato',
+			'regtime1': 'è stato registrato',
+			'regtime2': 'fa',
+			'regdate': 'è stato registrato su'
+		},
 		/*
 		* Smogon
 		*/

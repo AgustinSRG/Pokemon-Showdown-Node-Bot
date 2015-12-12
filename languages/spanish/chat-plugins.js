@@ -31,6 +31,16 @@ exports.translations = {
 				'No cuentes con ello.'
 			]
 		},
+		regdate: {
+			'inv': 'Nombre de usuario no válido',
+			'busy': 'Ahora mismo estoy descargando los datos, inténtalo de nuevo en unos segundos',
+			'err': 'No se pudieron obtener los datos desde',
+			'user': 'El usuario',
+			'not': 'no está registrado',
+			'regtime1': 'está regsitrado desde hace',
+			'regtime2': '',
+			'regdate': 'se registró en la fecha'
+		},
 		/*
 		* Smogon
 		*/
