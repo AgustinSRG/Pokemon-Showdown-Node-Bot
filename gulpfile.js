@@ -82,7 +82,7 @@ var lintData = [
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.base
 	}, {
-		dirs: ['./config-example.js', './data/*-example.js'],
+		dirs: ['./config-example.js', './data/*-example.js', './data/typechart.js'],
 		jsHint: jsHintOptions.base,
 		jscs: jscsOptions.config
 	}, {
