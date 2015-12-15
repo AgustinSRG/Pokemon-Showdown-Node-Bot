@@ -58,9 +58,9 @@ Commands for getting pokemon info:
  
 Smogon-related commands:
 
- - `usage` - Get a link to Smogon official usage stats
+ - `usagelink` - Get a link to Smogon official usage stats
  - `usage [pokemon], (tier)` - Get usage stats of a pokemon
- - `usagedata [pokemon], [], (tier)` - Get usage data (common moves, items, spreads, etc) of a pokemon
+ - `usagedata [pokemon], [moves / items / abilities / spreads / teammates], (tier)` - Get usage data (common moves, items, spreads, etc) of a pokemon
  - `suspect (tier)` - Get information about a suspect test
  - `setsuspect [tier], [pokemon being suspected, ...], [link to Smogon]` - Set suspect information
  - `deftier [tier]` - Set default tier for `usage` and `suspect` commands

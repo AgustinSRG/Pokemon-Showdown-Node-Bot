@@ -61,6 +61,12 @@ function markDownload (link, b) {
 	}
 }
 
+function tierName (tier) {
+	if (!tier) return "";
+	if (Formats[tier]) return Formats[tier].name;
+	return tier.toUpperCase();
+}
+
 /* Commands */
 
 Settings.addPermissions(['usage']);
@@ -120,55 +126,64 @@ exports.commands = {
 		var tier = getDefaultTier(this.room);
 		if (arg) {
 			tier = Tools.parseAliases(arg);
-			if (!Formats[tier]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
 		}
 		if (Settings.settings.suspect && Settings.settings.suspect[tier]) {
 			//Suspect
 			this.restrictReply("Suspect test " + this.trad('in') + " **" + Formats[tier].name + "**: **" + Tools.toName(Settings.settings.suspect[tier].poke) + "**. " + Settings.settings.suspect[tier].link, "info");
-		} else {
+		} else if (Formats[tier]) {
 			//No suspect
 			this.restrictReply(this.trad('nosuspect') + " " + Formats[tier].name + (this.isRanked('admin') ? (". " + this.trad('aux1') + " ``" + this.cmdToken + "setsuspect`` " + this.trad('aux2')) : ""), "info");
+		} else {
+			this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
 		}
 	},
 
 	usagedata: 'usage',
 	usagestats: 'usage',
+	usagedatalink: 'usage',
 	usagelink: 'usage',
 	usage: function (arg) {
+		var topTiers = {'ou': 1, 'oususpecttest': 1, 'doublesou': 1};
 		getUsageLink(function (link) {
 			if (!link) link = generateUsageLink(-2);
-			if (!arg || this.cmd === "usagelink") {
+			if (!arg) {
 				return this.restrictReply(this.trad((this.cmd === "usagedata" ? "data" : "stats")) + ': ' + link + (this.cmd === "usagedata" ? "moveset/" : ""), 'usage');
 			}
-			var poke = "garchomp";
+			if (this.cmd === "usagelink" || this.cmd === "usagedatalink") {
+				var tFormat = Tools.parseAliases(arg);
+				return this.restrictReply(this.trad((this.cmd === "usagedata" ? "data" : "stats")) + ': ' + link + (this.cmd === "usagedatalink" ? "moveset/" : "") + (tFormat ? (tFormat + "-" + ((tFormat in topTiers) ? "1695" : "1630") + ".txt") : ""), 'usage');
+			}
+			var poke = "garchomp", searchIndex = -1;
 			var tier = getDefaultTier(this.room);
 			var dataType = "";
 			var ladderType = 1630;
 			var args = arg.split(",");
 			for (var i = 0; i < args.length; i++) args[i] = toId(args[i]);
+			poke = toId(args[0]);
+			try {
+				var aliases = require(ALIASES_FILE).BattleAliases;
+				if (aliases[poke]) poke = toId(aliases[poke]);
+			} catch (e) {
+				debug("Could not fetch aliases. Cmd: " + this.cmd + " " + arg + " | Room: " + this.room + " | By: " + this.by);
+			}
+			if (parseInt(poke)) searchIndex = parseInt(poke);
 			if (this.cmd === "usagedata") {
 				if (args.length < 2) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [pokemon], [moves / items / abilities / spreads / teammates], (tier)", 'usage');
-				poke = toId(args[0]);
-				try {
-					var aliases = require(ALIASES_FILE).BattleAliases;
-					if (aliases[poke]) poke = toId(aliases[poke]);
-				} catch (e) {
-					debug("Could not fetch aliases. Cmd: " + this.cmd + " " + arg + " | Room: " + this.room + " | By: " + this.by);
-				}
 				dataType = toId(args[1]);
 				if (!(dataType in {"moves": 1, "items": 1, "abilities": 1, "teammates": 1, "spreads": 1})) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [pokemon], [moves / items / abilities / spreads / teammates], (tier)", 'usage');
 				if (args[2]) {
 					tier = Tools.parseAliases(args[2]);
-					if (!Formats[tier]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'usage');
+					if (!Formats[tier] && !Formats[tier + "suspecttest"])
+						return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'usage');
 				}
-				if (tier === "ou" || tier === "oususpecttest") ladderType = 1695; //OU representative usage stats
+				if (tier in topTiers) ladderType = 1695; //OU representative usage stats
 				if (markDownload(link + "moveset/" + tier + "-" + ladderType + ".txt")) return this.restrictReply(this.trad('busy'), 'usage');
 				Settings.httpGetAndCache(link + "moveset/" + tier + "-" + ladderType + ".txt", function (data, err) {
 					markDownload(link + "moveset/" + tier + "-" + ladderType + ".txt", false);
 					if (err) {
 						return this.restrictReply(this.trad('err') + " " + link + "moveset/" + tier + "-" + ladderType + ".txt", 'usage');
 					}
-					if (data.indexOf("+----------------------------------------+") === -1) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr3'), 'usage');
+					if (data.indexOf("+----------------------------------------+") === -1) return this.restrictReply(this.trad('tiererr1') + " \"" + tierName(tier) + "\" " + this.trad('tiererr3'), 'usage');
 					var pokes = data.split(' +----------------------------------------+ \n +----------------------------------------+ ');
 					var pokeData = null, chosen = false;
 					for (var i = 0; i < pokes.length; i++) {
@@ -177,7 +192,7 @@ exports.commands = {
 						chosen = true;
 						break;
 					}
-					if (!chosen) return this.restrictReply(this.trad('pokeerr1') + " \"" + poke + "\" " + this.trad('pokeerr2') + " " + tier + " " + this.trad('pokeerr3'), 'usage');
+					if (!chosen) return this.restrictReply(this.trad('pokeerr1') + " \"" + poke + "\" " + this.trad('pokeerr2') + " " + tierName(tier) + " " + this.trad('pokeerr3'), 'usage');
 					var result = [];
 					var resultName = "";
 					var pokeName = Tools.toName(pokeData[1].split("|")[1]);
@@ -219,8 +234,8 @@ exports.commands = {
 							break;
 						}
 					}
-					if (!result.length) return this.restrictReply(this.trad('notfound') + " " + this.trad('usagedata1').replace("#NAME", resultName) + pokeName + this.trad('usagedata2').replace("#NAME", resultName) + " " + this.trad('in') + " " + Formats[tier].name, 'usage');
-					var txt = "**" + this.trad('usagedata1').replace("#NAME", resultName) + pokeName + this.trad('usagedata2').replace("#NAME", resultName) + " " + this.trad('in') + " " + Formats[tier].name + "**: ";
+					if (!result.length) return this.restrictReply(this.trad('notfound') + " " + this.trad('usagedata1').replace("#NAME", resultName) + pokeName + this.trad('usagedata2').replace("#NAME", resultName) + " " + this.trad('in') + " " + tierName(tier), 'usage');
+					var txt = "**" + this.trad('usagedata1').replace("#NAME", resultName) + pokeName + this.trad('usagedata2').replace("#NAME", resultName) + " " + this.trad('in') + " " + tierName(tier) + "**: ";
 					var comma, cmds = [];
 					for (var i = 0; i < result.length; i++) {
 						comma = (i < result.length - 1) ? ", " : "";
@@ -237,12 +252,12 @@ exports.commands = {
 				});
 			} else {
 				if (args.length < 1) return this.restrictReply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [pokemon], (tier)", 'usage');
-				poke = toId(args[0]);
 				if (args[1]) {
 					tier = Tools.parseAliases(args[1]);
-					if (!Formats[tier]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'usage');
+					if (!Formats[tier] && !Formats[tier + "suspecttest"])
+						return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'usage');
 				}
-				if (tier === "ou" || tier === "oususpecttest") ladderType = 1695; //OU representative usage stats
+				if (tier in topTiers) ladderType = 1695; //OU representative usage stats
 				if (markDownload(link + tier + "-" + ladderType + ".txt")) return this.restrictReply(this.trad('busy'), 'usage');
 				Settings.httpGetAndCache(link + tier + "-" + ladderType + ".txt", function (data, err) {
 					markDownload(link + tier + "-" + ladderType + ".txt", false);
@@ -250,7 +265,7 @@ exports.commands = {
 						return this.restrictReply(this.trad('err') + " " + link + tier + "-" + ladderType + ".txt", 'usage');
 					}
 					var lines = data.split("\n");
-					if (lines[0].indexOf("Total battles:") === -1) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr3'), 'usage');
+					if (lines[0].indexOf("Total battles:") === -1) return this.restrictReply(this.trad('tiererr1') + " \"" + tierName(tier) + "\" " + this.trad('tiererr3'), 'usage');
 					var dataRes = {
 						name: poke,
 						pos: -1,
@@ -261,7 +276,7 @@ exports.commands = {
 					for (var i = 5; i < lines.length; i++) {
 						line = lines[i].split("|");
 						if (line.length < 7) continue;
-						if (toId(line[2]) === poke) {
+						if (toId(line[2]) === poke || searchIndex === parseInt(line[1].trim())) {
 							dataRes.name = Tools.toName(line[2]);
 							dataRes.pos = parseInt(line[1].trim());
 							dataRes.usage = line[3].trim();
@@ -269,8 +284,8 @@ exports.commands = {
 							break;
 						}
 					}
-					if (!dataRes.pos || dataRes.pos < 1) return this.restrictReply(this.trad('pokeerr1') + " \"" + poke + "\" " + this.trad('pokeerr2') + " " + tier + " " + this.trad('pokeerr4'), 'usage');
-					this.restrictReply("**" + dataRes.name + "**, #" + dataRes.pos + " " + this.trad('in') + " **" + Formats[tier].name + "**. " + this.trad('pokeusage') +  ": " + dataRes.usage + ", " + this.trad('pokeraw') + ": " + dataRes.raw, 'usage');
+					if (!dataRes.pos || dataRes.pos < 1) return this.restrictReply(this.trad('pokeerr1') + " \"" + poke + "\" " + this.trad('pokeerr2') + " " + tierName(tier) + " " + this.trad('pokeerr4'), 'usage');
+					this.restrictReply("**" + dataRes.name + "**, #" + dataRes.pos + " " + this.trad('in') + " **" + tierName(tier) + "**. " + this.trad('pokeusage') +  ": " + dataRes.usage + ", " + this.trad('pokeraw') + ": " + dataRes.raw, 'usage');
 				}.bind(this), function () {
 					markDownload(link + tier + "-" + ladderType + ".txt", true);
 				});
