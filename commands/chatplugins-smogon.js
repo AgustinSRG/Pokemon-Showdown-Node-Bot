@@ -91,6 +91,7 @@ exports.commands = {
 		Settings.settings.deftier[tarRoom] = tier;
 		Settings.save();
 		this.reply(this.trad('set') + " **" + tierName(tier) + "**" + textHelper);
+		this.sclog();
 	},
 
 	delsuspect: 'setsuspect',
@@ -103,6 +104,7 @@ exports.commands = {
 			if (!Settings.settings.suspect[arg]) return this.reply(this.trad('d1') + " \"" + arg + "\" " + this.trad('notfound'));
 			delete Settings.settings.suspect[arg];
 			Settings.save();
+			this.sclog();
 			this.reply(this.trad('d1') + " \"" + arg + " " + this.trad('d2'));
 		} else {
 			var args = arg.split(",");
@@ -117,6 +119,7 @@ exports.commands = {
 				link: link
 			};
 			Settings.save();
+			this.sclog();
 			this.parse(this.cmdToken + "suspect " + tier);
 		}
 	},

@@ -10,6 +10,7 @@ exports.commands = {
 		var tarRoom = toRoomid(arg) || room;
 		if (!Features['autoinvite']) return false;
 		if (!Bot.rooms || !Bot.rooms[tarRoom]) return false;
+		this.sclog();
 		if (cmd === 'reloadroomauth') {
 			Features['autoinvite'].roomAuthChanges[tarRoom] = 1;
 			Features['autoinvite'].checkAuth();

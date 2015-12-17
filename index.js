@@ -78,6 +78,8 @@ global.DataDownloader = require('./data-downloader.js');
 
 global.CommandParser = require('./command-parser.js');
 
+global.SecurityLog = require('./security-log.js');
+
 /* Commands */
 
 if (!AppOptions.testmode) CommandParser.loadCommands();
@@ -257,6 +259,7 @@ global.Bot = new PSClient(Config.server, Config.port, opts);
 var connected = false;
 Bot.on('connect', function (con) {
 	ok('Connected to server ' + Config.serverid + ' (' + Tools.getDateString() + ')');
+	SecurityLog.log('Connected to server ' + Bot.opts.server + ":" + Bot.opts.port + " (" + Bot.opts.serverid + ")");
 	connected = true;
 	for (var f in Features) {
 		try {
@@ -264,6 +267,7 @@ Bot.on('connect', function (con) {
 		} catch (e) {
 			errlog(e.stack);
 			error("Feature Crash: " + f + " | " + sys.inspect(e));
+			SecurityLog.log("FEATURE CRASH: " + f + " | " + e.message + "\n" + e.stack);
 		}
 	}
 });
@@ -352,6 +356,7 @@ Bot.on('renamefailure', function (e) {
 
 Bot.on('rename', function (name, named) {
 	monitor('Bot nickname has changed: ' + (named ? name.green : name.yellow) + (named ? '' : ' [guest]'));
+	SecurityLog.log('Bot nickname has changed: ' + name + (named ? '' : ' [guest]'));
 	if (named) {
 		if (!Config.nick) {
 			if (Bot.roomcount > 0) return; // Namechange, not initial login
@@ -369,6 +374,7 @@ Bot.on('rename', function (name, named) {
 var reconnectTimer = null;
 var reconnecting = false;
 Bot.on('disconnect', function (e) {
+	if (connected) SecurityLog.log('Disconnected from server');
 	connected = false;
 	if (Config.autoReconnectDelay) {
 		if (reconnecting) return;
@@ -418,6 +424,7 @@ Bot.on('line', function (room, message, isIntro, spl) {
 		} catch (e) {
 			errlog(e.stack);
 			error("Feature Crash: " + f + " | " + sys.inspect(e));
+			SecurityLog.log("FEATURE CRASH: " + f + " | " + e.message + "\n" + e.stack);
 			Features[f].disabled = true;
 			Features[f].parse = null;
 			info("Feature " + f + " has been disabled");
@@ -428,17 +435,20 @@ Bot.on('line', function (room, message, isIntro, spl) {
 /* Info and debug */
 
 Bot.on('joinroom', function (room, type) {
+	SecurityLog.log("Joined room: " + room + " [" + type + "]");
 	if (type === 'chat') monitor('Joined room ' + room, 'room', 'join');
 	else if (type === 'battle') monitor('Joined battle ' + room, 'battle', 'join');
 	else monitor('Joined room ' + room + ' [' + Bot.rooms[room].type + ']', 'room', 'join');
 });
 
 Bot.on('joinfailure', function (room, e, moreInfo) {
+	SecurityLog.log('Could not join ' + room + ': [' + e + '] ' + moreInfo);
 	monitor('Could not join ' + room + ': [' + e + '] ' + moreInfo, 'room', 'error');
 });
 
 Bot.on('leaveroom', function (room) {
 	var roomType = Bot.rooms[room] ? Bot.rooms[room].type : 'chat';
+	SecurityLog.log("Left room: " + room + " [" + roomType + "]");
 	if (roomType === 'chat') monitor('Left room ' + room, 'room', 'leave');
 	else if (roomType === 'battle') monitor('Left battle ' + room, 'battle', 'leave');
 	else monitor('Left room ' + room + ' [' + Bot.rooms[room].type + ']', 'room', 'leave');
@@ -482,10 +492,12 @@ var checkSystem = function () {
 		switch (issue) {
 			case 'connect':
 				monitor("Monitor failed: Connection issue. Reconnecting");
+				SecurityLog.log("Monitor failed: Connection issue. Reconnecting");
 				Bot.connect();
 				break;
 			case 'login':
 				monitor("Monitor failed: Login issue. Loging in a random username");
+				SecurityLog.log("Monitor failed: Login issue. Loging in a random username");
 				Config.nick = '';
 				Bot.rename('Bot ' + Tools.generateRandomNick(10));
 				break;
@@ -500,6 +512,7 @@ if (!AppOptions.testmode) {
 //CrashGuard
 if (!AppOptions.testmode && Config.crashguard) {
 	process.on('uncaughtException', function (err) {
+		SecurityLog.log("CRASH: " + err.message + "\n" + err.stack);
 		error(("" + err.message).red);
 		errlog(("" + err.stack).red);
 	});
@@ -518,7 +531,7 @@ if (!AppOptions.testmode && Config.watchconfig) {
 			CommandParser.reloadTokens();
 			info(AppOptions.config + ' reloaded');
 		} catch (e) {
-			error('could not reload ' + AppOptions.config);
+			error('could not reload ' + AppOptions.config + " | " + e.message);
 			errlog(e.stack);
 		}
 	});

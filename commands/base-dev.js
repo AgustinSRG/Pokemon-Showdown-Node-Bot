@@ -6,6 +6,7 @@ exports.commands = {
 	"eval": 'js',
 	js: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
+		this.sclog();
 		try {
 			var result = eval(arg.trim());
 			this.say(room, '``' + JSON.stringify(result) + '``');
@@ -16,6 +17,7 @@ exports.commands = {
 
 	send: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
+		this.sclog();
 		this.send(arg);
 	},
 
@@ -25,6 +27,7 @@ exports.commands = {
 		if (cmd.substr(0, 2) === 'un') {
 			if (CommandParser.resourceMonitor.isLocked(arg)) {
 				CommandParser.resourceMonitor.unlock(arg);
+				this.sclog();
 				this.reply('User ' + arg + ' is no longer ignored');
 			} else {
 				this.reply('User ' + arg + ' is not ignored');
@@ -32,6 +35,7 @@ exports.commands = {
 		} else {
 			if (!CommandParser.resourceMonitor.isLocked(arg)) {
 				CommandParser.resourceMonitor.lock(arg);
+				this.sclog();
 				this.reply('User ' + arg + ' has been ignored by CommandParser');
 			} else {
 				this.reply('User ' + arg + ' is already ignored');
@@ -46,8 +50,12 @@ exports.commands = {
 			if (!arg) return this.pmReply("Usage: " + this.cmdToken + this.cmd + " [room]");
 			return this.pmReply("Room \"" + arg + "\" not found");
 		}
-		if (Settings.sleepRoom(roomObj.id)) this.pmReply("Status for room <<" + roomObj.id + ">> is now ``Sleeping``");
-		else this.pmReply("The <<" + roomObj.id + ">> room status was already ``Sleeping``");
+		if (Settings.sleepRoom(roomObj.id)) {
+			this.sclog();
+			this.pmReply("Status for room <<" + roomObj.id + ">> is now ``Sleeping``");
+		} else {
+			this.pmReply("The <<" + roomObj.id + ">> room status was already ``Sleeping``");
+		}
 	},
 
 	wake: 'unsleep',
@@ -58,8 +66,12 @@ exports.commands = {
 			if (!arg) return this.pmReply("Usage: " + this.cmdToken + this.cmd + " [room]");
 			return this.pmReply("Room \"" + arg + "\" not found");
 		}
-		if (Settings.unsleepRoom(roomObj.id)) this.pmReply("Status for room <<" + roomObj.id + ">> is now ``Ready``");
-		else this.pmReply("The <<" + roomObj.id + ">> room status was already ``Ready``");
+		if (Settings.unsleepRoom(roomObj.id)) {
+			this.sclog();
+			this.pmReply("Status for room <<" + roomObj.id + ">> is now ``Ready``");
+		} else {
+			this.pmReply("The <<" + roomObj.id + ">> room status was already ``Ready``");
+		}
 	},
 
 	roomstatus: 'status',
@@ -94,14 +106,21 @@ exports.commands = {
 		switch (opt) {
 			case '':
 			case 'commands':
+				this.sclog();
 				var res = CommandParser.loadCommands(true) || [];
-				if (!res.length) return this.reply('Commands hotpatched');
+				if (!res.length) {
+					return this.reply('Commands hotpatched');
+				}
 				return this.reply('Some command files crashed: ' + res.join(", "));
 			case 'features':
+				this.sclog();
 				var errs = reloadFeatures() || [];
-				if (!errs.length) return this.reply('Features hotpatched');
+				if (!errs.length) {
+					return this.reply('Features hotpatched');
+				}
 				return this.reply('Some features crashed: ' + errs.join(", "));
 			case 'feature':
+				this.sclog();
 				if (!args[1]) return this.reply("You must specify a feature");
 				args[1] = args[1].trim();
 				var e = Tools.reloadFeature(args[1]);
@@ -118,6 +137,7 @@ exports.commands = {
 				break;
 			case 'commandparser':
 			case 'parser':
+				this.sclog();
 				try {
 					Tools.uncacheTree('./command-parser.js');
 					global.CommandParser = require('./../command-parser.js');
@@ -130,6 +150,7 @@ exports.commands = {
 				}
 				break;
 			case 'tools':
+				this.sclog();
 				try {
 					Tools.uncacheTree('./tools.js');
 					global.Tools = require('./../tools.js');
@@ -142,10 +163,12 @@ exports.commands = {
 				}
 				break;
 			case 'data':
+				this.sclog();
 				DataDownloader.download();
 				this.reply('Data files reloaded');
 				break;
 			case 'config':
+				this.sclog();
 				try {
 					Tools.uncacheTree(AppOptions.config);
 					global.Config = require(AppOptions.config);
@@ -162,6 +185,7 @@ exports.commands = {
 				break;
 			case 'lang':
 			case 'languages':
+				this.sclog();
 				var _errs = Tools.loadTranslations(true) || [];
 				if (!_errs.length) return this.reply('Languages hotpatched');
 				this.reply('Some languages crashed: ' + _errs.join(", "));
@@ -180,6 +204,7 @@ exports.commands = {
 		}
 
 		global.updateGitLock = true;
+		this.sclog();
 
 		var self = this;
 		var exec = require('child_process').exec;
@@ -211,6 +236,7 @@ exports.commands = {
 	endlockdown: 'lockdown',
 	lockdown: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
+		this.sclog();
 		if (cmd === 'endlockdown') {
 			if (!Settings.lockdown) return this.reply("Not in lockdown mode");
 			Settings.lockdown = false;
@@ -226,6 +252,7 @@ exports.commands = {
 	kill: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;
 		if (cmd === "forcekill") {
+			this.sclog();
 			console.log('Forced Kill. By: ' + by);
 			process.exit();
 		} else {
@@ -240,6 +267,7 @@ exports.commands = {
 					}
 				}
 			}
+			this.sclog();
 			console.log('Kill. By: ' + by);
 			process.exit();
 		}

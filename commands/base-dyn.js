@@ -65,6 +65,7 @@ exports.commands = {
 		if (CommandParser.dynCommands[dcmd]) {
 			delete CommandParser.dynCommands[dcmd];
 			CommandParser.saveDynCmds();
+			this.sclog();
 			this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('d'));
 		} else {
 			this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('n'));
@@ -86,6 +87,7 @@ exports.commands = {
 		}
 		CommandParser.dynCommands[dcmd] = CommandParser.tempVar;
 		CommandParser.saveDynCmds();
+		this.sclog();
 		this.reply(text);
 	},
 
@@ -101,6 +103,7 @@ exports.commands = {
 		if (CommandParser.dynCommands[dcmd].substr(0, 4) === "/ref") return this.reply(this.trad('c') + ' "' + dcmd + '" ' + this.trad('already'));
 		CommandParser.dynCommands[alias] = '/ref ' + dcmd;
 		CommandParser.saveDynCmds();
+		this.sclog();
 		this.reply(this.trad('c') + ' "' + alias + '" ' + this.trad('alias') + ' "' + dcmd + '"');
 	},
 
@@ -127,6 +130,7 @@ exports.commands = {
 	temp: function (arg, by, room, cmd) {
 		if (!this.isRanked(Tools.getGroup('admin'))) return false;
 		if (arg) CommandParser.tempVar = Tools.stripCommands(arg);
+		this.sclog("Temp command-parser var changed");
 		this.reply('Temp: ' + CommandParser.tempVar);
 	}
 };

@@ -236,6 +236,7 @@ exports.commands = {
 				var _code = args[0].trim();
 				var r =  Features['tours'].Leaderboards.execResetHashCode(_code);
 				if (!r) return this.reply(this.trad('invhash'));
+				this.sclog();
 				this.reply(this.trad('data') + " __" + r + "__ " + this.trad('del'));
 				break;
 			default:

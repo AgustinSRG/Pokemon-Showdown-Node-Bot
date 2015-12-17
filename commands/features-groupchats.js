@@ -10,6 +10,7 @@ exports.commands = {
 		if (!Features['groupchats']) return false;
 		if (Features['groupchats'].ignored[tarRoom]) return this.reply("Group Chat __" + tarRoom + "__ already ignored");
 		Features['groupchats'].ignored[tarRoom] = true;
+		this.sclog();
 		this.reply("Group Chat __" + tarRoom + "__ was temporarily ignored");
 	},
 
@@ -20,6 +21,7 @@ exports.commands = {
 		if (!Features['groupchats']) return false;
 		if (!Features['groupchats'].ignored[tarRoom]) return this.reply("Group Chat __" + tarRoom + "__ is not being ignored");
 		delete Features['groupchats'].ignored[tarRoom];
+		this.sclog();
 		this.reply("Group Chat __" + tarRoom + "__ is no longer ignored");
 	},
 
@@ -47,10 +49,12 @@ exports.commands = {
 			if (toId(arg) in {'on': 1, 'enable': 1}) {
 				Settings.settings.autopromote[tarRoom].enabled = true;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('on') + textHelper);
 			} else if (toId(arg) in {'off': 1, 'disable': 1}) {
 				Settings.settings.autopromote[tarRoom].enabled = false;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('off') + textHelper);
 			} else {
 				this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [on/off]");
@@ -80,12 +84,14 @@ exports.commands = {
 			if (rank in {'off': 1, 'disable': 1, 'deauth': 1}) {
 				Settings.settings.autopromote[tarRoom].all = 0;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('general1') + textHelper);
 				return;
 			}
 			if (Config.ranks.indexOf(rank) >= 0) {
 				Settings.settings.autopromote[tarRoom].all = rank;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('general2') + " " + rank + textHelper);
 			} else {
 				return this.reply(this.trad('rank') + " " + rank + " " + this.trad('notrank'));
@@ -98,12 +104,14 @@ exports.commands = {
 				if (!Settings.settings.autopromote[tarRoom].users[userid]) return this.reply(this.trad('user') + " " + userid + " " + this.trad('notuser') + textHelper);
 				delete Settings.settings.autopromote[tarRoom].users[userid];
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('user') + " " + userid + " " + this.trad('del') + textHelper);
 				return;
 			}
 			if (Config.ranks.indexOf(rank) >= 0) {
 				Settings.settings.autopromote[tarRoom].users[userid] = rank;
 				Settings.save();
+				this.sclog();
 				this.reply(this.trad('auser') + " " + userid + " " + this.trad('set') + " " + rank + textHelper);
 			} else {
 				return this.reply(this.trad('rank') + " " + rank + " " + this.trad('notrank'));
