@@ -86,11 +86,11 @@ exports.commands = {
 		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
 		var tier = toId(arg);
 		if (!tier) return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [tier]");
-		if (!Formats[tier]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
+		if (!Formats[tier] && !Formats[tier + "suspecttest"]) return this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
 		if (!Settings.settings.deftier) Settings.settings.deftier = {};
 		Settings.settings.deftier[tarRoom] = tier;
 		Settings.save();
-		this.reply(this.trad('set') + " **" + Formats[tier].name + "**" + textHelper);
+		this.reply(this.trad('set') + " **" + tierName(tier) + "**" + textHelper);
 	},
 
 	delsuspect: 'setsuspect',
@@ -109,7 +109,7 @@ exports.commands = {
 			var tier, poke, link;
 			if (args.length < 3) return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [tier], [pokemon], [link]");
 			tier = Tools.parseAliases(args.shift());
-			if (!Formats[tier]) return this.reply(this.trad('tier') + " \"" + tier + "\" " + this.trad('notfound'));
+			if (!Formats[tier] && !Formats[tier + "suspecttest"]) return this.reply(this.trad('tier') + " \"" + tier + "\" " + this.trad('notfound'));
 			link = args.pop().trim();
 			poke = args.join(",");
 			Settings.settings.suspect[tier] = {
@@ -129,10 +129,10 @@ exports.commands = {
 		}
 		if (Settings.settings.suspect && Settings.settings.suspect[tier]) {
 			//Suspect
-			this.restrictReply("Suspect test " + this.trad('in') + " **" + Formats[tier].name + "**: **" + Tools.toName(Settings.settings.suspect[tier].poke) + "**. " + Settings.settings.suspect[tier].link, "info");
-		} else if (Formats[tier]) {
+			this.restrictReply("Suspect test " + this.trad('in') + " **" + tierName(tier) + "**: **" + Tools.toName(Settings.settings.suspect[tier].poke) + "**. " + Settings.settings.suspect[tier].link, "info");
+		} else if (Formats[tier] || Formats[tier + "suspecttest"]) {
 			//No suspect
-			this.restrictReply(this.trad('nosuspect') + " " + Formats[tier].name + (this.isRanked('admin') ? (". " + this.trad('aux1') + " ``" + this.cmdToken + "setsuspect`` " + this.trad('aux2')) : ""), "info");
+			this.restrictReply(this.trad('nosuspect') + " " + tierName(tier) + (this.isRanked('admin') ? (". " + this.trad('aux1') + " ``" + this.cmdToken + "setsuspect`` " + this.trad('aux2')) : ""), "info");
 		} else {
 			this.restrictReply(this.trad('tiererr1') + " \"" + tier + "\" " + this.trad('tiererr2'), 'info');
 		}
