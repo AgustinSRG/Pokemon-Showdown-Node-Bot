@@ -190,20 +190,28 @@ exports.commands = {
 
 	jointours: function (arg, by, room, cmd) {
 		if (!this.can('jointour')) return false;
-		if (this.roomType !== 'chat') return this.reply(this.trad('notchat'));
+		var tarRoom = room;
+		var targetObj = Tools.getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
 		if (!Settings.settings['jointours']) Settings.settings['jointours'] = {};
 		if (toId(arg) === "off") {
-			if (!Settings.settings['jointours'][room]) return this.reply(this.trad('ad') + ' ' + room);
-			delete Settings.settings['jointours'][room];
+			if (!Settings.settings['jointours'][tarRoom]) return this.reply(this.trad('ad') + ' ' + tarRoom);
+			delete Settings.settings['jointours'][tarRoom];
 			Settings.save();
 			this.sclog();
-			this.reply(this.trad('d') + ' ' + room);
+			this.reply(this.trad('d') + ' ' + tarRoom);
 		} else {
-			if (Settings.settings['jointours'][room]) return this.reply(this.trad('ae') + ' ' + room);
-			Settings.settings['jointours'][room] = 1;
+			if (Settings.settings['jointours'][tarRoom]) return this.reply(this.trad('ae') + ' ' + tarRoom);
+			Settings.settings['jointours'][tarRoom] = 1;
 			Settings.save();
 			this.sclog();
-			this.reply(this.trad('e') + ' ' + room);
+			this.reply(this.trad('e') + ' ' + tarRoom);
 		}
 	},
 
