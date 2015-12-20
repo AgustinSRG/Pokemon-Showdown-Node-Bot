@@ -2,6 +2,11 @@
 	Commands for groupchats feature
 */
 
+function wpmEnabled (room) {
+	if (Settings.settings.pmwmsg[room]) return !!Settings.settings.pmwmsg[room].enabled;
+	return false;
+}
+
 exports.commands = {
 	igc: 'ignoregroupchat',
 	ignoregroupchat: function (arg, user, room, cmd) {
@@ -118,6 +123,76 @@ exports.commands = {
 			}
 		} else {
 			return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [user], [rank] " + this.trad('or') + " " + this.cmdToken + cmd + " [rank] " + this.trad('usage2'));
+		}
+	},
+
+	/* Welcome PM message */
+
+	setwpm: 'wpm',
+	delwpm: 'wpm',
+	wpm: function (arg, user, room, cmd) {
+		if (!this.isRanked('roomowner')) return false;
+		var tarRoom = room;
+		var targetObj = Tools.getTargetRoom(arg);
+		var textHelper = '';
+		if (targetObj && this.isExcepted) {
+			arg = targetObj.arg;
+			tarRoom = targetObj.room;
+			textHelper = ' (' + tarRoom + ')';
+		}
+		if (!Bot.rooms[tarRoom] || Bot.rooms[tarRoom].type !== 'chat') return this.reply(this.trad('notchat') + textHelper);
+		if (!Settings.settings.pmwmsg) Settings.settings.pmwmsg = {};
+		switch (cmd) {
+			case "wpm":
+				if (!arg) return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [enable / disable / view]");
+				switch (toId(arg)) {
+					case 'on':
+					case 'enable':
+						if (!this.isExcepted) return;
+						if (!Settings.settings.pmwmsg[tarRoom]) Settings.settings.pmwmsg[tarRoom] = {msg: '', enabled: true};
+						Settings.settings.pmwmsg[tarRoom].enabled = true;
+						Settings.save();
+						this.sclog();
+						this.reply(this.trad('on') + " " + tarRoom);
+						break;
+					case 'off':
+					case 'disable':
+						if (!this.isExcepted) return;
+						if (!Settings.settings.pmwmsg[tarRoom]) Settings.settings.pmwmsg[tarRoom] = {msg: '', enabled: false};
+						Settings.settings.pmwmsg[tarRoom].enabled = false;
+						if (!Settings.settings.pmwmsg[tarRoom].msg) delete Settings.settings.pmwmsg[tarRoom];
+						Settings.save();
+						this.sclog();
+						this.reply(this.trad('off') + " " + tarRoom);
+						break;
+					case 'view':
+						if (!wpmEnabled(tarRoom)) return this.reply(this.trad('dis') + " " + tarRoom);
+						if (!Settings.settings.pmwmsg[tarRoom].msg) return this.reply(this.trad('not') + " " + tarRoom);
+						this.reply(Tools.stripCommands(Settings.settings.pmwmsg[tarRoom].msg));
+						break;
+					default:
+						return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [enable / disable / view]");
+				}
+				break;
+			case "setwpm":
+				if (!wpmEnabled(tarRoom)) return this.reply(this.trad('dis') + " " + tarRoom);
+				arg = Tools.stripCommands(arg.trim());
+				if (!arg) return this.reply(this.trad('usage') + ": " + this.cmdToken + this.cmd + " [message]");
+				if (!Settings.settings.pmwmsg[tarRoom]) Settings.settings.pmwmsg[tarRoom] = {msg: '', enabled: true};
+				Settings.settings.pmwmsg[tarRoom].msg = arg;
+				Settings.save();
+				this.sclog();
+				this.reply(this.trad('set') + " " + tarRoom);
+				break;
+			case "delwpm":
+				if (!wpmEnabled(tarRoom)) return this.reply(this.trad('dis') + " " + tarRoom);
+				if (!Settings.settings.pmwmsg[tarRoom]) Settings.settings.pmwmsg[tarRoom] = {msg: '', enabled: true};
+				if (!Settings.settings.pmwmsg[tarRoom].msg) return this.reply(this.trad('not') + " " + tarRoom);
+				Settings.settings.pmwmsg[tarRoom].msg = false;
+				Settings.save();
+				this.sclog();
+				this.reply(this.trad('del') + " " + tarRoom);
+				break;
 		}
 	}
 };

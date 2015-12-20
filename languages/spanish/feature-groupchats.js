@@ -20,6 +20,16 @@
 			'del': 'fue eliminado de la lista de autopromote',
 			'auser': 'La promoción automática para el usuario',
 			'set': 'fue establecida en el rango'
+		},
+		wpm: {
+			'notchat': 'Este comando solo está disponible para las salas de chat',
+			'usage': 'Uso correcto',
+			'on': 'La funcionaliadad de mensaje privado de bienvenida ha sido activada para la sala',
+			'off': 'La funcionaliadad de mensaje privado de bienvenida ha sido desactivada para la sala',
+			'dis': 'La funcionaliadad de mensaje privado de bienvenida está desactivada en la sala',
+			'set': 'El mensaje privado de bienvenida ha sido modificado para la sala',
+			'not': 'No hay ningún mensaje privado de bienvenida establecido para la sala',
+			'del': 'El mensaje privado de bienvenida ha sido eliminado para la sala'
 		}
 	}
 };

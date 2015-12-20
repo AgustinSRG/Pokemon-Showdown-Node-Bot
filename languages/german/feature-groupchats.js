@@ -20,6 +20,16 @@
 			'del': 'wurde von der Liste gelöscht autopromotion',
 			'auser': 'Autopromotion für Benutzer',
 			'set': 'wurde eingestellt'
+		},
+		wpm: {
+			'notchat': 'Dieser Befehl ist nur Chat-Raum zur Verfügungs',
+			'usage': 'Usage',
+			'on': 'Private Willkommensnachricht Funktion wurde die aktiviert für Raum',
+			'off': 'Private Willkommensnachricht Funktion wurde die deaktiviert für Raum',
+			'dis': 'Private Willkommens-Nachricht Funktion wird deaktiviert für Raum',
+			'set': 'Private Willkommensnachricht modifizierter für Raum',
+			'not': 'Es gibt keine privaten Willkommensnachricht für Raum',
+			'del': 'Private Willkommensnachricht entfernt für Raum'
 		}
 	}
 };

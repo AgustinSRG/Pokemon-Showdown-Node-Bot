@@ -26,7 +26,7 @@ function parseDeinit (room) {
 	}, 1000);
 }
 
-function parseJoin (room, by) {
+function runAutopromote (room, by) {
 	if (!Settings.settings.autopromote) return;
 	if (!Settings.settings.autopromote[room]) return;
 	var autoPromotion = Settings.settings.autopromote[room];
@@ -34,6 +34,13 @@ function parseJoin (room, by) {
 	var userid = toId(by);
 	if (autoPromotion.users && autoPromotion.users[userid] && !Tools.equalOrHigherRank(by.charAt(0), autoPromotion.users[userid])) return Bot.say(room, '/roompromote ' + userid + "," + autoPromotion.users[userid]);
 	if (autoPromotion.all && !Tools.equalOrHigherRank(by.charAt(0), autoPromotion.all)) return Bot.say(room, '/roompromote ' + userid + "," + autoPromotion.all);
+}
+
+function runWelcomeMessage (room, by) {
+	if (!Settings.settings.pmwmsg) return;
+	if (!Settings.settings.pmwmsg[room]) return;
+	if (!Settings.settings.pmwmsg[room].enabled || !Settings.settings.pmwmsg[room].msg) return;
+	Bot.say(room, "/pm " + by + "," + Tools.stripCommands(Settings.settings.pmwmsg[room].msg));
 }
 
 var intervalJoin = exports.intervalJoin = function () {
@@ -60,7 +67,11 @@ exports.init = function () {
 
 exports.parse = function (room, message, isIntro, spl) {
 	if (exports.ignored[room]) return;
-	if (!isIntro && spl[0] === 'J' || spl[0] === 'j') return parseJoin(room, spl[1]);
+	if (!isIntro && spl[0] === 'J' || spl[0] === 'j') {
+		runAutopromote(room, spl[1]);
+		runWelcomeMessage(room, spl[1]);
+		return;
+	}
 	if (!isConfigured(room)) return;
 	if (spl[0] === 'init') return parseInit(room);
 	if (spl[0] === 'deinit') return parseDeinit(room);

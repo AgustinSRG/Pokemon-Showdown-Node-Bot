@@ -20,6 +20,16 @@
 			'del': 'è stato eliminato dalla lista autopromozione',
 			'auser': 'Autopromozione per l\'utente',
 			'set': 'era impostato su'
+		},
+		wpm: {
+			'notchat': 'Questo comando è disponibile solo per le chat room',
+			'usage': 'Usage',
+			'on': 'Privato caratteristica messaggio di benvenuto è stata attivata per room',
+			'off': 'Privato caratteristica messaggio di benvenuto è stato disattivato per room',
+			'dis': 'Privato caratteristica messaggio di benvenuto è disabilitata per room',
+			'set': 'Messaggio di benvenuto privato è stato modificato per room',
+			'not': 'Non c\'è nessun messaggio di benvenuto privato per room',
+			'del': 'Messaggio di benvenuto privato è stato rimosso per room'
 		}
 	}
 };

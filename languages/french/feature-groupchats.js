@@ -20,6 +20,16 @@
 			'del': 'a été supprimé de la liste de l\'autopromotion',
 			'auser': 'Autopromotion pour l\'utilisateur',
 			'set': 'a été mis à'
+		},
+		wpm: {
+			'notchat': 'Cette commande est uniquement disponible pour les salles de chat',
+			'usage': 'Usage',
+			'on': 'Bienvenue fonction Message privé a été activé pour la salle',
+			'off': 'Bienvenue fonction Message privé a été désactivé pour la salle',
+			'dis': 'Bienvenue fonction Message privé est désactivée pour la salle',
+			'set': 'Message de bienvenue privée a été modifié pour la salle',
+			'not': 'Il n\'y a aucune message de bienvenue privée pour la salle',
+			'del': 'Message de bienvenue privée a été retiré pour la salle'
 		}
 	}
 };

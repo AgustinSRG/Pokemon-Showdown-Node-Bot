@@ -20,6 +20,16 @@
 			'del': 'was deleted from the autopromotion list',
 			'auser': 'Autopromotion for user',
 			'set': 'was set to'
+		},
+		wpm: {
+			'notchat': 'This command is only available for chat rooms',
+			'usage': 'Usage',
+			'on': 'Welcome private message feature was enabled for room',
+			'off': 'Welcome private message feature was disabled for room',
+			'dis': 'Welcome private message feature is disabled for room',
+			'set': 'Welcome private message was modified for room',
+			'not': 'There is not any welcome private message for room',
+			'del': 'Welcome private message was removed for room'
 		}
 	}
 };

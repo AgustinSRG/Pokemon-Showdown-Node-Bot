@@ -294,6 +294,13 @@ Automated Promotion
  - `autorank [user], [rank/deauth]` - Set the autopromotion rank for a single user
  - `listautorank` - Upload the autopromotion list to Hastebin
 
+Welcome private message. This can be spammable, much caution!
+
+ - `wpm [enable / disable]` - Enable or disable this feature in a room. Only for excepted users.
+ - `wpm view` - View the welcome private message set in a room
+ - `setwpm [message]` - Set the welcome private message for a room
+ - `delwpm` - Remove the welcome private message for a room
+
 Developing commands for GroupChats feature
 
  - `ignoregroupchat [groupchat]` - temporarily ignore a groupchat (to leave a groupchat). Then you must edit the config to make it permanent
