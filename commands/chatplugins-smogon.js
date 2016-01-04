@@ -19,11 +19,11 @@ function generateUsageLink (monthmod) {
 	var month = now.getMonth();
 	if (monthmod) month += monthmod;
 	while (month < 0) {
-		month += 11;
+		month += 12;
 		year--;
 	}
 	while (month > 11) {
-		month -= 11;
+		month -= 12;
 		year++;
 	}
 	return "http://www.smogon.com/stats/" + Tools.addLeftZero(year, 4) + "-" + Tools.addLeftZero(month + 1, 2) + "/";
