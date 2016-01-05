@@ -4,7 +4,7 @@ var download = exports.download = function () {
 	var datenow = Date.now();
 	debug('Downloading Pokemon Showdown data');
 	var formats = fs.createWriteStream("data/formats.js");
-	https.get("https://play.pokemonshowdown.com/data/formats.js?" + datenow, function (res) {
+	https.get("https://raw.githubusercontent.com/Zarel/Pokemon-Showdown/master/config/formats.js", function (res) {
 		res.pipe(formats);
 		res.on('end', function () {
 			debug('formats.js downloaded');
@@ -18,7 +18,7 @@ var download = exports.download = function () {
 		errlog(err.stack);
 	});
 	var formatsdata = fs.createWriteStream("data/formats-data.js");
-	https.get("https://play.pokemonshowdown.com/data/formats-data.js?" + datenow, function (res) {
+	https.get("https://raw.githubusercontent.com/Zarel/Pokemon-Showdown/master/data/formats-data.js", function (res) {
 		res.pipe(formatsdata);
 		res.on('end', function () {
 			debug('formats-data.js downloaded');
