@@ -164,6 +164,8 @@ exports.commands = {
 				break;
 			case 'data':
 				this.sclog();
+				Tools.uncacheTree('./data-downloader.js');
+				global.DataDownloader = require('./../data-downloader.js');
 				DataDownloader.download();
 				this.reply('Data files reloaded');
 				break;
@@ -171,7 +173,7 @@ exports.commands = {
 				this.sclog();
 				try {
 					Tools.uncacheTree(AppOptions.config);
-					global.Config = require(AppOptions.config);
+					global.Config = require('./../' + AppOptions.config);
 					Tools.checkConfig();
 					Settings.applyConfig();
 					CommandParser.reloadTokens();
