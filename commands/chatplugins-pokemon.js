@@ -226,7 +226,7 @@ exports.commands = {
 		} else if (items[id]) {
 			text += 'Gen ' + items[id].gen;
 		} else {
-			this.restrictReply(this.trad('nfound'), 'pokemon');
+			return this.restrictReply(this.trad('nfound'), 'pokemon');
 		}
 		this.restrictReply(text, 'pokemon');
 	},
