@@ -259,15 +259,23 @@ exports.losemsg = ['gg', 'wp'];
 
 exports.battleMessages = {
 	/* Examples of battle messages:
-	'-crit': {
-		'self': [], //Example: ['lol that hax', 'stop haxing pls']
-		'foe': [] //Example: ['sorry', 'wow sorry for that', 'get critted']
+	'crit': {
+		'self': ['lol that hax', 'stop haxing pls'],
+		'foe': ['sorry', 'wow sorry for that', 'get critted']
 	},
-	'-miss': {
-		'self': [] //Example: ['wow hax', 'lol #poke you\'re blind']
+	'miss': {
+		'self': ['wow hax', 'lol #poke you\'re blind']
 	}
 	*/
 };
+
+exports.battleModules = {
+	/* Algorithms for use in battles */
+	"challengecup1v1": "ingame-nostatus",
+	"1v1": "ingame-nostatus"
+};
+
+//exports.battleLog = {ageOfLogs: 1}; // Days
 
 exports.abandonedBattleAutojoin = true;
 

@@ -21,8 +21,8 @@ exports.start = function (format) {
 		var counter = 0;
 		var maxBattles = 1;
 		if (Config.ladderNumberOfBattles && Config.ladderNumberOfBattles > 0) maxBattles = Config.ladderNumberOfBattles;
-		for (var i in Features['battle'].BattleBot.data) {
-			if (Features['battle'].BattleBot.data[i].tier && toId(Features['battle'].BattleBot.data[i].tier) === format && Features['battle'].BattleBot.data[i].rated) counter++;
+		for (var i in Features['battle'].BattleBot.battles) {
+			if (Features['battle'].BattleBot.battles[i].tier && toId(Features['battle'].BattleBot.battles[i].tier) === format && Features['battle'].BattleBot.battles[i].rated) counter++;
 		}
 		if (counter >= maxBattles) return;
 		var cmds = [];
