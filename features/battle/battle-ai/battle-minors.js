@@ -35,7 +35,7 @@ module.exports = {
 				case 'firepledge':
 				case 'jumpkick':
 				case 'highjumpkick':
-						break;
+					break;
 				case 'brn':
 				case 'psn':
 					if (!poke.helpers.stausCounter) poke.helpers.stausCounter = 0;
@@ -91,7 +91,7 @@ module.exports = {
 
 	"-sethp": function (args, kwargs) {
 		var poke, hp;
-		for (var i = 1; i < args.length - 1; i+=2) {
+		for (var i = 1; i < args.length - 1; i += 2) {
 			poke = this.getActive(args[i]);
 			hp = this.parseHealth(args[i + 1]);
 			poke.hp = hp;
@@ -208,7 +208,7 @@ module.exports = {
 			}
 		}
 	},
-	
+
 	"-miss": "-crit",
 	"-supereffective": "-crit",
 	"-resisted": "-crit",

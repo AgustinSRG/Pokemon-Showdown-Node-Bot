@@ -533,7 +533,7 @@ exports.calculate = function (pokeA, pokeB, move, conditionsA, conditionsB, gcon
 		if (gconditions.weather === "desolateland" && move.type === "Water") modifier = 0;
 		if (gconditions.weather === "primordialsea" && move.type === "Fire") modifier = 0;
 	}
-	
+
 	if (gen >= 4 && defTypes.indexOf("Rock") >= 0 && gconditions.weather === "sandstorm") {
 		if (defStat === "spd") def = Math.floor(def * 1.5);
 	}

@@ -387,7 +387,7 @@ var Battle = exports.Battle = (function () {
 			name: name
 		};
 	};
-	
+
 	Battle.prototype.getCalcRequestPokemon = function (sideId, forceMega) {
 		var p = this.request.side.pokemon[sideId];
 		var details = this.parseDetails(p.details);

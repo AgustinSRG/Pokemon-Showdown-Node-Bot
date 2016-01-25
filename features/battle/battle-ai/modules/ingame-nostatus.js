@@ -50,9 +50,9 @@ function getPokemonAverage (battle, s) {
 		var pokeView = battle.foe.teamPv[i];
 		var template = Data.getPokemon(pokeView.species, battle.gen);
 		var poke = new Pokemon(template, {
-				level: pokeView.level,
-				gender: pokeView.gender,
-				evs: {hp: 192, def: 124, spd: 124}
+			level: pokeView.level,
+			gender: pokeView.gender,
+			evs: {hp: 192, def: 124, spd: 124}
 		});
 		if (toId(battle.tier || "").indexOf("challengecup") >= 0) poke.happiness = 100;
 		if (template.abilities) poke.ability = Data.getAbility(template.abilities[0], battle.gen);
