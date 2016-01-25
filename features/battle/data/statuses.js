@@ -64,7 +64,7 @@ exports.BattleStatuses = {
 		onStart: function (target) {
 			this.add('-status', target, 'frz');
 			if (target.template.species === 'Shaymin-Sky' && target.baseTemplate.baseSpecies === 'Shaymin') {
-				let template = this.getTemplate('Shaymin');
+				var template = this.getTemplate('Shaymin');
 				target.formeChange(template);
 				target.baseTemplate = template;
 				target.setAbility(template.abilities['0']);
@@ -130,7 +130,7 @@ exports.BattleStatuses = {
 	confusion: {
 		// this is a volatile status
 		onStart: function (target, source, sourceEffect) {
-			let result = this.runEvent('TryConfusion', target, source, sourceEffect);
+			var result = this.runEvent('TryConfusion', target, source, sourceEffect);
 			if (!result) return result;
 			if (sourceEffect && sourceEffect.id === 'lockedmove') {
 				this.add('-start', target, 'confusion', '[fatigue]');
@@ -272,8 +272,8 @@ exports.BattleStatuses = {
 			if (pokemon.ignoringItem()) {
 				return;
 			}
-			let moves = pokemon.moveset;
-			for (let i = 0; i < moves.length; i++) {
+			var moves = pokemon.moveset;
+			for (var i = 0; i < moves.length; i++) {
 				if (moves[i].id !== this.effectData.move) {
 					pokemon.disableMove(moves[i].id, false, this.effectData.sourceEffect);
 				}
@@ -297,15 +297,15 @@ exports.BattleStatuses = {
 		// this is a side condition
 		onStart: function (side) {
 			this.effectData.positions = [];
-			for (let i = 0; i < side.active.length; i++) {
+			for (var i = 0; i < side.active.length; i++) {
 				this.effectData.positions[i] = null;
 			}
 		},
 		onResidualOrder: 3,
 		onResidual: function (side) {
-			let finished = true;
-			for (let i = 0; i < side.active.length; i++) {
-				let posData = this.effectData.positions[i];
+			var finished = true;
+			for (var i = 0; i < side.active.length; i++) {
+				var posData = this.effectData.positions[i];
 				if (!posData) continue;
 
 				posData.duration--;
@@ -316,8 +316,8 @@ exports.BattleStatuses = {
 				}
 
 				// time's up; time to hit! :D
-				let target = side.active[i];
-				let move = this.getMove(posData.move);
+				var target = side.active[i];
+				var move = this.getMove(posData.move);
 				if (target.fainted) {
 					this.add('-hint', '' + move.name + ' did not hit because the target is fainted.');
 					this.effectData.positions[i] = null;
@@ -360,7 +360,7 @@ exports.BattleStatuses = {
 		onStallMove: function () {
 			// this.effectData.counter should never be undefined here.
 			// However, just in case, use 1 if it is undefined.
-			let counter = this.effectData.counter || 1;
+			var counter = this.effectData.counter || 1;
 			this.debug("Success chance: " + Math.round(100 / counter) + "%");
 			return (this.random(counter) === 0);
 		},
@@ -383,7 +383,7 @@ exports.BattleStatuses = {
 		duration: 1,
 		onBasePowerPriority: 8,
 		onBasePower: function (basePower, user, target, move) {
-			let modifier = 0x1547;
+			var modifier = 0x1547;
 			this.debug('Aura Boost');
 			if (user.volatiles['aurabreak']) {
 				modifier = 0x0C00;
@@ -626,7 +626,7 @@ exports.BattleStatuses = {
 		// Hackmons.
 		onSwitchInPriority: 101,
 		onSwitchIn: function (pokemon) {
-			let type = 'Normal';
+			var type = 'Normal';
 			if (pokemon.ability === 'multitype') {
 				type = pokemon.getItem().onPlate;
 				if (!type || type === true) {
