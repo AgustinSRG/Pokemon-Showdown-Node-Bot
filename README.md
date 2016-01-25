@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/Ecuacion/Pokemon-Showdown-Node-Bot.svg)](https://travis-ci.org/Ecuacion/Pokemon-Showdown-Node-Bot)
 [![Dependency Status](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot.svg)](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot)
 [![devDependency Status](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot/dev-status.svg)](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot#info=devDependencies)
-[![Version](https://img.shields.io/badge/version-0.5.3-orange.svg)](https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot#pokemon-showdown-bot-for-node)
+[![Version](https://img.shields.io/badge/version-0.6.0-orange.svg)](https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot#pokemon-showdown-bot-for-node)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 This is a [Pokemon Showdown](https://github.com/Zarel/Pokemon-Showdown) bot written in JavaScript for [Node](http://nodejs.org/)
@@ -15,7 +15,7 @@ Features included in this package:
  - **Base:** Basic commands for getting basic information, manage command permissions, languages and dynamic commands (only-text commands useful for giving information).
  - **Chat-Plugins:** This includes a customizable database of jokes and quotes, pokemon informational commands, smogon-related commands and others like regdate or translate (to translate pokemon stuff into different languages).
  - **Moderation:** Automated chat moderation for infractions like spam, flood, caps, stretching, etc  This also includes a blacklist and welcome messages called join-phrases.
- - **Battle:** Automated battle bot for challenges, ladder and tournaments. This also includes teams management commands. Note that this is not an artificial intelligence, just an improvised algorithm that simulates in-game players (just for fun).
+ - **Battle:** Automated battle bot for challenges, ladder and tournaments. This also includes teams management commands. Note that this is not an artificial intelligence, so it can't learn stuff and is usually easy to win it.
  - **Chat Logger:** Stores logs of chat rooms and/or pms. This also includes an optional logs server.
  - **Tournaments:** A single command for creating, starting and set auto-dq of a tournament automatically. This also includes an optional tournaments leaderboards system.
  - **Games:** A collection of chat games for your Pokemon Showdown Bot
