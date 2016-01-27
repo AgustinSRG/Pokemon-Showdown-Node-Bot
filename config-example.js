@@ -55,6 +55,7 @@ exports.autoReloginDelay = 60 * 1000;
 */
 
 exports.rooms = ['lobby'];
+
 /*
 * exports.rooms = 'all'; //For joining all rooms
 * exports.rooms = 'official'; //For joining official rooms
@@ -83,12 +84,12 @@ exports.exceptions = {
 /*
 * 'userid': 'rank' or 'userid': true for full access
 * Example:
-
-exports.exceptions = {
-	'ecuacion': true,
-	'excepted': true
-};
-
+*
+* exports.exceptions = {
+*	'ecuacion': true,
+*	'excepted': true
+* };
+*
 */
 
 exports.ranks = ['+', '\u2605', '%', '@', '#', '&', '~'];
@@ -232,7 +233,8 @@ exports.moderation = {
 
 	psServersExcepts: {
 		"showdown": 1,
-		"smogtours": 1
+		"smogtours": 1,
+		"sim": 1
 	},
 
 	zeroToleranceDefaultLevel: 'h',

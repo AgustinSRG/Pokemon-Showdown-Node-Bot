@@ -71,6 +71,10 @@ jsHintOptions.test = util._extend(util._extend({}, jsHintOptions.base), {
 	"mocha": true
 });
 
+jsHintOptions.externalScripts = util._extend(util._extend({}, jsHintOptions.base), {
+	"globals": {}
+});
+
 var jscsOptions = {};
 jscsOptions.base = "./test/.jscsrc";
 jscsOptions.config = "./test/.jscsrc";
@@ -89,6 +93,10 @@ var lintData = [
 		dirs: ['./test/*.js', './testfiles/*.js'],
 		jsHint: jsHintOptions.test,
 		jscs: jscsOptions.config
+	}, {
+		dirs: ['./getserver.js', './bot-setup.js'],
+		jsHint: jsHintOptions.externalScripts,
+		jscs: jscsOptions.base
 	}
 ];
 

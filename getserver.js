@@ -2,6 +2,14 @@
 	Server configuration help
 */
 
+try {
+	require('sugar');
+	require('colors');
+} catch (e) {
+	console.log('Installing dependencies...');
+	require('child_process').spawnSync('sh', ['-c', 'npm install --production'], {stdio: 'inherit'});
+}
+
 require('sugar');
 var colors = require('colors');
 var readline = require('readline');
@@ -11,12 +19,12 @@ var http = require('http');
 var fs = require('fs');
 
 var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
+	input: process.stdin,
+	output: process.stdout
 });
 
 function askUrl () {
-	rl.question("Client url for server (example.psim.us): ", function(serverUrl) {
+	rl.question("Client url for server (example.psim.us): ", function (serverUrl) {
 		if (serverUrl.indexOf('://') !== -1) {
 			serverUrl = url.parse(serverUrl).host;
 		}
@@ -32,10 +40,10 @@ function askUrl () {
 			path: '/crossdomain.php?host=' + serverUrl + '&path=',
 			method: 'GET'
 		};
-		var req = http.request(requestOptions, function(res) {
+		var req = http.request(requestOptions, function (res) {
 			res.setEncoding('utf8');
 			var str = '';
-			res.on('data', function(chunk) {
+			res.on('data', function (chunk) {
 				str += chunk;
 			});
 			res.on('end', function () {
@@ -88,7 +96,7 @@ function askUrl () {
 }
 
 function writeConfig (server, port, serverid) {
-	rl.question("Do you want to write this in config.js? (yes, no): ", function(answer) {
+	rl.question("Do you want to write this in config.js? (yes, no): ", function (answer) {
 		answer = answer.toLowerCase().replace(/[^a-z0-9]/g, '');
 		if (answer in {'no': 1, 'n': 1}) {
 			rl.close();
@@ -131,7 +139,7 @@ function writeConfig (server, port, serverid) {
 
 console.log((
 	"\n-------------------------------------------\n" +
-	"    Configure your Pokemon Showdown Bot    \n" +
+	"       Pokemon-Showdown Servers Helper      \n" +
 	"-------------------------------------------\n"
 ).yellow);
 
