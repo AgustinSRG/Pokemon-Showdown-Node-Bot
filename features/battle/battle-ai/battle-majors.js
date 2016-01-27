@@ -64,7 +64,7 @@ module.exports = {
 	inactive: function (args, kwargs) {
 		this.timer = true;
 		if (args[1]) {
-			if (args[1].indexOf("Battle timer is now ON") === 0 || args[1].indexOf("You have") === 0 || args[1].indexOf(Bot.status.nickname + " has") >= 0) this.makeDecision();
+			if (args[1].indexOf("Battle timer is now ON") === 0 || args[1].indexOf("You have") === 0 || args[1].indexOf(Bot.status.nickName + " has") >= 0) this.makeDecision();
 		}
 	},
 

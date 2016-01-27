@@ -162,6 +162,7 @@ var Battle = exports.Battle = (function () {
 
 	Battle.prototype.makeDecision = function (forced) {
 		if (!this.self) return; // Not playing
+		debug(this.id + "->MakeDecision");
 		if (!forced && this.lastSend.rqid >= 0 && this.lastSend.rqid === this.rqid) {
 			if (Date.now() - this.lastSend.time < MIN_TIME_LOCK) return;
 			if (this.lastSend.decision) {
