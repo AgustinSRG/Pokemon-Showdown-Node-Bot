@@ -54,6 +54,7 @@ var Battle = exports.Battle = (function () {
 			decision: null
 		};
 		this.lock = false;
+		this.leaveInterval = null;
 	}
 
 	Battle.prototype.createLogStream = function (file) {
@@ -119,7 +120,12 @@ var Battle = exports.Battle = (function () {
 	};
 
 	Battle.prototype.leave = function () {
-		this.send("/leave");
+		if (!this.leaveInterval) {
+			this.leaveInterval = setInterval(function () {
+				this.send("/leave");
+			}.bind(this), 5000);
+		}
+		this.send('/leave');
 	};
 
 	Battle.prototype.start = function () {
@@ -138,7 +144,6 @@ var Battle = exports.Battle = (function () {
 			var losemsg = Config.losemsg;
 			if (losemsg && losemsg.length) this.send(losemsg[Math.floor(Math.random() * losemsg.length)]);
 		}
-		this.send('/leave');
 	};
 
 	Battle.prototype.message = function (type, player, poke) {
@@ -414,6 +419,10 @@ var Battle = exports.Battle = (function () {
 		if (this.stream) {
 			this.stream.close();
 			this.stream = null;
+		}
+		if (this.leaveInterval) {
+			clearInterval(this.leaveInterval);
+			this.leaveInterval = null;
 		}
 	};
 
