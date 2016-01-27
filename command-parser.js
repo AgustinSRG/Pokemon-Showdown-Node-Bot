@@ -307,7 +307,9 @@ var parse = exports.parse = function (room, by, msg) {
 	}
 
 	if (!cmdToken) {
-		if (room.charAt(0) === ',' && Config.pmhelp && resourceMonitor.counthelp(by)) Bot.pm(by, Config.pmhelp);
+		if (room.charAt(0) === ',' && Config.pmhelp && resourceMonitor.counthelp(by)) {
+			Bot.pm(by, Tools.stripCommands(Config.pmhelp.replace(/#USER/g, by.substr(1))));
+		}
 		return;
 	}
 
