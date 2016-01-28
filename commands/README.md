@@ -205,6 +205,8 @@ Commands for leaderboards system
 
  - `rank (user)` - View users's ranking (points, wins, finals, semifinals, etc)
  - `top` - View the Top5 in the leaderboard
+ - `official` - Make a tournament in progress official (to be counted, see config)
+ - `unofficial` - Make a tournament in progress unofficial
  - `leaderboards table, [room]` - Upload the leaderboard table to Hastebin
  - `leaderboards reset, [room]` - Reset leaderboards data
 

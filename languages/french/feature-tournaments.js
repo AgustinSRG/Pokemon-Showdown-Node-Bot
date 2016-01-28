@@ -18,6 +18,14 @@
 			'param': 'Paramètre',
 			'paramhelp': 'introuvable, paramètre valide sont'
 		},
+		official: {
+			'not': 'Classements est pas activé pour la salle',
+			'notour': 'Il n\'y a pas un tournoi dans cette salle',
+			'already': 'Le tournoi était déjà officielle',
+			'already-not': 'Le tournoi était déjà non officielle',
+			'official': 'Ce tournoi est maintenant officiel et comptera pour les classements',
+			'unofficial': 'Ce tournoi est plus officielle'
+		},
 		leaderboard: {
 			'usage': 'Usage',
 			'invuser': 'Nom d\'utilisateur invalide',

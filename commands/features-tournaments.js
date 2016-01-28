@@ -2,7 +2,7 @@
 	Tournaments Commands
 */
 
-Settings.addPermissions(['tournament', 'rank']);
+Settings.addPermissions(['tournament', 'rank', 'official']);
 
 function tryGetRoomName (room) {
 	if (!Bot.rooms[room]) return room;
@@ -163,6 +163,22 @@ exports.commands = {
 				delete Features['tours'].tournaments[room];
 			}
 		}.bind(this), 2500);
+	},
+
+	unofficial: 'official',
+	official: function (arg, by, room, cmd) {
+		if (!this.can("official")) return;
+		if (!Features['tours'].Leaderboards.isConfigured(room)) return this.reply(this.trad('not') + " " + room);
+		if (!Features['tours'].tourData[room]) return this.reply(this.trad("notour"));
+		if (cmd === "unofficial") {
+			if (!Features['tours'].tourData[room].isOfficialTour) return this.reply(this.trad("already-not"));
+			Features['tours'].tourData[room].isOfficialTour = false;
+			this.reply(this.trad("unofficial"));
+		} else {
+			if (Features['tours'].tourData[room].isOfficialTour) return this.reply(this.trad("already"));
+			Features['tours'].tourData[room].isOfficialTour = true;
+			this.reply(this.trad("official"));
+		}
 	},
 
 	rank: 'leaderboard',

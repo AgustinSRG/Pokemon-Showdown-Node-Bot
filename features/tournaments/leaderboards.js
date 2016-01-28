@@ -46,6 +46,7 @@ var filterTier = exports.filterTier = function (tier, filter) {
 var getConfig = exports.getConfig = function (room) {
 	var res = {
 		tierFilter: null,
+		onlyOfficial: false,
 		winnerPoints: 5,
 		finalistPoints: 3,
 		semiFinalistPoints: 1,
@@ -57,6 +58,7 @@ var getConfig = exports.getConfig = function (room) {
 	res.semiFinalistPoints = parseInt(Config.leaderboards[room].semiFinalistPoints) || res.semiFinalistPoints;
 	res.battlePoints = parseInt(Config.leaderboards[room].battlePoints) || res.battlePoints;
 	res.tierFilter = Config.leaderboards[room].tierFilter;
+	res.onlyOfficial = Config.leaderboards[room].onlyOfficial || false;
 	return res;
 };
 
@@ -221,10 +223,17 @@ var writeResults = exports.writeResults = function (room, results) {
 
 exports.onTournamentEnd = function (room, data) {
 	if (!isConfigured(room)) return;
-	var filter = getConfig(room).tierFilter;
-	if (!filterTier(data.format, filter)) {
-		debug("Discarted tour because of tier filter. Tier: " + data.format + " | Room: " + room);
-		return;
+	if (!data.isOfficialTour) {
+		//debug(JSON.stringify(getConfig(room)));
+		if (getConfig(room).onlyOfficial) {
+			debug("Discarded tour because it is not official. Tier: " + data.format + " | Room: " + room);
+			return;
+		}
+		var filter = getConfig(room).tierFilter;
+		if (!filterTier(data.format, filter)) {
+			debug("Discarded tour because of tier filter. Tier: " + data.format + " | Room: " + room);
+			return;
+		}
 	}
 	var results = parseTournamentResults(data);
 	//console.log(JSON.stringify(results));

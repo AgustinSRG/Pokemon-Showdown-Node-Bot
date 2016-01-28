@@ -26,6 +26,7 @@ exports.leaderboards['Room Id here'] = {
 	winnerPoints: 5,
 	finalistPoints: 3,
 	semiFinalistPoints: 1,
-	battlePoints: 0
+	battlePoints: 0,
+	onlyOfficial: true // If true, only official tours (must use .official command) will be counted
 };
 ```

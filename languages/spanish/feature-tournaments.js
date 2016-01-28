@@ -18,6 +18,14 @@ exports.translations = {
 			'param': 'Parámetro',
 			'paramhelp': 'no encontrado, Los parámetros correctos son'
 		},
+		official: {
+			'not': 'La funcion Leaderboards no esta disponibe para la sala',
+			'notour': 'No hay ningún torneo en esta sala',
+			'already': 'El torneo ya era oficial',
+			'already-not': 'El torneo no es oficial',
+			'official': 'Este torneo es ahora oficial y contará para el Leaderboards',
+			'unofficial': 'Este torneo ha dejado de ser oficial'
+		},
 		leaderboard: {
 			'usage': 'Uso correcto',
 			'invuser': 'Nombre de usuario no válido',

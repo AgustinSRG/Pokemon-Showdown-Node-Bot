@@ -18,6 +18,14 @@ exports.translations = {
 			'param': 'Parameter',
 			'paramhelp': 'not found, valid parameter are'
 		},
+		official: {
+			'not': 'Leaderboards is not enabled for room',
+			'notour': 'There is not a tournament in this room',
+			'already': 'The tournament was already official',
+			'already-not': 'The tournament was already unofficial',
+			'official': 'This tournament is now official and will count for the leaderboards',
+			'unofficial': 'This tournament is no longer official'
+		},
 		leaderboard: {
 			'usage': 'Usage',
 			'invuser': 'Invalid username',
