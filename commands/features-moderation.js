@@ -843,7 +843,8 @@ exports.commands = {
 			'youtube': 1,
 			'psservers': 1,
 			'multiple': 1,
-			'zerotol': 1
+			'zerotol': 1,
+			'replays': 1
 		};
 		if (args.length < 2) return this.reply(this.trad('u1') + ": " + this.cmdToken + cmd + " " + this.trad('u2'));
 		var mod = (args.length < 3) ? toId(args[0]) : toId(args[1]);
