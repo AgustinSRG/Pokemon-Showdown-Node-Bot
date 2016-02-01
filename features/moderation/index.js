@@ -32,7 +32,8 @@ var DEFAULT_MOD_VALUES = {
 	'inapwords': 2,
 	'servers': 2,
 	'youtube': 2,
-	'spoiler': 2
+	'spoiler': 2,
+	'replays': 1
 };
 
 function getValue (key) {
@@ -326,6 +327,16 @@ function parseChat (room, time, by, message) {
 		if (pointVal < pv) {
 			pointVal = pv;
 			muteMessage = ', ' + trad('automod', room) + ': ' + trad('youtube', room);
+		}
+	}
+	
+	pv = getValue("replays");
+	if (modSettings['replays'] !== 0 && (msg.toLowerCase().indexOf("replay.pokemonshowdown.com/") > -1)) {
+		infractions.push(trad('replays-0', room));
+		totalPointVal += pv;
+		if (pointVal < pv) {
+			pointVal = pv;
+			muteMessage = ', ' + trad('automod', room) + ': ' + trad('replays', room);
 		}
 	}
 

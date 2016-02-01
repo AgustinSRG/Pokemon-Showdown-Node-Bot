@@ -201,7 +201,8 @@ exports.moderation = {
 		'inapwords': 2,
 		'servers': 2,
 		'youtube': 2,
-		'spoiler': 2
+		'spoiler': 2,
+		'replays': 1
 	},
 
 	modDefault: {
@@ -218,6 +219,7 @@ exports.moderation = {
 		'spoiler': 0,
 		'youtube': 0,
 		'psservers': 0,
+		'replays': 0,
 
 		//multiple infraction
 		'multiple': 1,
