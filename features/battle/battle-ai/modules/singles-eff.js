@@ -217,7 +217,7 @@ var getViableSupportMoves = exports.getViableSupportMoves = function (battle, de
 				else res.unviable.push(decisions[i]);
 				continue;
 			case "rapidspin":
-				if (selfCanSwitch(battle) && (conditionsB.side["spikes"] || conditionsB.side["toxicspikes"] || conditionsB.side["stealthrock"] || conditionsB.side["stickyweb"])) {
+				if (selfCanSwitch(battle) && (conditionsA.side["spikes"] || conditionsA.side["toxicspikes"] || conditionsA.side["stealthrock"] || conditionsA.side["stickyweb"])) {
 					if (Calc.calculate(pokeA, pokeB, move, conditionsA, conditionsB, battle.conditions, battle.gen).getMax() === 0) {
 						res.unviable.push(decisions[i]);
 					} else {
@@ -228,7 +228,12 @@ var getViableSupportMoves = exports.getViableSupportMoves = function (battle, de
 				}
 				continue;
 			case "defog":
-				if (selfCanSwitch(battle) && (conditionsB.side["spikes"] || conditionsB.side["toxicspikes"] || conditionsB.side["stealthrock"] || conditionsB.side["stickyweb"])) {
+				if (battle.gen < 6) {
+					// Defog does not work before gen 6
+					res.unviable.push(decisions[i]);
+					continue;
+				}
+				if (selfCanSwitch(battle) && (conditionsA.side["spikes"] || conditionsA.side["toxicspikes"] || conditionsA.side["stealthrock"] || conditionsA.side["stickyweb"])) {
 					res.viable.push(decisions[i]);
 				} else {
 					res.unviable.push(decisions[i]);
