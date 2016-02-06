@@ -73,6 +73,10 @@ var save = exports.save =  function () {
 	settingsFFM.writeObj(settings);
 };
 
+/*
+ * Permissions
+ */
+
 exports.userCan = function (room, user, permission) {
 	var rank;
 	if (!settings['commands'] || !settings['commands'][room] || typeof settings['commands'][room][permission] === "undefined") {
@@ -97,6 +101,10 @@ exports.setPermission = function (room, perm, rank) {
 	if (!settings.commands[room]) settings.commands[room] = {};
 	settings.commands[room][perm] = rank;
 };
+
+/*
+ * Configuration
+ */
 
 var parserFilters = exports.parserFilters = {};
 
@@ -151,20 +159,162 @@ exports.applyConfig = function () {
 	Bot.opts.showErrors = Bot.opts.debug = (Config.debug ? Config.debug.debug : true);
 };
 
-var seen = exports.seen = {};
-var reportSeen = exports.reportSeen = function (user, room, action, args) {
-	if (!args) args = [];
-	var userid = toId(user);
-	var dSeen = {};
-	dSeen.name = user.substr(1);
-	dSeen.time = Date.now();
-	if (!(room in Config.privateRooms)) {
-		dSeen.room = room;
-		dSeen.action = action;
-		dSeen.args = args;
+/*
+ * Seen / Alts feature
+ */
+
+var users = exports.users = {};
+
+var User = exports.User = (function () {
+	function User (name) {
+		this.name = name;
+		this.id = toId(name);
+		this.alts = [];
+		this.lastSeen = null;
+		this.online = false;
+		this.rooms = {};
 	}
-	seen[userid] = dSeen;
+
+	User.prototype.markAlt = function (alt) {
+		alt = toId(alt);
+		if (alt === this.id) return;
+		if (this.alts.indexOf(alt) < 0) {
+			this.alts.push(alt);
+			for (var i = 0; i < this.alts.length; i++) {
+				if (users[this.alts[i]]) {
+					users[this.alts[i]].markAlt(alt); // recursive
+				}
+			}
+		}
+	};
+
+	User.prototype.setOnline = function () {
+		this.online = true;
+	};
+
+	User.prototype.setOffline = function () {
+		this.online = false;
+		for (var r in this.rooms) delete this.rooms[r];
+	};
+
+	User.prototype.reportSeen = function (room, action, args) {
+		if (!args) args = [];
+		var dSeen = {};
+		dSeen.name = this.name;
+		dSeen.time = Date.now();
+		if (!(room in Config.privateRooms)) {
+			dSeen.room = room;
+			dSeen.action = action;
+			dSeen.args = args;
+		}
+		this.lastSeen = dSeen;
+	};
+
+	return User;
+})();
+
+exports.userManager = {
+	isOnline: function (user) {
+		var userid = toId(user);
+		if (!users[userid]) return false;
+		return !!users[userid].online;
+	},
+
+	getName: function (user) {
+		var userid = toId(user);
+		if (!users[userid]) return userid;
+		return users[userid].name;
+	},
+
+	getSeen: function (user) {
+		var userid = toId(user);
+		if (!users[userid]) return null;
+		return users[userid].lastSeen;
+	},
+
+	getAlts: function (user) {
+		var userid = toId(user);
+		if (!users[userid]) return null;
+		return users[userid].alts;
+	},
+
+	reportJoin: function (user, room) {
+		if (Config.disableSeen) return;
+		var userid = toId(user);
+		if (!users[userid]) {
+			users[userid] = new User(user.substr(1));
+		}
+		var userObj = users[userid];
+		userObj.setOnline();
+		userObj.rooms[room] = {group: user.charAt(0)};
+		userObj.reportSeen(room, 'j', []);
+	},
+
+	reportChat: function (user, room) {
+		if (Config.disableSeen) return;
+		var userid = toId(user);
+		if (!users[userid]) {
+			users[userid] = new User(user.substr(1));
+		}
+		var userObj = users[userid];
+		userObj.setOnline();
+		userObj.reportSeen(room, 'c', []);
+	},
+
+	reportLeave: function (user, room) {
+		if (Config.disableSeen) return;
+		var userid = toId(user);
+		if (!users[userid]) {
+			users[userid] = new User(user.substr(1));
+		}
+		var userObj = users[userid];
+		if (userObj.rooms[room]) delete userObj.rooms[room];
+		userObj.reportSeen(room, 'l', []);
+		if (Object.keys(userObj.rooms).length > 0) {
+			userObj.setOnline();
+		} else {
+			userObj.setOffline();
+		}
+	},
+
+	reportRename: function (user, newName, room) {
+		if (Config.disableSeen) return;
+		var userid = toId(user);
+		if (!users[userid]) {
+			users[userid] = new User(user.substr(1));
+		}
+		var userObj = users[userid];
+		if (toId(user) === toId(newName)) {
+			// Just a name change
+			userObj.name = newName.substr(1);
+			userObj.rooms[room] = {group: newName.charAt(0)};
+		} else {
+			// User change
+			var newUserid = toId(newName);
+			userObj.setOffline();
+			if (!Config.disableAlts) userObj.markAlt(newUserid);
+			userObj.reportSeen(room, 'n', [newName.substr(1)]);
+			if (!users[newUserid]) {
+				users[newUserid] = new User(newName.substr(1));
+			}
+			var newUserObj = users[newUserid];
+			newUserObj.setOnline();
+			newUserObj.rooms[room] = {group: newName.charAt(0)};
+			if (!Config.disableAlts) {
+				newUserObj.markAlt(userid);
+				// merge alts
+				for (var i = 0; i < userObj.alts.length; i++) {
+					newUserObj.markAlt(userObj.alts[i]);
+				}
+			}
+			newUserObj.reportSeen(room, 'j', []);
+		}
+	}
 };
+
+/*
+ * Cache System
+ */
 
 var httpCache = exports.httpCache = {};
 

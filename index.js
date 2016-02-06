@@ -395,7 +395,7 @@ Bot.on('disconnect', function (e) {
 
 Bot.on('chat', function (room, timeOff, by, msg) {
 	CommandParser.parse(room, by, msg);
-	Settings.reportSeen(by, room, 'c', []);
+	Settings.userManager.reportChat(by, room);
 });
 
 Bot.on('pm', function (by, msg) {
@@ -403,16 +403,15 @@ Bot.on('pm', function (by, msg) {
 });
 
 Bot.on('userjoin', function (room, by) {
-	Settings.reportSeen(by, room, 'j', []);
+	Settings.userManager.reportJoin(by, room);
 });
 
 Bot.on('userleave', function (room, by) {
-	Settings.reportSeen(by, room, 'l', []);
+	Settings.userManager.reportLeave(by, room);
 });
 
 Bot.on('userrename', function (room, old, by) {
-	if (!old || !by || toId(old) === toId(by)) return;
-	Settings.reportSeen(" " + old, room, 'n', [by.substr(1)]);
+	Settings.userManager.reportRename(old, by, room);
 });
 
 /* Features */

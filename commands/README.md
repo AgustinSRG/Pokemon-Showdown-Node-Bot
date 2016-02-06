@@ -15,6 +15,7 @@ Basic features and some information about the bot.
  - `time` - Current time for Bot
  - `uptime` - Time since the last bot restart
  - `seen [user]` - Latest data from an user
+ - `alts [user]` - List of known alts of an user (Alts detedted from namechanges)
  - `say [text]` - Force to say something
 
 Dynamic Commands

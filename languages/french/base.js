@@ -32,6 +32,12 @@
 			'c': 'chat in',
 			'n': 'changer de nick à'
 		},
+		alts: {
+			'inv': 'Nom d\'utilisateur invalide',
+			'n': 'Aucune alts trouvé pour l\'utilisateur',
+			'alts': 'Alts connus de',
+			'more': 'plus'
+		},
 		/*
 		* Admin Commands
 		*/

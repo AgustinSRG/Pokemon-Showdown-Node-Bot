@@ -32,6 +32,12 @@ exports.translations = {
 			'c': 'chateando en',
 			'n': 'cambiándose el nick a'
 		},
+		alts: {
+			'inv': 'Nombre no válido',
+			'n': 'No se encontraron alts para el usuario',
+			'alts': 'Alts conocidas de',
+			'more': 'más'
+		},
 		/*
 		* Admin Commands
 		*/

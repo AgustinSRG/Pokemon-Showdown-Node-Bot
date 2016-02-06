@@ -32,6 +32,12 @@
 			'c': 'beim chatten in',
 			'n': 'beim Ändern des Namens in'
 		},
+		alts: {
+			'inv': 'Wer?',
+			'n': 'Kein alts gefunden für Benutzer',
+			'alts': 'Bekannte Alts von',
+			'more': 'mehr'
+		},
 		/*
 		* Admin Commands
 		*/

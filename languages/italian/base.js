@@ -32,6 +32,12 @@
 			'c': 'chatto in',
 			'n': 'il nuovo nick è'
 		},
+		alts: {
+			'inv': 'username non valido',
+			'n': 'Nessun alts trovato per l\'utente',
+			'alts': 'Alts note del',
+			'more': 'di Più'
+		},
 		/*
 		* Admin Commands
 		*/
