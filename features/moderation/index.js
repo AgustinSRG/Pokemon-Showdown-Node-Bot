@@ -102,6 +102,16 @@ function isBanned (room, user, noregexp) {
 	return false;
 }
 
+function blacklistUser(user, room) {
+	if (!Settings.settings['autoban'] || !Settings.settings['autoban'][room] || !Settings.settings['autoban'][room][user]) {
+		if (!Settings.settings['autoban']) Settings.settings['autoban'] = {};
+		if (!Settings.settings['autoban'][room]) Settings.settings['autoban'][room] = {};
+		Settings.settings['autoban'][room][user] = 1;
+		return true;
+	}
+	return false;
+}
+
 function getJoinPhrase (room, user) {
 	user = toId(user);
 	if (Settings.settings['jpdisable'] && Settings.settings['jpdisable'][room]) return false;
@@ -470,7 +480,13 @@ function parseLeave (room, by) {
 function parseRename (room, by, old) {
 	if (Tools.equalOrHigherRank(by, Config.moderation.modException)) return;
 	var ban = isBanned(room, by);
-	if (ban) Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegExp)' : ''));
+	if (ban) {
+		Bot.say(room, '/roomban ' + by + ', ' + trad('ab', room) + ((ban === '#range') ? ' (RegExp)' : ''));
+		if (ban !== '#range' && !isBanned(room, old)) {
+			blacklistUser(room, old); // Blacklist alt
+			SecurityLog.log("User \"" + old + "\" was blacklisted for being alt of \"" + toId(by) + "\" | Room: " + room);
+		}
+	}
 }
 
 exports.init = function () {
