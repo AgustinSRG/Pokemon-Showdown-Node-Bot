@@ -142,7 +142,7 @@ exports.parse = function (room, message, isIntro, spl) {
 		case 'J': case 'j':
 			parseJoin(room, spl[1]);
 			break;
-		case 'N':
+		case 'n': case 'N':
 			parseRename(room, spl[1], spl[2]);
 			break;
 	}
