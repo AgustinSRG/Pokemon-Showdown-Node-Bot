@@ -292,6 +292,7 @@ var parse = exports.parse = function (room, by, msg) {
 	}
 	if (msg.substr(0, 8) === '/invite ' && Tools.equalOrHigherRank(by, '%')) {
 		Bot.say('', '/join ' +  msg.substr(8));
+		SecurityLog.log("User " + by + " used /invite " + msg.substr(8));
 		return;
 	}
 
