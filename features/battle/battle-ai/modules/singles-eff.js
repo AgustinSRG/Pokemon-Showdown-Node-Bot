@@ -275,8 +275,11 @@ var getViableSupportMoves = exports.getViableSupportMoves = function (battle, de
 				continue;
 			case "disable":
 			case "encore":
-				if (battle.foe.active[0].helpers.sw !== battle.turn) res.viable.push(decisions[i]);
-				else res.unviable.push(decisions[i]);
+				if (battle.foe.active[0].helpers.sw && battle.foe.active[0].helpers.lastMove && battle.foe.active[0].helpers.sw && battle.turn - battle.foe.active[0].helpers.sw > 1 && battle.foe.active[0].helpers.lastMoveTurn > battle.foe.active[0].helpers.sw) {
+					res.viable.push(decisions[i]);
+				} else {
+					res.unviable.push(decisions[i]);
+				}
 				continue;
 			case "attract":
 				if (!conditionsB.volatiles[move.volatileStatus] && (pokeA.gender === "M" || pokeA.gender === "F") && (pokeB.gender === "M" || pokeB.gender === "F") && (pokeA.gender !== pokeB.gender)) {
@@ -446,7 +449,6 @@ var getViableSupportMoves = exports.getViableSupportMoves = function (battle, de
 			}
 			continue;
 		}
-		//gastroacid, nightmare
 		if (move.id in {"supersonic": 1, "swagger": 1, "sweetkiss": 1, "confuseray": 1, "teeterdance": 1, "flatter": 1, "embargo": 1, "taunt": 1, "telekinesis": 1, "torment": 1, "healblock": 1}) {
 			if (conditionsB.volatiles[move.volatileStatus]) {
 				res.unviable.push(decisions[i]);
