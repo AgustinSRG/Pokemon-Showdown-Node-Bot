@@ -83,12 +83,26 @@ exports.commands = {
 		}
 		if (!arg) {
 			var rooms = "", roomArr = [];
+			var buf = "", cmds = [];
+			buf += "**Bot status** |" + (Settings.lockdown ? " **Lockdown** |" : "") + " Username: ``" + Bot.status.nickName + "`` | Rooms: ";
 			for (var i in Bot.rooms) {
 				var botIdent = Bot.rooms[i].users[toId(Bot.status.nickName)] || " ";
 				roomArr.push("<<" + i + ">> (" + Bot.rooms[i].type.charAt(0).toLowerCase() + (Settings.isSleeping(i) ? "s" : "r") + (botIdent.charAt(0) !== " " ? botIdent.charAt(0) : "u") + (Config.privateRooms[i] ? "h" : "p") + ")");
 			}
-			if (roomArr.length) rooms = roomArr.join(', ');
-			return this.pmReply(this.splitReply("**Bot status** |" + (Settings.lockdown ? " **Lockdown** |" : "") + " Username: ``" + Bot.status.nickName + "`` | Rooms: " + (rooms || "(none)")));
+			if (roomArr.length) {
+				for (var i = 0; i < roomArr.length; i++) {
+					if (buf.length + roomArr[i].length + (i < roomArr.length - 1 ? 2 : 0) > 300) {
+						cmds.push(buf);
+						buf = "";
+					}
+					buf += roomArr[i];
+					if (i < roomArr.length - 1) buf += ", ";
+				}
+			} else {
+				buf += "(none)";
+			}
+			cmds.push(buf);
+			return this.pmReply(cmds);
 		}
 		var tarRoom = toRoomid(arg);
 		var roomObj = this.getRoom(tarRoom);
