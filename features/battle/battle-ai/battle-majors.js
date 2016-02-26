@@ -275,7 +275,7 @@ module.exports = {
 			poke.passing = this.turn;
 		}
 		if (!noDeductPP && kwargs.from !== 'lockedmove') {
-			if (args[1] !== args[3] && poke2.ability && poke2.ability.id === "pressure") {
+			if (args[1] !== args[3] && poke2 && poke2.ability && poke2.ability.id === "pressure") {
 				move.pp -= 2;
 			} else {
 				move.pp--;
