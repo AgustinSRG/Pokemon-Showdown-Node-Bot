@@ -3,7 +3,7 @@
 try {
 	require('sugar');
 	require('colors');
-	require('node-ps-client');
+	require('websocket')
 } catch (e) {
 	console.log('Installing dependencies...');
 	require('child_process').spawnSync('sh', ['-c', 'npm install --production'], {stdio: 'inherit'});

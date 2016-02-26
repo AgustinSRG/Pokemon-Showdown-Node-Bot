@@ -11,7 +11,7 @@ try {
 	global.sys = require('sys');
 	global.fs = require('fs');
 	global.path = require('path');
-	global.PSClient = require('node-ps-client');
+	global.PSClient = require('./showdown-client.js');
 } catch (e) {
 	console.log(e.stack);
 	console.log("ERROR: missing dependencies, try 'npm install'");
@@ -188,7 +188,7 @@ function joinByQueryRequest(target) {
 		Bot.send(cmds, 2000);
 		return;
 	}
-	Bot.on('queryresponse', function (data) {
+	var qParser = function (data) {
 		data = data.split('|');
 		if (data[0] === 'rooms') {
 			data.splice(0, 1);
@@ -229,9 +229,10 @@ function joinByQueryRequest(target) {
 				}
 			}
 			Bot.send(cmds, 2000);
-			Bot.on('queryresponse', function () {return;});
+			Bot.removeListener('queryresponse', qParser);
 		}
-	});
+	};
+	Bot.on('queryresponse', qParser);
 	Bot.send('|/cmd rooms');
 }
 

@@ -67,7 +67,7 @@ exports.commands = {
 			else if (arg === 'all') target = 'all';
 			else return this.reply('Usage: ' + this.cmdToken + cmd + ' [official/public/all]');
 		}
-		Bot.on('queryresponse', function (data) {
+		var qParser = function (data) {
 			data = data.split('|');
 			if (data[0] === 'rooms') {
 				data.splice(0, 1);
@@ -94,9 +94,10 @@ exports.commands = {
 					}
 				} catch (e) {}
 				Bot.send(cmds, 2000);
-				Bot.on('queryresponse', function () {return;});
+				Bot.removeListener('queryresponse', qParser);
 			}
-		});
+		};
+		Bot.on('queryresponse', qParser);
 		this.sclog();
 		Bot.send('|/cmd rooms');
 	},
