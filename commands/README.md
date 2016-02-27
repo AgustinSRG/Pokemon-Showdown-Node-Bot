@@ -210,6 +210,10 @@ Commands for leaderboards system
  - `unofficial` - Make a tournament in progress unofficial
  - `leaderboards table, [room]` - Upload the leaderboard table to Hastebin
  - `leaderboards reset, [room]` - Reset leaderboards data
+ - `leaderboards setconfig, [room], on, [Win points], [Finalist], [SemiFinalist], [Battle win points], [official/all]` - Activate and set leaderboards configuration
+ - `leaderboards setconfig, [room], off` - Disable leaderboards system.
+ - `leaderboards viewconfig, [room]` - View leaderboards configuration
+ - `leaderboards reset, [room]` - Reset leaderboards data
 
 Games
 ------------

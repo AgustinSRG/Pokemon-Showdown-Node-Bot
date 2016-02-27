@@ -48,6 +48,9 @@ exports.translations = {
 			'invhash': 'Invalid hashcode',
 			'data': 'Leaderboars data for room',
 			'del': 'was resetted',
+			'wasset': 'Leaderboards configuration was set for room',
+			'wasdisabled': 'Leaderboards was disabled for room',
+			'alrdisabled': 'Leaderboards is already disabled for room',
 			'unknown': 'Unknown option'
 		}
 	}

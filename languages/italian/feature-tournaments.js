@@ -48,6 +48,9 @@
 			'invhash': 'Codice hash non valido',
 			'data': 'Dati leaderboard per la room',
 			'del': 'è stato resettato',
+			'wasset': 'Configurazione Leaderboards è stato fissato per room',
+			'wasdisabled': 'Classifiche è stato disattivato per room',
+			'alrdisabled': 'Classifiche è già disabilitato per room',
 			'unknown': 'Opzione sconosciuta'
 		}
 	}

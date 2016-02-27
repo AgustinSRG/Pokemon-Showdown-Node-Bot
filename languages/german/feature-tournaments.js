@@ -48,6 +48,9 @@
 			'invhash': 'Ungültige hashcode',
 			'data': 'Leaderdaten für Raum',
 			'del': 'wurde zurückgesetzt',
+			'wasset': 'Listen-Konfiguration wurde für Raum',
+			'wasdisabled': 'Rang wurde für Zimmer gesperrt',
+			'alrdisabled': 'Rang ist bereits für Zimmer gesperrt',
 			'unknown': 'Unbekannte option'
 		}
 	}

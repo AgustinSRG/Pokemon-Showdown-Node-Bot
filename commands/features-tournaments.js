@@ -255,8 +255,67 @@ exports.commands = {
 				this.sclog();
 				this.reply(this.trad('data') + " __" + r + "__ " + this.trad('del'));
 				break;
+			case "viewconfig":
+				if (!this.isExcepted) return false;
+				if (args.length < 1 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
+				tarRoom = toRoomid(args[0]);
+				var rConf = Features['tours'].Leaderboards.getConfig(tarRoom);
+				if (Config.leaderboards && Config.leaderboards[tarRoom]) {
+					this.reply("Room: " + tarRoom + " | ``config.js`` - static | " +
+							   "W: " + rConf.winnerPoints + ", F: " + rConf.finalistPoints +
+							   ", SF: " + rConf.semiFinalistPoints + ", B: " + rConf.battlePoints +
+							   (rConf.onlyOfficial ? " | Only official tours" : ""));
+				} else if (Settings.settings.leaderboards && Settings.settings.leaderboards[tarRoom]) {
+					this.reply("Room: " + tarRoom + " | " +
+							   "W: " + rConf.winnerPoints + ", F: " + rConf.finalistPoints +
+							   ", SF: " + rConf.semiFinalistPoints + ", B: " + rConf.battlePoints +
+							   (rConf.onlyOfficial ? " | Only official tours" : ""));
+				} else {
+					this.reply(this.trad('not') + " " + tarRoom);
+				}
+				break;
+			case "setconfig":
+				if (!this.isExcepted) return false;
+				if (!Settings.settings.leaderboards) Settings.settings.leaderboards = {};
+				if (args.length < 2 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [official/all]");
+				if (args[6] && toId(args[6]) !== "official" && toId(args[6]) !== "all") return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [official/all]");
+				tarRoom = toRoomid(args[0]);
+				var enabled = toId(args[1]);
+				var rConfAux = Features['tours'].Leaderboards.getConfig(tarRoom);
+				if (enabled in {on: 1, enabled: 1}) {
+					if (args[2]) rConfAux.winnerPoints = parseInt(args[2]);
+					if (args[3]) rConfAux.finalistPoints = parseInt(args[3]);
+					if (args[4]) rConfAux.semiFinalistPoints = parseInt(args[4]);
+					if (args[5]) rConfAux.battlePoints = parseInt(args[5]);
+					if (args[6]) {
+						switch (toId(args[6])) {
+							case "official":
+								rConfAux.onlyOfficial = true;
+								break;
+							case "all":
+								rConfAux.onlyOfficial = false;
+								break;
+						}
+					}
+					this.sclog();
+					Settings.settings.leaderboards[tarRoom] = rConfAux;
+					Settings.save();
+					this.reply(this.trad('wasset') + " " + tarRoom);
+				} else if (enabled in {off: 1, disabled: 1}) {
+					if (Settings.settings.leaderboards && Settings.settings.leaderboards[tarRoom]) {
+						this.sclog();
+						delete Settings.settings.leaderboards[tarRoom];
+						Settings.save();
+						this.reply(this.trad('wasdisabled') + " " + tarRoom);
+					} else {
+						this.reply(this.trad('alrdisabled') + " " + tarRoom);
+					}
+				} else {
+					return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [official/all]");
+				}
+				break;
 			default:
-				this.restrictReply(this.trad('unknown') + ". " + this.trad('usage') + ": " + this.cmdToken + this.handler + " [rank/top/table/reset]", "rank");
+				this.restrictReply(this.trad('unknown') + ". " + this.trad('usage') + ": " + this.cmdToken + this.handler + " [rank/top/table/reset/setconfig/viewconfig]", "rank");
 		}
 	}
 };

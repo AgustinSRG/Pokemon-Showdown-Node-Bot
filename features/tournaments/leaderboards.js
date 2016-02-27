@@ -20,7 +20,7 @@ var save = exports.save = function () {
 };
 
 var isConfigured = exports.isConfigured = function (room) {
-	if (!Config.leaderboards || !Config.leaderboards[room]) return false;
+	if ((!Config.leaderboards || !Config.leaderboards[room]) && (!Settings.settings.leaderboards || !Settings.settings.leaderboards[room])) return false;
 	return true;
 };
 
@@ -52,13 +52,20 @@ var getConfig = exports.getConfig = function (room) {
 		semiFinalistPoints: 1,
 		battlePoints: 0
 	};
-	if (!Config.leaderboards || !Config.leaderboards[room]) return res;
-	res.winnerPoints = parseInt(Config.leaderboards[room].winnerPoints) || res.winnerPoints;
-	res.finalistPoints = parseInt(Config.leaderboards[room].finalistPoints) || res.finalistPoints;
-	res.semiFinalistPoints = parseInt(Config.leaderboards[room].semiFinalistPoints) || res.semiFinalistPoints;
-	res.battlePoints = parseInt(Config.leaderboards[room].battlePoints) || res.battlePoints;
-	res.tierFilter = Config.leaderboards[room].tierFilter;
-	res.onlyOfficial = Config.leaderboards[room].onlyOfficial || false;
+	if (Config.leaderboards && Config.leaderboards[room]) {
+		res.winnerPoints = parseInt(Config.leaderboards[room].winnerPoints) || 0;
+		res.finalistPoints = parseInt(Config.leaderboards[room].finalistPoints) || 0;
+		res.semiFinalistPoints = parseInt(Config.leaderboards[room].semiFinalistPoints) || 0;
+		res.battlePoints = parseInt(Config.leaderboards[room].battlePoints) || 0;
+		res.tierFilter = Config.leaderboards[room].tierFilter;
+		res.onlyOfficial = Config.leaderboards[room].onlyOfficial || false;
+	} else if (Settings.settings.leaderboards && Settings.settings.leaderboards[room]) {
+		res.winnerPoints = parseInt(Settings.settings.leaderboards[room].winnerPoints) || 0;
+		res.finalistPoints = parseInt(Settings.settings.leaderboards[room].finalistPoints) || 0;
+		res.semiFinalistPoints = parseInt(Settings.settings.leaderboards[room].semiFinalistPoints) || 0;
+		res.battlePoints = parseInt(Settings.settings.leaderboards[room].battlePoints) || 0;
+		res.onlyOfficial = Settings.settings.leaderboards[room].onlyOfficial || false;
+	}
 	return res;
 };
 

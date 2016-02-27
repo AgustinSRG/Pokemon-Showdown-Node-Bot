@@ -48,6 +48,9 @@
 			'invhash': 'Code de hachage non valide',
 			'data': 'Données Leaderboard pour la salle',
 			'del': 'a été remis à zéro',
+			'wasset': 'Configuration Leaderboards a été fixé pour la salle',
+			'wasdisabled': 'Leaderboards a été désactivée pour la chambre',
+			'alrdisabled': 'Leaderboards est déjà désactivé pour la chambre',
 			'unknown': 'Option inconnue'
 		}
 	}

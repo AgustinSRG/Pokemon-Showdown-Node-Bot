@@ -48,6 +48,9 @@ exports.translations = {
 			'invhash': 'Código no válido',
 			'data': 'Datos del Leaderboars de la sala',
 			'del': 'borrados',
+			'wasset': 'La configuracion del sistema de Leaderboards ha sido establecida para la sala',
+			'wasdisabled': 'La funcion Leaderboards ha sido desactivada para la sala',
+			'alrdisabled': 'La funcion Leaderboards ya estaba desactivada en la sala',
 			'unknown': 'Opción desconocida'
 		}
 	}
