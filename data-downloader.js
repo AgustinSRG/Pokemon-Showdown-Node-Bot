@@ -87,3 +87,35 @@ var download = exports.download = function () {
 		});
 	}
 };
+
+exports.getPokedex = function () {
+	return require("./data/pokedex.js").BattlePokedex;
+};
+
+exports.getMovedex = function () {
+	return require("./data/moves.js").BattleMovedex;
+};
+
+exports.getAbilities = function () {
+	return require("./data/abilities.js").BattleAbilities;
+};
+
+exports.getItems = function () {
+	return require("./data/items.js").BattleItems;
+};
+
+exports.getAliases = function () {
+	return require("./data/aliases.js").BattleAliases;
+};
+
+exports.getFormats = function () {
+	return require("./data/formats.js").Formats;
+};
+
+exports.getFormatsData = function () {
+	return require("./data/formats-data.js").BattleFormatsData;
+};
+
+exports.getLearnsets = function () {
+	return require("./data/learnsets-g6.js").BattleLearnsets;
+};

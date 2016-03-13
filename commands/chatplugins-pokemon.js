@@ -1,11 +1,6 @@
-﻿
-const ALIASES_FILE = './../data/aliases.js';
-const POKEDEX_FILE = './../data/pokedex.js';
-const MOVEDEX_FILE = './../data/moves.js';
-const ABILITIES_FILE = './../data/abilities.js';
-const ITEMS_FILE = './../data/items.js';
-const LEARNSETS_FILE = './../data/learnsets-g6';
-const FORMATS_DATA_FILE = './../data/formats-data.js';
+﻿/*
+ * Pokemon-related commands
+ */
 
 function normalize_init () {
 	var str1 = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑÇç";
@@ -131,7 +126,7 @@ exports.commands = {
 		if (validlangs.indexOf(to) < 0) return this.restrictReply(this.trad('lnot1') + " \"" + to + "\" " +  this.trad('lnot2') + ": " + validlangs.join(', '), "pokemon");
 		if (from === "english" || (to === "english" && bidirectional)) {
 			try {
-				var aliases = require(ALIASES_FILE).BattleAliases;
+				var aliases = DataDownloader.getAliases();
 				if (aliases[toId(word)]) word = aliases[toId(word)];
 			} catch (e) {
 				debug("Could not fetch aliases. Cmd: " + this.cmd + " " + arg + " | Room: " + this.room + " | By: " + this.by);
@@ -172,7 +167,7 @@ exports.commands = {
 	randompokemon: function (arg, by, room, cmd) {
 		var pokedex;
 		try {
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			pokedex = DataDownloader.getPokedex();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -187,11 +182,11 @@ exports.commands = {
 	gen: function (arg, by, room, cmd) {
 		var pokedex, aliases, movedex, abilities, items;
 		try {
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
-			aliases = require(ALIASES_FILE).BattleAliases;
-			movedex = require(MOVEDEX_FILE).BattleMovedex;
-			abilities = require(ABILITIES_FILE).BattleAbilities;
-			items = require(ITEMS_FILE).BattleItems;
+			pokedex = DataDownloader.getPokedex();
+			aliases = DataDownloader.getAliases();
+			movedex = DataDownloader.getMovedex();
+			abilities = DataDownloader.getAbilities();
+			items = DataDownloader.getItems();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -235,9 +230,9 @@ exports.commands = {
 	randommoves: function (arg, by, room, cmd) {
 		var aliases, formatsdata, movedex;
 		try {
-			aliases = require(ALIASES_FILE).BattleAliases;
-			formatsdata = require(FORMATS_DATA_FILE).BattleFormatsData;
-			movedex = require(MOVEDEX_FILE).BattleMovedex;
+			aliases = DataDownloader.getAliases();
+			formatsdata = DataDownloader.getFormatsData();
+			movedex = DataDownloader.getMovedex();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -267,8 +262,8 @@ exports.commands = {
 	heavyslam: function (arg, by, room, cmd) {
 		var pokedex, aliases;
 		try {
-			aliases = require(ALIASES_FILE).BattleAliases;
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			aliases = DataDownloader.getAliases();
+			pokedex = DataDownloader.getPokedex();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -297,8 +292,8 @@ exports.commands = {
 	prevo: function (arg, by, room, cmd) {
 		var pokedex, aliases;
 		try {
-			aliases = require(ALIASES_FILE).BattleAliases;
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
+			aliases = DataDownloader.getAliases();
+			pokedex = DataDownloader.getPokedex();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -318,10 +313,10 @@ exports.commands = {
 	priority: function (arg, by, room, cmd) {
 		var pokedex, aliases, movedex, learnsets;
 		try {
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
-			aliases = require(ALIASES_FILE).BattleAliases;
-			movedex = require(MOVEDEX_FILE).BattleMovedex;
-			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+			aliases = DataDownloader.getAliases();
+			pokedex = DataDownloader.getPokedex();
+			movedex = DataDownloader.getMovedex();
+			learnsets = DataDownloader.getLearnsets();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -361,10 +356,10 @@ exports.commands = {
 	boosting: function (arg, by, room, cmd) {
 		var pokedex, aliases, movedex, learnsets;
 		try {
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
-			aliases = require(ALIASES_FILE).BattleAliases;
-			movedex = require(MOVEDEX_FILE).BattleMovedex;
-			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+			pokedex = DataDownloader.getPokedex();
+			aliases = DataDownloader.getAliases();
+			movedex = DataDownloader.getMovedex();
+			learnsets = DataDownloader.getLearnsets();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -404,10 +399,10 @@ exports.commands = {
 	recovery: function (arg, by, room, cmd) {
 		var pokedex, aliases, movedex, learnsets;
 		try {
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
-			aliases = require(ALIASES_FILE).BattleAliases;
-			movedex = require(MOVEDEX_FILE).BattleMovedex;
-			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+			pokedex = DataDownloader.getPokedex();
+			aliases = DataDownloader.getAliases();
+			movedex = DataDownloader.getMovedex();
+			learnsets = DataDownloader.getLearnsets();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}
@@ -456,10 +451,10 @@ exports.commands = {
 	hazard: function (arg, by, room, cmd) {
 		var pokedex, aliases, movedex, learnsets;
 		try {
-			pokedex = require(POKEDEX_FILE).BattlePokedex;
-			aliases = require(ALIASES_FILE).BattleAliases;
-			movedex = require(MOVEDEX_FILE).BattleMovedex;
-			learnsets = require(LEARNSETS_FILE).BattleLearnsets;
+			pokedex = DataDownloader.getPokedex();
+			aliases = DataDownloader.getAliases();
+			movedex = DataDownloader.getMovedex();
+			learnsets = DataDownloader.getLearnsets();
 		} catch (e) {
 			return this.pmReply(this.trad('err'));
 		}

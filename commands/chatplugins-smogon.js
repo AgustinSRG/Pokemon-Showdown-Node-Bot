@@ -2,8 +2,6 @@
 	Smogon related commads
 */
 
-const ALIASES_FILE = './../data/aliases.js';
-
 /* Default tier */
 
 function getDefaultTier (room) {
@@ -164,7 +162,7 @@ exports.commands = {
 			for (var i = 0; i < args.length; i++) args[i] = toId(args[i]);
 			poke = toId(args[0]);
 			try {
-				var aliases = require(ALIASES_FILE).BattleAliases;
+				var aliases = DataDownloader.getAliases();
 				if (aliases[poke]) poke = toId(aliases[poke]);
 			} catch (e) {
 				debug("Could not fetch aliases. Cmd: " + this.cmd + " " + arg + " | Room: " + this.room + " | By: " + this.by);

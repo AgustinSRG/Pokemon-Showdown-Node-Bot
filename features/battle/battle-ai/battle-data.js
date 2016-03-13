@@ -61,7 +61,7 @@ exports.getPokemon = exports.getTemplate = function (poke, gen) {
 	var pokemon = {};
 	var temp;
 	try {
-		temp = require(DATA_DIR + "pokedex.js").BattlePokedex[poke];
+		temp = DataDownloader.getPokedex()[poke];
 		for (var i in temp) pokemon[i] = temp[i];
 	} catch (e) {}
 	for (var i = 5; i >= gen; i--) {
@@ -101,7 +101,7 @@ exports.getMove = function (move, gen) {
 	var moveData = {};
 	var temp;
 	try {
-		temp = require(DATA_DIR + "moves.js").BattleMovedex[move];
+		temp = DataDownloader.getMovedex()[move];
 		for (var i in temp) moveData[i] = temp[i];
 	} catch (e) {}
 	for (var i = 5; i >= gen; i--) {
@@ -144,7 +144,7 @@ exports.getItem = function (item, gen) {
 	var itemData = {};
 	var temp;
 	try {
-		temp = require(DATA_DIR + "items.js").BattleItems[item];
+		temp = DataDownloader.getItems()[item];
 		for (var i in temp) itemData[i] = temp[i];
 	} catch (e) {}
 	for (var i = 5; i >= gen; i--) {
@@ -182,7 +182,7 @@ exports.getAbility = function (ab, gen) {
 	var ability = {};
 	var temp;
 	try {
-		temp = require(DATA_DIR + "abilities.js").BattleAbilities[ab];
+		temp = DataDownloader.getAbilities()[ab];
 		for (var i in temp) ability[i] = temp[i];
 	} catch (e) {}
 	for (var i = 5; i >= gen; i--) {
@@ -442,7 +442,7 @@ exports.getFormatsData = function (gen) {
 		return require(BAT_DATA_DIR + "gen" + gen + "/formats-data.js").BattleFormatsData;
 	} catch (e) {
 		try {
-			return require(DATA_DIR + "formats-data.js").BattleFormatsData;
+			return DataDownloader.getFormatsData();
 		} catch (ex) {
 			return null;
 		}

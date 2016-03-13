@@ -1,8 +1,6 @@
-const Pokedex_File = './../../data/pokedex.js';
-const Movedex_File = './../../data/moves.js';
-const Abilitydex_File = './../../data/abilities.js';
-const Itemdex_File = './../../data/items.js';
-const FormatData_File = './../../data/formats-data.js';
+/*
+ * Random Pokemon Words
+ */
 
 var Pokedex, Movedex, Itemdex, Abilitydex, Natures;
 var FormatData = {};
@@ -13,11 +11,11 @@ Natures = exports.Natures = ['Adamant', 'Bashful', 'Bold', 'Brave', 'Calm', 'Car
 
 function getData () {
 	try {
-		Pokedex = exports.Pokedex = require(Pokedex_File).BattlePokedex;
-		Movedex = exports.Movedex = require(Movedex_File).BattleMovedex;
-		Itemdex = exports.Itemdex = require(Itemdex_File).BattleItems;
-		Abilitydex = exports.Abilitydex = require(Abilitydex_File).BattleAbilities;
-		FormatData = exports.FormatData = require(FormatData_File).BattleFormatsData;
+		Pokedex = exports.Pokedex = DataDownloader.getPokedex();
+		Movedex = exports.Movedex = DataDownloader.getMovedex();
+		Itemdex = exports.Itemdex = DataDownloader.getItems();
+		Abilitydex = exports.Abilitydex = DataDownloader.getAbilities();
+		FormatData = exports.FormatData = DataDownloader.getFormatsData();
 	} catch (e) {
 		return e;
 	}

@@ -465,7 +465,7 @@ exports.parseAliases = function (format) {
 	if (aliases[format]) format = toId(aliases[format]);
 	if (Formats[format]) return format;
 	try {
-		var psAliases = require("./data/aliases.js").BattleAliases;
+		var psAliases = DataDownloader.getAliases();
 		if (psAliases[format]) format = toId(psAliases[format]);
 	} catch (e) {}
 	return format;
@@ -627,7 +627,7 @@ var packTeam = exports.packTeam = function (team) {
 		// ability
 		var template = set.species || set.name;
 		try {
-			template = require('./data/pokedex.js').BattlePokedex[toId(template)];
+			template = DataDownloader.getPokedex()[toId(template)];
 		} catch (e) {
 			errlog(e.stack);
 			template = null;
@@ -815,7 +815,7 @@ var teamOverview = exports.teamOverview = function (buf) {
 exports.getTemplate = function (name) {
 	name = toId(name || '');
 	try {
-		return (require('./data/pokedex.js').BattlePokedex[name] || {});
+		return (DataDownloader.getPokedex()[name] || {});
 	} catch (e) {}
 	return {};
 };
@@ -823,7 +823,7 @@ exports.getTemplate = function (name) {
 exports.getItem = function (name) {
 	name = toId(name || '');
 	try {
-		return (require('./data/items.js').BattleItems[name] || {});
+		return (DataDownloader.getItems()[name] || {});
 	} catch (e) {}
 	return {};
 };
@@ -831,7 +831,7 @@ exports.getItem = function (name) {
 exports.getAbility = function (name) {
 	name = toId(name || '');
 	try {
-		return (require('./data/abilities.js').BattleAbilities[name] || {});
+		return (DataDownloader.getAbilities()[name] || {});
 	} catch (e) {}
 	return {};
 };
@@ -839,7 +839,7 @@ exports.getAbility = function (name) {
 exports.getMove = function (name) {
 	name = toId(name || '');
 	try {
-		return (require('./data/moves.js').BattleMovedex[name] || {});
+		return (DataDownloader.getMovedex()[name] || {});
 	} catch (e) {}
 	return {};
 };
