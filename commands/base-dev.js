@@ -112,6 +112,13 @@ exports.commands = {
 		this.pmReply("**" + roomObj.title + "** <<" + roomObj.id + ">> | Type: ``" + roomObj.type + "``" + (Config.privateRooms[roomObj.id] ? " (Hidden)" : "") + " | Users: ``" + roomObj.users.length + "`` | Bot group: ``" + (botIdent.charAt(0) !== " " ? botIdent.charAt(0) : "(regular user)") + "`` | Status: ``" + sleep + "``");
 	},
 
+	uncacheall: 'clearcache',
+	clearcache: function () {
+		if (!this.isExcepted) return false;
+		Settings.unCacheUrl(true);
+		this.reply("Http-Cache successfully cleared");
+	},
+
 	hotpatch: 'reload',
 	reload: function (arg, by, room, cmd) {
 		if (!this.isExcepted) return false;

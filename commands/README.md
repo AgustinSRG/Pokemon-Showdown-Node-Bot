@@ -99,6 +99,7 @@ Commands for developing (only for excepted users)
  - `send` - Send anything to the server
  - `reload [commands/config/features/laguages]` - Hotpatch source files
  - `updategit` - Fast forward from git repo
+ - `clearcache` - Clear the cache, for example for reloading the usage data
 
 CommandParser developing commands
 

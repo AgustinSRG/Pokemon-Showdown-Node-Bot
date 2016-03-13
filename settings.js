@@ -369,6 +369,8 @@ exports.unCacheUrl = function (url) {
 			if (url === httpCache[file].url) uncache = true;
 		} else if (typeof url === "object" && url instanceof RegExp) {
 			if (url.test(httpCache[file].url)) uncache = true;
+		} else if (url === true) {
+			uncache = true;
 		}
 		if (uncache) {
 			try {
