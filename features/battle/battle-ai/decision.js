@@ -164,6 +164,7 @@ exports.getDecisions = function (battle) {
 				continue;
 			}
 			var active = req.active[i];
+			var auxHasTarget;
 			//moves
 			for (var j = 0; j < active.moves.length; j++) {
 				if (active.moves[j].disabled || active.moves[j].pp === 0) continue; // No more moves
@@ -174,8 +175,14 @@ exports.getDecisions = function (battle) {
 					if (mega) tables[i].push(new MoveDecision(j, null, true, active.moves[j].move));
 					tables[i].push(new MoveDecision(j, null, false, active.moves[j].move));
 				} else if (active.moves[j].target in {'any': 1, 'normal': 1}) {
+					auxHasTarget = false;
 					for (var tar = 0; tar < battle.foe.active.length; tar++) {
 						if (!battle.foe.active[tar] || battle.foe.active[tar].fainted) continue; // Target not found
+						if (active.moves[j].target === 'normal' && Math.abs(tar - i) > 1) continue; // Target too far
+						auxHasTarget = true;
+					}
+					for (var tar = 0; tar < battle.foe.active.length; tar++) {
+						if (auxHasTarget && (!battle.foe.active[tar] || battle.foe.active[tar].fainted)) continue; // Target not found
 						if (active.moves[j].target === 'normal' && Math.abs(tar - i) > 1) continue; // Target too far
 						if (mega) tables[i].push(new MoveDecision(j, tar, true, active.moves[j].move));
 						tables[i].push(new MoveDecision(j, tar, false, active.moves[j].move));
