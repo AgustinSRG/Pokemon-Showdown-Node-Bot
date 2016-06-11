@@ -482,6 +482,10 @@ var getViableSupportMoves = exports.getViableSupportMoves = function (battle, de
 			}
 			continue;
 		}
+		if (move.id === 'metronome') {
+			res.viable.push(decisions[i]);
+			continue;
+		}
 		res.unviable.push(decisions[i]);
 	}
 	return res;
