@@ -80,7 +80,7 @@ exports.questions = [
 	{q: "This item summons Heatran when brought to Stark Mountain or Reversal Mountain.", a: "Magma Stone"},
 	{q: "What Pokemon is based off of antlion larvae?", a: "Trapinch"},
 	{q: "What Pokemon trainer gives you a Dusk Stone in ORAS after defeating them?", a: "Hex Maniac Valerie"},
-	{q: "What move increases the Attack and Sp. Attack of grounded Grass-type Pokemon?", a: "Blissey"},
+	{q: "What move increases the Attack and Sp. Attack of grounded Grass-type Pokemon?", a: "Rototiller"},
 	{q: "Who is the daughter of a gym leader that became a member of the Elite Four?", a: "Janine"},
 	{q: "What is Ash's first Pokémon?", a: "Pikachu"},
 	{q: "Which item evolves Slowbro to Slowking when traded?", a: "King's Rock"},
