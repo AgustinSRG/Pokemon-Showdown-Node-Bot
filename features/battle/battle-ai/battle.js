@@ -196,9 +196,12 @@ var Battle = exports.Battle = (function () {
 		try {
 			mod = modules.choose(this);
 			if (mod) {
-				this.lock = false;
-				this.sendDecision(mod.decide(this, decisions));
-				return;
+				var decision = mod.decide(this, decisions);
+				if (decision instanceof Array) {
+					this.lock = false;
+					this.sendDecision(decision);
+					return;
+				}
 			}
 		} catch (ex) {
 			debug(ex.stack);
