@@ -202,7 +202,7 @@ exports.commands = {
 				if (!link) return this.reply(this.trad('u1') + ': ' + this.cmdToken + cmd + ' ' + this.trad('u2'));
 				if (link.substr(-1) === '/') link = link.substr(0, link.length - 1);
 				var splitedLink = link.split('/');
-				link = 'http://hastebin.com/raw/' + splitedLink[splitedLink.length - 1];
+				link = 'http://pastebin.com/raw/' + splitedLink[splitedLink.length - 1];
 				if (!Formats[format]) return this.reply(this.trad('format') + " __" + format + "__ " + this.trad('notexists'));
 				this.reply(this.trad('download') + '... (' + link + ')');
 				var http = require('http');
@@ -245,7 +245,7 @@ exports.commands = {
 				if (!Features['battle'].TeamBuilder.dynTeams[id]) return this.reply(this.trad('team') + " __" + name + "__ " + this.trad('notexists'));
 				try {
 					var data = Tools.exportTeam(Features['battle'].TeamBuilder.dynTeams[id].packed);
-					Tools.uploadToHastebin(data, function (r, link) {
+					Tools.uploadTopastebin(data, function (r, link) {
 						if (r) return this.pmReply(id + ': ' + link);
 						else this.pmReply(this.trad('err'));
 					}.bind(this));
@@ -294,7 +294,7 @@ exports.commands = {
 			nTeams++;
 		}
 		if (!nTeams) return this.pmReply(this.trad('empty'));
-		Tools.uploadToHastebin(teamsStr, function (r, link) {
+		Tools.uploadTopastebin(teamsStr, function (r, link) {
 			if (r) return this.pmReply(this.trad('list') + ': ' + link);
 			else this.pmReply(this.trad('err'));
 		}.bind(this));
