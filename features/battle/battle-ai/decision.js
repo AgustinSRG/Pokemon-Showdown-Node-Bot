@@ -49,6 +49,14 @@ var ShiftDecision = exports.ShiftDecision = (function () {
 	return ShiftDecision;
 })();
 
+function isTooFar(battle, a, b) {
+	if (battle.gametype === 'triples') {
+		return ((a === 0 && b === 0) || (a === 2 && b === 2));
+	} else {
+		return false;
+	}
+}
+
 function combinateTeamPreview (array, i, values, solutions) {
 	if (i >= array.length) {
 		solutions.push(array.slice());
@@ -126,7 +134,10 @@ exports.getDecisions = function (battle) {
 	if (req.wait) return null; // Nothing to do
 	if (req.teamPreview) {
 		/* Team required */
-		var comb = generateTeamCombinations(req.side.pokemon.length, this.teamPreview || 1);
+		var n = 1;
+		if (battle.gametype === 'doubles') n = 2;
+		else if (battle.gametype === 'triples') n = 3;
+		var comb = generateTeamCombinations(req.side.pokemon.length, n);
 		for (var i = 0; i < comb.length; i++) {
 			res.push([new TeamDecision(comb[i])]);
 		}
@@ -178,19 +189,19 @@ exports.getDecisions = function (battle) {
 					auxHasTarget = false;
 					for (var tar = 0; tar < battle.foe.active.length; tar++) {
 						if (!battle.foe.active[tar] || battle.foe.active[tar].fainted) continue; // Target not found
-						if (active.moves[j].target === 'normal' && Math.abs(tar - i) > 1) continue; // Target too far
+						if (active.moves[j].target === 'normal' && isTooFar(battle, tar, i)) continue; // Target too far
 						auxHasTarget = true;
 					}
 					for (var tar = 0; tar < battle.foe.active.length; tar++) {
 						if (auxHasTarget && (!battle.foe.active[tar] || battle.foe.active[tar].fainted)) continue; // Target not found
-						if (active.moves[j].target === 'normal' && Math.abs(tar - i) > 1) continue; // Target too far
+						if (active.moves[j].target === 'normal' && isTooFar(battle, tar, i)) continue; // Target too far
 						if (mega) tables[i].push(new MoveDecision(j, tar, true, active.moves[j].move));
 						tables[i].push(new MoveDecision(j, tar, false, active.moves[j].move));
 					}
 					for (var tar = 0; tar < battle.self.active.length; tar++) {
 						if (tar === i) continue; // Not self target allowed
 						if (!battle.self.active[tar] || battle.self.active[tar].fainted) continue; // Target not found
-						if (active.moves[j].target === 'normal' && Math.abs(tar - i) > 1) continue; // Target too far
+						if (active.moves[j].target === 'normal' && isTooFar(battle, tar, i)) continue; // Target too far
 						if (mega) tables[i].push(new MoveDecision(j, (-1) * (tar + 1), true, active.moves[j].move));
 						tables[i].push(new MoveDecision(j, (-1) * (tar + 1), false, active.moves[j].move));
 					}
@@ -198,7 +209,7 @@ exports.getDecisions = function (battle) {
 					for (var tar = 0; tar < battle.self.active.length; tar++) {
 						if (tar === i) continue; // Not self target allowed
 						if (!battle.self.active[tar] || battle.self.active[tar].fainted) continue; // Target not found
-						if (active.moves[j].target === 'normal' && Math.abs(tar - i) > 1) continue; // Target too far
+						if (active.moves[j].target === 'normal' && isTooFar(battle, tar, i)) continue; // Target too far
 						if (mega) tables[i].push(new MoveDecision(j, (-1) * (tar + 1), true, active.moves[j].move));
 						tables[i].push(new MoveDecision(j, (-1) * (tar + 1), false, active.moves[j].move));
 					}
