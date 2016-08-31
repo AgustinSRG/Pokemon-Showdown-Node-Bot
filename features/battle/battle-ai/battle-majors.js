@@ -6,6 +6,10 @@ var battleData = require("./battle-data.js");
 var Move = battleData.Move;
 
 module.exports = {
+	rated: function (args, kwargs) {
+		this.rated = true;
+	},
+
 	request: function (args, kwargs) {
 		args.shift();
 		this.request = JSON.parse(args.join("|"));
