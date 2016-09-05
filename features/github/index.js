@@ -8,7 +8,7 @@ var updates = exports.updates = {};
 
 function report (str) {
 	debug("GitHub: " + str);
-	if (Config.github) Bot.say(Config.github.room, "!htmlbox " + str);
+	if (Config.github) Bot.say(Config.github.room, "/addhtmlbox " + str);
 }
 
 function startWebHook (secret, port) {
