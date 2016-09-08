@@ -32,7 +32,7 @@ if (AppOptions.help) {
 	console.log(
 		"Options:\n" +
 		"   [-h/-help] - Gives you this guide\n" +
-		"   [-c/-config] config-file - Set a custom configuratioon file\n" +
+		"   [-c/-config] config-file - Set a custom configuration file\n" +
 		"   [-dt/-data] data-dir - Set a custom data directory\n" +
 		"   [-p/-production] - Production mode (recommended)\n" +
 		"   [-m/-monitor] - Monitor mode\n" +
@@ -339,7 +339,7 @@ Bot.on('renamefailure', function (e) {
 		}
 	} else {
 		if (Config.autoReloginDelay) {
-			error('Login failure, retrying in ' + (Config.autoReloginDelay / 1000) + ' seconds');
+			error('Login failure, retrying in ' + (Config.autoReloginDelay / 1000) + ' seconds.');
 			retryingRename = true;
 			setTimeout(function () {
 				retryingRename = false;
@@ -357,14 +357,14 @@ Bot.on('renamefailure', function (e) {
 
 Bot.on('rename', function (name, named) {
 	monitor('Bot nickname has changed: ' + (named ? name.green : name.yellow) + (named ? '' : ' [guest]'));
-	SecurityLog.log('Bot nickname has changed: ' + name + (named ? '' : ' [guest]'));
+	SecurityLog.log('Bot nickname has changed to: ' + name + (named ? '' : ' [guest]'));
 	if (named) {
 		if (!Config.nick) {
 			if (Bot.roomcount > 0) return; // Namechange, not initial login
-			ok('Succesfully logged in as ' + name);
+			ok('Successfully logged in as ' + name);
 			botAfterConnect();
 		} else if (toId(Config.nick) === toId(name)) {
-			ok('Succesfully logged in as ' + name);
+			ok('Successfully logged in as ' + name);
 			botAfterConnect();
 		}
 	}
@@ -491,13 +491,13 @@ var checkSystem = function () {
 	if (issue) {
 		switch (issue) {
 			case 'connect':
-				monitor("Monitor failed: Connection issue. Reconnecting");
-				SecurityLog.log("Monitor failed: Connection issue. Reconnecting");
+				monitor("Monitor failed: Connection issue. Reconnecting...");
+				SecurityLog.log("Monitor failed: Connection issue. Reconnecting...");
 				Bot.connect();
 				break;
 			case 'login':
-				monitor("Monitor failed: Login issue. Loging in a random username");
-				SecurityLog.log("Monitor failed: Login issue. Loging in a random username");
+				monitor("Monitor failed: Login issue. Logging in a random username.");
+				SecurityLog.log("Monitor failed: Login issue. Logging in a random username.");
 				Config.nick = '';
 				Bot.rename('Bot ' + Tools.generateRandomNick(10));
 				break;
