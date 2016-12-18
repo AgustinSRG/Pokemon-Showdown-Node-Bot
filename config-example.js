@@ -92,7 +92,7 @@ exports.exceptions = {
 *
 */
 
-exports.ranks = ['+', '\u2605', '%', '@', '#', '&', '~'];
+exports.ranks = ['+', '\u2605', '%', '@', '*', '#', '&', '~'];
 
 exports.globalPermissions = {
 	'voice': '+', //Min rank to broadcast in a server
