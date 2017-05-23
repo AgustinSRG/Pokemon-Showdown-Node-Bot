@@ -94,6 +94,8 @@ exports.questions = [
 	{q: "What pokemon controls space?", a: "Palkia"},
 	{q: "Which Pokemon evolution line has no weaknesses due to their abilities?", a: "Eelektross"},
 	{q: "What color are Raichu's cheeks?", a: "Yellow"},
+	{q: "What is the only Pokemon with the typing Normal/Dragon?", a: "Drampa"},
+	{q: "What is the only Pokemon with the typing Ghost/Fighting?", a: "Marshadow"},
 	{q: "What is the only Pokemon with the typing Normal/Water?", a: "Bibarel"},
 	{q: "What is the only Pokemon with the typing Normal/Ground?", a: "Diggersby"},
 	{q: "What is the only Pokemon with the typing Fire/Water?", a: "Volcanion"},
