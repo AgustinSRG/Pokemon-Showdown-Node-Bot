@@ -15,7 +15,7 @@ Basic features and some information about the bot.
  - `time` - Current time for Bot
  - `uptime` - Time since the last bot restart
  - `seen [user]` - Latest data from an user
- - `alts [user]` - List of known alts of an user (Alts detedted from namechanges)
+ - `alts [user]` - List of known alts of an user (Alts deleted from namechanges)
  - `say [text]` - Force to say something
 
 Dynamic Commands
@@ -135,13 +135,13 @@ Moderation
  - `0tol delete, [user1], [user2], [...]` - Removeusers from zero tolerance list
  - `vzt` - Upload zero tolerance list to hastebin
 
-**Banwords and InapropiateWords:** Saying this words means automute. InapropiateWords requires that words are separated.
+**Banwords and Inappropriate Words:** Saying this words means automute. Inappropriate Words requires that words are separated.
  - `banword [phrase]` - Add a banword
  - `unbanword [phrase]` - Remove a banword
  - `vbw` - View banword list
  - `inapword [phrase]` - Add an inappropriate word
  - `uninapword [phrase]` - Remove an inappropriate word
- - `viw` - View inapropiate words list
+ - `viw` - View inappropriate words list
 
 **Joinphrases:** Configure what phrase Bot says when certain user joins a room. This can be spammable, much caution!
  - `joinphrase [enable/disable]` - Enable or disable joinphrases for a room
