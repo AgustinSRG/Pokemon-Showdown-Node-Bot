@@ -176,6 +176,7 @@ var Context = exports.Context = (function () {
 	};
 
 	Context.prototype.say = function (targetRoom, data) {
+		monitor('said: ' + data.toString() + ' in ' + targetRoom.toString() );
 		this.send(targetRoom, data);
 	};
 

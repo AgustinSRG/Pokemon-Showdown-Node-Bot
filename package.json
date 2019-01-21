@@ -3,12 +3,14 @@
   "version": "0.7.2",
   "author": {
     "name": "Ecuacion",
-	"email": "alajandro5gt01@gmail.com",
-	"url": "https://github.com/Ecuacion"
+    "email": "alajandro5gt01@gmail.com",
+    "url": "https://github.com/Ecuacion"
   },
   "scripts": {
     "start": "node bot",
-    "test": "gulp && mocha"
+    "test": "gulp && tsc && mochatsc",
+    "tsc": "tsc",
+    "build": "tsc"
   },
   "contributors": [
     {

@@ -72,7 +72,7 @@ exports.parse = function (room, message, isIntro, spl) {
 };
 ```
 
-Features must have and **unique id** and two essential functions:
+Features must have a **unique id** and two essential functions:
 
  - **init** - Is called on connection to server, to delete residual data or start/restart feature timeouts.
  - **parse** - It will receive all server messages, already separated in lines, each parse call is a new line received.

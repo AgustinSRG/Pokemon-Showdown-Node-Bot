@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "lib": ["es2015", "es2016.array.include", "es2017.object"],
+        "noEmit": true,
+        "target": "esnext",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "strict": true,
+        "allowJs": true,
+        "checkJs": true
+    },
+    "types": ["node"],
+    "include": [
+        "./interfaces/mashup-recipe.ts",
+    ]
+}

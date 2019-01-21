@@ -12,6 +12,7 @@ try {
 	global.fs = require('fs');
 	global.path = require('path');
 	global.PSClient = require('./showdown-client.js');
+	//global.IMashupRecipe = require('./interfaces/mashup-recipe.ts');
 } catch (e) {
 	console.log(e.stack);
 	console.log("ERROR: missing dependencies, try 'npm install'");
@@ -79,6 +80,9 @@ global.DataDownloader = require('./data-downloader.js');
 global.CommandParser = require('./command-parser.js');
 
 global.SecurityLog = require('./security-log.js');
+
+global.ActiveMashupRecipes = {};
+global.MashupRecipesStatic = require('./data/mashup-recipes-static.js');
 
 /* Commands */
 
