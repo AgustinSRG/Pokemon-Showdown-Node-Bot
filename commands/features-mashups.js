@@ -10,6 +10,7 @@ exports.commands = {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
         Mashups.resetCompletedTourAuthTypeArray();
+        Mashups.save();
 
         var sAnalysisStatement = Mashups.analyseTourAuthTypeCountStatement();
 	    if (sAnalysisStatement) Bot.say(room, sAnalysisStatement);
@@ -19,6 +20,7 @@ exports.commands = {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
         Mashups.setCompletedTourAuthTypeCount(Mashups.MashupAuthType.Official, parseInt(arg));
+        Mashups.save();
 
         var sAnalysisStatement = Mashups.analyseTourAuthTypeCountStatement();
 	    if (sAnalysisStatement) Bot.say(room, sAnalysisStatement);
@@ -28,6 +30,7 @@ exports.commands = {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
         Mashups.setCompletedTourAuthTypeCount(Mashups.MashupAuthType.Spotlight, parseInt(arg));
+        Mashups.save();
 
         var sAnalysisStatement = Mashups.analyseTourAuthTypeCountStatement();
 	    if (sAnalysisStatement) Bot.say(room, sAnalysisStatement);
@@ -37,6 +40,7 @@ exports.commands = {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
         Mashups.setCompletedTourAuthTypeCount(Mashups.MashupAuthType.Other, parseInt(arg));
+        Mashups.save();
 
         var sAnalysisStatement = Mashups.analyseTourAuthTypeCountStatement();
 	    if (sAnalysisStatement) Bot.say(room, sAnalysisStatement);

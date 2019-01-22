@@ -53,6 +53,25 @@ exports.onTournamentEnd = function (room, data) {
 		}
 	}
 
+	// Check if day has changed
+	var currentTimestamp = Mashups.todayStartTimestamp();
+	//Bot.say(room, currentTimestamp.toString() + ' / ' + Mashups.mashupsSavedData['date'].toString() );
+	if( (currentTimestamp.getFullYear() !== Mashups.mashupsSavedData['dateY']) ||
+		(currentTimestamp.getMonth() !== Mashups.mashupsSavedData['dateM']) ||
+		(currentTimestamp.getDate() !== Mashups.mashupsSavedData['dateD']) )
+	{
+		var sDayChangedStatement = `Resetting tour counts because date has changed... `;
+		sDayChangedStatement += `(Y:${currentTimestamp.getFullYear().toString()}, `;
+		sDayChangedStatement += `M:${currentTimestamp.getMonth().toString()}, `;
+		sDayChangedStatement += `D:${currentTimestamp.getDate().toString()})`;
+		if (sDayChangedStatement) Bot.say(room, sDayChangedStatement);
+
+		Mashups.mashupsSavedData['dateY'] = currentTimestamp.getFullYear();
+		Mashups.mashupsSavedData['dateM'] = currentTimestamp.getMonth();
+		Mashups.mashupsSavedData['dateD'] = currentTimestamp.getDate();
+		Mashups.resetCompletedTourAuthTypeArray();
+	}
+
 	// Print justification
 	var sAuthTypeName = Mashups.string_of_enum(Mashups.MashupAuthType, eAuthType);
 	var sDeterminationJustification = '';
@@ -67,6 +86,7 @@ exports.onTournamentEnd = function (room, data) {
 	
 	// Increment
 	Mashups.incrementCompletedTourAuthTypeCount(eAuthType);
+	Mashups.save();
 
 	// Print analysis of post-tour ratio
 	var sAnalysisStatement = Mashups.analyseTourAuthTypeCountStatement();

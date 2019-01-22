@@ -9,6 +9,31 @@ var aliases = exports.aliases = require("./../../data/aliases.js").BattleAliases
 
 var TourRatioTracker = exports.TourRatioTracker = require('./tour-ratio-tracker.js');
 
+// Save data
+const mashupsDataFile = AppOptions.data + 'mashups.json';
+
+var mashupsFFM = exports.mashupsFFM = new Settings.FlatFileManager(mashupsDataFile);
+
+var mashupsSavedData = exports.mashupsSavedData = {};
+
+try {
+	mashupsSavedData = exports.mashupsSavedData = mashupsFFM.readObj();
+} catch (e) {
+	errlog(e.stack);
+	error("Could not import mashups data: " + sys.inspect(e));
+}
+
+var save = exports.save = function () {
+	if (!mashupsSavedData['authType']) {
+		mashupsSavedData['authType'] = {};
+	}
+	for (var nAuthTypeItr=0; nAuthTypeItr<MashupAuthType.Count; ++nAuthTypeItr) {
+		mashupsSavedData['authType'][nAuthTypeItr] = completedTourAuthTypeArray[nAuthTypeItr];
+	}
+
+	mashupsFFM.writeObj(mashupsSavedData);
+};
+
 var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
@@ -99,6 +124,34 @@ Object.freeze(officialTourNamesArray);
 var officialTourNamesIdArray = exports.officialTourNamesIdArray = [];
 var officialTourNamesGenericIdArray = exports.officialTourNamesGenericIdArray = [];
 
+var todayStartTimestamp = exports.todayStartTimestamp = function() {
+	var d = new Date();
+	d.setHours(0,0,0,0);
+	return d;
+};
+
+var loadCompletedTourAuthTypeArray = exports.loadCompletedTourAuthTypeArray = function() {
+	resetCompletedTourAuthTypeArray();
+
+	// Init save data
+	if (!mashupsSavedData['authType']) {
+		mashupsSavedData['authType'] = {};
+		for (var nAuthTypeItr=0; nAuthTypeItr<MashupAuthType.Count; ++nAuthTypeItr) {
+			mashupsSavedData['authType'][nAuthTypeItr] = 0;
+		}
+	}
+	if (!mashupsSavedData['dateY']) {
+		var d = todayStartTimestamp();
+		mashupsSavedData['dateY'] = d.getFullYear();
+		mashupsSavedData['dateM'] = d.getMonth();
+		mashupsSavedData['dateD'] = d.getDate();
+	}
+
+	for (var nAuthTypeItr=0; nAuthTypeItr<MashupAuthType.Count; ++nAuthTypeItr) {
+		completedTourAuthTypeArray[nAuthTypeItr] = mashupsSavedData['authType'][nAuthTypeItr];
+	}
+};
+
 var resetCompletedTourAuthTypeArray = exports.resetCompletedTourAuthTypeArray = function() {
 	completedTourAuthTypeArray = new Array(MashupAuthType.Count);
 	for (var nAuthTypeItr=0; nAuthTypeItr<MashupAuthType.Count; ++nAuthTypeItr) {
@@ -108,7 +161,7 @@ var resetCompletedTourAuthTypeArray = exports.resetCompletedTourAuthTypeArray = 
 
 var setCompletedTourAuthTypeCount = exports.setCompletedTourAuthTypeCount = function(nAuthType, nCount) {
 	if(undefined === completedTourAuthTypeArray) {
-		resetCompletedTourAuthTypeArray();
+		loadCompletedTourAuthTypeArray();
 	}
 	completedTourAuthTypeArray[nAuthType] = nCount;
 };
@@ -208,7 +261,7 @@ exports.init = function () {
 	for (var i in tourMetaData)
 		delete tourMetaData[i];
 
-	resetCompletedTourAuthTypeArray();
+	loadCompletedTourAuthTypeArray();
 };
 
 exports.parse = function (room, message, isIntro, spl) {
