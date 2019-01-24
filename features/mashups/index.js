@@ -221,7 +221,7 @@ var tourNameToAuthTypeGenericId = exports.tourNameToAuthTypeGenericId = function
 	// Remover tier data
 	var tierAliases;
 	for (var nTier=0; nTier<Tier.Count; ++nTier) {
-		sGenericId = sGenericId.replace(tierNamesArray[nTier], '');
+		sGenericId = sGenericId.replace(toId(tierNamesArray[nTier]), '');
 		// FIXME: Try to add tier aliases
 		/*
 		tierAliases = aliases[toId(tierNamesArray[nTier])];
