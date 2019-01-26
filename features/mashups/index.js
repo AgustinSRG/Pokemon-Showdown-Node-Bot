@@ -115,7 +115,7 @@ var officialTourNamesArray = exports.officialTourNamesArray = [
 	'[Gen 7] AAA STABmons',
 	'[Gen 7] STAB n Mega',
 	'[Gen7] AAA Doubles',
-	'[Gen7] Anything Goes Doubles',
+	'[Gen7] CAAAmomons',
 	'[Gen7] Almost Any Ability LC',
 	'[Gen 7] LC Balanced Hackmons',
 	'[Gen 7] STABmons LC',
