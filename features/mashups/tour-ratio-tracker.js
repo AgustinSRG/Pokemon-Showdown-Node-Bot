@@ -44,10 +44,12 @@ exports.onTournamentEnd = function (room, data) {
 	if( Mashups.MashupAuthType.Other === eAuthType ) {
 		if( Mashups.officialTourNamesArray ) {
 			for (var nOfficial=0; nOfficial<Mashups.officialTourNamesArray.length; ++nOfficial) {
-				//Bot.say(room, `official: ${Mashups.officialTourNamesGenericIdArray[nOfficial]}`);
-				if( Mashups.officialTourNamesGenericIdArray[nOfficial] === sGenericFormatId ) {
-					eAuthType = Mashups.MashupAuthType.Official;
-					sIdentifiedDerivedFromTourName = Mashups.officialTourNamesArray[nOfficial];
+				for (var nAliasItr=0; nAliasItr<Mashups.officialTourNamesArray[nOfficial].length; ++nAliasItr) {
+					//Bot.say(room, `official: ${Mashups.officialTourNamesGenericIdArray[nOfficial][nAliasItr]}`);
+					if( Mashups.officialTourNamesGenericIdArray[nOfficial][nAliasItr] === sGenericFormatId ) {
+						eAuthType = Mashups.MashupAuthType.Official;
+						sIdentifiedDerivedFromTourName = Mashups.officialTourNamesArray[nOfficial][nAliasItr];
+					}
 				}
 			}
 		}

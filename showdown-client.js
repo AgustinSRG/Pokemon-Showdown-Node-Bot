@@ -303,7 +303,7 @@ var Client = (function () {
 				return spacer;
 			} else {
 				data = JSON.stringify(data);
-				monitor('sending data: ' + data);
+				//monitor('sending data: ' + data);
 				self.events.emit('send', data);
 				connection.send(data);
 			}

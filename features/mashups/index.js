@@ -38,7 +38,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourName = exports.spotlightTourName = '[Gen 7] Mix and Mega LC';
+var spotlightTourName = exports.spotlightTourName = '[Gen7] CAAAmomons';
 var spotlightTourNameId = exports.spotlightTourNameId = '';
 var spotlightTourNameGenericId = exports.spotlightTourNameGenericId = '';
 
@@ -109,16 +109,16 @@ Object.freeze(tourAuthTypeIdealRatiosArray);
 // Copied directly from the megathread official tour list; spacing is inconsistent there
 // https://www.smogon.com/forums/threads/om-mashup-megathread.3635904/#post-7802591
 var officialTourNamesArray = exports.officialTourNamesArray = [
-	'[Gen7] Pure Hackmons',
-	'[Gen7] AAA Ubers',
-	'[Gen 7] STABmons Ubers',
-	'[Gen 7] AAA STABmons',
-	'[Gen 7] STAB n Mega',
-	'[Gen7] AAA Doubles',
-	'[Gen7] CAAAmomons',
-	'[Gen7] Almost Any Ability LC',
-	'[Gen 7] LC Balanced Hackmons',
-	'[Gen 7] STABmons LC',
+	['[Gen7] Pure Hackmons'],
+	['[Gen7] AAA Ubers'],
+	['[Gen 7] STABmons Ubers'],
+	['[Gen 7] AAA STABmons', '[Gen 7] STAAABmons'],
+	['[Gen 7] STAB n Mega'],
+	['[Gen7] AAA Doubles'],
+	['[Gen7] CAAAmomons'],
+	['[Gen7] Almost Any Ability LC'],
+	['[Gen 7] LC Balanced Hackmons'],
+	['[Gen 7] STABmons LC'],
 ];
 Object.freeze(officialTourNamesArray);
 var officialTourNamesIdArray = exports.officialTourNamesIdArray = [];
@@ -253,9 +253,13 @@ exports.init = function () {
 
 	// Set up officials data
 	for (var nOfficial=0; nOfficial<officialTourNamesArray.length; ++nOfficial) {
-		//console.log(`sOfficialMashupName: ${officialTourNamesArray[nOfficial]}`);
-		officialTourNamesIdArray[nOfficial] = toId(officialTourNamesArray[nOfficial]);
-		officialTourNamesGenericIdArray[nOfficial] = tourNameToAuthTypeGenericId(officialTourNamesArray[nOfficial]);
+		officialTourNamesIdArray[nOfficial] = [];
+		officialTourNamesGenericIdArray[nOfficial] = [];
+		for (var nAliasItr=0; nAliasItr<officialTourNamesArray[nOfficial].length; ++nAliasItr) {
+			//console.log(`sOfficialMashupName: ${officialTourNamesArray[nOfficial][nAliasItr]}`);
+			officialTourNamesIdArray[nOfficial][nAliasItr] = toId(officialTourNamesArray[nOfficial][nAliasItr]);
+			officialTourNamesGenericIdArray[nOfficial][nAliasItr] = tourNameToAuthTypeGenericId(officialTourNamesArray[nOfficial][nAliasItr]);
+		}
 	}
 
 	for (var i in tourMetaData)
