@@ -106,19 +106,29 @@ var tourAuthTypeIdealRatiosArray = exports.tourAuthTypeIdealRatiosArray = [
 ];
 Object.freeze(tourAuthTypeIdealRatiosArray);
 
-// Copied directly from the megathread official tour list; spacing is inconsistent there
-// https://www.smogon.com/forums/threads/om-mashup-megathread.3635904/#post-7802591
+// Copied directly from the megathread tour lists; spacing is inconsistent there
+// https://www.smogon.com/forums/threads/om-mashup-megathread.3635904/#post-7802586
 var officialTourNamesArray = exports.officialTourNamesArray = [
+	// OM Mashups​
 	['[Gen7] Pure Hackmons'],
+	// Mix and Mega Anything Goes (Not on main) 
 	['[Gen7] AAA Ubers'],
+	['[Gen7] CAAAmomons'],
 	['[Gen 7] STABmons Ubers'],
 	['[Gen 7] AAA STABmons', '[Gen 7] STAAABmons'],
 	['[Gen 7] STAB n Mega'],
+
+	// Doubles Metagames​
+	['[Gen 7] Balanced Hackmons Doubles'],
 	['[Gen7] AAA Doubles'],
-	['[Gen7] CAAAmomons'],
-	['[Gen7] Almost Any Ability LC'],
+	// Mix and Mega Doubles (Not on main)
+	['[Gen7] STABmons Doubles'],
+
+	// Little Cup Metagames​
 	['[Gen 7] LC Balanced Hackmons'],
+	['[Gen7] Almost Any Ability LC'],
 	['[Gen 7] STABmons LC'],
+	['[Gen 7] Mix and Mega LC'],
 ];
 Object.freeze(officialTourNamesArray);
 var officialTourNamesIdArray = exports.officialTourNamesIdArray = [];
