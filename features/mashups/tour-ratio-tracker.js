@@ -32,10 +32,12 @@ exports.onTournamentEnd = function (room, data) {
 
 	// Prioritise spotlight if spotlight is official
 	if( Mashups.MashupAuthType.Other === eAuthType ) {
-		//Bot.say(room, `spotlightTourNameGenericId: ${Mashups.spotlightTourNameGenericId}`);
-		if( Mashups.spotlightTourNameGenericId === sGenericFormatId ) {
-			eAuthType = Mashups.MashupAuthType.Spotlight;
-			sIdentifiedDerivedFromTourName = Mashups.spotlightTourName;
+		for (var nAliasItr=0; nAliasItr<Mashups.spotlightTourNameGenericIdArray.length; ++nAliasItr) {
+			//Bot.say(room, `spotlightTourNameGenericId: ${Mashups.spotlightTourNameGenericIdArray[nAliasItr]}`);
+			if( Mashups.spotlightTourNameGenericIdArray[nAliasItr] === sGenericFormatId ) {
+				eAuthType = Mashups.MashupAuthType.Spotlight;
+				sIdentifiedDerivedFromTourName = Mashups.spotlightTourNameArray[nAliasItr];
+			}
 		}
 	}
 

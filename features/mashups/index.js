@@ -38,9 +38,9 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourName = exports.spotlightTourName = '[Gen7] CAAAmomons';
-var spotlightTourNameId = exports.spotlightTourNameId = '';
-var spotlightTourNameGenericId = exports.spotlightTourNameGenericId = '';
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] Balanced Hackmons Doubles', '[Gen 7] Doubles Balanced Hackmons'];
+var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
+var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
 var string_of_enum = exports.string_of_enum = function string_of_enum(eEnum,value) 
 {
@@ -119,7 +119,7 @@ var officialTourNamesArray = exports.officialTourNamesArray = [
 	['[Gen 7] STAB n Mega'],
 
 	// Doubles Metagames​
-	['[Gen 7] Balanced Hackmons Doubles'],
+	['[Gen 7] Balanced Hackmons Doubles', '[Gen 7] Doubles Balanced Hackmons'],
 	['[Gen7] AAA Doubles'],
 	// Mix and Mega Doubles (Not on main)
 	['[Gen7] STABmons Doubles'],
@@ -243,23 +243,110 @@ var tourNameToAuthTypeGenericId = exports.tourNameToAuthTypeGenericId = function
 	return sGenericId;
 };
 
-var setSpotlightTourName = exports.setSpotlightTourName = function (sSpotlightName) {
-	spotlightTourName = exports.spotlightTourNameId = sSpotlightName;
-	spotlightTourNameId = exports.spotlightTourNameId = toId(sSpotlightName);
-	spotlightTourNameGenericId = exports.spotlightTourNameGenericId = tourNameToAuthTypeGenericId(sSpotlightName);
+var setSpotlightTourNameArray = exports.setSpotlightTourNameArray = function (sSpotlightNameArray) {
+	for (var nAliasItr=0; nAliasItr<sSpotlightNameArray.length; ++nAliasItr) {
+		spotlightTourNameArray[nAliasItr] = sSpotlightNameArray[nAliasItr];
+		spotlightTourNameIdArray[nAliasItr] = toId(sSpotlightNameArray[nAliasItr]);
+		spotlightTourNameGenericIdArray[nAliasItr] = tourNameToAuthTypeGenericId(sSpotlightNameArray[nAliasItr]);
+	}
 
-	Object.freeze(spotlightTourName);
-	Object.freeze(spotlightTourNameId);
-	Object.freeze(spotlightTourNameGenericId);
+	Object.freeze(spotlightTourNameArray);
+	Object.freeze(spotlightTourNameIdArray);
+	Object.freeze(spotlightTourNameGenericIdArray);
 
+	//for (var nAliasItr=0; nAliasItr<Mashups.spotlightTourNameGenericIdArray.length; ++nAliasItr) {
 	//console.log(`spotlightTourName: ${spotlightTourName}`);
 	//console.log(`spotlightTourNameId: ${spotlightTourNameId}`);
 	//console.log(`spotlightTourNameGenericId: ${spotlightTourNameGenericId}`);
+	//}
 };
+
+//#region GenTourCode
+
+var getFormatKey = exports.getFormatKey = function (sFormatAlias) {
+	sFormatAlias = toId(sFormatAlias);
+
+	// Special cases aliases
+	if('aaa' === sFormatAlias) {
+		sFormatAlias = 'almostanyability';
+	}
+	if('stab' === sFormatAlias) {
+		sFormatAlias = 'stabmons';
+	}
+	if('bh' === sFormatAlias) {
+		sFormatAlias = 'balancedhackmons';
+	}
+	if('camo' === sFormatAlias) {
+		sFormatAlias = 'camomons';
+	}
+	if('pic' === sFormatAlias) {
+		sFormatAlias = 'partnersincrime';
+	}
+
+	// Convert from standard alias if this is one
+	try {
+		var aliases = DataDownloader.getAliases();
+		if (aliases[sFormatAlias]) sFormatAlias = toId(aliases[sFormatAlias]);
+	} catch (e) {
+		debug(`Could not fetch aliases.`);
+		return null;
+	}
+
+	// Add 'gen7' prefix if no gen was specified
+	if('gen' !== sFormatAlias.substring(0, 3)) {
+		sFormatAlias = 'gen7' + sFormatAlias;
+	}
+
+	// Find format that fits alias
+	for (var formatKey in Formats) {
+		if(sFormatAlias === formatKey) {
+			return formatKey;
+		}
+	}
+
+	return null;
+};
+
+var getPokemonKey = exports.getPokemonKey = function (sPokemonAlias) {
+	sPokemonAlias = toId(sPokemonAlias);
+
+	// Convert from standard alias if this is one
+	try {
+		var aliases = DataDownloader.getAliases();
+		if (aliases[sPokemonAlias]) sPokemonAlias = toId(aliases[sPokemonAlias]);
+	} catch (e) {
+		debug(`Could not fetch aliases.`);
+		return null;
+	}
+
+	// Check Pokemon exists
+	if(BattlePokedex[sPokemonAlias]) {
+		return sPokemonAlias;
+	}
+
+	return null;
+};
+
+var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
+	sGameObjectAlias = toId(sGameObjectAlias);
+
+	// Convert from standard alias if this is one
+	try {
+		var aliases = DataDownloader.getAliases();
+		if (aliases[sGameObjectAlias]) sGameObjectAlias = toId(aliases[sGameObjectAlias]);
+	} catch (e) {
+		debug(`Could not fetch aliases.`);
+		return null;
+	}
+
+	return null;
+};
+
+//#endregion
 
 exports.init = function () {
 	// Set up spotlight data
-	setSpotlightTourName(spotlightTourName);
+	setSpotlightTourNameArray(spotlightTourNameArray);
 
 	// Set up officials data
 	for (var nOfficial=0; nOfficial<officialTourNamesArray.length; ++nOfficial) {
