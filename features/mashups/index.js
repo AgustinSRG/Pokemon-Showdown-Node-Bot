@@ -116,7 +116,7 @@ var officialTourNamesArray = exports.officialTourNamesArray = [
 	['[Gen7] CAAAmomons'],
 	['[Gen 7] STABmons Ubers'],
 	['[Gen 7] AAA STABmons', '[Gen 7] STAAABmons'],
-	['[Gen 7] STAB n Mega'],
+	['[Gen 7] STAB n Mega', '[Gen 7] STAB and Mega'],
 
 	// Doubles Metagames​
 	['[Gen 7] Balanced Hackmons Doubles', '[Gen 7] Doubles Balanced Hackmons'],
