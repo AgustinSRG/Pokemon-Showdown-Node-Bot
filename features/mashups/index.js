@@ -7,6 +7,8 @@ exports.desc = 'Tools to manage mashups room features';
 
 var aliases = exports.aliases = require("./../../data/aliases.js").BattleAliases;
 
+var FormatDetailsArray = exports.FormatDetailsArray = require('./../../data/formats.js').Formats;
+
 var TourRatioTracker = exports.TourRatioTracker = require('./tour-ratio-tracker.js');
 
 // Save data
@@ -61,7 +63,7 @@ var Tier = exports.Tier = {
 	'PU':9,
 	'ZUBL':10,
 	'ZU':11,
-	'LC Ubers':12,
+	'LCUbers':12,
 	'LC':13,
 
     'Count':14,
@@ -70,23 +72,23 @@ var Tier = exports.Tier = {
 };
 Object.freeze(Tier);
 
-var tierNamesArray = exports.tierNamesArray = [
-	'Ubers',
-	'OU',
-	'UUBL',
-	'UU',
-	'RUBL',
-	'RU',
-	'NUBL',
-	'NU',
-	'PUBL',
-	'PU',
-	'ZUBL',
-	'ZU',
-	'LC Ubers',
-	'LC',
+var tierDataArray = exports.tierDataArray = [
+	{ name: 'Ubers', 	parent: Tier.Undefined, isUbers: true },
+	{ name: 'OU', 		parent: Tier.Ubers, 	isUbers: false },
+	{ name: 'UUBL', 	parent: Tier.OU, 		isUbers: false },
+	{ name: 'UU', 		parent: Tier.UUBL, 		isUbers: false },
+	{ name: 'RUBL', 	parent: Tier.UU, 		isUbers: false },
+	{ name: 'RU', 		parent: Tier.RUBL, 		isUbers: false },
+	{ name: 'NUBL', 	parent: Tier.RU, 		isUbers: false },
+	{ name: 'NU', 		parent: Tier.NUBL, 		isUbers: false },
+	{ name: 'PUBL', 	parent: Tier.NU, 		isUbers: false },
+	{ name: 'PU', 		parent: Tier.PUBL, 		isUbers: false },
+	{ name: 'ZUBL', 	parent: Tier.PU, 		isUbers: false },
+	{ name: 'ZU', 		parent: Tier.ZUBL, 		isUbers: false },
+	{ name: 'LCUbers', 	parent: Tier.Undefined, isUbers: true },
+	{ name: 'LC', 		parent: Tier.LCUbers, 	isUbers: false },
 ];
-Object.freeze(tierNamesArray);
+Object.freeze(tierDataArray);
 
 var MashupAuthType = exports.MashupAuthType = {
     'Official':0,
@@ -231,10 +233,10 @@ var tourNameToAuthTypeGenericId = exports.tourNameToAuthTypeGenericId = function
 	// Remover tier data
 	var tierAliases;
 	for (var nTier=0; nTier<Tier.Count; ++nTier) {
-		sGenericId = sGenericId.replace(toId(tierNamesArray[nTier]), '');
+		sGenericId = sGenericId.replace(toId(tierDataArray[nTier].name), '');
 		// FIXME: Try to add tier aliases
 		/*
-		tierAliases = aliases[toId(tierNamesArray[nTier])];
+		tierAliases = aliases[toId(tierDataArray[nTier].name)];
 		if (tierAliases) {
 
 		}
@@ -341,6 +343,44 @@ var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
 
 	return null;
 };
+
+var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName) {
+	sSearchFormatName = toId(sSearchFormatName);
+
+	// Search all format details for match by name => id
+	//monitor(`DEBUG FormatDetailsArray.length: ${FormatDetailsArray.length}`);
+	for (var nFDItr=0; nFDItr<FormatDetailsArray.length; ++nFDItr) {
+		if( !FormatDetailsArray[nFDItr] ) continue;
+		if( !FormatDetailsArray[nFDItr].name ) continue;
+		monitor(`DEBUG FormatDetailsArray[${nFDItr}].name: ${FormatDetailsArray[nFDItr].name}`);
+
+		if( sSearchFormatName == toId(FormatDetailsArray[nFDItr].name) ) {
+			return FormatDetailsArray[nFDItr];
+		}
+	}
+
+	return null;
+}
+
+var determineFormatTierId = exports.determineFormatTierId = function (sFormatName) {
+	sFormatName = toId(sFormatName);
+
+	var sLoopTierName;
+	for(nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
+		sLoopTierName = toId('gen7' + tierDataArray[nTierItr].name);
+		monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
+		if(sLoopTierName !== sFormatName) continue;
+		// Found matching tier
+		return nTierItr;
+	}
+
+	// Not a tier definition format
+	return -1;
+}
+
+var isFormatTierDefinition = exports.isFormatTierDefinition = function (sFormatName) {
+	return (-1 !== determineFormatTierId(sFormatName));
+}
 
 //#endregion
 
