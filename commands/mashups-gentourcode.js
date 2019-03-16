@@ -2,7 +2,302 @@
 	Commands for tour code generation
 */
 
+// FIXME: HERE: Auto unban abilities like Drizzle from lower-tier AAA mashups
+
 var Mashups = exports.Mashups = require('./../features/mashups/index.js');
+
+var c_sIgnoreRuleArray = ['Pokemon', 'Standard', 'Team Preview'];
+
+var extractedRuleArray = [];
+var nExtractedRuleCount = 0;
+var extractedBanArray = [];
+var nExtractedBanCount = 0;
+var extractedUnbanArray = [];
+var nExtractedUnbanCount = 0;
+
+var baseFormat = null;
+
+var nTierId;
+var bTierModified;
+var bIsLC;
+
+var TryAddRule = function(sCurrentRule, params)
+{
+	var bIgnoreRule = false;
+
+	monitor(`DEBUG ruleset: ${sCurrentRule}`);
+
+	var sCurrentRuleId = toId(sCurrentRule);
+
+	// Banned (redundant) rules
+	for (nExistingRuleItr = 0; nExistingRuleItr < c_sIgnoreRuleArray.length; ++nExistingRuleItr) {
+		if (toId(c_sIgnoreRuleArray[nExistingRuleItr]) === sCurrentRuleId) {
+			bIgnoreRule = true;
+			break;
+		}
+		if (bIgnoreRule) return;
+	}
+
+	// Tier rules have no value on a separate base and disrupt mashups with invisible compound bans
+	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.Tier.Count; ++nExistingRuleItr) {
+		if (toId('gen7'+Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) { // FIXME: Multi-gen support
+			bIgnoreRule = true;
+			break;
+		}
+		if (bIgnoreRule) return;
+	}
+
+	// Ignore rules that are already in the base format
+	if(baseFormat.ruleset) {
+		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.ruleset.length; ++nExistingRuleItr) {
+			if (baseFormat.ruleset[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+			if (bIgnoreRule) return;
+		}
+	}
+
+	if (params.additionalRules) { // Ignore rules that are redundant because they have already been added in params
+		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalRules.length; ++nExistingRuleItr) {
+			if (params.additionalRules[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	if (extractedRuleArray) { // Ignore rules that are already in extractedRuleArray
+		for (nExistingRuleItr = 0; nExistingRuleItr < extractedRuleArray.length; ++nExistingRuleItr) {
+			if (extractedRuleArray[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	monitor(`DEBUG ruleset survived culling: ${sCurrentRule}`);
+
+	// Add relevant rule
+	extractedRuleArray[nExtractedRuleCount] = sCurrentRule;
+	nExtractedRuleCount++;
+}
+
+var TryAddBan = function(sCurrentRule, params, bTierCheck=false)
+{
+	var bIgnoreRule = false;
+
+	monitor(`DEBUG banlist: ${sCurrentRule}`);
+
+	// Ignore bans that are already in the base format
+	for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.banlist.length; ++nExistingRuleItr) {
+		if (baseFormat.banlist[nExistingRuleItr] === sCurrentRule) {
+			bIgnoreRule = true;
+			break;
+		}
+		if (bIgnoreRule) return;
+	}
+
+	//monitor(`DEBUG ban survived culling 0: ${sCurrentRule}`);
+
+	if (params.additionalBans) { // Ignore bans that are redundant because they have already been added in params
+		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalBans.length; ++nExistingRuleItr) {
+			if (params.additionalBans[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	//monitor(`DEBUG ban survived culling 1: ${sCurrentRule}`);
+
+	if (params.additionalUnbans) { // Ignore unbans that are in unbans params because we want that to take priority
+		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalUnbans.length; ++nExistingRuleItr) {
+			if (params.additionalUnbans[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	if (extractedBanArray) { // Ignore bans that are already in extractedBanArray
+		for (nExistingRuleItr = 0; nExistingRuleItr < extractedBanArray.length; ++nExistingRuleItr) {
+			if (extractedBanArray[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	var goAsPoke = Mashups.getGameObjectAsPokemon(sCurrentRule);
+	if(goAsPoke) { // As Pokemon checks
+		// Ignore specific Pokemon bans if it would already be banned by tier
+		if(!bTierCheck && bTierModified && !bIsLC) {
+			var nPokeTier = Mashups.calcPokemonTier(goAsPoke);
+			if(Mashups.isABannedInTierB(nPokeTier, nTierId)) {
+				return;
+			}
+		}
+	}
+
+	monitor(`DEBUG ban survived culling: ${sCurrentRule}`);
+
+	// Add relevant ban
+	extractedBanArray[nExtractedBanCount] = sCurrentRule;
+	nExtractedBanCount++;
+
+	if (extractedUnbanArray) { // If a Pokemon is banned in one component meta and banned in another, prioritise ban: remove it from prior extracted unbans
+		for (nExistingRuleItr = 0; nExistingRuleItr < nExtractedUnbanCount; ++nExistingRuleItr) {
+			if (extractedUnbanArray[nExistingRuleItr] === sCurrentRule) {
+				extractedUnbanArray.splice(nExistingRuleItr, 1);
+				nExtractedUnbanCount--;
+			}
+		}
+	}
+}
+
+var TryAddUnban = function(sCurrentRule, params, bTierCheck=false)
+{
+	var bIgnoreRule = false;
+
+	monitor(`DEBUG unbanlist: ${sCurrentRule}`);
+
+	// Ignore unbans that are already in the base format
+	if(baseFormat.unbanlist) {
+		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.unbanlist.length; ++nExistingRuleItr) {
+			if (baseFormat.unbanlist[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	if (params.additionalUnbans) { // Ignore unbans that are redundant because they have already been added in params
+		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalUnbans.length; ++nExistingRuleItr) {
+			if (params.additionalUnbans[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	if (extractedUnbanArray) { // Ignore unbans that are already in extractedUnbanArray
+		for (nExistingRuleItr = 0; nExistingRuleItr < extractedUnbanArray.length; ++nExistingRuleItr) {
+			if (extractedUnbanArray[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	if (params.additionalBans) { // Ignore unbans that are in ban params under all circumstances because we clearly want to definitely ban that thing
+		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalBans.length; ++nExistingRuleItr) {
+			if (params.additionalBans[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	if (extractedBanArray) { // Ignore unbans that were implicitely banned by another meta (if they were in unban params also we would already have continued)
+		for (nExistingRuleItr = 0; nExistingRuleItr < extractedBanArray.length; ++nExistingRuleItr) {
+			if (extractedBanArray[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	var goAsPoke = Mashups.getGameObjectAsPokemon(sCurrentRule);
+	if(goAsPoke) { // As Pokemon checks
+		// Autoreject overtiered pokes if base tier altered
+		if(!bTierCheck && bTierModified && !bIsLC) { // FIXME: LC needs separate processing
+			var nPokeTier = Mashups.calcPokemonTier(goAsPoke);
+			if(Mashups.isABannedInTierB(nPokeTier, nTierId)) {
+				return;
+			}
+		}
+	}
+
+	monitor(`DEBUG unban survived culling: ${sCurrentRule}`);
+
+	// Add relevant unban
+	extractedUnbanArray[nExtractedUnbanCount] = sCurrentRule;
+	nExtractedUnbanCount++;
+}
+
+var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
+{
+	if(!formatDetails) return;
+	if(!formatDetails.name) return;
+
+	var sCurrentRule;
+
+	// ruleset
+	if (formatDetails.ruleset) {
+		monitor(`DEBUG ruleset`);
+		for (nRuleItr = 0; nRuleItr < formatDetails.ruleset.length; ++nRuleItr) {
+			sCurrentRule = formatDetails.ruleset[nRuleItr];
+
+			TryAddRule(sCurrentRule, params);
+		}
+	}
+
+	// banlist
+	if (formatDetails.banlist) {
+		monitor(`DEBUG banlist`);
+		for (nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
+			sCurrentRule = formatDetails.banlist[nRuleItr];
+
+			TryAddBan(sCurrentRule, params, bTierCheck);
+		}
+	}
+
+	// unbanlist
+	if (formatDetails.unbanlist) {
+		monitor(`DEBUG unbanlist`);
+		for (nRuleItr = 0; nRuleItr < formatDetails.unbanlist.length; ++nRuleItr) {
+			sCurrentRule = formatDetails.unbanlist[nRuleItr];
+
+			TryAddUnban(sCurrentRule, params, bTierCheck);
+		}
+	}
+
+	// Special cases
+	var sGenericMetaName = Mashups.genericiseMetaName(formatDetails.name);
+	switch(sGenericMetaName) {
+		case 'almostanyability':
+			// For AAA, we can't restrict abilties properly due to tour code length limits, so treat restrictedAbilities as extra bans
+			if (formatDetails.restrictedAbilities) {
+				for (nRuleItr = 0; nRuleItr < formatDetails.restrictedAbilities.length; ++nRuleItr) {
+					sCurrentRule = formatDetails.restrictedAbilities[nRuleItr];
+					TryAddBan(sCurrentRule, params, bTierCheck);
+				}
+			}
+			break;
+		case 'stabmons': // FIXME: Remember to bypass in long tour code case
+			// In a 'short' tour code, treat restricted moves as extra bans
+			if (formatDetails.restrictedMoves) {
+				for (nRuleItr = 0; nRuleItr < formatDetails.restrictedMoves.length; ++nRuleItr) {
+					sCurrentRule = formatDetails.restrictedMoves[nRuleItr];
+					TryAddBan(sCurrentRule, params, bTierCheck);
+				}
+			}
+			break;
+		// FIXME: Other special cases: STABmons, Mix and Mega?
+	}
+
+}
 
 exports.commands = {
 	genmashup: 'gentourcode',
@@ -160,7 +455,7 @@ exports.commands = {
 						nAdditionalRuleCount++;
 					}
 				}
-					breaks;
+					break;
 				case 6: // customTitle
 					if ((args[i]) && ('' !== args[i])) {
 						params.customTitle = args[i];
@@ -183,19 +478,29 @@ exports.commands = {
 		}
 		*/
 
+		// Reset module globals
+		extractedRuleArray = [];
+		nExtractedRuleCount = 0;
+		extractedBanArray = [];
+		nExtractedBanCount = 0;
+		extractedUnbanArray = [];
+		nExtractedUnbanCount = 0;
+
 		// Determine format name and base format
 		var sFormatName = Formats[params.baseFormat].name;
 		if (params.useCompression) {
 			sFormatName = toId(sFormatName);
 		}
-		//var baseFormat = Formats[params.baseFormat];
-		var baseFormat = Mashups.findFormatDetails(params.baseFormat);
+		//baseFormat = Formats[params.baseFormat];
+		baseFormat = Mashups.findFormatDetails(params.baseFormat);
 		//this.reply(`DEBUG baseFormat: ${JSON.stringify(baseFormat)}`);
+		var nBaseFormatTierId = Mashups.Tier.OU; // FIXME: Determine programmatically(?)
 
 		// FIXME: Non-gen 7 case
 
 		var nAddOn;
 		var addOnFormat;
+		var nRuleItr;
 
 		// FIXME: Check same meta is not included multiple times
 		if (params.addOnFormats) {
@@ -203,6 +508,11 @@ exports.commands = {
 			var subAddOnFormat;
 			for (nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 				addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+				if(!addOnFormat) {
+					this.reply(`Unknown add-on! : ${params.addOnFormats[nAddOn]}`);
+					return;
+					//continue;
+				}
 
 				if(baseFormat.name === addOnFormat.name) {
 					this.reply(`An add-on format is the same as the base! : ${addOnFormat.name}`);
@@ -216,7 +526,8 @@ exports.commands = {
 		}
 
 		// Determine tier
-		var nTierId = Mashups.Tier.OU; // We use OU by default
+		nTierId = Mashups.Tier.OU; // We use OU by default
+		bTierModified = false;
 		// Search add-ons for tier-altering formats
 		var nTierFormatAddOnIdx = -1;
 		var nLoopTierId;
@@ -235,42 +546,140 @@ exports.commands = {
 					}
 					nTierId = nLoopTierId;
 					nTierFormatAddOnIdx = nAddOn;
+					bTierModified = true;
 				}
 			}
 		}
+		bIsLC = (Mashups.Tier.LC == nTierId) || (Mashups.Tier.LCUbers == nTierId);
 		monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
 
 		// Deconstruct tier and build up bans atomically so they can be edited properly
 		var bIsUbersBase = Mashups.tierDataArray[nTierId].isUbers;
 		var bReachedLimit = false;
-		if(!bReachedLimit) {
-			
+		var nRecursiveTierId = nTierId;
+		var bFirstLoop = true;
+		var formatDetails;
+		var sTierName;
+		var nTierParent;
+		while(!bReachedLimit) {
+			sTierName = Mashups.tierDataArray[nRecursiveTierId].name;
+			monitor(`sTierName: ${sTierName}`);
+
+			// Extract rules if this tier has a format
+			formatDetails = Mashups.findFormatDetails('gen7' + sTierName);
+			if(null !== formatDetails) {
+				monitor(`Extract tier`);
+				ExtractFormatRules(formatDetails, params, true);
+			}
+
+			// Ban the whole tier if it is above base
+			if(!bFirstLoop) {
+				TryAddBan(sTierName, params);
+			}
+
+			// Move on to next tier or end
+			nTierParent = Mashups.tierDataArray[nRecursiveTierId].parent;
+			monitor(`nTierParent: ${nTierParent}`);
+			if( (nTierParent <= nBaseFormatTierId) || (Mashups.Tier.Undefined === nTierParent) || (!bIsUbersBase && Mashups.tierDataArray[nTierParent].isUbers) ) {
+				bReachedLimit = true;
+			}
+			else {
+				nRecursiveTierId = nTierParent;
+			}
+
+			bFirstLoop = false;
+		}
+
+		// Put all involved metas into an array for robust accessing
+		var sMetaArray = [params.baseFormat];
+		var metaDetailsArray = [baseFormat];
+		for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
+			sMetaArray[nAddOn+1] = params.addOnFormats[nAddOn];
+			metaDetailsArray[nAddOn+1] = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
 		}
 
 		// FIXME: Implement
 		// Determine tour name
-		var sTourName = '[Gen 7] Generated Tour';
-		if (params.customTitle) {
-			sTourName = params.customTitle;
+		{
+			var sGenStrippedName;
+			var nAAAIdx = -1;
+			var sAAAPlaceholderToken = '@@@';
+			var bIncludesMnM = false;
+			var bIncludesStabmons = false;
+
+			var sMetaNameBasis;
+			
+			var sTourName = '[Gen 7] ';
+			for ( var nMetaItr = 0; nMetaItr < sMetaArray.length; ++nMetaItr) {
+				// Special cases
+				sGenStrippedName = Mashups.genStripName(sMetaArray[nMetaItr]);
+				switch(sGenStrippedName) {
+					case 'almostanyability':
+						nAAAIdx = nMetaItr;
+						sTourName += sAAAPlaceholderToken;
+						continue;
+					case 'mixandmega':
+						bIncludesMnM = true;
+						continue;
+					case 'stabmons':
+						bIncludesStabmons = true;
+						break;
+				}
+
+				// Spacing
+				if(nMetaItr > 0) sTourName += ' ';
+
+				// Append name as normal
+				if(metaDetailsArray[nMetaItr]) {
+					sMetaNameBasis = Mashups.genStripName(metaDetailsArray[nMetaItr].name);
+				}
+				else {
+					sMetaNameBasis = sMetaArray[nMetaItr];
+				}
+				sTourName += sMetaNameBasis;
+			}
+
+			// Post-process for special case meta names
+			if( bIncludesMnM) {
+				sTourName += ' n Mega';
+			}
+			if( nAAAIdx >= 0 ) {
+				var sReplacePlaceholderContent = '';
+				if(sTourName.includes('STABmons')) { // Prioritise stabmons
+					sTourName = sTourName.replace('STABmons', 'STAAABmons');
+				}
+				else if(sTourName.includes('a')) { // Replace letter a/A if we can
+					sTourName = sTourName.replace('a', 'AAA');
+				}
+				else if(sTourName.includes('A')) {
+					sTourName = sTourName.replace('A', 'AAA');
+				}
+				else { // Otherwise just fill in as AAA in ordered place
+					if(nAAAIdx > 0) {
+						sReplacePlaceholderContent += '';
+					}
+					else {
+						sReplacePlaceholderContent += 'AAA';
+					}
+				}
+				sTourName = sTourName.replace(sAAAPlaceholderToken, sReplacePlaceholderContent);
+			}
+
+			// Custom name option
+			if (params.customTitle) {
+				sTourName = params.customTitle;
+			}
 		}
 
 		// Determine tour rules
 		var tourRulesArray = [];
 		var nTourRuleCount = 0;
 		{
-			var nRuleItr;
-
 			// Add rules from add-ons
 			if (params.addOnFormats) {
 				//this.reply(`DEBUG reached addOnFormats`);
 
 				var nExistingRuleItr;
-				var extractedRuleArray = [];
-				var nExtractedRuleCount = 0;
-				var extractedBanArray = [];
-				var nExtractedBanCount = 0;
-				var extractedUnbanArray = [];
-				var nExtractedUnbanCount = 0;
 				var bIgnoreRule;
 				var sCurrentRule;
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
@@ -284,201 +693,11 @@ exports.commands = {
 						continue;
 					}
 
-					if(!addOnFormat) continue;
-					if(!addOnFormat.name) continue;
-
-					// ruleset
-					if (addOnFormat.ruleset) {
-						monitor(`DEBUG ruleset`);
-						for (nRuleItr = 0; nRuleItr < addOnFormat.ruleset.length; ++nRuleItr) {
-							bIgnoreRule = false;
-							sCurrentRule = addOnFormat.ruleset[nRuleItr];
-
-							monitor(`DEBUG ruleset[${nRuleItr}]: ${sCurrentRule}`);
-
-							// This rule has no value on a separate base and disrupts mashups
-							if( 'gen7ou' === toId(sCurrentRule) ) {
-								continue;
-							}
-
-							// Ignore rules that are already in the base format
-							if(baseFormat.ruleset) {
-								for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.ruleset.length; ++nExistingRuleItr) {
-									if (baseFormat.ruleset[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-									if (bIgnoreRule) continue;
-								}
-							}
-
-							if (params.additionalRules) { // Ignore rules that are redundant because they have already been added in params
-								for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalRules.length; ++nExistingRuleItr) {
-									if (params.additionalRules[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							if (extractedRuleArray) { // Ignore rules that are already in extractedRuleArray
-								for (nExistingRuleItr = 0; nExistingRuleItr < extractedRuleArray.length; ++nExistingRuleItr) {
-									if (extractedRuleArray[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							monitor(`DEBUG ruleset survived culling: ${sCurrentRule}`);
-
-							// Add relevant rule
-							extractedRuleArray[nExtractedRuleCount] = sCurrentRule;
-							nExtractedRuleCount++;
-						}
-					}
-
-					// banlist
-					if (addOnFormat.banlist) {
-						monitor(`DEBUG banlist`);
-						for (nRuleItr = 0; nRuleItr < addOnFormat.banlist.length; ++nRuleItr) {
-							bIgnoreRule = false;
-							sCurrentRule = addOnFormat.banlist[nRuleItr];
-
-							monitor(`DEBUG banlist[${nRuleItr}]: ${sCurrentRule}`);
-
-							// Ignore bans that are already in the base format
-							for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.banlist.length; ++nExistingRuleItr) {
-								if (baseFormat.banlist[nExistingRuleItr] === sCurrentRule) {
-									bIgnoreRule = true;
-									break;
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							//monitor(`DEBUG ban survived culling 0: ${sCurrentRule}`);
-
-							if (params.additionalBans) { // Ignore bans that are redundant because they have already been added in params
-								for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalBans.length; ++nExistingRuleItr) {
-									if (params.additionalBans[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							//monitor(`DEBUG ban survived culling 1: ${sCurrentRule}`);
-
-							if (params.additionalUnbans) { // Ignore unbans that are in unbans params because we want that to take priority
-								for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalUnbans.length; ++nExistingRuleItr) {
-									if (params.additionalUnbans[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							if (extractedBanArray) { // Ignore bans that are already in extractedBanArray
-								for (nExistingRuleItr = 0; nExistingRuleItr < extractedBanArray.length; ++nExistingRuleItr) {
-									if (extractedBanArray[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							monitor(`DEBUG ban survived culling: ${sCurrentRule}`);
-
-							// Add relevant ban
-							extractedBanArray[nExtractedBanCount] = sCurrentRule;
-							nExtractedBanCount++;
-
-							if (extractedUnbanArray) { // If a Pokemon is banned in one component meta and banned in another, prioritise ban: remove it from prior extracted unbans
-								for (nExistingRuleItr = 0; nExistingRuleItr < nExtractedUnbanCount; ++nExistingRuleItr) {
-									if (extractedUnbanArray[nExistingRuleItr] === sCurrentRule) {
-										extractedUnbanArray.splice(nExistingRuleItr, 1);
-										nExtractedUnbanCount--;
-									}
-								}
-							}
-						}
-					}
-
-					// unbanlist
-					if (addOnFormat.unbanlist) {
-						monitor(`DEBUG unbanlist`);
-						for (nRuleItr = 0; nRuleItr < addOnFormat.unbanlist.length; ++nRuleItr) {
-							bIgnoreRule = false;
-							sCurrentRule = addOnFormat.unbanlist[nRuleItr];
-
-							monitor(`DEBUG unbanlist[${nRuleItr}]: ${sCurrentRule}`);
-
-							// Ignore unbans that are already in the base format
-							if(baseFormat.unbanlist) {
-								for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.unbanlist.length; ++nExistingRuleItr) {
-									if (baseFormat.unbanlist[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							if (params.additionalUnbans) { // Ignore unbans that are redundant because they have already been added in params
-								for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalUnbans.length; ++nExistingRuleItr) {
-									if (params.additionalUnbans[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							if (extractedUnbanArray) { // Ignore unbans that are already in extractedUnbanArray
-								for (nExistingRuleItr = 0; nExistingRuleItr < extractedUnbanArray.length; ++nExistingRuleItr) {
-									if (extractedUnbanArray[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							if (params.additionalBans) { // Ignore unbans that are in ban params under all circumstances because we clearly want to definitely ban that thing
-								for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalBans.length; ++nExistingRuleItr) {
-									if (params.additionalBans[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							if (extractedBanArray) { //Ignore unbans that were implicitely banned by another meta (if they were in unban params also we would already have continued)
-								for (nExistingRuleItr = 0; nExistingRuleItr < extractedBanArray.length; ++nExistingRuleItr) {
-									if (extractedBanArray[nExistingRuleItr] === sCurrentRule) {
-										bIgnoreRule = true;
-										break;
-									}
-								}
-								if (bIgnoreRule) continue;
-							}
-
-							monitor(`DEBUG unban survived culling: ${sCurrentRule}`);
-
-							// Add relevant unban
-							extractedUnbanArray[nExtractedUnbanCount] = sCurrentRule;
-							nExtractedUnbanCount++;
-						}
-					}
+					ExtractFormatRules(addOnFormat, params);
 
 					// Format-exclusive unique behaviours
-					// FIXME:
+					if(!addOnFormat) continue;
+					// FIXME: Others
 					switch(toId(addOnFormat.name)) {
 						case 'gen7cap':
 						if (extractedUnbanArray) {
@@ -488,6 +707,34 @@ exports.commands = {
 						break;
 					}
 				}
+			}
+
+			// Post-processes
+			if(extractedUnbanArray) { // Cull extracted unbans that aren't included in base and every add-on (unbans are an intersection not union)
+				for (var nRuleItr = 0; nRuleItr < extractedUnbanArray.length; ++nRuleItr) {
+					if(!baseFormat.unbanlist || (!baseFormat.unbanlist.includes(extractedUnbanArray[nRuleItr]))) {
+						extractedUnbanArray[nRuleItr] = null;
+						continue;
+					}
+
+					if (params.addOnFormats) {
+						for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
+							addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+							if(!addOnFormat) continue;
+
+							if(!addOnFormat.unbanlist || !addOnFormat.unbanlist.includes(extractedUnbanArray[nRuleItr])) {
+								extractedUnbanArray[nRuleItr] = null;
+								continue;
+							}
+						}
+					}
+				}
+
+				extractedUnbanArray = extractedUnbanArray.filter(function (el) {
+					return el != null;
+				});
+
+				nExtractedUnbanCount = extractedUnbanArray.length;
 			}
 
 			// Lock bans/unbans at this point and concatenate '+'/'-'

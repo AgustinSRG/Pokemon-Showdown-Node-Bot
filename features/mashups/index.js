@@ -8,6 +8,7 @@ exports.desc = 'Tools to manage mashups room features';
 var aliases = exports.aliases = require("./../../data/aliases.js").BattleAliases;
 
 var FormatDetailsArray = exports.FormatDetailsArray = require('./../../data/formats.js').Formats;
+var PokedexArray = exports.PokedexArray = require('./../../data/pokedex.js').BattlePokedex;
 
 var TourRatioTracker = exports.TourRatioTracker = require('./tour-ratio-tracker.js');
 
@@ -68,7 +69,7 @@ var Tier = exports.Tier = {
 
     'Count':14,
 
-    'Undefined':15
+    'Undefined':-1
 };
 Object.freeze(Tier);
 
@@ -224,12 +225,26 @@ var analyseTourAuthTypeCountStatement = exports.analyseTourAuthTypeCountStatemen
 	return sStatement;
 };
 
+var genStripName = exports.genStripName = function(sName) {
+	for (var nGen=0; nGen<=7; ++nGen) {
+		sName = sName.replace('gen'+nGen.toString(), '');
+		sName = sName.replace('[Gen '+nGen.toString()+'] ', '');
+	}
+	return String(sName);
+}
+
+var genericiseMetaName = exports.genericiseMetaName = function(sName) {
+	sName = toId(sName);
+	sName = genStripName(sName);
+	return String(sName);
+}
+
 var tourNameToAuthTypeGenericId = exports.tourNameToAuthTypeGenericId = function (sTourName) {
 	let sGenericId = toId(sTourName);
+
 	// Remove gen data
-	for (var nGen=0; nGen<=7; ++nGen) {
-		sGenericId = sGenericId.replace('gen'+nGen.toString(), '');
-	}
+	sGenericId = genStripName(sGenericId);
+
 	// Remover tier data
 	var tierAliases;
 	for (var nTier=0; nTier<Tier.Count; ++nTier) {
@@ -352,7 +367,7 @@ var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName)
 	for (var nFDItr=0; nFDItr<FormatDetailsArray.length; ++nFDItr) {
 		if( !FormatDetailsArray[nFDItr] ) continue;
 		if( !FormatDetailsArray[nFDItr].name ) continue;
-		monitor(`DEBUG FormatDetailsArray[${nFDItr}].name: ${FormatDetailsArray[nFDItr].name}`);
+		//monitor(`DEBUG FormatDetailsArray[${nFDItr}].name: ${FormatDetailsArray[nFDItr].name}`);
 
 		if( sSearchFormatName == toId(FormatDetailsArray[nFDItr].name) ) {
 			return FormatDetailsArray[nFDItr];
@@ -362,13 +377,40 @@ var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName)
 	return null;
 }
 
+var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObject) {
+	sGameObject = toId(sGameObject);
+	monitor(`DEBUG sGameObject: ${sGameObject}`);
+
+	var nLength = Object.keys(PokedexArray).length
+	monitor(`DEBUG nLength: ${nLength}`);
+
+	return PokedexArray[sGameObject];
+}
+
+var calcPokemonTier = exports.calcPokemonTier = function(goPokemon) {
+	if(!goPokemon) return Tier.Undefined;
+
+	if(!goPokemon.tier) { // Recurse from base forme
+		if(!goPokemon.baseSpecies) return Tier.Undefined;
+		return calcPokemonTier(toId(goPokemon.baseSpecies));
+	}
+
+	if(!goPokemon.tier) return Tier.Undefined;
+
+	if('(PU)' === goPokemon.tier) { // Special case
+		return Tier.ZU;
+	}
+
+	return determineFormatTierId(goPokemon.tier);
+}
+
 var determineFormatTierId = exports.determineFormatTierId = function (sFormatName) {
 	sFormatName = toId(sFormatName);
 
 	var sLoopTierName;
 	for(nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
 		sLoopTierName = toId('gen7' + tierDataArray[nTierItr].name);
-		monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
+		//monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
 		if(sLoopTierName !== sFormatName) continue;
 		// Found matching tier
 		return nTierItr;
@@ -380,6 +422,10 @@ var determineFormatTierId = exports.determineFormatTierId = function (sFormatNam
 
 var isFormatTierDefinition = exports.isFormatTierDefinition = function (sFormatName) {
 	return (-1 !== determineFormatTierId(sFormatName));
+}
+
+var isABannedInTierB = exports.isABannedInTierB = function(nCheckTier, nBasisTier) {
+	return (nCheckTier < nBasisTier);
 }
 
 //#endregion
