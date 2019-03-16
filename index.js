@@ -82,7 +82,7 @@ global.CommandParser = require('./command-parser.js');
 global.SecurityLog = require('./security-log.js');
 
 global.ActiveMashupRecipes = {};
-global.MashupRecipesStatic = require('./data/mashup-recipes-static.js');
+global.MashupRecipesStatic = {};
 
 /* Commands */
 
