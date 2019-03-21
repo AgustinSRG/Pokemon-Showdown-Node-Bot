@@ -41,7 +41,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] Balanced Hackmons Doubles', '[Gen 7] Doubles Balanced Hackmons'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] AAA STABmons RU', '[Gen 7] STAAABmons RU'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
