@@ -51,45 +51,231 @@ var string_of_enum = exports.string_of_enum = function string_of_enum(eEnum,valu
   return null;
 }
 
-var Tier = exports.Tier = {
-	'Ubers':0,
-	'OU':1,
-	'UUBL':2,
-	'UU':3,
-	'RUBL':4,
-	'RU':5,
-	'NUBL':6,
-	'NU':7,
-	'PUBL':8,
-	'PU':9,
-	'ZUBL':10,
-	'ZU':11,
-	'LCUbers':12,
-	'LC':13,
+//#region Tier
 
-    'Count':14,
+var Tier = exports.Tier = {
+	'AG':0,
+	'Ubers':1,
+	'OU':2,
+	'UUBL':3,
+	'UU':4,
+	'RUBL':5,
+	'RU':6,
+	'NUBL':7,
+	'NU':8,
+	'PUBL':9,
+	'PU':10,
+	'ZUBL':11,
+	'ZU':12,
+	'LCUbers':13,
+	'LC':14,
+
+    'Count':15,
 
     'Undefined':-1
 };
 Object.freeze(Tier);
 
 var tierDataArray = exports.tierDataArray = [
-	{ name: 'Ubers', 	parent: Tier.Undefined, isUbers: true },
-	{ name: 'OU', 		parent: Tier.Ubers, 	isUbers: false },
-	{ name: 'UUBL', 	parent: Tier.OU, 		isUbers: false },
-	{ name: 'UU', 		parent: Tier.UUBL, 		isUbers: false },
-	{ name: 'RUBL', 	parent: Tier.UU, 		isUbers: false },
-	{ name: 'RU', 		parent: Tier.RUBL, 		isUbers: false },
-	{ name: 'NUBL', 	parent: Tier.RU, 		isUbers: false },
-	{ name: 'NU', 		parent: Tier.NUBL, 		isUbers: false },
-	{ name: 'PUBL', 	parent: Tier.NU, 		isUbers: false },
-	{ name: 'PU', 		parent: Tier.PUBL, 		isUbers: false },
-	{ name: 'ZUBL', 	parent: Tier.PU, 		isUbers: false },
-	{ name: 'ZU', 		parent: Tier.ZUBL, 		isUbers: false },
-	{ name: 'LCUbers', 	parent: Tier.Undefined, isUbers: true },
-	{ name: 'LC', 		parent: Tier.LCUbers, 	isUbers: false },
+	{ name: 'Anything Goes', 	parent: Tier.Undefined, isUbers: true },
+	{ name: 'Ubers', 			parent: Tier.AG, 		isUbers: true },
+	{ name: 'OU', 				parent: Tier.Ubers, 	isUbers: false },
+	{ name: 'UUBL', 			parent: Tier.OU, 		isUbers: false },
+	{ name: 'UU', 				parent: Tier.UUBL, 		isUbers: false },
+	{ name: 'RUBL', 			parent: Tier.UU, 		isUbers: false },
+	{ name: 'RU', 				parent: Tier.RUBL, 		isUbers: false },
+	{ name: 'NUBL', 			parent: Tier.RU, 		isUbers: false },
+	{ name: 'NU', 				parent: Tier.NUBL, 		isUbers: false },
+	{ name: 'PUBL', 			parent: Tier.NU, 		isUbers: false },
+	{ name: 'PU', 				parent: Tier.PUBL, 		isUbers: false },
+	{ name: 'ZUBL', 			parent: Tier.PU, 		isUbers: false },
+	{ name: 'ZU', 				parent: Tier.ZUBL, 		isUbers: false },
+	{ name: 'LCUbers', 			parent: Tier.Undefined, isUbers: true },
+	{ name: 'LC', 				parent: Tier.LCUbers, 	isUbers: false },
 ];
 Object.freeze(tierDataArray);
+
+// This determines only if a format actually defines a tier, not what its basis tier is
+// E.g. [Gen 7] Underused will be UU, but [Gen 7] Mix and Mega is Undefined, not Ubers
+var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = function (sFormatName) {
+	sFormatName = toId(sFormatName);
+
+	var sLoopTierName;
+	for(nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
+		//if( Tier.AG === nTierItr ) continue; // Prevent AG form counting here
+
+		sLoopTierName = toId('gen7' + tierDataArray[nTierItr].name); // FIXME: Multi-gen support
+		//monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
+		if(sLoopTierName !== sFormatName) continue;
+		// Found matching tier
+		return nTierItr;
+	}
+
+	// Not a tier definition format
+	return Tier.Undefined;
+}
+
+var isFormatTierDefinition = exports.isFormatTierDefinition = function (sFormatName) {
+	return (Tier.Undefined !== determineFormatDefinitionTierId(sFormatName));
+}
+
+var isABannedInTierB = exports.isABannedInTierB = function(nCheckTier, nBasisTier) {
+	return (nCheckTier < nBasisTier);
+}
+
+// This actually tries to deduce a format's intrinsic tier (used for bases primarily)
+// E.g. [Gen 7] Mix and Mega is Ubers
+var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (formatDetails) {
+	if(!formatDetails || !formatDetails.name) {
+		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		return Tier.Undefined;
+	}
+
+	var sFormatName = formatDetails.name;
+
+	// Prevent misclassification of tier definition formats, which may include a higher tier format name in their rules before adding bans, etc
+	var nTierAsDefinitionFormat = determineFormatBasisTierId(sFormatName);
+	if(Tier.Undefined !== nTierAsDefinitionFormat) {
+		return nTierAsDefinitionFormat;
+	}
+
+	// If a tier has no ruleset, we can only assume AG (maybe Undefined?)
+	if(!formatDetails.ruleset) {
+		return Tier.AG;
+	}
+
+	// Use ruleset to determine the basis tier
+	var ruleset = formatDetails.ruleset;
+	var nRuleAsTier;
+	for(var nRuleItr=0; nRuleItr<formatDetails.ruleset.length; ++nRuleItr) {
+		nRuleAsTier = determineFormatDefinitionTierId(ruleset[nRuleItr]);
+		if(Tier.Undefined !== nRuleAsTier) {
+			return nRuleAsTier;
+		}
+	}
+
+	// If not relevant rules are found, we have to assume AG as a basis tier
+	return Tier.AG; // FIXME: Think about this, should it be Ubers?
+}
+
+//#endregion
+
+//#region GameType
+
+var GameType = exports.GameType = {
+	'Singles':0,
+	'Doubles':1,
+	'Triples':2,
+
+    'Count':3,
+
+    'Undefined':-1
+};
+Object.freeze(GameType);
+
+var GameTypeDataArray = exports.GameTypeDataArray = [
+	{ name: 'Singles' },
+	{ name: 'Doubles' },
+	{ name: 'Triples' },
+];
+Object.freeze(tierDataArray);
+
+var determineFormatGameTypeId = exports.determineFormatGameTypeId = function (formatDetails) {
+	if(!formatDetails || !formatDetails.name) {
+		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		return GameType.Undefined;
+	}
+
+	if(!formatDetails.gameType) { // Singles metas don't seem to supply gameType in general
+		return GameType.Singles;
+	}
+
+	switch(formatDetails.gameType) {
+		default: // Assume anything weird is singles
+		case 'singles':
+			return GameType.Singles;
+		case 'doubles':
+			return GameType.Doubles;
+		case 'triples':
+			return GameType.Triples;
+	}
+}
+
+//#endregion
+
+//#region Gen
+
+var c_nCurrentGen = exports.c_nCurrentGen = 7;
+
+var genStripName = exports.genStripName = function(sName) {
+	for (var nGen=0; nGen<=c_nCurrentGen; ++nGen) {
+		sName = sName.replace('gen'+nGen.toString(), '');
+		sName = sName.replace('[Gen '+nGen.toString()+'] ', '');
+	}
+	return String(sName);
+}
+
+var isLegalGen = exports.isLegalGen = function(nGen) {
+	if(!nGen) return false;
+	if(NaN === nGen) return false;
+
+	if(nGen <= 0) return false;
+	if(nGen > c_nCurrentGen) return false;
+
+	return true;
+}
+
+var determineFormatGen = exports.determineFormatGen = function (formatDetails) {
+	if(!formatDetails || !formatDetails.name) {
+		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		return -1;
+	}
+
+	var sStrippedName;
+	var nParsedGen;
+	if(formatDetails.mod) { // Try to get gen definition by mod if possible (most reliable method as it's based on function)
+		sStrippedName = formatDetails.mod.replace('gen', '');
+		nParsedGen = parseInt( sStrippedName, 10 );
+		if(isLegalGen(nParsedGen) ) {
+			return nParsedGen;
+		}
+	}
+
+	// Forced to try by name
+	sStrippedName = formatDetails.name.substring(0, 6);
+	sStrippedName = sStrippedName.replace('[Gen ', '');
+	nParsedGen = parseInt( sStrippedName, 10 );
+	if(isLegalGen(nParsedGen) ) {
+		return nParsedGen;
+	}
+
+	// Assume current gen if we can't derive anything
+	return c_nCurrentGen;
+}
+
+//#endregion
+
+//#region Mod
+
+var determineFormatMod = exports.determineFormatMod = function (formatDetails) {
+	if(!formatDetails || !formatDetails.name) {
+		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		return '';
+	}
+
+	if(formatDetails.mod) {
+		return formatDetails.mod;
+	}
+
+	// This probably can't happen, but just to cover the case...
+	return '';
+}
+
+var isDefaultModName = exports.isDefaultModName = function (sModName) {
+	return ( '' === genStripName(sModName) );
+}
+
+//#endregion
 
 var MashupAuthType = exports.MashupAuthType = {
     'Official':0,
@@ -224,14 +410,6 @@ var analyseTourAuthTypeCountStatement = exports.analyseTourAuthTypeCountStatemen
 	sStatement += `. Suggested next tour type: ${string_of_enum(MashupAuthType, nRecommendedAuthType)}.`;
 	return sStatement;
 };
-
-var genStripName = exports.genStripName = function(sName) {
-	for (var nGen=0; nGen<=7; ++nGen) {
-		sName = sName.replace('gen'+nGen.toString(), '');
-		sName = sName.replace('[Gen '+nGen.toString()+'] ', '');
-	}
-	return String(sName);
-}
 
 var genericiseMetaName = exports.genericiseMetaName = function(sName) {
 	sName = toId(sName);
@@ -401,31 +579,7 @@ var calcPokemonTier = exports.calcPokemonTier = function(goPokemon) {
 		return Tier.ZU;
 	}
 
-	return determineFormatTierId(goPokemon.tier);
-}
-
-var determineFormatTierId = exports.determineFormatTierId = function (sFormatName) {
-	sFormatName = toId(sFormatName);
-
-	var sLoopTierName;
-	for(nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
-		sLoopTierName = toId('gen7' + tierDataArray[nTierItr].name);
-		//monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
-		if(sLoopTierName !== sFormatName) continue;
-		// Found matching tier
-		return nTierItr;
-	}
-
-	// Not a tier definition format
-	return -1;
-}
-
-var isFormatTierDefinition = exports.isFormatTierDefinition = function (sFormatName) {
-	return (-1 !== determineFormatTierId(sFormatName));
-}
-
-var isABannedInTierB = exports.isABannedInTierB = function(nCheckTier, nBasisTier) {
-	return (nCheckTier < nBasisTier);
+	return determineFormatDefinitionTierId(goPokemon.tier);
 }
 
 //#endregion

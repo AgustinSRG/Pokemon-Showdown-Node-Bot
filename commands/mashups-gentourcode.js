@@ -15,7 +15,10 @@ var nExtractedBanCount = 0;
 var extractedUnbanArray = [];
 var nExtractedUnbanCount = 0;
 
-var baseFormat = null;
+var baseFormatDetails = null;
+var sBaseModName;
+var nBaseGen;
+var nBaseGameType;
 
 var nTierId;
 var bTierModified;
@@ -48,9 +51,9 @@ var TryAddRule = function(sCurrentRule, params)
 	}
 
 	// Ignore rules that are already in the base format
-	if(baseFormat.ruleset) {
-		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.ruleset.length; ++nExistingRuleItr) {
-			if (baseFormat.ruleset[nExistingRuleItr] === sCurrentRule) {
+	if(baseFormatDetails.ruleset) {
+		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatDetails.ruleset.length; ++nExistingRuleItr) {
+			if (baseFormatDetails.ruleset[nExistingRuleItr] === sCurrentRule) {
 				bIgnoreRule = true;
 				break;
 			}
@@ -92,8 +95,8 @@ var TryAddBan = function(sCurrentRule, params, bTierCheck=false)
 	monitor(`DEBUG banlist: ${sCurrentRule}`);
 
 	// Ignore bans that are already in the base format
-	for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.banlist.length; ++nExistingRuleItr) {
-		if (baseFormat.banlist[nExistingRuleItr] === sCurrentRule) {
+	for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatDetails.banlist.length; ++nExistingRuleItr) {
+		if (baseFormatDetails.banlist[nExistingRuleItr] === sCurrentRule) {
 			bIgnoreRule = true;
 			break;
 		}
@@ -168,9 +171,9 @@ var TryAddUnban = function(sCurrentRule, params, bTierCheck=false)
 	monitor(`DEBUG unbanlist: ${sCurrentRule}`);
 
 	// Ignore unbans that are already in the base format
-	if(baseFormat.unbanlist) {
-		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormat.unbanlist.length; ++nExistingRuleItr) {
-			if (baseFormat.unbanlist[nExistingRuleItr] === sCurrentRule) {
+	if(baseFormatDetails.unbanlist) {
+		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatDetails.unbanlist.length; ++nExistingRuleItr) {
+			if (baseFormatDetails.unbanlist[nExistingRuleItr] === sCurrentRule) {
 				bIgnoreRule = true;
 				break;
 			}
@@ -294,7 +297,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 				}
 			}
 			break;
-		// FIXME: Other special cases: STABmons, Mix and Mega?
+		// FIXME: Other special cases: Mix and Mega?
 	}
 
 }
@@ -336,7 +339,7 @@ exports.commands = {
 				case 0: // baseFormat
 					// Search base format as a server native format
 					params.baseFormat = Mashups.getFormatKey(args[i]);
-					// FIXME: Add support for common compund bases like PH
+					// FIXME: Add support for common compound bases like PH
 					if (null === params.baseFormat) {
 						this.reply(`Base format: "${args[i]}" not found on this server!`);
 						return;
@@ -491,10 +494,12 @@ exports.commands = {
 		if (params.useCompression) {
 			sFormatName = toId(sFormatName);
 		}
-		//baseFormat = Formats[params.baseFormat];
-		baseFormat = Mashups.findFormatDetails(params.baseFormat);
-		//this.reply(`DEBUG baseFormat: ${JSON.stringify(baseFormat)}`);
-		var nBaseFormatTierId = Mashups.Tier.OU; // FIXME: Determine programmatically(?)
+		baseFormatDetails = Mashups.findFormatDetails(params.baseFormat);
+		//this.reply(`DEBUG baseFormatDetails: ${JSON.stringify(baseFormatDetails)}`);
+		var nBaseFormatTierId = Mashups.determineFormatBasisTierId(baseFormatDetails);
+		nBaseGameType = Mashups.determineFormatGameTypeId(baseFormatDetails);
+		nBaseGen = Mashups.determineFormatGen(baseFormatDetails);
+		sBaseModName = Mashups.determineFormatMod(baseFormatDetails);
 
 		// FIXME: Non-gen 7 case
 
@@ -502,7 +507,7 @@ exports.commands = {
 		var addOnFormat;
 		var nRuleItr;
 
-		// FIXME: Check same meta is not included multiple times
+		// Check same meta is not included multiple times (pointless, fatal error)
 		if (params.addOnFormats) {
 			var nSubAddOn;
 			var subAddOnFormat;
@@ -511,22 +516,28 @@ exports.commands = {
 				if(!addOnFormat) {
 					this.reply(`Unknown add-on! : ${params.addOnFormats[nAddOn]}`);
 					return;
-					//continue;
 				}
 
-				if(baseFormat.name === addOnFormat.name) {
+				// Check add-on is not the same as the base
+				if(baseFormatDetails.name === addOnFormat.name) {
 					this.reply(`An add-on format is the same as the base! : ${addOnFormat.name}`);
 					return;
 				}
 
+				// Check same add-on is not included multiple times
 				for (nSubAddOn = nAddOn+1; nSubAddOn < params.addOnFormats.length; ++nSubAddOn) {
-
+					if(nAddOn === nSubAddOn) continue;
+					subAddOnFormat = Mashups.findFormatDetails(params.addOnFormats[nSubAddOn]);
+					if(addOnFormat.name === subAddOnFormat.name) {
+						this.reply(`An add-on format appeared multiple times! : ${addOnFormat.name}`);
+						return;
+					}
 				}
 			}
 		}
 
 		// Determine tier
-		nTierId = Mashups.Tier.OU; // We use OU by default
+		nTierId = nBaseFormatTierId; // Assume the base format's tier by default
 		bTierModified = false;
 		// Search add-ons for tier-altering formats
 		var nTierFormatAddOnIdx = -1;
@@ -537,7 +548,7 @@ exports.commands = {
 				if(!addOnFormat) continue;
 				if(!addOnFormat.name) continue;
 
-				nLoopTierId = Mashups.determineFormatTierId(addOnFormat.name);
+				nLoopTierId = Mashups.determineFormatDefinitionTierId(addOnFormat.name);
 				if( -1 !== nLoopTierId ) {
 					// Found matching tier
 					if(-1 !== nTierFormatAddOnIdx) {
@@ -553,6 +564,7 @@ exports.commands = {
 		bIsLC = (Mashups.Tier.LC == nTierId) || (Mashups.Tier.LCUbers == nTierId);
 		monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
 
+		// FIXME: Support case where final tier is higher than base format tier
 		// Deconstruct tier and build up bans atomically so they can be edited properly
 		var bIsUbersBase = Mashups.tierDataArray[nTierId].isUbers;
 		var bReachedLimit = false;
@@ -592,13 +604,12 @@ exports.commands = {
 
 		// Put all involved metas into an array for robust accessing
 		var sMetaArray = [params.baseFormat];
-		var metaDetailsArray = [baseFormat];
+		var metaDetailsArray = [baseFormatDetails];
 		for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 			sMetaArray[nAddOn+1] = params.addOnFormats[nAddOn];
 			metaDetailsArray[nAddOn+1] = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
 		}
 
-		// FIXME: Implement
 		// Determine tour name
 		{
 			var sGenStrippedName;
@@ -712,7 +723,7 @@ exports.commands = {
 			// Post-processes
 			if(extractedUnbanArray) { // Cull extracted unbans that aren't included in base and every add-on (unbans are an intersection not union)
 				for (var nRuleItr = 0; nRuleItr < extractedUnbanArray.length; ++nRuleItr) {
-					if(!baseFormat.unbanlist || (!baseFormat.unbanlist.includes(extractedUnbanArray[nRuleItr]))) {
+					if(!baseFormatDetails.unbanlist || (!baseFormatDetails.unbanlist.includes(extractedUnbanArray[nRuleItr]))) {
 						extractedUnbanArray[nRuleItr] = null;
 						continue;
 					}
@@ -782,6 +793,53 @@ exports.commands = {
 			nTourRuleCount = tourRulesArray.length;
 		}
 
+		// Generate warning list
+		var warningArray = [];
+		if (params.addOnFormats) {
+			var nAddOnGameType;
+			var nAddOnGen;
+			var sAddOnMod;
+			var sWarningStatement;
+			var sGenericMetaName;
+			for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
+				addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+				if(!addOnFormat) continue;
+
+				// Mod conflict check - this is almost certain to be a fatal problem
+				sAddOnMod = Mashups.determineFormatMod(addOnFormat);
+				if( (sAddOnMod !== sBaseModName) && (!Mashups.isDefaultModName(sAddOnMod)) ) {
+					sWarningStatement = `Mod Conflict: "${sAddOnMod}" in addOn "${addOnFormat.name}" conflicts with base mod "${sBaseModName}"!`;
+					warningArray.push(sWarningStatement);
+				}
+
+				// FIXME: We could test for the existence of onBeforeSwitchIn etc in addOns
+
+				// Whitelist certain add-ons that we know will work cross-gen/gametype
+				sGenericMetaName = Mashups.genericiseMetaName(addOnFormat.name);
+				switch(sGenericMetaName) {
+					case 'almostanyability':
+					case 'stabmons':
+					case 'balancedhackmons':
+					continue;
+				}
+
+				// GameType conflict check
+				nAddOnGameType = Mashups.determineFormatGameTypeId(addOnFormat);
+				if(nAddOnGameType !== nBaseGameType) {
+					sWarningStatement = `GameType Conflict: gametype "${Mashups.GameTypeDataArray[nAddOnGameType].name}" of addOn "${addOnFormat.name}" conflicts with base gametype "${Mashups.GameTypeDataArray[nBaseGameType].name}"!`;
+					warningArray.push(sWarningStatement);
+				}
+
+				// Gen conflict check
+				nAddOnGen = Mashups.determineFormatGen(addOnFormat);
+				if(nAddOnGen !== nBaseGen) {
+					sWarningStatement = `Generation Conflict: addOn "${addOnFormat.name}" is [Gen ${nAddOnGen.toString()}] but base format is [Gen ${nBaseGen.toString()}]!`;
+					warningArray.push(sWarningStatement);
+				}
+			}
+		}
+
+		// Construct tour code string
 		let sTourCode = '';
 		sTourCode += `/tour new ${sFormatName}, ${params.type}, 32,1\n`;
 		sTourCode += `/tour autostart ${params.timeToStart}\n`;
@@ -797,8 +855,20 @@ exports.commands = {
 		}
 		sTourCode += `/tour name ${sTourName}\n`;
 
+		// Print out as !code
 		let sStatement = '!code ' + sTourCode;
-
 		if (sStatement) this.reply(sStatement);
+
+		// Print out warnings (after, so we don't hit message limit with tour code output itself)
+		if(warningArray.length > 0) {
+			var sWarningPlural = ( warningArray.length > 1 ) ? 'warnings' : 'warning';
+			this.reply(`Code generation triggered ${warningArray.length.toString()} ${sWarningPlural}:-`);
+			var sWarningStatement = '!code ';
+			for(var nWarnItr=0; nWarnItr<warningArray.length; ++nWarnItr) {
+				sWarningStatement += warningArray[nWarnItr];
+				sWarningStatement += `\n`;
+			}
+			if (sWarningStatement) this.reply(sWarningStatement);
+		}
 	}
 };
