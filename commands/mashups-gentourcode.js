@@ -567,12 +567,21 @@ exports.commands = {
 			}
 		}
 
+		// Put all involved metas into an array for robust accessing
+		var sMetaArray = [params.baseFormat];
+		var metaDetailsArray = [baseFormatDetails];
+		for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
+			sMetaArray[nAddOn+1] = params.addOnFormats[nAddOn];
+			metaDetailsArray[nAddOn+1] = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+		}
+
 		// Determine tier
 		nTierId = nBaseFormatTierId; // Assume the base format's tier by default
 		bTierModified = false;
 		bTierIncreased = false;
 		// Search add-ons for tier-altering formats
 		var nTierFormatAddOnIdx = -1;
+		var nTierFormatMetaIdx = -1;
 		var nLoopTierId;
 		if (params.addOnFormats) {
 			for (nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
@@ -589,6 +598,7 @@ exports.commands = {
 					}
 					nTierId = nLoopTierId;
 					nTierFormatAddOnIdx = nAddOn;
+					nTierFormatMetaIdx = nAddOn + 1;
 					bTierModified = true;
 				}
 			}
@@ -724,24 +734,19 @@ exports.commands = {
 		}
 		// Otherwise, the base and final tier match, so we don't need to do anything
 
-		// Put all involved metas into an array for robust accessing
-		var sMetaArray = [params.baseFormat];
-		var metaDetailsArray = [baseFormatDetails];
-		for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-			sMetaArray[nAddOn+1] = params.addOnFormats[nAddOn];
-			metaDetailsArray[nAddOn+1] = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
-		}
-
 		// Determine tour name
-		{
+		{ // FIXME: Make tier meta last
 			var sGenStrippedName;
 			var nAAAIdx = -1;
 			var sAAAPlaceholderToken = '@@@';
+			var sMnMPlaceholderToken = '$$$';
 			var bIncludesMnM = false;
+			var bIncludesSubstantiveNonMnM = false;
 			var bIncludesStabmons = false;
 
 			var sMetaNameBasis;
-			
+			var sReplacePlaceholderContent;
+
 			var sTourName = '[Gen 7] ';
 			for ( var nMetaItr = 0; nMetaItr < sMetaArray.length; ++nMetaItr) {
 				// Special cases
@@ -753,9 +758,16 @@ exports.commands = {
 						continue;
 					case 'mixandmega':
 						bIncludesMnM = true;
+						sTourName += sMnMPlaceholderToken;
 						continue;
 					case 'stabmons':
 						bIncludesStabmons = true;
+						bIncludesSubstantiveNonMnM = true;
+						break;
+					default:
+						if( nTierFormatMetaIdx !== nMetaItr) {
+							bIncludesSubstantiveNonMnM = true;
+						}
 						break;
 				}
 
@@ -773,11 +785,18 @@ exports.commands = {
 			}
 
 			// Post-process for special case meta names
-			if( bIncludesMnM) {
-				sTourName += ' n Mega';
+			if(bIncludesMnM) {
+				sReplacePlaceholderContent = '';
+				if(bIncludesSubstantiveNonMnM) {
+					sTourName += ' n Mega';
+				}
+				else {
+					sReplacePlaceholderContent = 'Mix and Mega';
+				}
+				sTourName = sTourName.replace(sMnMPlaceholderToken, sReplacePlaceholderContent);
 			}
 			if( nAAAIdx >= 0 ) {
-				var sReplacePlaceholderContent = '';
+				sReplacePlaceholderContent = '';
 				if(sTourName.includes('STABmons')) { // Prioritise stabmons
 					sTourName = sTourName.replace('STABmons', 'STAAABmons');
 				}
@@ -797,6 +816,9 @@ exports.commands = {
 				}
 				sTourName = sTourName.replace(sAAAPlaceholderToken, sReplacePlaceholderContent);
 			}
+
+			// Remove double spaces
+			sTourName = sTourName.replace('  ', ' ');
 
 			// Custom name option
 			if (params.customTitle) {
@@ -834,8 +856,8 @@ exports.commands = {
 					switch(toId(addOnFormat.name)) {
 						case 'gen7cap':
 						if (extractedUnbanArray) {
-							extractedUnbanArray[nExtractedUnbanCount] = 'Crucibellite';
-							nExtractedUnbanCount++;
+							extractedUnbanArray[nExtractedUnbanCount++] = 'Crucibellite';
+							deltaUnbanArray[nDeltaUnbanCount++] = 'Crucibellite';
 						}
 						break;
 					}
