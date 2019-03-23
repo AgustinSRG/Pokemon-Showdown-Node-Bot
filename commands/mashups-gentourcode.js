@@ -52,7 +52,7 @@ var TryAddRule = function(sCurrentRule, params)
 		if (bIgnoreRule) return;
 	}
 
-	// Ignore certain 'distruptive' rules like Standard with nested bans and that are generally redundant
+	// Ignore certain 'disruptive' rules like Standard with nested bans and that are generally redundant
 	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.DisruptiveRuleArray.length; ++nExistingRuleItr) {
 		//monitor(`DEBUG disruptive: ${Mashups.DisruptiveRuleArray[nExistingRuleItr]}, ${sCurrentRule}`);
 		if (toId(Mashups.DisruptiveRuleArray[nExistingRuleItr]) === sCurrentRuleId) {
@@ -100,7 +100,7 @@ var TryAddRule = function(sCurrentRule, params)
 	nExtractedRuleCount++;
 }
 
-var TryAddBan = function(sCurrentRule, params, bTierCheck=false)
+var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 {
 	var bIgnoreRule = false;
 
@@ -167,8 +167,8 @@ var TryAddBan = function(sCurrentRule, params, bTierCheck=false)
 				return;
 			}
 		}
-		// Ignore Pokemon bans that have been legalised by a tier upgrade
-		if(!bTierCheck && bTierIncreased) {
+		// Ignore Pokemon bans if the final tier is higher than the source formats's tier
+		if(!bTierCheck && (nTierId < nSourceTier) ) {
 			var nPokeTier = Mashups.calcPokemonTier(goAsPoke);
 			if(!Mashups.isABannedInTierB(nPokeTier, nTierId)) {
 				return;
@@ -192,7 +192,7 @@ var TryAddBan = function(sCurrentRule, params, bTierCheck=false)
 	}
 }
 
-var TryAddUnban = function(sCurrentRule, params, bTierCheck=false)
+var TryAddUnban = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 {
 	var bIgnoreRule = false;
 
@@ -274,6 +274,8 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 
 	var sCurrentRule;
 
+	var nFormatBasisTier = Mashups.determineFormatBasisTierId(formatDetails);
+
 	// ruleset
 	if (formatDetails.ruleset) {
 		monitor(`DEBUG ruleset`);
@@ -290,7 +292,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 		for (nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
 			sCurrentRule = formatDetails.banlist[nRuleItr];
 
-			TryAddBan(sCurrentRule, params, bTierCheck);
+			TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
 		}
 	}
 
@@ -300,7 +302,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 		for (nRuleItr = 0; nRuleItr < formatDetails.unbanlist.length; ++nRuleItr) {
 			sCurrentRule = formatDetails.unbanlist[nRuleItr];
 
-			TryAddUnban(sCurrentRule, params, bTierCheck);
+			TryAddUnban(sCurrentRule, params, nFormatBasisTier, bTierCheck);
 		}
 	}
 
@@ -312,7 +314,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 			if (formatDetails.restrictedAbilities) {
 				for (nRuleItr = 0; nRuleItr < formatDetails.restrictedAbilities.length; ++nRuleItr) {
 					sCurrentRule = formatDetails.restrictedAbilities[nRuleItr];
-					TryAddBan(sCurrentRule, params, bTierCheck);
+					TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
 				}
 			}
 			break;
@@ -321,7 +323,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 			if (formatDetails.restrictedMoves) {
 				for (nRuleItr = 0; nRuleItr < formatDetails.restrictedMoves.length; ++nRuleItr) {
 					sCurrentRule = formatDetails.restrictedMoves[nRuleItr];
-					TryAddBan(sCurrentRule, params, bTierCheck);
+					TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
 				}
 			}
 			break;
@@ -620,7 +622,7 @@ exports.commands = {
 
 				// Ban the whole tier if it is above base
 				if(!bFirstLoop) {
-					TryAddBan(sTierName, params);
+					TryAddBan(sTierName, params, nRecursiveTierId);
 				}
 
 				// Move on to next tier or end
@@ -717,7 +719,7 @@ exports.commands = {
 
 			// Effect the delta unbans
 			for(nRuleItr = 0; nRuleItr < deltaUnbanArray.length; ++nRuleItr) {
-				TryAddUnban(deltaUnbanArray[nRuleItr], params, true);
+				TryAddUnban(deltaUnbanArray[nRuleItr], params, nTierId, true);
 			}
 		}
 		// Otherwise, the base and final tier match, so we don't need to do anything
