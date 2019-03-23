@@ -16,6 +16,7 @@ var extractedUnbanArray = [];
 var nExtractedUnbanCount = 0;
 
 var baseFormatDetails = null;
+var baseFormatTierDetails = null;
 var sBaseModName;
 var nBaseGen;
 var nBaseGameType;
@@ -44,6 +45,16 @@ var TryAddRule = function(sCurrentRule, params)
 	// Tier rules have no value on a separate base and disrupt mashups with invisible compound bans
 	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.Tier.Count; ++nExistingRuleItr) {
 		if (toId('gen7'+Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) { // FIXME: Multi-gen support
+			bIgnoreRule = true;
+			break;
+		}
+		if (bIgnoreRule) return;
+	}
+
+	// Ignore certain 'distruptive' rules like Standard with nested bans and that are generally redundant
+	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.DisruptiveRuleArray.length; ++nExistingRuleItr) {
+		//monitor(`DEBUG disruptive: ${Mashups.DisruptiveRuleArray[nExistingRuleItr]}, ${sCurrentRule}`);
+		if (toId(Mashups.DisruptiveRuleArray[nExistingRuleItr]) === sCurrentRuleId) {
 			bIgnoreRule = true;
 			break;
 		}
@@ -97,6 +108,15 @@ var TryAddBan = function(sCurrentRule, params, bTierCheck=false)
 	// Ignore bans that are already in the base format
 	for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatDetails.banlist.length; ++nExistingRuleItr) {
 		if (baseFormatDetails.banlist[nExistingRuleItr] === sCurrentRule) {
+			bIgnoreRule = true;
+			break;
+		}
+		if (bIgnoreRule) return;
+	}
+
+	// Ignore bans that are already in the base format's tier format (e.g. Baton Pass for OU-based metas)
+	for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatTierDetails.banlist.length; ++nExistingRuleItr) {
+		if (baseFormatTierDetails.banlist[nExistingRuleItr] === sCurrentRule) {
 			bIgnoreRule = true;
 			break;
 		}
@@ -500,6 +520,7 @@ exports.commands = {
 		nBaseGameType = Mashups.determineFormatGameTypeId(baseFormatDetails);
 		nBaseGen = Mashups.determineFormatGen(baseFormatDetails);
 		sBaseModName = Mashups.determineFormatMod(baseFormatDetails);
+		baseFormatTierDetails = Mashups.findTierFormatDetails(nBaseFormatTierId, nBaseGen);
 
 		// FIXME: Non-gen 7 case
 
@@ -564,43 +585,132 @@ exports.commands = {
 		bIsLC = (Mashups.Tier.LC == nTierId) || (Mashups.Tier.LCUbers == nTierId);
 		monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
 
-		// FIXME: Support case where final tier is higher than base format tier
 		// Deconstruct tier and build up bans atomically so they can be edited properly
+		var nDeltaTier = nBaseFormatTierId - nTierId;
+		var deltaUnbanArray = [];
+		var nDeltaUnbanCount = 0;
 		var bIsUbersBase = Mashups.tierDataArray[nTierId].isUbers;
 		var bReachedLimit = false;
-		var nRecursiveTierId = nTierId;
+		var nRecursiveTierId;
 		var bFirstLoop = true;
 		var formatDetails;
 		var sTierName;
 		var nTierParent;
-		while(!bReachedLimit) {
-			sTierName = Mashups.tierDataArray[nRecursiveTierId].name;
-			monitor(`sTierName: ${sTierName}`);
+		if(nDeltaTier < 0) { // Final tier is reduced from base by an add-on tier format
+			nRecursiveTierId = nTierId;
+			while(!bReachedLimit) {
+				sTierName = Mashups.tierDataArray[nRecursiveTierId].name;
+				monitor(`sTierName: ${sTierName}`);
 
-			// Extract rules if this tier has a format
-			formatDetails = Mashups.findFormatDetails('gen7' + sTierName);
-			if(null !== formatDetails) {
-				monitor(`Extract tier`);
-				ExtractFormatRules(formatDetails, params, true);
-			}
+				// Extract rules if this tier has a format
+				formatDetails = Mashups.findFormatDetails('gen7' + sTierName);
+				if(null !== formatDetails) {
+					monitor(`Extract tier`);
+					ExtractFormatRules(formatDetails, params, true);
+				}
 
-			// Ban the whole tier if it is above base
-			if(!bFirstLoop) {
-				TryAddBan(sTierName, params);
-			}
+				// Ban the whole tier if it is above base
+				if(!bFirstLoop) {
+					TryAddBan(sTierName, params);
+				}
 
-			// Move on to next tier or end
-			nTierParent = Mashups.tierDataArray[nRecursiveTierId].parent;
-			monitor(`nTierParent: ${nTierParent}`);
-			if( (nTierParent <= nBaseFormatTierId) || (Mashups.Tier.Undefined === nTierParent) || (!bIsUbersBase && Mashups.tierDataArray[nTierParent].isUbers) ) {
-				bReachedLimit = true;
-			}
-			else {
-				nRecursiveTierId = nTierParent;
-			}
+				// Move on to next tier or end
+				nTierParent = Mashups.tierDataArray[nRecursiveTierId].parent;
+				monitor(`nTierParent: ${nTierParent}`);
+				if( (nTierParent <= nBaseFormatTierId) ||
+					(Mashups.Tier.Undefined === nTierParent) ||
+					(!bIsUbersBase && Mashups.tierDataArray[nTierParent].isUbers) )
+				{
+					bReachedLimit = true;
+				}
+				else {
+					nRecursiveTierId = nTierParent;
+				}
 
-			bFirstLoop = false;
+				bFirstLoop = false;
+			}
 		}
+		else if(nDeltaTier > 0) { // Final tier is increased over base by an add-on tier format
+			nRecursiveTierId = nBaseFormatTierId;
+			var nDeltaUnbanIndexOf;
+			while(!bReachedLimit) {
+				sTierName = Mashups.tierDataArray[nRecursiveTierId].name;
+				monitor(`sTierName: ${sTierName}`);
+
+				// Extract rules if this tier has a format (only needed if above base)
+				formatDetails = Mashups.findFormatDetails('gen7' + sTierName);
+				if(!bFirstLoop) {
+					if(null !== formatDetails) {
+						monitor(`Extract tier`);
+						ExtractFormatRules(formatDetails, params, true);
+					}
+				}
+
+				// Determine if this will be the final loop
+				nTierParent = Mashups.tierDataArray[nRecursiveTierId].parent;
+				monitor(`nTierParent: ${nTierParent}`);
+				if( (nTierParent < nTierId) ||
+					(Mashups.Tier.Undefined === nTierParent) /*||
+					(!bIsUbersBase && Mashups.tierDataArray[nTierParent].isUbers)*/ )
+				{
+					bReachedLimit = true;
+				}
+				else {
+					nRecursiveTierId = nTierParent;
+				}
+
+				// Prevent unbans from previous tiers if they are rebanned in the upper tier
+				if(null !== formatDetails) {
+					monitor(`Extract bans for rebanning`);
+					if(formatDetails.banlist) {
+						for(nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
+							nDeltaUnbanIndexOf = deltaUnbanArray.indexOf(formatDetails.banlist[nRuleItr]);
+							if(nDeltaUnbanIndexOf < 0) continue;
+							deltaUnbanArray[nDeltaUnbanIndexOf] = null;
+						}
+
+						deltaUnbanArray = deltaUnbanArray.filter(function (el) {
+							return el != null;
+						});
+						nDeltaUnbanCount = deltaUnbanArray.length;
+					}
+				}
+
+				// Prepare to unban all the bans in the tier if we haven't reached limit
+				if(!bReachedLimit) {
+					if(null !== formatDetails) {
+						monitor(`Extract bans so we can reverse them`);
+						if(formatDetails.banlist) {
+							for(nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
+								if(deltaUnbanArray.includes(formatDetails.banlist[nRuleItr])) continue;
+								deltaUnbanArray[nDeltaUnbanCount++] = formatDetails.banlist[nRuleItr];
+							}
+						}
+					}
+				}
+
+				bFirstLoop = false;
+			}
+
+			// Delta unban Pokemon from the base format tiered below the new tier
+			var goAsPoke;
+			for(nRuleItr = 0; nRuleItr < baseFormatDetails.banlist.length; ++nRuleItr) {
+				goAsPoke = Mashups.getGameObjectAsPokemon(baseFormatDetails.banlist[nRuleItr]);
+				if(goAsPoke) { // As Pokemon checks
+					var nPokeTier = Mashups.calcPokemonTier(goAsPoke);
+					monitor(`${goAsPoke.name}: nPokeTier: ${nPokeTier}, nTierId: ${nTierId}`);
+					if(!Mashups.isABannedInTierB(nPokeTier, nTierId)) {
+						deltaUnbanArray[nDeltaUnbanCount++] = baseFormatDetails.banlist[nRuleItr];
+					}
+				}
+			}
+
+			// Effect the delta unbans
+			for(nRuleItr = 0; nRuleItr < deltaUnbanArray.length; ++nRuleItr) {
+				TryAddUnban(deltaUnbanArray[nRuleItr], params, true);
+			}
+		}
+		// Otherwise, the base and final tier match, so we don't need to do anything
 
 		// Put all involved metas into an array for robust accessing
 		var sMetaArray = [params.baseFormat];
@@ -723,6 +833,11 @@ exports.commands = {
 			// Post-processes
 			if(extractedUnbanArray) { // Cull extracted unbans that aren't included in base and every add-on (unbans are an intersection not union)
 				for (var nRuleItr = 0; nRuleItr < extractedUnbanArray.length; ++nRuleItr) {
+					// Delta unbans are whitelisted
+					if(deltaUnbanArray.includes(extractedUnbanArray[nRuleItr])) continue;
+
+					// FIXME: Probably need to whitelist pokes based on tier to support ubers, etc
+
 					if(!baseFormatDetails.unbanlist || (!baseFormatDetails.unbanlist.includes(extractedUnbanArray[nRuleItr]))) {
 						extractedUnbanArray[nRuleItr] = null;
 						continue;

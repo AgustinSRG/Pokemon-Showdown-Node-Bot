@@ -115,6 +115,24 @@ var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = 
 	return Tier.Undefined;
 }
 
+// Gets the tier id for a tier name, including BL tiers that have no formats
+var tierNameToId = exports.tierNameToId = function (sTierName) {
+	sTierName = toId(sTierName);
+
+	var sLoopTierName;
+	for(nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
+		//if( Tier.AG === nTierItr ) continue; // Prevent AG form counting here
+
+		sLoopTierName = toId(tierDataArray[nTierItr].name);
+		if(sLoopTierName !== sTierName) continue;
+		// Found matching tier
+		return nTierItr;
+	}
+
+	// Doesn't match any defined tier
+	return Tier.Undefined;
+}
+
 var isFormatTierDefinition = exports.isFormatTierDefinition = function (sFormatName) {
 	return (Tier.Undefined !== determineFormatDefinitionTierId(sFormatName));
 }
@@ -156,6 +174,13 @@ var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (
 
 	// If not relevant rules are found, we have to assume AG as a basis tier
 	return Tier.AG; // FIXME: Think about this, should it be Ubers?
+}
+
+var findTierFormatDetails = exports.findTierFormatDetails = function (nTierId, nGen=c_nCurrentGen) {
+	var sTierName = tierDataArray[nTierId].name;
+
+	// Extract rules if this tier has a format
+	return findFormatDetails('gen' + nGen.toString() + sTierName);
 }
 
 //#endregion
@@ -274,6 +299,30 @@ var determineFormatMod = exports.determineFormatMod = function (formatDetails) {
 var isDefaultModName = exports.isDefaultModName = function (sModName) {
 	return ( '' === genStripName(sModName) );
 }
+
+//#endregion
+
+//#region Ruleset
+
+var DisruptiveRuleArray = exports.DisruptiveRuleArray = [
+	'Pokemon',
+	'Standard',
+	'Standard NEXT',
+	'Standard Ubers',
+	'Standard GBU',
+	'Minimal GBU',
+	'Standard Doubles',
+	'Sleep Clause Mod',
+	'Species Clause',
+	'Nickname Clause',
+	'OHKO Clause',
+	'Moody Clause',
+	'Evasion Moves Clause',
+	'Endless Battle Clause',
+	'HP Percentage Mod',
+	'Cancel Mod'
+];
+Object.freeze(DisruptiveRuleArray);
 
 //#endregion
 
@@ -579,7 +628,7 @@ var calcPokemonTier = exports.calcPokemonTier = function(goPokemon) {
 		return Tier.ZU;
 	}
 
-	return determineFormatDefinitionTierId(goPokemon.tier);
+	return tierNameToId(goPokemon.tier);
 }
 
 //#endregion
