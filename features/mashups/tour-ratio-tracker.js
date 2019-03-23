@@ -24,6 +24,7 @@ exports.onTournamentEnd = function (room, data) {
 	var sFormatId = data['format'];
 	//Bot.say(room, `Format: ${sFormatId}`);
 	var sGenericFormatId = Mashups.tourNameToAuthTypeGenericId(sFormatId);
+	var sGenericFormatIdHardTiered = Mashups.tourNameToAuthTypeGenericId(sFormatId, false);
 	//Bot.say(room, `sGenericFormatId: ${sGenericFormatId}`);
 	
 	// Determine tour type
@@ -34,7 +35,7 @@ exports.onTournamentEnd = function (room, data) {
 	if( Mashups.MashupAuthType.Other === eAuthType ) {
 		for (var nAliasItr=0; nAliasItr<Mashups.spotlightTourNameGenericIdArray.length; ++nAliasItr) {
 			//Bot.say(room, `spotlightTourNameGenericId: ${Mashups.spotlightTourNameGenericIdArray[nAliasItr]}`);
-			if( Mashups.spotlightTourNameGenericIdArray[nAliasItr] === sGenericFormatId ) {
+			if( Mashups.spotlightTourNameGenericIdArray[nAliasItr] === sGenericFormatIdHardTiered ) {
 				eAuthType = Mashups.MashupAuthType.Spotlight;
 				sIdentifiedDerivedFromTourName = Mashups.spotlightTourNameArray[nAliasItr];
 			}

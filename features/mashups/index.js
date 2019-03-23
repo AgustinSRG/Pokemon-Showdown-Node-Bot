@@ -466,23 +466,25 @@ var genericiseMetaName = exports.genericiseMetaName = function(sName) {
 	return String(sName);
 }
 
-var tourNameToAuthTypeGenericId = exports.tourNameToAuthTypeGenericId = function (sTourName) {
+var tourNameToAuthTypeGenericId = exports.tourNameToAuthTypeGenericId = function (sTourName, bRemoveTierData=true) {
 	let sGenericId = toId(sTourName);
 
 	// Remove gen data
 	sGenericId = genStripName(sGenericId);
 
-	// Remover tier data
-	var tierAliases;
-	for (var nTier=0; nTier<Tier.Count; ++nTier) {
-		sGenericId = sGenericId.replace(toId(tierDataArray[nTier].name), '');
-		// FIXME: Try to add tier aliases
-		/*
-		tierAliases = aliases[toId(tierDataArray[nTier].name)];
-		if (tierAliases) {
+	// Remove tier data
+	if(bRemoveTierData) {
+		var tierAliases;
+		for (var nTier=0; nTier<Tier.Count; ++nTier) {
+			sGenericId = sGenericId.replace(toId(tierDataArray[nTier].name), '');
+			// FIXME: Try to add tier aliases
+			/*
+			tierAliases = aliases[toId(tierDataArray[nTier].name)];
+			if (tierAliases) {
 
+			}
+			*/
 		}
-		*/
 	}
 	return sGenericId;
 };
@@ -491,7 +493,7 @@ var setSpotlightTourNameArray = exports.setSpotlightTourNameArray = function (sS
 	for (var nAliasItr=0; nAliasItr<sSpotlightNameArray.length; ++nAliasItr) {
 		spotlightTourNameArray[nAliasItr] = sSpotlightNameArray[nAliasItr];
 		spotlightTourNameIdArray[nAliasItr] = toId(sSpotlightNameArray[nAliasItr]);
-		spotlightTourNameGenericIdArray[nAliasItr] = tourNameToAuthTypeGenericId(sSpotlightNameArray[nAliasItr]);
+		spotlightTourNameGenericIdArray[nAliasItr] = tourNameToAuthTypeGenericId(sSpotlightNameArray[nAliasItr], false);
 	}
 
 	Object.freeze(spotlightTourNameArray);
