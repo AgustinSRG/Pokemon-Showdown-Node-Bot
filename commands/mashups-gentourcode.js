@@ -23,6 +23,7 @@ var nBaseGameType;
 
 var nTierId;
 var bTierModified;
+var bTierIncreased;
 var bIsLC;
 
 var TryAddRule = function(sCurrentRule, params)
@@ -163,6 +164,13 @@ var TryAddBan = function(sCurrentRule, params, bTierCheck=false)
 		if(!bTierCheck && bTierModified && !bIsLC) {
 			var nPokeTier = Mashups.calcPokemonTier(goAsPoke);
 			if(Mashups.isABannedInTierB(nPokeTier, nTierId)) {
+				return;
+			}
+		}
+		// Ignore Pokemon bans that have been legalised by a tier upgrade
+		if(!bTierCheck && bTierIncreased) {
+			var nPokeTier = Mashups.calcPokemonTier(goAsPoke);
+			if(!Mashups.isABannedInTierB(nPokeTier, nTierId)) {
 				return;
 			}
 		}
@@ -560,6 +568,7 @@ exports.commands = {
 		// Determine tier
 		nTierId = nBaseFormatTierId; // Assume the base format's tier by default
 		bTierModified = false;
+		bTierIncreased = false;
 		// Search add-ons for tier-altering formats
 		var nTierFormatAddOnIdx = -1;
 		var nLoopTierId;
@@ -631,6 +640,7 @@ exports.commands = {
 			}
 		}
 		else if(nDeltaTier > 0) { // Final tier is increased over base by an add-on tier format
+			bTierIncreased = true;
 			nRecursiveTierId = nBaseFormatTierId;
 			var nDeltaUnbanIndexOf;
 			while(!bReachedLimit) {
@@ -832,18 +842,28 @@ exports.commands = {
 
 			// Post-processes
 			if(extractedUnbanArray) { // Cull extracted unbans that aren't included in base and every add-on (unbans are an intersection not union)
+				var goAsPoke;
+				var nPokeTier;
 				for (var nRuleItr = 0; nRuleItr < extractedUnbanArray.length; ++nRuleItr) {
 					// Delta unbans are whitelisted
 					if(deltaUnbanArray.includes(extractedUnbanArray[nRuleItr])) continue;
 
-					// FIXME: Probably need to whitelist pokes based on tier to support ubers, etc
+					// Whitelist pokes that have been legalised by final tier to support ubers, etc
+					goAsPoke = Mashups.getGameObjectAsPokemon(extractedUnbanArray[nRuleItr]);
+					if(goAsPoke) { // As Pokemon checks
+						nPokeTier = Mashups.calcPokemonTier(goAsPoke);
+						if(!Mashups.isABannedInTierB(nPokeTier, nTierId)) {
+							continue;
+						}
+					}
 
+					// Nullify unbans that are banned by base format
 					if(!baseFormatDetails.unbanlist || (!baseFormatDetails.unbanlist.includes(extractedUnbanArray[nRuleItr]))) {
 						extractedUnbanArray[nRuleItr] = null;
 						continue;
 					}
 
-					if (params.addOnFormats) {
+					if (params.addOnFormats) { // Nullify unbans that are banned by any add-on
 						for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 							addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
 							if(!addOnFormat) continue;
