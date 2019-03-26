@@ -332,6 +332,28 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 
 }
 
+//#region eCommandParam
+
+var eCommandParam = {
+	'BaseFormat':0,
+	'AddOnFormats':1,
+	'LaunchTour':2,
+	'UseComplexBansForRestrictions':3,
+	'AdditionalBans':4,
+	'AdditionalUnbans':5,
+	'AdditionalRules':6,
+	'AdditionalUnrules':7,
+	'AdditionalRestrictions':8,
+	'CustomTitle':9,
+	'TimeToStart':10,
+	'AutoDQ':11,
+
+    'Count':12,
+};
+Object.freeze(eCommandParam);
+
+//#endregion
+
 exports.commands = {
 	genmashup: 'gentourcode',
 	generatemashup: 'gentourcode',
@@ -366,7 +388,7 @@ exports.commands = {
 			args[i] = args[i].trim();
 			if (!args[i]) continue;
 			switch (i) {
-				case 0: // baseFormat
+				case eCommandParam.BaseFormat: // baseFormat
 					// Search base format as a server native format
 					params.baseFormat = Mashups.getFormatKey(args[i]);
 					// FIXME: Add support for common compound bases like PH
@@ -379,7 +401,7 @@ exports.commands = {
 						return;
 					}
 					break;
-				case 1: { // addOnFormats
+				case eCommandParam.AddOnFormats: { // addOnFormats
 					// Start add-ons with empty array
 					var nAddOnCount = 0;
 					params.addOnFormats = [];
@@ -406,8 +428,16 @@ exports.commands = {
 						nAddOnCount++;
 					}
 				}
-					break;
-				case 2: { // additionalBans
+				break;
+				case eCommandParam.LaunchTour: {
+
+				}
+				break;
+				case eCommandParam.UseComplexBansForRestrictions: {
+
+				}
+				break;
+				case eCommandParam.AdditionalBans: { // additionalBans
 					// Start addition bans with empty array
 					var nAdditionalBanCount = 0;
 					params.additionalBans = [];
@@ -428,8 +458,8 @@ exports.commands = {
 						nAdditionalBanCount++;
 					}
 				}
-					break;
-				case 3: { // additionalUnbans
+				break;
+				case eCommandParam.AdditionalUnbans: { // additionalUnbans
 					// Start addition unbans with empty array
 					var nAdditionalUnbanCount = 0;
 					params.additionalUnbans = [];
@@ -450,8 +480,28 @@ exports.commands = {
 						nAdditionalUnbanCount++;
 					}
 				}
-					break;
-				case 4: { // additionalRestrictions
+				break;
+				case eCommandParam.AdditionalRules: { // additionalRules
+					var nAdditionalRuleCount = 0;
+					params.additionalRules = [];
+
+					// Split addition restrictions
+					var sAdditionalRulesString = args[i];
+					var additionalRulesArray = sAdditionalRulesString.split('|');
+					var sRuleKey;
+					for (var nRule = 0; nRule < additionalRulesArray.length; ++nRule) {
+						sRuleKey = additionalRulesArray[nRule].trim();
+						// FIXME: Somehow pull and validate rules?
+						params.additionalRules[nAdditionalRuleCount] = sRuleKey;
+						nAdditionalRuleCount++;
+					}
+				}
+				break;
+				case eCommandParam.AdditionalUnrules: {
+
+				}
+				break;
+				case eCommandParam.AdditionalRestrictions: { // additionalRestrictions
 					// Start addition restrictions with empty array
 					var nAdditionalRestrictionCount = 0;
 					params.additionalRestrictions = [];
@@ -472,32 +522,16 @@ exports.commands = {
 						nAdditionalRestrictionCount++;
 					}
 				}
-					break;
-				case 5: { // additionalRules
-					var nAdditionalRuleCount = 0;
-					params.additionalRules = [];
-
-					// Split addition restrictions
-					var sAdditionalRulesString = args[i];
-					var additionalRulesArray = sAdditionalRulesString.split('|');
-					var sRuleKey;
-					for (var nRule = 0; nRule < additionalRulesArray.length; ++nRule) {
-						additionalRulesArray[nRule].trim();
-						// FIXME: Somehow pull and validate rules?
-						params.additionalRules[nAdditionalRuleCount] = sRuleKey;
-						nAdditionalRuleCount++;
-					}
-				}
-					break;
-				case 6: // customTitle
+				break;
+				case eCommandParam.CustomTitle: // customTitle
 					if ((args[i]) && ('' !== args[i])) {
 						params.customTitle = args[i];
 					}
 					break;
-				case 7: // timeToStart
+				case eCommandParam.TimeToStart: // timeToStart
 					params.timeToStart = args[i];
 					break;
-				case 8: // autodq
+				case eCommandParam.AutoDQ: // autodq
 					params.autodq = args[i];
 					break;
 			}
@@ -985,7 +1019,7 @@ exports.commands = {
 				// GameType conflict check
 				nAddOnGameType = Mashups.determineFormatGameTypeId(addOnFormat);
 				if(nAddOnGameType !== nBaseGameType) {
-					sWarningStatement = `GameType Conflict: gametype "${Mashups.GameTypeDataArray[nAddOnGameType].name}" of addOn "${addOnFormat.name}" conflicts with base gametype "${Mashups.GameTypeDataArray[nBaseGameType].name}"!`;
+					sWarningStatement = `GameType Conflict: gametype "${Mashups.GameTypeDataArray[nAddOnGameType].name}" of add-on "${addOnFormat.name}" conflicts with base gametype "${Mashups.GameTypeDataArray[nBaseGameType].name}"!`;
 					warningArray.push(sWarningStatement);
 				}
 

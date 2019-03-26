@@ -585,7 +585,10 @@ var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
 		return null;
 	}
 
-	return null;
+	// FIXME: Implement checks, for now just return
+	//return null;
+
+	return sGameObjectAlias;
 };
 
 var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName) {
