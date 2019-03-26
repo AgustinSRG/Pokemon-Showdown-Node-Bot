@@ -8,7 +8,12 @@ exports.desc = 'Tools to manage mashups room features';
 var aliases = exports.aliases = require("./../../data/aliases.js").BattleAliases;
 
 var FormatDetailsArray = exports.FormatDetailsArray = require('./../../data/formats.js').Formats;
+var VirtualFormatDetailsArray = exports.VirtualFormatDetailsArray = require('./virtual-formats.js').Formats;
+
 var PokedexArray = exports.PokedexArray = require('./../../data/pokedex.js').BattlePokedex;
+var MovesArray = exports.MovesArray = require('./../../data/moves.js').BattleMovedex;
+var AbilitiesArray = exports.AbilitiesArray = require('./../../data/abilities.js').BattleAbilities;
+var ItemsArray = exports.ItemsArray = require('./../../data/items.js').BattleItems;
 
 var TourRatioTracker = exports.TourRatioTracker = require('./tour-ratio-tracker.js');
 
