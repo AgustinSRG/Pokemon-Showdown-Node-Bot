@@ -4,14 +4,6 @@
 
 var Mashups = exports.Mashups = require('./index.js');
 
-// Tour data example:
-// format: gen7sketchmons
-// generator: Single Elimination
-// playerCap: 32
-// isStarted: false
-// isJoined: false
-// Might be more, reached line limit....
-
 exports.onTournamentEnd = function (room, data) {
     //var statement = `Tour ended in ${room}!`;
     //if (statement) Bot.say(room, statement);

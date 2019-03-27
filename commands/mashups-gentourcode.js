@@ -377,7 +377,7 @@ exports.commands = {
 			additionalUnbans: null,
 			additionalRestrictions: null,
 			additionalRules: null,
-			// FIXME: Might need 'unrules'
+			additionalUnrules: null,
 			customTitle: null,
 			timeToStart: 10,
 			autodq: null,
@@ -406,8 +406,6 @@ exports.commands = {
 					var nAddOnCount = 0;
 					params.addOnFormats = [];
 
-					// FIXME: Check and warn about formats that probably won't work as add-ons
-
 					// Split add-ons
 					var sAddOnFormatsString = args[i];
 					var addOnFormatsArray = sAddOnFormatsString.split('|');
@@ -419,7 +417,7 @@ exports.commands = {
 						addOnFormatsArray[nAddOn].trim();
 						// Search add-on format as a server native format
 						sAddOnKey = Mashups.getFormatKey(addOnFormatsArray[nAddOn]);
-						// FIXME: Add support for common compund bases like PH
+						// FIXME: Add support for common compound bases like PH
 						if (null === sAddOnKey) {
 							this.reply(`Add-on format: "${addOnFormatsArray[nAddOn]}" not found on this server!`);
 							return;
@@ -447,13 +445,7 @@ exports.commands = {
 					var additionalBansArray = sAdditionalBansString.split('|');
 					var sBanGOKey;
 					for (var nGO = 0; nGO < additionalBansArray.length; ++nGO) {
-						additionalBansArray[nGO].trim();
-						// Get GameObject id; check it exists
-						sBanGOKey = Mashups.getGameObjectKey(additionalBansArray[nGO]);
-						if (null === sBanGOKey) {
-							this.reply(`Additionally banned GameObject: "${additionalBansArray[nGO]}" could not be identified!`);
-							return;
-						}
+						sBanGOKey = additionalBansArray[nGO].trim(); // Do validation in warnings for reliability
 						params.additionalBans[nAdditionalBanCount] = sBanGOKey;
 						nAdditionalBanCount++;
 					}
@@ -469,13 +461,7 @@ exports.commands = {
 					var additionalUnbansArray = sAdditionalUnbansString.split('|');
 					var sUnbanGOKey;
 					for (var nGO = 0; nGO < additionalUnbansArray.length; ++nGO) {
-						additionalUnbansArray[nGO].trim();
-						// Get GameObject id; check it exists
-						sUnbanGOKey = Mashups.getGameObjectKey(additionalUnbansArray[nGO]);
-						if (null === sUnbanGOKey) {
-							this.reply(`Additionally unbanned GameObject: "${additionalUnbansArray[nGO]}" could not be identified!`);
-							return;
-						}
+						sUnbanGOKey = additionalUnbansArray[nGO].trim(); // Do validation in warnings for reliability
 						params.additionalUnbans[nAdditionalUnbanCount] = sUnbanGOKey;
 						nAdditionalUnbanCount++;
 					}
@@ -941,6 +927,72 @@ exports.commands = {
 				nExtractedUnbanCount = extractedUnbanArray.length;
 			}
 
+			// Generate warning list
+			var warningArray = [];
+			if (params.addOnFormats) {
+				var nAddOnGameType;
+				var nAddOnGen;
+				var sAddOnMod;
+				var sWarningStatement;
+				var sGenericMetaName;
+				var sGOKey;
+				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
+					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					if(!addOnFormat) continue;
+
+					// Mod conflict check - this is almost certain to be a fatal problem
+					sAddOnMod = Mashups.determineFormatMod(addOnFormat);
+					if( (sAddOnMod !== sBaseModName) && (!Mashups.isDefaultModName(sAddOnMod)) ) {
+						sWarningStatement = `Mod Conflict: "${sAddOnMod}" in addOn "${addOnFormat.name}" conflicts with base mod "${sBaseModName}"!`;
+						warningArray.push(sWarningStatement);
+					}
+
+					// FIXME: We could test for the existence of onBeforeSwitchIn etc in addOns
+
+					// Whitelist certain add-ons that we know will work cross-gen/gametype
+					sGenericMetaName = Mashups.genericiseMetaName(addOnFormat.name);
+					switch(sGenericMetaName) {
+						case 'almostanyability':
+						case 'stabmons':
+						case 'balancedhackmons':
+						continue;
+					}
+
+					// GameType conflict check
+					nAddOnGameType = Mashups.determineFormatGameTypeId(addOnFormat);
+					if(nAddOnGameType !== nBaseGameType) {
+						sWarningStatement = `GameType Conflict: gametype "${Mashups.GameTypeDataArray[nAddOnGameType].name}" of add-on "${addOnFormat.name}" conflicts with base gametype "${Mashups.GameTypeDataArray[nBaseGameType].name}"!`;
+						warningArray.push(sWarningStatement);
+					}
+
+					// Gen conflict check
+					nAddOnGen = Mashups.determineFormatGen(addOnFormat);
+					if(nAddOnGen !== nBaseGen) {
+						sWarningStatement = `Generation Conflict: addOn "${addOnFormat.name}" is [Gen ${nAddOnGen.toString()}] but base format is [Gen ${nBaseGen.toString()}]!`;
+						warningArray.push(sWarningStatement);
+					}
+				}
+
+				if(params.additionalBans) { // Check param bans are real GameObjects
+					for(nRuleItr = 0; nRuleItr < params.additionalBans.length; ++nRuleItr) {
+						// Get GameObject id; check it exists
+						sGOKey = Mashups.getGameObjectKey(params.additionalBans[nRuleItr]);
+						if(sGOKey) continue;
+						sWarningStatement = `Additional ban: "${params.additionalBans[nRuleItr]}" could not be identified as a real GameObject!`;
+						warningArray.push(sWarningStatement);
+					}
+				}
+				if(params.additionalUnbans) { // Added param unbans
+					for(nRuleItr = 0; nRuleItr < params.additionalUnbans.length; ++nRuleItr) {
+						// Get GameObject id; check it exists
+						sGOKey = Mashups.getGameObjectKey(params.additionalUnbans[nRuleItr]);
+						if(sGOKey) continue;
+						sWarningStatement = `Additional unban: "${params.additionalUnbans[nRuleItr]}" could not be identified as a real GameObject!`;
+						warningArray.push(sWarningStatement);
+					}
+				}
+			}
+
 			// Lock bans/unbans at this point and concatenate '+'/'-'
 			if(extractedBanArray) { // Inherent bans
 				for (nRuleItr = 0; nRuleItr < extractedBanArray.length; ++nRuleItr) {
@@ -984,52 +1036,6 @@ exports.commands = {
 			}
 
 			nTourRuleCount = tourRulesArray.length;
-		}
-
-		// Generate warning list
-		var warningArray = [];
-		if (params.addOnFormats) {
-			var nAddOnGameType;
-			var nAddOnGen;
-			var sAddOnMod;
-			var sWarningStatement;
-			var sGenericMetaName;
-			for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-				addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
-				if(!addOnFormat) continue;
-
-				// Mod conflict check - this is almost certain to be a fatal problem
-				sAddOnMod = Mashups.determineFormatMod(addOnFormat);
-				if( (sAddOnMod !== sBaseModName) && (!Mashups.isDefaultModName(sAddOnMod)) ) {
-					sWarningStatement = `Mod Conflict: "${sAddOnMod}" in addOn "${addOnFormat.name}" conflicts with base mod "${sBaseModName}"!`;
-					warningArray.push(sWarningStatement);
-				}
-
-				// FIXME: We could test for the existence of onBeforeSwitchIn etc in addOns
-
-				// Whitelist certain add-ons that we know will work cross-gen/gametype
-				sGenericMetaName = Mashups.genericiseMetaName(addOnFormat.name);
-				switch(sGenericMetaName) {
-					case 'almostanyability':
-					case 'stabmons':
-					case 'balancedhackmons':
-					continue;
-				}
-
-				// GameType conflict check
-				nAddOnGameType = Mashups.determineFormatGameTypeId(addOnFormat);
-				if(nAddOnGameType !== nBaseGameType) {
-					sWarningStatement = `GameType Conflict: gametype "${Mashups.GameTypeDataArray[nAddOnGameType].name}" of add-on "${addOnFormat.name}" conflicts with base gametype "${Mashups.GameTypeDataArray[nBaseGameType].name}"!`;
-					warningArray.push(sWarningStatement);
-				}
-
-				// Gen conflict check
-				nAddOnGen = Mashups.determineFormatGen(addOnFormat);
-				if(nAddOnGen !== nBaseGen) {
-					sWarningStatement = `Generation Conflict: addOn "${addOnFormat.name}" is [Gen ${nAddOnGen.toString()}] but base format is [Gen ${nBaseGen.toString()}]!`;
-					warningArray.push(sWarningStatement);
-				}
-			}
 		}
 
 		// Construct tour code string

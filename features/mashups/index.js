@@ -512,7 +512,118 @@ var setSpotlightTourNameArray = exports.setSpotlightTourNameArray = function (sS
 	//}
 };
 
-//#region GenTourCode
+//#region GameObject
+
+var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
+	sGameObjectAlias = toId(sGameObjectAlias);
+
+	// Convert from standard alias if this is one
+	try {
+		var aliases = DataDownloader.getAliases();
+		if (aliases[sGameObjectAlias]) sGameObjectAlias = toId(aliases[sGameObjectAlias]);
+	} catch (e) {
+		debug(`Could not fetch aliases.`);
+		return null;
+	}
+
+	// Check any type of object with this alias exists
+	if(PokedexArray[sGameObjectAlias]) {
+		return sGameObjectAlias;
+	}
+	if(MovesArray[sGameObjectAlias]) {
+		return sGameObjectAlias;
+	}
+	if(AbilitiesArray[sGameObjectAlias]) {
+		return sGameObjectAlias;
+	}
+	if(MovesArray[sGameObjectAlias]) {
+		return sGameObjectAlias;
+	}
+
+	return null;
+};
+
+//#endregion
+
+//#region PokemonGO
+
+var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObject) {
+	sGameObject = toId(sGameObject);
+	monitor(`DEBUG sGameObject: ${sGameObject}`);
+
+	var nLength = Object.keys(PokedexArray).length
+	monitor(`DEBUG nLength: ${nLength}`);
+
+	return PokedexArray[sGameObject];
+}
+
+var calcPokemonTier = exports.calcPokemonTier = function(goPokemon) {
+	if(!goPokemon) return Tier.Undefined;
+
+	if(!goPokemon.tier) { // Recurse from base forme
+		if(!goPokemon.baseSpecies) return Tier.Undefined;
+		return calcPokemonTier(toId(goPokemon.baseSpecies));
+	}
+
+	if(!goPokemon.tier) return Tier.Undefined;
+
+	if('(PU)' === goPokemon.tier) { // Special case
+		return Tier.ZU;
+	}
+
+	return tierNameToId(goPokemon.tier);
+}
+
+var getPokemonKey = exports.getPokemonKey = function (sPokemonAlias) {
+	sPokemonAlias = toId(sPokemonAlias);
+
+	// Convert from standard alias if this is one
+	try {
+		var aliases = DataDownloader.getAliases();
+		if (aliases[sPokemonAlias]) sPokemonAlias = toId(aliases[sPokemonAlias]);
+	} catch (e) {
+		debug(`Could not fetch aliases.`);
+		return null;
+	}
+
+	// Check Pokemon exists
+	if(PokedexArray[sPokemonAlias]) {
+		return sPokemonAlias;
+	}
+
+	return null;
+}
+
+//#endregion
+
+//#region MoveGO
+
+var getGameObjectAsMove = exports.getGameObjectAsMove = function(sGameObject) {
+	sGameObject = toId(sGameObject);
+	return MovesArray[sGameObject];
+}
+
+//#endregion
+
+//#region AbilityGO
+
+var getGameObjectAsAbility = exports.getGameObjectAsAbility = function(sGameObject) {
+	sGameObject = toId(sGameObject);
+	return AbilitiesArray[sGameObject];
+}
+
+//#endregion
+
+//#region ItemGO
+
+var getGameObjectAsItem = exports.getGameObjectAsItem = function(sGameObject) {
+	sGameObject = toId(sGameObject);
+	return ItemsArray[sGameObject];
+}
+
+//#endregion
+
+//#region Format
 
 var getFormatKey = exports.getFormatKey = function (sFormatAlias) {
 	sFormatAlias = toId(sFormatAlias);
@@ -558,44 +669,6 @@ var getFormatKey = exports.getFormatKey = function (sFormatAlias) {
 	return null;
 };
 
-var getPokemonKey = exports.getPokemonKey = function (sPokemonAlias) {
-	sPokemonAlias = toId(sPokemonAlias);
-
-	// Convert from standard alias if this is one
-	try {
-		var aliases = DataDownloader.getAliases();
-		if (aliases[sPokemonAlias]) sPokemonAlias = toId(aliases[sPokemonAlias]);
-	} catch (e) {
-		debug(`Could not fetch aliases.`);
-		return null;
-	}
-
-	// Check Pokemon exists
-	if(BattlePokedex[sPokemonAlias]) {
-		return sPokemonAlias;
-	}
-
-	return null;
-};
-
-var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
-	sGameObjectAlias = toId(sGameObjectAlias);
-
-	// Convert from standard alias if this is one
-	try {
-		var aliases = DataDownloader.getAliases();
-		if (aliases[sGameObjectAlias]) sGameObjectAlias = toId(aliases[sGameObjectAlias]);
-	} catch (e) {
-		debug(`Could not fetch aliases.`);
-		return null;
-	}
-
-	// FIXME: Implement checks, for now just return
-	//return null;
-
-	return sGameObjectAlias;
-};
-
 var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName) {
 	sSearchFormatName = toId(sSearchFormatName);
 
@@ -612,33 +685,6 @@ var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName)
 	}
 
 	return null;
-}
-
-var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObject) {
-	sGameObject = toId(sGameObject);
-	monitor(`DEBUG sGameObject: ${sGameObject}`);
-
-	var nLength = Object.keys(PokedexArray).length
-	monitor(`DEBUG nLength: ${nLength}`);
-
-	return PokedexArray[sGameObject];
-}
-
-var calcPokemonTier = exports.calcPokemonTier = function(goPokemon) {
-	if(!goPokemon) return Tier.Undefined;
-
-	if(!goPokemon.tier) { // Recurse from base forme
-		if(!goPokemon.baseSpecies) return Tier.Undefined;
-		return calcPokemonTier(toId(goPokemon.baseSpecies));
-	}
-
-	if(!goPokemon.tier) return Tier.Undefined;
-
-	if('(PU)' === goPokemon.tier) { // Special case
-		return Tier.ZU;
-	}
-
-	return tierNameToId(goPokemon.tier);
 }
 
 //#endregion
