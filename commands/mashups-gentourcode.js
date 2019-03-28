@@ -827,11 +827,11 @@ exports.commands = {
 					sTourName = sTourName.replace('A', 'AAA');
 				}
 				else { // Otherwise just fill in as AAA in ordered place
-					if(nAAAIdx > 0) {
-						sReplacePlaceholderContent += '';
+					if(0 === nAAAIdx) {
+						sReplacePlaceholderContent += 'AAA';
 					}
 					else {
-						sReplacePlaceholderContent += 'AAA';
+						sReplacePlaceholderContent += ' AAA';
 					}
 				}
 				sTourName = sTourName.replace(sAAAPlaceholderToken, sReplacePlaceholderContent);
@@ -943,7 +943,7 @@ exports.commands = {
 					// Mod conflict check - this is almost certain to be a fatal problem
 					sAddOnMod = Mashups.determineFormatMod(addOnFormat);
 					if( (sAddOnMod !== sBaseModName) && (!Mashups.isDefaultModName(sAddOnMod)) ) {
-						sWarningStatement = `Mod Conflict: "${sAddOnMod}" in addOn "${addOnFormat.name}" conflicts with base mod "${sBaseModName}"!`;
+						sWarningStatement = `Mod Conflict: "${sAddOnMod}" in add-on "${addOnFormat.name}" conflicts with base mod "${sBaseModName}"!`;
 						warningArray.push(sWarningStatement);
 					}
 
@@ -978,7 +978,7 @@ exports.commands = {
 						// Get GameObject id; check it exists
 						sGOKey = Mashups.getGameObjectKey(params.additionalBans[nRuleItr]);
 						if(sGOKey) continue;
-						sWarningStatement = `Additional ban: "${params.additionalBans[nRuleItr]}" could not be identified as a real GameObject!`;
+						sWarningStatement = `Unidentified additional ban: "${params.additionalBans[nRuleItr]}" could not be identified as a real GameObject!`;
 						warningArray.push(sWarningStatement);
 					}
 				}
@@ -987,7 +987,7 @@ exports.commands = {
 						// Get GameObject id; check it exists
 						sGOKey = Mashups.getGameObjectKey(params.additionalUnbans[nRuleItr]);
 						if(sGOKey) continue;
-						sWarningStatement = `Additional unban: "${params.additionalUnbans[nRuleItr]}" could not be identified as a real GameObject!`;
+						sWarningStatement = `Unidentified additional unban: "${params.additionalUnbans[nRuleItr]}" could not be identified as a real GameObject!`;
 						warningArray.push(sWarningStatement);
 					}
 				}
