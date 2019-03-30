@@ -107,21 +107,25 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 	monitor(`DEBUG banlist: ${sCurrentRule}`);
 
 	// Ignore bans that are already in the base format
-	for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatDetails.banlist.length; ++nExistingRuleItr) {
-		if (baseFormatDetails.banlist[nExistingRuleItr] === sCurrentRule) {
-			bIgnoreRule = true;
-			break;
+	if(baseFormatDetails.banlist) {
+		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatDetails.banlist.length; ++nExistingRuleItr) {
+			if (baseFormatDetails.banlist[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+			if (bIgnoreRule) return;
 		}
-		if (bIgnoreRule) return;
 	}
 
 	// Ignore bans that are already in the base format's tier format (e.g. Baton Pass for OU-based metas)
-	for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatTierDetails.banlist.length; ++nExistingRuleItr) {
-		if (baseFormatTierDetails.banlist[nExistingRuleItr] === sCurrentRule) {
-			bIgnoreRule = true;
-			break;
+	if(baseFormatDetails.banlist) {
+		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatTierDetails.banlist.length; ++nExistingRuleItr) {
+			if (baseFormatTierDetails.banlist[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+			if (bIgnoreRule) return;
 		}
-		if (bIgnoreRule) return;
 	}
 
 	//monitor(`DEBUG ban survived culling 0: ${sCurrentRule}`);
