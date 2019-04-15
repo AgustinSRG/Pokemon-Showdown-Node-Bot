@@ -46,7 +46,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] AAA STABmons RU', '[Gen 7] STAAABmons RU'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] Mix and Mega Tier Shift'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
@@ -307,6 +307,54 @@ var isDefaultModName = exports.isDefaultModName = function (sModName) {
 
 //#endregion
 
+//#region CustomCallbacks
+
+var CustomCallbackNamesArray = exports.CustomCallbackNamesArray = [
+	'checkLearnset',
+	'onAfterMega',
+	'onBegin',
+	'onChangeSet',
+	'onModifyTemplate',
+	'onTeamPreview',
+	'onValidateSet',
+	'onValidateTeam',
+	'validateSet',
+	'validateTeam',
+];
+Object.freeze(DisruptiveRuleArray);
+
+var doesFormatHaveKeyCustomCallbacks = exports.doesFormatHaveKeyCustomCallbacks = function (formatDetails) {
+	if(!formatDetails || !formatDetails.name) {
+		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		return '';
+	}
+
+	if(formatDetails.mod) {
+		return formatDetails.mod;
+	}
+
+	// This probably can't happen, but just to cover the case...
+	return '';
+}
+
+var calcFormatCustomCallbacks = exports.calcFormatCustomCallbacks = function (formatDetails) {
+	/*for (const value of Object.values(obj)) {
+
+	}
+	*/
+
+	if(!formatDetails || !formatDetails.name) {
+		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		return '';
+	}
+
+	var customCallbackArray = [];
+
+
+}
+
+//#endregion
+
 //#region Ruleset
 
 var DisruptiveRuleArray = exports.DisruptiveRuleArray = [
@@ -328,6 +376,32 @@ var DisruptiveRuleArray = exports.DisruptiveRuleArray = [
 	'Cancel Mod'
 ];
 Object.freeze(DisruptiveRuleArray);
+
+//#endregion
+
+//#region Ruleset
+
+var MashupBaseRequirement = exports.MashupBaseRequirement = {
+	'NonStandardMod':0,
+	'SuppliesTeam':1,
+	'KeyCustomCallbacks':2,
+	'CustomValidation':3,
+	'NonStandardProperties':4,
+
+    'Count':5,
+
+    'Undefined':-1
+};
+Object.freeze(MashupBaseRequirement);
+
+var MashupBaseRequirementDataArray = exports.MashupBaseRequirementDataArray = [
+	{ isStrict: true }, // NonStandardMod
+	{ isStrict: true }, // SuppliesTeam
+	{ isStrict: true }, // KeyCustomCallbacks
+	{ isStrict: false }, // CustomValidation
+	{ isStrict: false }, // NonStandardProperties
+];
+Object.freeze(MashupBaseRequirementDataArray);
 
 //#endregion
 
