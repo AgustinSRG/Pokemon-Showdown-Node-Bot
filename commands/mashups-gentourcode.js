@@ -8,6 +8,10 @@ var Mashups = exports.Mashups = require('./../features/mashups/index.js');
 
 var c_sIgnoreRuleArray = ['Pokemon', 'Standard', 'Team Preview'];
 
+var c_nCodeBroadcastCharacterLimit = 8192;
+var c_nCodeBroadcastLeeway = 10;
+var c_nCodeBroadcastWarningCharacterCount = (c_nCodeBroadcastCharacterLimit - c_nCodeBroadcastLeeway);
+
 var extractedRuleArray = [];
 var nExtractedRuleCount = 0;
 var extractedBanArray = [];
@@ -1061,6 +1065,12 @@ exports.commands = {
 		// Print out as !code
 		let sStatement = '!code ' + sTourCode;
 		if (sStatement) this.reply(sStatement);
+
+		// Warning about !code character limit errors
+		let nTourCodeCharCount = sTourCode.length;
+		if( nTourCodeCharCount > c_nCodeBroadcastWarningCharacterCount ) {
+			this.reply(`The generated tour code may exceed !code's ${c_nCodeBroadcastCharacterLimit.toString()} character limit, preventing it from being displayed.`);
+		}
 
 		// Print out warnings (after, so we don't hit message limit with tour code output itself)
 		if(warningArray.length > 0) {
