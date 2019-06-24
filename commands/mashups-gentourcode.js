@@ -1134,16 +1134,28 @@ exports.commands = {
 			sTourCode += `\n`;
 		}
 		sTourCode += `/tour name ${sTourName}\n`;
+		let nTourCodeCharCount = sTourCode.length;
 
-		// Print out as !code
-		let sStatement = '!code ' + sTourCode;
-		if (sStatement) this.reply(sStatement);
+		// Split !code outputs
+		let nCodeBlocksNeeded = Math.ceil( nTourCodeCharCount / c_nCodeBroadcastWarningCharacterCount );
+		if( nCodeBlocksNeeded > 1 ) {
+			let sSplitTourCode;
+			for(var nBlockItr=0; nBlockItr<nCodeBlocksNeeded; ++nBlockItr ) {
+				sSplitTourCode = sTourCode.substr( nBlockItr * c_nCodeBroadcastWarningCharacterCount, c_nCodeBroadcastWarningCharacterCount );
+				if (sSplitTourCode) this.reply('!code ' + sSplitTourCode);
+			}
+
+			this.reply(`The generated tour code exceeded !code's ${c_nCodeBroadcastCharacterLimit.toString()} character limit, and had to be split into ${nCodeBlocksNeeded} blocks.`);
+		}
+		else {// Print out as !code
+			let sStatement = '!code ' + sTourCode;
+			if (sStatement) this.reply(sStatement);
+		}
 
 		// Warning about !code character limit errors
-		let nTourCodeCharCount = sTourCode.length;
-		if( nTourCodeCharCount > c_nCodeBroadcastWarningCharacterCount ) {
+		/*if( nTourCodeCharCount > c_nCodeBroadcastWarningCharacterCount ) {
 			this.reply(`The generated tour code may exceed !code's ${c_nCodeBroadcastCharacterLimit.toString()} character limit, preventing it from being displayed.`);
-		}
+		}*/
 
 		// Print out warnings (after, so we don't hit message limit with tour code output itself)
 		if(warningArray.length > 0) {
