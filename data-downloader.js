@@ -34,6 +34,10 @@ var data = exports.data = [
 		file: "learnsets-g6.js"
 	},
 	{
+		url: "https://play.pokemonshowdown.com/data/learnsets.js?" + datenow,
+		file: "learnsets.js"
+	},
+	{
 		url: "https://play.pokemonshowdown.com/data/aliases.js?" + datenow,
 		file: "aliases.js"
 	}
@@ -117,5 +121,5 @@ exports.getFormatsData = function () {
 };
 
 exports.getLearnsets = function () {
-	return require("./data/learnsets-g6.js").BattleLearnsets;
+	return require("./data/learnsets.js").BattleLearnsets;
 };

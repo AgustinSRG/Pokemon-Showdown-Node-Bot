@@ -14,6 +14,7 @@ var PokedexArray = exports.PokedexArray = require('./../../data/pokedex.js').Bat
 var MovesArray = exports.MovesArray = require('./../../data/moves.js').BattleMovedex;
 var AbilitiesArray = exports.AbilitiesArray = require('./../../data/abilities.js').BattleAbilities;
 var ItemsArray = exports.ItemsArray = require('./../../data/items.js').BattleItems;
+var LearnsetsArray = exports.LearnsetsArray = require('./../../data/learnsets.js').BattleLearnsets;
 
 var TourRatioTracker = exports.TourRatioTracker = require('./tour-ratio-tracker.js');
 
@@ -623,10 +624,10 @@ var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
 
 var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObject) {
 	sGameObject = toId(sGameObject);
-	monitor(`DEBUG sGameObject: ${sGameObject}`);
+	//monitor(`DEBUG sGameObject: ${sGameObject}`);
 
-	var nLength = Object.keys(PokedexArray).length
-	monitor(`DEBUG nLength: ${nLength}`);
+	var nLength = Object.keys(PokedexArray).length;
+	//monitor(`DEBUG nLength: ${nLength}`);
 
 	return PokedexArray[sGameObject];
 }
@@ -668,6 +669,74 @@ var getPokemonKey = exports.getPokemonKey = function (sPokemonAlias) {
 	return null;
 }
 
+var DoesPokemonHavePreBattleAccessToTyping = exports.DoesPokemonHavePreBattleAccessToTyping = function(sPokemonName, sTypingName, bRecurseFormes)
+{
+	var pokemonGO = getGameObjectAsPokemon(sPokemonName);
+	if(!pokemonGO) return false;
+
+	// Battle change-only special cases (Mega/Primal)
+	if(pokemonGO.forme) {
+		// Mega/Primals case: treat as base forme
+		if( ('Mega' ===  pokemonGO.forme) ||
+			('Mega-X' ===  pokemonGO.forme) ||
+			('Mega-Y' ===  pokemonGO.forme) ||
+			('Primal' ===  pokemonGO.forme) )
+		{
+			if(!pokemonGO.baseSpecies) return false; // Should be impossible
+
+			if(bRecurseFormes) return DoesPokemonHavePreBattleAccessToTyping( pokemonGO.baseSpecies, sTypingName, true );
+			else return false;
+		}
+	}
+
+	// Battle change-only special cases (others)
+	if(pokemonGO.species) {
+		var sSpeciesId = toId(pokemonGO.species);
+		if( ( 'castformsunny' === sSpeciesId ) ||
+			( 'castformrainy' === sSpeciesId ) ||
+			( 'castformsnowy' === sSpeciesId ) ||
+			( 'meloettapirouette' === sSpeciesId ) ||
+			( 'darmanitanzen' === sSpeciesId ) )
+		{
+			if(!pokemonGO.baseSpecies) return false; // Should be impossible
+
+			if(bRecurseFormes) return DoesPokemonHavePreBattleAccessToTyping( pokemonGO.baseSpecies, sTypingName, true );
+			else return false;
+		}
+	}
+
+	// Check if we have the typing
+	if(pokemonGO.types) {
+		for (var nTypeItr = 0; nTypeItr < pokemonGO.types.length; ++nTypeItr) {
+			if( sTypingName === pokemonGO.types[nTypeItr] ) return true;
+		}
+	}
+
+	if(bRecurseFormes) { // Recurse other formes for typing
+		if(pokemonGO.otherFormes) {
+			for (var nFormeItr = 0; nFormeItr < pokemonGO.otherFormes.length; ++nFormeItr) {
+				if( DoesPokemonHavePreBattleAccessToTyping( pokemonGO.otherFormes[nFormeItr], sTypingName, false ) ) {
+					return true;
+				}
+			}
+		}
+		if(pokemonGO.baseSpecies) {
+			if( DoesPokemonHavePreBattleAccessToTyping( pokemonGO.baseSpecies, sTypingName, false ) ) {
+				return true;
+			}
+		}
+	}
+
+	if(pokemonGO.prevo) { // Check prevo for typing
+		if( DoesPokemonHavePreBattleAccessToTyping( pokemonGO.prevo, sTypingName, false ) ) {
+			return true;
+		}
+	}
+
+	// Exhausted means of obtaining typing
+	return false;
+}
+
 //#endregion
 
 //#region MoveGO
@@ -693,6 +762,21 @@ var getGameObjectAsAbility = exports.getGameObjectAsAbility = function(sGameObje
 var getGameObjectAsItem = exports.getGameObjectAsItem = function(sGameObject) {
 	sGameObject = toId(sGameObject);
 	return ItemsArray[sGameObject];
+}
+
+//#endregion
+
+//#region Learnsets
+
+var doesPokemonLearnMove = exports.doesPokemonLearnMove = function(sPokemonName, sMoveName) {
+	sPokemonName = toId(sPokemonName);
+	sMoveName = toId(sMoveName);
+
+	var battleLearnset = LearnsetsArray[sPokemonName];
+	if(!battleLearnset) return false;
+	if(!battleLearnset.learnset) return false;
+
+	return (sMoveName in battleLearnset.learnset);
 }
 
 //#endregion

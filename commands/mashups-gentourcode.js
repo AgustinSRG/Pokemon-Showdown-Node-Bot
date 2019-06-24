@@ -18,6 +18,8 @@ var extractedBanArray = [];
 var nExtractedBanCount = 0;
 var extractedUnbanArray = [];
 var nExtractedUnbanCount = 0;
+var extractedRestrictionArray = [];
+var nExtractedRestrictionCount = 0;
 
 var baseFormatDetails = null;
 var baseFormatTierDetails = null;
@@ -200,6 +202,35 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 	}
 }
 
+var TryAddRestriction = function(sCurrentRule, params)
+{
+	var bIgnoreRule = false;
+
+	if (params.additionalRestrictions) { // Ignore restrictions that are redundant because they have already been added in params
+		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalRestrictions.length; ++nExistingRuleItr) {
+			if (params.additionalRestrictions[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	if (extractedRestrictionArray) { // Ignore restrictions that are already in extractedRestrictionArray
+		for (nExistingRuleItr = 0; nExistingRuleItr < extractedRestrictionArray.length; ++nExistingRuleItr) {
+			if (extractedRestrictionArray[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+		}
+		if (bIgnoreRule) return;
+	}
+
+	// Add relevant restrictiom
+	extractedRestrictionArray[nExtractedRestrictionCount] = sCurrentRule;
+	nExtractedRestrictionCount++;
+}
+
 var TryAddUnban = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 {
 	var bIgnoreRule = false;
@@ -326,12 +357,19 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 				}
 			}
 			break;
-		case 'stabmons': // FIXME: Remember to bypass in long tour code case
-			// In a 'short' tour code, treat restricted moves as extra bans
+		case 'stabmons':
 			if (formatDetails.restrictedMoves) {
-				for (nRuleItr = 0; nRuleItr < formatDetails.restrictedMoves.length; ++nRuleItr) {
-					sCurrentRule = formatDetails.restrictedMoves[nRuleItr];
-					TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
+				if(params.useComplexBansForRestrictions) { // Create restrictions
+					for (nRuleItr = 0; nRuleItr < formatDetails.restrictedMoves.length; ++nRuleItr) {
+						sCurrentRule = formatDetails.restrictedMoves[nRuleItr];
+						TryAddRestriction(sCurrentRule, params);
+					}
+				}
+				else { // In a 'short' tour code, treat restricted moves as extra bans
+					for (nRuleItr = 0; nRuleItr < formatDetails.restrictedMoves.length; ++nRuleItr) {
+						sCurrentRule = formatDetails.restrictedMoves[nRuleItr];
+						TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
+					}
 				}
 			}
 			break;
@@ -391,6 +429,7 @@ exports.commands = {
 			autodq: null,
 			type: 'elimination',
 			useCompression: true,
+			useComplexBansForRestrictions: false,
 		};
 		for (var i = 0; i < args.length; i++) {
 			args[i] = args[i].trim();
@@ -440,7 +479,8 @@ exports.commands = {
 				}
 				break;
 				case eCommandParam.UseComplexBansForRestrictions: {
-
+					var sUseComplexBansString = args[i];
+					params.useComplexBansForRestrictions = 'true' === toId(sUseComplexBansString) ? true : false;
 				}
 				break;
 				case eCommandParam.AdditionalBans: { // additionalBans
@@ -933,6 +973,39 @@ exports.commands = {
 				});
 
 				nExtractedUnbanCount = extractedUnbanArray.length;
+			}
+
+			// Convert restrictions to complex bans
+			if(params.useComplexBansForRestrictions && (nExtractedRestrictionCount > 0) ) {
+				var pokedexKeys = Object.keys(Mashups.PokedexArray);
+				var nPokeItr;
+				var sPokeName;
+				var pokeGO;
+				var sTypeName;
+				for (var nRuleItr = 0; nRuleItr < extractedRestrictionArray.length; ++nRuleItr) {
+					var goAsMove = Mashups.getGameObjectAsMove(extractedRestrictionArray[nRuleItr]);
+					if(goAsMove) { // As Move checks
+						// Only STABmons adds moves as restrictions currently
+						if(!goAsMove.type) continue;
+						if(!goAsMove.name) continue;
+						sTypeName = goAsMove.type;
+						for (nPokeItr = 0; nPokeItr < pokedexKeys.length; ++nPokeItr) {
+							sPokeName = pokedexKeys[nPokeItr];
+							// Don't complex ban the move if we actually learn it
+							if(Mashups.doesPokemonLearnMove(sPokeName, goAsMove.name) ) continue;
+							
+							// Don't need complex ban if we don't have the typing to get it from STABmons Rule
+							if(!Mashups.DoesPokemonHavePreBattleAccessToTyping(pokedexKeys[nPokeItr], sTypeName, true) ) continue;
+
+							pokeGO = Mashups.getGameObjectAsPokemon(sPokeName);
+							if(pokeGO && pokeGO.species) {
+								sPokeName = pokeGO.species;
+							}
+
+							extractedBanArray[nExtractedBanCount++] = sPokeName + ' + ' + goAsMove.name;
+						}
+					}
+				}
 			}
 
 			// Generate warning list
