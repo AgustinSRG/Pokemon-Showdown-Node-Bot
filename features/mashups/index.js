@@ -47,7 +47,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen7] Pure Hackmons'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen7] Tier Shift AAA', '[Gen7] AAA Tier Shift', '[Gen7] Tier Shift Almost Any Ability', '[Gen7] Almost Any Ability Tier Shift'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
