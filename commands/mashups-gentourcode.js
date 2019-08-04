@@ -993,7 +993,10 @@ exports.commands = {
 							sPokeName = pokedexKeys[nPokeItr];
 							// Don't complex ban the move if we actually learn it
 							if(Mashups.doesPokemonLearnMove(sPokeName, goAsMove.name) ) continue;
-							
+
+							// Don't complex ban the move if we could learn it through Sketch
+							if(Mashups.doesPokemonLearnMove(sPokeName, 'Sketch') ) continue;
+
 							// Don't need complex ban if we don't have the typing to get it from STABmons Rule
 							if(!Mashups.DoesPokemonHavePreBattleAccessToTyping(pokedexKeys[nPokeItr], sTypeName, true) ) continue;
 
