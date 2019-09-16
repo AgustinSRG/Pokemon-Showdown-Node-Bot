@@ -47,7 +47,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] Camomons Ubers'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] Camomons Balanced Hackmons', '[Gen 7] Camomons BH'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
