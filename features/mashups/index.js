@@ -47,7 +47,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] Camomons Balanced Hackmons', '[Gen 7] Camomons BH'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] AAA STABmons', '[Gen 7] STAAABmons', '[Gen 7] Tier Shift AAA', '[Gen 7] AAA Tier Shift'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
@@ -692,6 +692,12 @@ var DoesPokemonHavePreBattleAccessToTyping = exports.DoesPokemonHavePreBattleAcc
 	// Battle change-only special cases (others)
 	if(pokemonGO.species) {
 		var sSpeciesId = toId(pokemonGO.species);
+		if( ('arceus' === sSpeciesId) ||
+			('silvally' === sSpeciesId) )
+		{ // Arceus/Silvally are special case that get every typing
+			return true;
+		}
+
 		if( ( 'castformsunny' === sSpeciesId ) ||
 			( 'castformrainy' === sSpeciesId ) ||
 			( 'castformsnowy' === sSpeciesId ) ||
@@ -768,8 +774,25 @@ var getGameObjectAsItem = exports.getGameObjectAsItem = function(sGameObject) {
 
 //#region Learnsets
 
-var doesPokemonLearnMove = exports.doesPokemonLearnMove = function(sPokemonName, sMoveName) {
+var doesPokemonLearnMove = exports.doesPokemonLearnMove = function(sPokemonName, sMoveName, bRecurseFormes=true) {
 	sPokemonName = toId(sPokemonName);
+
+	var pokemonGO = getGameObjectAsPokemon(sPokemonName);
+	if(!pokemonGO) return false;
+
+	if(bRecurseFormes) { // Some formes don't have their own learnsets, others do; go to base and check all formes
+		if(pokemonGO.baseSpecies) {
+			return doesPokemonLearnMove(pokemonGO.baseSpecies, sMoveName, true);
+		}
+		else if(pokemonGO.otherFormes) {
+			for (var nFormeItr = 0; nFormeItr < pokemonGO.otherFormes.length; ++nFormeItr) {
+				if(doesPokemonLearnMove(pokemonGO.otherFormes[nFormeItr], sMoveName, false) ) {
+					return true;
+				}
+			}
+		}
+	}
+
 	sMoveName = toId(sMoveName);
 
 	var battleLearnset = LearnsetsArray[sPokemonName];
