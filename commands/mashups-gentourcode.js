@@ -688,6 +688,11 @@ exports.commands = {
 				}
 			}
 		}
+		if( -1 === nTierFormatMetaIdx ) { // If no add-on modifies the tier, check if the base is a tier-defining format
+			if(Mashups.isFormatTierDefinition(sFormatName, nBaseGen)) {
+				nTierFormatMetaIdx = 0;
+			}
+		}
 		bIsLC = (Mashups.Tier.LC == nTierId) || (Mashups.Tier.LCUbers == nTierId);
 		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
 
@@ -833,7 +838,9 @@ exports.commands = {
 			var sReplacePlaceholderContent;
 
 			var sTourName = Mashups.getGenNameDisplayFormatted(nBaseGen) + ' ';
-			for ( var nMetaItr = 0; nMetaItr < sMetaArray.length; ++nMetaItr) {
+			for(var nMetaItr = 0; nMetaItr < sMetaArray.length; ++nMetaItr) {
+				if(nMetaItr === nTierFormatMetaIdx) continue; // Tier-defining format should always go last
+
 				// Special cases
 				sGenStrippedName = Mashups.genStripName(sMetaArray[nMetaItr]);
 				switch(sGenStrippedName) {
@@ -850,7 +857,7 @@ exports.commands = {
 						bIncludesSubstantiveNonMnM = true;
 						break;
 					default:
-						if( nTierFormatMetaIdx !== nMetaItr) {
+						if(nTierFormatMetaIdx !== nMetaItr) {
 							bIncludesSubstantiveNonMnM = true;
 						}
 						break;
@@ -900,6 +907,18 @@ exports.commands = {
 					}
 				}
 				sTourName = sTourName.replace(sAAAPlaceholderToken, sReplacePlaceholderContent);
+			}
+			if(-1 !== nTierFormatMetaIdx) {
+				sTourName += ' ';
+
+				// Append name as normal
+				if(metaDetailsArray[nTierFormatMetaIdx]) {
+					sMetaNameBasis = Mashups.genStripName(metaDetailsArray[nTierFormatMetaIdx].name);
+				}
+				else {
+					sMetaNameBasis = sMetaArray[nTierFormatMetaIdx];
+				}
+				sTourName += sMetaNameBasis;
 			}
 
 			// Remove double spaces
