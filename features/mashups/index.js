@@ -102,7 +102,7 @@ var tierDataArray = exports.tierDataArray = [
 Object.freeze(tierDataArray);
 
 // This determines only if a format actually defines a tier, not what its basis tier is
-// E.g. [Gen 7] Underused will be UU, but [Gen 7] Mix and Mega is Undefined, not Ubers
+// E.g. [Gen 8] Underused will be UU, but [Gen 8] Mix and Mega is Undefined, not Ubers
 var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = function (sFormatName) {
 	sFormatName = toId(sFormatName);
 
@@ -110,7 +110,7 @@ var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = 
 	for(nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
 		//if( Tier.AG === nTierItr ) continue; // Prevent AG form counting here
 
-		sLoopTierName = toId('gen7' + tierDataArray[nTierItr].name); // FIXME: Multi-gen support
+		sLoopTierName = toId('gen8' + tierDataArray[nTierItr].name); // FIXME: Multi-gen support
 		//monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
 		if(sLoopTierName !== sFormatName) continue;
 		// Found matching tier
@@ -148,10 +148,12 @@ var isABannedInTierB = exports.isABannedInTierB = function(nCheckTier, nBasisTie
 }
 
 // This actually tries to deduce a format's intrinsic tier (used for bases primarily)
-// E.g. [Gen 7] Mix and Mega is Ubers
+// E.g. [Gen 8] Mix and Mega is Ubers
 var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (formatDetails) {
 	if(!formatDetails || !formatDetails.name) {
-		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		//var e = new Error();
+		//console.log(e.stack);
+		//monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
 		return Tier.Undefined;
 	}
 
@@ -183,7 +185,9 @@ var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (
 }
 
 var findTierFormatDetails = exports.findTierFormatDetails = function (nTierId, nGen=c_nCurrentGen) {
+	//monitor(`nTierId: ` + nTierId);
 	var sTierName = tierDataArray[nTierId].name;
+	//monitor(`sTierName: ` + sTierName);
 
 	// Extract rules if this tier has a format
 	return findFormatDetails('gen' + nGen.toString() + sTierName);
@@ -236,7 +240,23 @@ var determineFormatGameTypeId = exports.determineFormatGameTypeId = function (fo
 
 //#region Gen
 
-var c_nCurrentGen = exports.c_nCurrentGen = 7;
+var c_nCurrentGen = exports.c_nCurrentGen = 8;
+
+var getGenName = exports.getGenName = function(nGen) {
+	return 'gen' + nGen.toString();
+}
+
+var getCurrentGenName = exports.getCurrentGenName = function() {
+	return getGenName(c_nCurrentGen);
+}
+
+var getGenNameDisplayFormatted = exports.getGenNameDisplayFormatted = function(nGen) {
+	return '[Gen ' + nGen.toString() + ']';
+}
+
+var getCurrentGenNameDisplayFormatted = exports.getCurrentGenNameDisplayFormatted = function() {
+	return getGenNameDisplayFormatted(c_nCurrentGen);
+}
 
 var genStripName = exports.genStripName = function(sName) {
 	for (var nGen=0; nGen<=c_nCurrentGen; ++nGen) {
@@ -428,25 +448,25 @@ Object.freeze(tourAuthTypeIdealRatiosArray);
 // https://www.smogon.com/forums/threads/om-mashup-megathread.3635904/#post-7802586
 var officialTourNamesArray = exports.officialTourNamesArray = [
 	// OM Mashups​
-	['[Gen7] Pure Hackmons'],
+	['[Gen8] Pure Hackmons'],
 	// Mix and Mega Anything Goes (Not on main) 
-	['[Gen7] AAA Ubers'],
-	['[Gen7] CAAAmomons'],
-	['[Gen 7] STABmons Ubers'],
-	['[Gen 7] AAA STABmons', '[Gen 7] STAAABmons'],
-	['[Gen 7] STAB n Mega', '[Gen 7] STAB and Mega'],
+	['[Gen8] AAA Ubers'],
+	['[Gen8] CAAAmomons'],
+	['[Gen 8] STABmons Ubers'],
+	['[Gen 8] AAA STABmons', '[Gen 8] STAAABmons'],
+	['[Gen 8] STAB n Mega', '[Gen 8] STAB and Mega'],
 
 	// Doubles Metagames​
-	['[Gen 7] Balanced Hackmons Doubles', '[Gen 7] Doubles Balanced Hackmons'],
-	['[Gen7] AAA Doubles'],
+	['[Gen 8] Balanced Hackmons Doubles', '[Gen 8] Doubles Balanced Hackmons'],
+	['[Gen8] AAA Doubles'],
 	// Mix and Mega Doubles (Not on main)
-	['[Gen7] STABmons Doubles'],
+	['[Gen8] STABmons Doubles'],
 
 	// Little Cup Metagames​
-	['[Gen 7] LC Balanced Hackmons'],
-	['[Gen7] Almost Any Ability LC'],
-	['[Gen 7] STABmons LC'],
-	['[Gen 7] Mix and Mega LC'],
+	['[Gen 8] LC Balanced Hackmons'],
+	['[Gen8] Almost Any Ability LC'],
+	['[Gen 8] STABmons LC'],
+	['[Gen 8] Mix and Mega LC'],
 ];
 Object.freeze(officialTourNamesArray);
 var officialTourNamesIdArray = exports.officialTourNamesIdArray = [];
@@ -835,9 +855,9 @@ var getFormatKey = exports.getFormatKey = function (sFormatAlias) {
 		return null;
 	}
 
-	// Add 'gen7' prefix if no gen was specified
+	// Add current gen prefix if no gen was specified
 	if('gen' !== sFormatAlias.substring(0, 3)) {
-		sFormatAlias = 'gen7' + sFormatAlias;
+		sFormatAlias = getCurrentGenName() + sFormatAlias;
 	}
 
 	// Find format that fits alias
@@ -865,6 +885,7 @@ var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName)
 		}
 	}
 
+	//monitor(`DEBUG returning null for sSearchFormatName: ${sSearchFormatName}`);
 	return null;
 }
 

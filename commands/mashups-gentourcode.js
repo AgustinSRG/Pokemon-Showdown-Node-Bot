@@ -36,7 +36,7 @@ var TryAddRule = function(sCurrentRule, params)
 {
 	var bIgnoreRule = false;
 
-	monitor(`DEBUG ruleset: ${sCurrentRule}`);
+	//monitor(`DEBUG ruleset: ${sCurrentRule}`);
 
 	var sCurrentRuleId = toId(sCurrentRule);
 
@@ -51,7 +51,7 @@ var TryAddRule = function(sCurrentRule, params)
 
 	// Tier rules have no value on a separate base and disrupt mashups with invisible compound bans
 	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.Tier.Count; ++nExistingRuleItr) {
-		if (toId('gen7'+Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) { // FIXME: Multi-gen support
+		if (toId(Mashups.getCurrentGenName() + Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) { // FIXME: Multi-gen support
 			bIgnoreRule = true;
 			break;
 		}
@@ -99,7 +99,7 @@ var TryAddRule = function(sCurrentRule, params)
 		if (bIgnoreRule) return;
 	}
 
-	monitor(`DEBUG ruleset survived culling: ${sCurrentRule}`);
+	//monitor(`DEBUG ruleset survived culling: ${sCurrentRule}`);
 
 	// Add relevant rule
 	extractedRuleArray[nExtractedRuleCount] = sCurrentRule;
@@ -110,7 +110,8 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 {
 	var bIgnoreRule = false;
 
-	monitor(`DEBUG banlist: ${sCurrentRule}`);
+	//monitor(`DEBUG banlist: ${sCurrentRule}`);
+	//monitor(`base: ${baseFormatDetails.name}`);
 
 	// Ignore bans that are already in the base format
 	if(baseFormatDetails.banlist) {
@@ -124,7 +125,7 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 	}
 
 	// Ignore bans that are already in the base format's tier format (e.g. Baton Pass for OU-based metas)
-	if(baseFormatDetails.banlist) {
+	if(baseFormatTierDetails.banlist) {
 		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatTierDetails.banlist.length; ++nExistingRuleItr) {
 			if (baseFormatTierDetails.banlist[nExistingRuleItr] === sCurrentRule) {
 				bIgnoreRule = true;
@@ -186,7 +187,7 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 		}
 	}
 
-	monitor(`DEBUG ban survived culling: ${sCurrentRule}`);
+	//monitor(`DEBUG ban survived culling: ${sCurrentRule}`);
 
 	// Add relevant ban
 	extractedBanArray[nExtractedBanCount] = sCurrentRule;
@@ -235,7 +236,7 @@ var TryAddUnban = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 {
 	var bIgnoreRule = false;
 
-	monitor(`DEBUG unbanlist: ${sCurrentRule}`);
+	//monitor(`DEBUG unbanlist: ${sCurrentRule}`);
 
 	// Ignore unbans that are already in the base format
 	if(baseFormatDetails.unbanlist) {
@@ -299,7 +300,7 @@ var TryAddUnban = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 		}
 	}
 
-	monitor(`DEBUG unban survived culling: ${sCurrentRule}`);
+	//monitor(`DEBUG unban survived culling: ${sCurrentRule}`);
 
 	// Add relevant unban
 	extractedUnbanArray[nExtractedUnbanCount] = sCurrentRule;
@@ -317,7 +318,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 
 	// ruleset
 	if (formatDetails.ruleset) {
-		monitor(`DEBUG ruleset`);
+		//monitor(`DEBUG ruleset`);
 		for (nRuleItr = 0; nRuleItr < formatDetails.ruleset.length; ++nRuleItr) {
 			sCurrentRule = formatDetails.ruleset[nRuleItr];
 
@@ -327,7 +328,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 
 	// banlist
 	if (formatDetails.banlist) {
-		monitor(`DEBUG banlist`);
+		//monitor(`DEBUG banlist`);
 		for (nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
 			sCurrentRule = formatDetails.banlist[nRuleItr];
 
@@ -599,8 +600,9 @@ exports.commands = {
 		nBaseGen = Mashups.determineFormatGen(baseFormatDetails);
 		sBaseModName = Mashups.determineFormatMod(baseFormatDetails);
 		baseFormatTierDetails = Mashups.findTierFormatDetails(nBaseFormatTierId, nBaseGen);
+		//this.reply(`DEBUG baseFormatTierDetails: ${JSON.stringify(baseFormatTierDetails)}`);
 
-		// FIXME: Non-gen 7 case
+		// FIXME: Non-current gen case
 
 		var nAddOn;
 		var addOnFormat;
@@ -672,7 +674,7 @@ exports.commands = {
 			}
 		}
 		bIsLC = (Mashups.Tier.LC == nTierId) || (Mashups.Tier.LCUbers == nTierId);
-		monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
+		//monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
 
 		// Deconstruct tier and build up bans atomically so they can be edited properly
 		var nDeltaTier = nBaseFormatTierId - nTierId;
@@ -689,12 +691,12 @@ exports.commands = {
 			nRecursiveTierId = nTierId;
 			while(!bReachedLimit) {
 				sTierName = Mashups.tierDataArray[nRecursiveTierId].name;
-				monitor(`sTierName: ${sTierName}`);
+				//monitor(`sTierName: ${sTierName}`);
 
 				// Extract rules if this tier has a format
-				formatDetails = Mashups.findFormatDetails('gen7' + sTierName);
+				formatDetails = Mashups.findFormatDetails(Mashups.getCurrentGenName() + sTierName); // FIXME: Multi-gen support
 				if(null !== formatDetails) {
-					monitor(`Extract tier`);
+					//monitor(`Extract tier`);
 					ExtractFormatRules(formatDetails, params, true);
 				}
 
@@ -705,7 +707,7 @@ exports.commands = {
 
 				// Move on to next tier or end
 				nTierParent = Mashups.tierDataArray[nRecursiveTierId].parent;
-				monitor(`nTierParent: ${nTierParent}`);
+				//monitor(`nTierParent: ${nTierParent}`);
 				if( (nTierParent <= nBaseFormatTierId) ||
 					(Mashups.Tier.Undefined === nTierParent) ||
 					(!bIsUbersBase && Mashups.tierDataArray[nTierParent].isUbers) )
@@ -725,20 +727,20 @@ exports.commands = {
 			var nDeltaUnbanIndexOf;
 			while(!bReachedLimit) {
 				sTierName = Mashups.tierDataArray[nRecursiveTierId].name;
-				monitor(`sTierName: ${sTierName}`);
+				//monitor(`sTierName: ${sTierName}`);
 
 				// Extract rules if this tier has a format (only needed if above base)
-				formatDetails = Mashups.findFormatDetails('gen7' + sTierName);
+				formatDetails = Mashups.findFormatDetails(Mashups.getCurrentGenName() + sTierName); // FIXME: Multi-gen support
 				if(!bFirstLoop) {
 					if(null !== formatDetails) {
-						monitor(`Extract tier`);
+						//monitor(`Extract tier`);
 						ExtractFormatRules(formatDetails, params, true);
 					}
 				}
 
 				// Determine if this will be the final loop
 				nTierParent = Mashups.tierDataArray[nRecursiveTierId].parent;
-				monitor(`nTierParent: ${nTierParent}`);
+				//monitor(`nTierParent: ${nTierParent}`);
 				if( (nTierParent < nTierId) ||
 					(Mashups.Tier.Undefined === nTierParent) /*||
 					(!bIsUbersBase && Mashups.tierDataArray[nTierParent].isUbers)*/ )
@@ -751,7 +753,7 @@ exports.commands = {
 
 				// Prevent unbans from previous tiers if they are rebanned in the upper tier
 				if(null !== formatDetails) {
-					monitor(`Extract bans for rebanning`);
+					//monitor(`Extract bans for rebanning`);
 					if(formatDetails.banlist) {
 						for(nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
 							nDeltaUnbanIndexOf = deltaUnbanArray.indexOf(formatDetails.banlist[nRuleItr]);
@@ -769,7 +771,7 @@ exports.commands = {
 				// Prepare to unban all the bans in the tier if we haven't reached limit
 				if(!bReachedLimit) {
 					if(null !== formatDetails) {
-						monitor(`Extract bans so we can reverse them`);
+						//monitor(`Extract bans so we can reverse them`);
 						if(formatDetails.banlist) {
 							for(nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
 								if(deltaUnbanArray.includes(formatDetails.banlist[nRuleItr])) continue;
@@ -788,7 +790,7 @@ exports.commands = {
 				goAsPoke = Mashups.getGameObjectAsPokemon(baseFormatDetails.banlist[nRuleItr]);
 				if(goAsPoke) { // As Pokemon checks
 					var nPokeTier = Mashups.calcPokemonTier(goAsPoke);
-					monitor(`${goAsPoke.name}: nPokeTier: ${nPokeTier}, nTierId: ${nTierId}`);
+					//monitor(`${goAsPoke.name}: nPokeTier: ${nPokeTier}, nTierId: ${nTierId}`);
 					if(!Mashups.isABannedInTierB(nPokeTier, nTierId)) {
 						deltaUnbanArray[nDeltaUnbanCount++] = baseFormatDetails.banlist[nRuleItr];
 					}
@@ -815,7 +817,7 @@ exports.commands = {
 			var sMetaNameBasis;
 			var sReplacePlaceholderContent;
 
-			var sTourName = '[Gen 7] ';
+			var sTourName = Mashups.getCurrentGenNameDisplayFormatted() + ' '; // FIXME: Multi-gen support
 			for ( var nMetaItr = 0; nMetaItr < sMetaArray.length; ++nMetaItr) {
 				// Special cases
 				sGenStrippedName = Mashups.genStripName(sMetaArray[nMetaItr]);
@@ -908,11 +910,11 @@ exports.commands = {
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 					//addOnFormat = Formats[params.addOnFormats[nAddOn]];
 					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
-					monitor(`DEBUG addOnFormats[${nAddOn}]: ${JSON.stringify(addOnFormat)}`);
+					//monitor(`DEBUG addOnFormats[${nAddOn}]: ${JSON.stringify(addOnFormat)}`);
 
 					// Don't do anything here with a tier add-on, as that should be handled above
 					if(nTierFormatAddOnIdx === nAddOn) {
-						monitor(`DEBUG Ignoring as tier format...`);
+						//monitor(`DEBUG Ignoring as tier format...`);
 						continue;
 					}
 
@@ -922,7 +924,7 @@ exports.commands = {
 					if(!addOnFormat) continue;
 					// FIXME: Others
 					switch(toId(addOnFormat.name)) {
-						case 'gen7cap':
+						case Mashups.getCurrentGenName() + 'cap': // FIXME: Multi-gen support
 						if (extractedUnbanArray) {
 							extractedUnbanArray[nExtractedUnbanCount++] = 'Crucibellite';
 							deltaUnbanArray[nDeltaUnbanCount++] = 'Crucibellite';
