@@ -366,6 +366,12 @@ var isDefaultModName = exports.isDefaultModName = function (sModName) {
 
 //#region CustomCallbacks
 
+var hasOwnProperty = exports.hasOwnProperty = function (obj, prop) {
+    var proto = obj.__proto__ || obj.constructor.prototype;
+    return (prop in obj) &&
+        (!(prop in proto) || proto[prop] !== obj[prop]);
+}
+
 var CustomCallbackNamesArray = exports.CustomCallbackNamesArray = [
 	'checkLearnset',
 	'onAfterMega',
@@ -378,36 +384,42 @@ var CustomCallbackNamesArray = exports.CustomCallbackNamesArray = [
 	'validateSet',
 	'validateTeam',
 ];
-Object.freeze(DisruptiveRuleArray);
+Object.freeze(CustomCallbackNamesArray);
 
 var doesFormatHaveKeyCustomCallbacks = exports.doesFormatHaveKeyCustomCallbacks = function (formatDetails) {
 	if(!formatDetails || !formatDetails.name) {
 		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
-		return '';
+		return false;
 	}
 
-	if(formatDetails.mod) {
-		return formatDetails.mod;
+	var keyCustomCallbacks = calcFormatCustomCallbacks(formatDetails);
+	if(keyCustomCallbacks && keyCustomCallbacks.length && (keyCustomCallbacks.length > 0)) {
+		return true;
 	}
 
-	// This probably can't happen, but just to cover the case...
-	return '';
+	return false;
 }
 
 var calcFormatCustomCallbacks = exports.calcFormatCustomCallbacks = function (formatDetails) {
-	/*for (const value of Object.values(obj)) {
-
-	}
-	*/
-
-	if(!formatDetails || !formatDetails.name) {
-		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
-		return '';
+	if(MASHUPS_DEBUG_ON) {
+		for (const value of Object.values(formatDetails)) {
+			monitor(`callback val: ${value}`);
+		}
 	}
 
 	var customCallbackArray = [];
 
+	if(!formatDetails || !formatDetails.name) {
+		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		return customCallbackArray;
+	}
 
+	for(var nCCItr=0; nCCItr<CustomCallbackNamesArray.length; ++nCCItr) {
+		if(!hasOwnProperty(formatDetails, CustomCallbackNamesArray[nCCItr])) continue;
+		customCallbackArray.push(CustomCallbackNamesArray[nCCItr]);
+	}
+
+	return customCallbackArray;
 }
 
 //#endregion

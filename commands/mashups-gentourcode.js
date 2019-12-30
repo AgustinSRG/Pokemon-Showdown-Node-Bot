@@ -20,6 +20,7 @@ var extractedUnbanArray = [];
 var nExtractedUnbanCount = 0;
 var extractedRestrictionArray = [];
 var nExtractedRestrictionCount = 0;
+var formatStackedAddOnsDictionary = new Object();
 
 var baseFormatDetails = null;
 var baseFormatTierDetails = null;
@@ -32,7 +33,7 @@ var bTierModified;
 var bTierIncreased;
 var bIsLC;
 
-var TryAddRule = function(sCurrentRule, params)
+var TryAddRule = function(sCurrentRule, params, sourceFormat, bTierCheck)
 {
 	var bIgnoreRule = false;
 
@@ -40,18 +41,30 @@ var TryAddRule = function(sCurrentRule, params)
 
 	var sCurrentRuleId = toId(sCurrentRule);
 
-	// Banned (redundant) rules
-	for (nExistingRuleItr = 0; nExistingRuleItr < c_sIgnoreRuleArray.length; ++nExistingRuleItr) {
-		if (toId(c_sIgnoreRuleArray[nExistingRuleItr]) === sCurrentRuleId) {
+	// Tier rules have no value on a separate base and disrupt mashups with invisible compound bans
+	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.Tier.Count; ++nExistingRuleItr) {
+		if (toId(Mashups.getGenName(nBaseGen) + Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) {
 			bIgnoreRule = true;
+
+			// Format stacking needs to remove internal tier format specifications in some cases
+			if(!bTierCheck) { // We can't be stacked during tier check
+				if(sourceFormat.name in formatStackedAddOnsDictionary) { // Stacked format
+					if(nTierId < nExistingRuleItr) { // Mashup's tier is above (<) this; it will be disruptive
+						if(Mashups.MASHUPS_DEBUG_ON) monitor(`Inverting ruleset: ${sCurrentRule} (nTierId: ${nTierId}, nExistingRuleItr: ${nExistingRuleItr})`);
+						bIgnoreRule = false; // Invert rule instead of ignoring it
+						sCurrentRule = '!' + sCurrentRule;
+						sCurrentRuleId = '!' + sCurrentRuleId;
+					}
+				}
+			}
 			break;
 		}
 		if (bIgnoreRule) return;
 	}
 
-	// Tier rules have no value on a separate base and disrupt mashups with invisible compound bans
-	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.Tier.Count; ++nExistingRuleItr) {
-		if (toId(Mashups.getGenName(nBaseGen) + Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) {
+	// Banned (redundant) rules
+	for (nExistingRuleItr = 0; nExistingRuleItr < c_sIgnoreRuleArray.length; ++nExistingRuleItr) {
+		if (toId(c_sIgnoreRuleArray[nExistingRuleItr]) === sCurrentRuleId) {
 			bIgnoreRule = true;
 			break;
 		}
@@ -323,7 +336,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 		for (nRuleItr = 0; nRuleItr < formatDetails.ruleset.length; ++nRuleItr) {
 			sCurrentRule = formatDetails.ruleset[nRuleItr];
 
-			TryAddRule(sCurrentRule, params);
+			TryAddRule(sCurrentRule, params, formatDetails, bTierCheck);
 		}
 	}
 
@@ -456,10 +469,10 @@ exports.commands = {
 					var sAddOnFormatsString = args[i];
 					var addOnFormatsArray = sAddOnFormatsString.split('|');
 					var sAddOnKey;
-					if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG sAddOnFormatsString: ${sAddOnFormatsString}`);
+					if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG sAddOnFormatsString: ${sAddOnFormatsString}`);
 					for (var nAddOn = 0; nAddOn < addOnFormatsArray.length; ++nAddOn) {
 						if (!addOnFormatsArray[nAddOn]) continue;
-						if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG addOnFormatsArray[${nAddOn}]: ${addOnFormatsArray[nAddOn]}`);
+						if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG addOnFormatsArray[${nAddOn}]: ${addOnFormatsArray[nAddOn]}`);
 						addOnFormatsArray[nAddOn].trim();
 						// Search add-on format as a server native format
 						sAddOnKey = Mashups.getFormatKey(addOnFormatsArray[nAddOn]);
@@ -594,9 +607,9 @@ exports.commands = {
 		baseFormatDetails = Mashups.findFormatDetails(params.baseFormat);
 		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG baseFormatDetails: ${JSON.stringify(baseFormatDetails)}`);
 		nBaseGen = Mashups.determineFormatGen(baseFormatDetails);
-		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG nBaseGen: ${nBaseGen}`);
+		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG nBaseGen: ${nBaseGen}`);
 		var nBaseFormatTierId = Mashups.determineFormatBasisTierId(baseFormatDetails, nBaseGen);
-		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG nBaseFormatTierId: ${nBaseFormatTierId}`);
+		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG nBaseFormatTierId: ${nBaseFormatTierId}`);
 		nBaseGameType = Mashups.determineFormatGameTypeId(baseFormatDetails);
 		sBaseModName = Mashups.determineFormatMod(baseFormatDetails);
 		baseFormatTierDetails = Mashups.findTierFormatDetails(nBaseFormatTierId, nBaseGen);
@@ -904,7 +917,20 @@ exports.commands = {
 		{
 			// Add rules from add-ons
 			if (params.addOnFormats) {
-				if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG reached addOnFormats`);
+				if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG reached addOnFormats`);
+
+				// Add rules created through format-stacking
+				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
+					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					if(!Mashups.doesFormatHaveKeyCustomCallbacks(addOnFormat)) continue;
+
+					// Format has custom callbacks and must be stacked to make them effective
+					extractedRuleArray[nExtractedRuleCount] = addOnFormat.name;
+					nExtractedRuleCount++;
+
+					// Add to stacked dictionary
+					formatStackedAddOnsDictionary[addOnFormat.name] = true;
+				}
 
 				var nExistingRuleItr;
 				var bIgnoreRule;
@@ -1033,8 +1059,6 @@ exports.commands = {
 						sWarningStatement = `Mod Conflict: "${sAddOnMod}" in add-on "${addOnFormat.name}" conflicts with base mod "${sBaseModName}"!`;
 						warningArray.push(sWarningStatement);
 					}
-
-					// FIXME: We could test for the existence of onBeforeSwitchIn etc in addOns
 
 					// Whitelist certain add-ons that we know will work cross-gen/gametype
 					sGenericMetaName = Mashups.genericiseMetaName(addOnFormat.name);
