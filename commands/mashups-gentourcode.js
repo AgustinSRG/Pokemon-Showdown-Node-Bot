@@ -36,7 +36,7 @@ var TryAddRule = function(sCurrentRule, params)
 {
 	var bIgnoreRule = false;
 
-	//monitor(`DEBUG ruleset: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG ruleset: ${sCurrentRule}`);
 
 	var sCurrentRuleId = toId(sCurrentRule);
 
@@ -60,7 +60,7 @@ var TryAddRule = function(sCurrentRule, params)
 
 	// Ignore certain 'disruptive' rules like Standard with nested bans and that are generally redundant
 	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.DisruptiveRuleArray.length; ++nExistingRuleItr) {
-		//monitor(`DEBUG disruptive: ${Mashups.DisruptiveRuleArray[nExistingRuleItr]}, ${sCurrentRule}`);
+		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG disruptive: ${Mashups.DisruptiveRuleArray[nExistingRuleItr]}, ${sCurrentRule}`);
 		if (toId(Mashups.DisruptiveRuleArray[nExistingRuleItr]) === sCurrentRuleId) {
 			bIgnoreRule = true;
 			break;
@@ -99,7 +99,7 @@ var TryAddRule = function(sCurrentRule, params)
 		if (bIgnoreRule) return;
 	}
 
-	//monitor(`DEBUG ruleset survived culling: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG ruleset survived culling: ${sCurrentRule}`);
 
 	// Add relevant rule
 	extractedRuleArray[nExtractedRuleCount] = sCurrentRule;
@@ -110,8 +110,8 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 {
 	var bIgnoreRule = false;
 
-	//monitor(`DEBUG banlist: ${sCurrentRule}`);
-	//monitor(`base: ${baseFormatDetails.name}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG banlist: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`base: ${baseFormatDetails.name}`);
 
 	// Ignore bans that are already in the base format
 	if(baseFormatDetails.banlist) {
@@ -135,7 +135,7 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 		}
 	}
 
-	//monitor(`DEBUG ban survived culling 0: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG ban survived culling 0: ${sCurrentRule}`);
 
 	if (params.additionalBans) { // Ignore bans that are redundant because they have already been added in params
 		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalBans.length; ++nExistingRuleItr) {
@@ -147,7 +147,7 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 		if (bIgnoreRule) return;
 	}
 
-	//monitor(`DEBUG ban survived culling 1: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG ban survived culling 1: ${sCurrentRule}`);
 
 	if (params.additionalUnbans) { // Ignore unbans that are in unbans params because we want that to take priority
 		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalUnbans.length; ++nExistingRuleItr) {
@@ -187,7 +187,7 @@ var TryAddBan = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 		}
 	}
 
-	//monitor(`DEBUG ban survived culling: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG ban survived culling: ${sCurrentRule}`);
 
 	// Add relevant ban
 	extractedBanArray[nExtractedBanCount] = sCurrentRule;
@@ -236,7 +236,7 @@ var TryAddUnban = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 {
 	var bIgnoreRule = false;
 
-	//monitor(`DEBUG unbanlist: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG unbanlist: ${sCurrentRule}`);
 
 	// Ignore unbans that are already in the base format
 	if(baseFormatDetails.unbanlist) {
@@ -300,7 +300,7 @@ var TryAddUnban = function(sCurrentRule, params, nSourceTier, bTierCheck=false)
 		}
 	}
 
-	//monitor(`DEBUG unban survived culling: ${sCurrentRule}`);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG unban survived culling: ${sCurrentRule}`);
 
 	// Add relevant unban
 	extractedUnbanArray[nExtractedUnbanCount] = sCurrentRule;
@@ -328,7 +328,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 
 	// banlist
 	if (formatDetails.banlist) {
-		//monitor(`DEBUG banlist`);
+		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG banlist`);
 		for (nRuleItr = 0; nRuleItr < formatDetails.banlist.length; ++nRuleItr) {
 			sCurrentRule = formatDetails.banlist[nRuleItr];
 
@@ -338,7 +338,7 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 
 	// unbanlist
 	if (formatDetails.unbanlist) {
-		monitor(`DEBUG unbanlist`);
+		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG unbanlist`);
 		for (nRuleItr = 0; nRuleItr < formatDetails.unbanlist.length; ++nRuleItr) {
 			sCurrentRule = formatDetails.unbanlist[nRuleItr];
 
@@ -458,10 +458,10 @@ exports.commands = {
 					var sAddOnFormatsString = args[i];
 					var addOnFormatsArray = sAddOnFormatsString.split('|');
 					var sAddOnKey;
-					//this.reply(`DEBUG sAddOnFormatsString: ${sAddOnFormatsString}`);
+					if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG sAddOnFormatsString: ${sAddOnFormatsString}`);
 					for (var nAddOn = 0; nAddOn < addOnFormatsArray.length; ++nAddOn) {
 						if (!addOnFormatsArray[nAddOn]) continue;
-						//this.reply(`DEBUG addOnFormatsArray[${nAddOn}]: ${addOnFormatsArray[nAddOn]}`);
+						if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG addOnFormatsArray[${nAddOn}]: ${addOnFormatsArray[nAddOn]}`);
 						addOnFormatsArray[nAddOn].trim();
 						// Search add-on format as a server native format
 						sAddOnKey = Mashups.getFormatKey(addOnFormatsArray[nAddOn]);
@@ -594,13 +594,13 @@ exports.commands = {
 			sFormatName = toId(sFormatName);
 		}
 		baseFormatDetails = Mashups.findFormatDetails(params.baseFormat);
-		//this.reply(`DEBUG baseFormatDetails: ${JSON.stringify(baseFormatDetails)}`);
+		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG baseFormatDetails: ${JSON.stringify(baseFormatDetails)}`);
 		var nBaseFormatTierId = Mashups.determineFormatBasisTierId(baseFormatDetails);
 		nBaseGameType = Mashups.determineFormatGameTypeId(baseFormatDetails);
 		nBaseGen = Mashups.determineFormatGen(baseFormatDetails);
 		sBaseModName = Mashups.determineFormatMod(baseFormatDetails);
 		baseFormatTierDetails = Mashups.findTierFormatDetails(nBaseFormatTierId, nBaseGen);
-		//this.reply(`DEBUG baseFormatTierDetails: ${JSON.stringify(baseFormatTierDetails)}`);
+		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG baseFormatTierDetails: ${JSON.stringify(baseFormatTierDetails)}`);
 
 		// FIXME: Non-current gen case
 
@@ -674,7 +674,7 @@ exports.commands = {
 			}
 		}
 		bIsLC = (Mashups.Tier.LC == nTierId) || (Mashups.Tier.LCUbers == nTierId);
-		//monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
+		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG Using tier format: ${Mashups.tierDataArray[nTierId].name}`);
 
 		// Deconstruct tier and build up bans atomically so they can be edited properly
 		var nDeltaTier = nBaseFormatTierId - nTierId;
@@ -902,7 +902,7 @@ exports.commands = {
 		{
 			// Add rules from add-ons
 			if (params.addOnFormats) {
-				//this.reply(`DEBUG reached addOnFormats`);
+				if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG reached addOnFormats`);
 
 				var nExistingRuleItr;
 				var bIgnoreRule;
@@ -910,11 +910,11 @@ exports.commands = {
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 					//addOnFormat = Formats[params.addOnFormats[nAddOn]];
 					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
-					//monitor(`DEBUG addOnFormats[${nAddOn}]: ${JSON.stringify(addOnFormat)}`);
+					if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG addOnFormats[${nAddOn}]: ${JSON.stringify(addOnFormat)}`);
 
 					// Don't do anything here with a tier add-on, as that should be handled above
 					if(nTierFormatAddOnIdx === nAddOn) {
-						//monitor(`DEBUG Ignoring as tier format...`);
+						if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG Ignoring as tier format...`);
 						continue;
 					}
 

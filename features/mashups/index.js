@@ -57,6 +57,12 @@ var string_of_enum = exports.string_of_enum = function string_of_enum(eEnum,valu
   return null;
 }
 
+//#region DEBUG
+
+var MASHUPS_DEBUG_ON = exports.MASHUPS_DEBUG_ON = false;
+
+//#endregion
+
 //#region Tier
 
 var Tier = exports.Tier = {
@@ -111,7 +117,7 @@ var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = 
 		//if( Tier.AG === nTierItr ) continue; // Prevent AG form counting here
 
 		sLoopTierName = toId('gen8' + tierDataArray[nTierItr].name); // FIXME: Multi-gen support
-		//monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
+		if(MASHUPS_DEBUG_ON) monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
 		if(sLoopTierName !== sFormatName) continue;
 		// Found matching tier
 		return nTierItr;
@@ -644,10 +650,10 @@ var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
 
 var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObject) {
 	sGameObject = toId(sGameObject);
-	//monitor(`DEBUG sGameObject: ${sGameObject}`);
+	if(MASHUPS_DEBUG_ON) monitor(`DEBUG sGameObject: ${sGameObject}`);
 
 	var nLength = Object.keys(PokedexArray).length;
-	//monitor(`DEBUG nLength: ${nLength}`);
+	if(MASHUPS_DEBUG_ON) monitor(`DEBUG nLength: ${nLength}`);
 
 	return PokedexArray[sGameObject];
 }
@@ -874,18 +880,18 @@ var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName)
 	sSearchFormatName = toId(sSearchFormatName);
 
 	// Search all format details for match by name => id
-	//monitor(`DEBUG FormatDetailsArray.length: ${FormatDetailsArray.length}`);
+	if(MASHUPS_DEBUG_ON) monitor(`DEBUG FormatDetailsArray.length: ${FormatDetailsArray.length}`);
 	for (var nFDItr=0; nFDItr<FormatDetailsArray.length; ++nFDItr) {
 		if( !FormatDetailsArray[nFDItr] ) continue;
 		if( !FormatDetailsArray[nFDItr].name ) continue;
-		//monitor(`DEBUG FormatDetailsArray[${nFDItr}].name: ${FormatDetailsArray[nFDItr].name}`);
+		if(MASHUPS_DEBUG_ON) monitor(`DEBUG FormatDetailsArray[${nFDItr}].name: ${FormatDetailsArray[nFDItr].name}`);
 
 		if( sSearchFormatName == toId(FormatDetailsArray[nFDItr].name) ) {
 			return FormatDetailsArray[nFDItr];
 		}
 	}
 
-	//monitor(`DEBUG returning null for sSearchFormatName: ${sSearchFormatName}`);
+	if(MASHUPS_DEBUG_ON) monitor(`DEBUG returning null for sSearchFormatName: ${sSearchFormatName}`);
 	return null;
 }
 
