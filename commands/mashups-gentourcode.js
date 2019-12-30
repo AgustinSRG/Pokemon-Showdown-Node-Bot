@@ -51,7 +51,7 @@ var TryAddRule = function(sCurrentRule, params)
 
 	// Tier rules have no value on a separate base and disrupt mashups with invisible compound bans
 	for (nExistingRuleItr = 0; nExistingRuleItr < Mashups.Tier.Count; ++nExistingRuleItr) {
-		if (toId(Mashups.getCurrentGenName() + Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) { // FIXME: Multi-gen support
+		if (toId(Mashups.getGenName(nBaseGen) + Mashups.tierDataArray[nExistingRuleItr].name) === sCurrentRuleId) {
 			bIgnoreRule = true;
 			break;
 		}
@@ -314,7 +314,8 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 
 	var sCurrentRule;
 
-	var nFormatBasisTier = Mashups.determineFormatBasisTierId(formatDetails);
+	var nFormatGen = Mashups.determineFormatGen(formatDetails);
+	var nFormatBasisTier = Mashups.determineFormatBasisTierId(formatDetails, nFormatGen);
 
 	// ruleset
 	if (formatDetails.ruleset) {
@@ -444,10 +445,7 @@ exports.commands = {
 						this.reply(`Base format: "${args[i]}" not found on this server!`);
 						return;
 					}
-					if (Mashups.isFormatTierDefinition(params.baseFormat)) {
-						this.reply(`Base format shouldn't be a tier definition! (Identified as "${args[i]}".)`);
-						return;
-					}
+					// (Tier definition formats as bases now supported)
 					break;
 				case eCommandParam.AddOnFormats: { // addOnFormats
 					// Start add-ons with empty array
@@ -595,14 +593,18 @@ exports.commands = {
 		}
 		baseFormatDetails = Mashups.findFormatDetails(params.baseFormat);
 		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG baseFormatDetails: ${JSON.stringify(baseFormatDetails)}`);
-		var nBaseFormatTierId = Mashups.determineFormatBasisTierId(baseFormatDetails);
-		nBaseGameType = Mashups.determineFormatGameTypeId(baseFormatDetails);
 		nBaseGen = Mashups.determineFormatGen(baseFormatDetails);
+		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG nBaseGen: ${nBaseGen}`);
+		var nBaseFormatTierId = Mashups.determineFormatBasisTierId(baseFormatDetails, nBaseGen);
+		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG nBaseFormatTierId: ${nBaseFormatTierId}`);
+		nBaseGameType = Mashups.determineFormatGameTypeId(baseFormatDetails);
 		sBaseModName = Mashups.determineFormatMod(baseFormatDetails);
 		baseFormatTierDetails = Mashups.findTierFormatDetails(nBaseFormatTierId, nBaseGen);
 		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG baseFormatTierDetails: ${JSON.stringify(baseFormatTierDetails)}`);
-
-		// FIXME: Non-current gen case
+		if(null === baseFormatTierDetails) {
+			this.reply(`Could not find any format to use as base tier! (Gen: ${nBaseGen}, Tier Id: ${nBaseFormatTierId}`);
+			return;
+		}
 
 		var nAddOn;
 		var addOnFormat;
@@ -659,7 +661,7 @@ exports.commands = {
 				if(!addOnFormat) continue;
 				if(!addOnFormat.name) continue;
 
-				nLoopTierId = Mashups.determineFormatDefinitionTierId(addOnFormat.name);
+				nLoopTierId = Mashups.determineFormatDefinitionTierId(addOnFormat.name, nBaseGen);
 				if( -1 !== nLoopTierId ) {
 					// Found matching tier
 					if(-1 !== nTierFormatAddOnIdx) {
@@ -694,7 +696,7 @@ exports.commands = {
 				//monitor(`sTierName: ${sTierName}`);
 
 				// Extract rules if this tier has a format
-				formatDetails = Mashups.findFormatDetails(Mashups.getCurrentGenName() + sTierName); // FIXME: Multi-gen support
+				formatDetails = Mashups.findFormatDetails(Mashups.getGenName(nBaseGen) + sTierName);
 				if(null !== formatDetails) {
 					//monitor(`Extract tier`);
 					ExtractFormatRules(formatDetails, params, true);
@@ -730,7 +732,7 @@ exports.commands = {
 				//monitor(`sTierName: ${sTierName}`);
 
 				// Extract rules if this tier has a format (only needed if above base)
-				formatDetails = Mashups.findFormatDetails(Mashups.getCurrentGenName() + sTierName); // FIXME: Multi-gen support
+				formatDetails = Mashups.findFormatDetails(Mashups.getGenName(nBaseGen) + sTierName);
 				if(!bFirstLoop) {
 					if(null !== formatDetails) {
 						//monitor(`Extract tier`);
@@ -817,7 +819,7 @@ exports.commands = {
 			var sMetaNameBasis;
 			var sReplacePlaceholderContent;
 
-			var sTourName = Mashups.getCurrentGenNameDisplayFormatted() + ' '; // FIXME: Multi-gen support
+			var sTourName = Mashups.getGenNameDisplayFormatted(nBaseGen) + ' ';
 			for ( var nMetaItr = 0; nMetaItr < sMetaArray.length; ++nMetaItr) {
 				// Special cases
 				sGenStrippedName = Mashups.genStripName(sMetaArray[nMetaItr]);
@@ -922,9 +924,8 @@ exports.commands = {
 
 					// Format-exclusive unique behaviours
 					if(!addOnFormat) continue;
-					// FIXME: Others
-					switch(toId(addOnFormat.name)) {
-						case Mashups.getCurrentGenName() + 'cap': // FIXME: Multi-gen support
+					switch(Mashups.genStripName(toId(addOnFormat.name))) {
+						case 'cap':
 						if (extractedUnbanArray) {
 							extractedUnbanArray[nExtractedUnbanCount++] = 'Crucibellite';
 							deltaUnbanArray[nDeltaUnbanCount++] = 'Crucibellite';

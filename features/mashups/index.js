@@ -53,8 +53,8 @@ var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = 
 
 var string_of_enum = exports.string_of_enum = function string_of_enum(eEnum,value) 
 {
-  for (var k in eEnum) if (eEnum[k] == value) return k;
-  return null;
+	for (var k in eEnum) if (eEnum[k] == value) return k;
+	return null;
 }
 
 //#region DEBUG
@@ -109,14 +109,14 @@ Object.freeze(tierDataArray);
 
 // This determines only if a format actually defines a tier, not what its basis tier is
 // E.g. [Gen 8] Underused will be UU, but [Gen 8] Mix and Mega is Undefined, not Ubers
-var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = function (sFormatName) {
+var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = function (sFormatName, nGen) {
 	sFormatName = toId(sFormatName);
 
 	var sLoopTierName;
 	for(nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
 		//if( Tier.AG === nTierItr ) continue; // Prevent AG form counting here
 
-		sLoopTierName = toId('gen8' + tierDataArray[nTierItr].name); // FIXME: Multi-gen support
+		sLoopTierName = toId(getGenName(nGen) + tierDataArray[nTierItr].name);
 		if(MASHUPS_DEBUG_ON) monitor(`DEBUG tier comparison: ${sLoopTierName} and ${sFormatName}`);
 		if(sLoopTierName !== sFormatName) continue;
 		// Found matching tier
@@ -145,8 +145,8 @@ var tierNameToId = exports.tierNameToId = function (sTierName) {
 	return Tier.Undefined;
 }
 
-var isFormatTierDefinition = exports.isFormatTierDefinition = function (sFormatName) {
-	return (Tier.Undefined !== determineFormatDefinitionTierId(sFormatName));
+var isFormatTierDefinition = exports.isFormatTierDefinition = function (sFormatName, nGen) {
+	return (Tier.Undefined !== determineFormatDefinitionTierId(sFormatName, nGen));
 }
 
 var isABannedInTierB = exports.isABannedInTierB = function(nCheckTier, nBasisTier) {
@@ -155,24 +155,34 @@ var isABannedInTierB = exports.isABannedInTierB = function(nCheckTier, nBasisTie
 
 // This actually tries to deduce a format's intrinsic tier (used for bases primarily)
 // E.g. [Gen 8] Mix and Mega is Ubers
-var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (formatDetails) {
+var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (formatDetails, nGen) {
 	if(!formatDetails || !formatDetails.name) {
 		//var e = new Error();
 		//console.log(e.stack);
-		//monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		if(MASHUPS_DEBUG_ON) monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
 		return Tier.Undefined;
 	}
 
 	var sFormatName = formatDetails.name;
 
+	// Initially check if the format itself is a tier-defining format
+	var nTierDefinedByFormat = determineFormatDefinitionTierId(sFormatName, nGen);
+	if(Tier.Undefined !== nTierDefinedByFormat) {
+		return nTierDefinedByFormat;
+	}
+
+	// Not a tier-defining format: use rules to determine tier
+
 	// Prevent misclassification of tier definition formats, which may include a higher tier format name in their rules before adding bans, etc
-	var nTierAsDefinitionFormat = determineFormatBasisTierId(sFormatName);
+	var nTierAsDefinitionFormat = determineFormatBasisTierId(sFormatName, nGen);
 	if(Tier.Undefined !== nTierAsDefinitionFormat) {
+		if(MASHUPS_DEBUG_ON) monitor(`Returning through nTierAsDefinitionFormat: ${nTierAsDefinitionFormat}.`);
 		return nTierAsDefinitionFormat;
 	}
 
 	// If a tier has no ruleset, we can only assume AG (maybe Undefined?)
 	if(!formatDetails.ruleset) {
+		if(MASHUPS_DEBUG_ON) monitor(`Returning AG due to undefined ruleset.`);
 		return Tier.AG;
 	}
 
@@ -180,23 +190,43 @@ var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (
 	var ruleset = formatDetails.ruleset;
 	var nRuleAsTier;
 	for(var nRuleItr=0; nRuleItr<formatDetails.ruleset.length; ++nRuleItr) {
-		nRuleAsTier = determineFormatDefinitionTierId(ruleset[nRuleItr]);
+		nRuleAsTier = determineFormatDefinitionTierId(ruleset[nRuleItr], nGen);
 		if(Tier.Undefined !== nRuleAsTier) {
 			return nRuleAsTier;
 		}
 	}
 
 	// If not relevant rules are found, we have to assume AG as a basis tier
+	if(MASHUPS_DEBUG_ON) monitor(`Returning AG due to lack of relevant rules.`);
 	return Tier.AG; // FIXME: Think about this, should it be Ubers?
 }
 
 var findTierFormatDetails = exports.findTierFormatDetails = function (nTierId, nGen=c_nCurrentGen) {
-	//monitor(`nTierId: ` + nTierId);
+	if(MASHUPS_DEBUG_ON) monitor(`nTierId: ` + nTierId);
 	var sTierName = tierDataArray[nTierId].name;
-	//monitor(`sTierName: ` + sTierName);
+	if(MASHUPS_DEBUG_ON) monitor(`sTierName: ` + sTierName);
 
 	// Extract rules if this tier has a format
-	return findFormatDetails('gen' + nGen.toString() + sTierName);
+	var sGenName = getGenName(nGen);
+	var bestMatchTier = findFormatDetails(sGenName + sTierName);
+	if(null !== bestMatchTier) return bestMatchTier;
+
+	// Otherwise search for a rough best match
+	if(nTierId < 0.5 * Tier.Count) {
+		for(var nTierItr=0; nTierItr<Tier.Count; ++nTierItr) {
+			bestMatchTier = findFormatDetails(sGenName + tierDataArray[nTierId].name);
+			if(null !== bestMatchTier) return bestMatchTier;
+		}
+	}
+	else {
+		for(var nTierItr=Tier.Count-1; nTierItr>=0; --nTierItr) {
+			bestMatchTier = findFormatDetails(sGenName + tierDataArray[nTierId].name);
+			if(null !== bestMatchTier) return bestMatchTier;
+		}
+	}
+
+	// Really can't find anything usable
+	return null;
 }
 
 //#endregion
