@@ -47,7 +47,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 7] AAA STABmons', '[Gen 7] STAAABmons', '[Gen 7] Tier Shift AAA', '[Gen 7] AAA Tier Shift'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] STABmons Mix and Mega', '[Gen 8] STAB n Mega', '[Gen 8] STAB and Mega'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
@@ -492,29 +492,29 @@ var tourAuthTypeIdealRatiosArray = exports.tourAuthTypeIdealRatiosArray = [
 ];
 Object.freeze(tourAuthTypeIdealRatiosArray);
 
-// Copied directly from the megathread tour lists; spacing is inconsistent there
-// https://www.smogon.com/forums/threads/om-mashup-megathread.3635904/#post-7802586
+// Copied directly from the megathread tour lists; spacing can be inconsistent there
+// Gen 8: https://www.smogon.com/forums/threads/om-mashup-megathread.3657159/#post-8299989
+// Gen 7: https://www.smogon.com/forums/threads/om-mashup-megathread.3635904/#post-7802586
 var officialTourNamesArray = exports.officialTourNamesArray = [
 	// OM Mashups​
-	['[Gen8] Pure Hackmons'],
-	// Mix and Mega Anything Goes (Not on main) 
-	['[Gen8] AAA Ubers'],
-	['[Gen8] CAAAmomons'],
+	['[Gen 8] Camomons BH', '[Gen 8] Camomons Balanced Hackmons'],
+	['[Gen 8] STABmons + Almost Any Ability', '[Gen 8] AAA STABmons', '[Gen 8] STAAABmons'],
+	['[Gen 8] Camomons + Almost Any Ability', '[Gen8] CAAAmomons'],
+	['[Gen 8] STABmons Mix and Mega', '[Gen 8] STAB n Mega', '[Gen 8] STAB and Mega'],
+	['[Gen 8] AAA Ubers'],
 	['[Gen 8] STABmons Ubers'],
-	['[Gen 8] AAA STABmons', '[Gen 8] STAAABmons'],
-	['[Gen 8] STAB n Mega', '[Gen 8] STAB and Mega'],
 
 	// Doubles Metagames​
-	['[Gen 8] Balanced Hackmons Doubles', '[Gen 8] Doubles Balanced Hackmons'],
-	['[Gen8] AAA Doubles'],
-	// Mix and Mega Doubles (Not on main)
-	['[Gen8] STABmons Doubles'],
+	['[Gen 8] Almost Any Ability Doubles', '[Gen8] AAA Doubles'],
+	['[Gen 8] Balanced Hackmons Doubles', '[Gen 8] Doubles Balanced Hackmons', '[Gen 8] BH Doubles'],
+	['[Gen 8] Camomons Doubles'],
+	['[Gen 8] STABmons Doubles'],
 
 	// Little Cup Metagames​
-	['[Gen 8] LC Balanced Hackmons'],
-	['[Gen8] Almost Any Ability LC'],
+	['[Gen 8] Almost Any Ability Little Cup', '[Gen8] Almost Any Ability LC'],
 	['[Gen 8] STABmons LC'],
-	['[Gen 8] Mix and Mega LC'],
+	['[Gen 8] Camomons Little Cup'],
+	['[Gen 8] Balanced Hackmons Little Cup', '[Gen 8] LC Balanced Hackmons'],
 ];
 Object.freeze(officialTourNamesArray);
 var officialTourNamesIdArray = exports.officialTourNamesIdArray = [];
