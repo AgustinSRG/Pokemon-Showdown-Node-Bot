@@ -47,7 +47,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] STABmons Mix and Mega', '[Gen 8] STAB n Mega', '[Gen 8] STAB and Mega'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] STABmons + Almost Any Ability', '[Gen 8] AAA STABmons', '[Gen 8] STAAABmons'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
