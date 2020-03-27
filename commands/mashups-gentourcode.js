@@ -373,24 +373,29 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 			}
 			break;
 		case 'stabmons':
-			if (formatDetails.restrictedMoves) {
-				if(params.useComplexBansForRestrictions) { // Create restrictions
-					for (nRuleItr = 0; nRuleItr < formatDetails.restrictedMoves.length; ++nRuleItr) {
-						sCurrentRule = formatDetails.restrictedMoves[nRuleItr];
-						TryAddRestriction(sCurrentRule, params);
-					}
-				}
-				else { // In a 'short' tour code, treat restricted moves as extra bans
-					for (nRuleItr = 0; nRuleItr < formatDetails.restrictedMoves.length; ++nRuleItr) {
-						sCurrentRule = formatDetails.restrictedMoves[nRuleItr];
-						TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
-					}
-				}
-			}
+			ExtractStabmonsRestricted(formatDetails.restrictedMoves, params, bTierCheck, nFormatBasisTier);
+			ExtractStabmonsRestricted(formatDetails.restricted, params, bTierCheck, nFormatBasisTier);
 			break;
 		// FIXME: Other special cases: Mix and Mega?
 	}
+}
 
+var ExtractStabmonsRestricted = function(restrictedArray, params, bTierCheck, nFormatBasisTier)
+{
+	if (!restrictedArray) return;
+
+	if(params.useComplexBansForRestrictions) { // Create restrictions
+		for (nRuleItr = 0; nRuleItr < restrictedArray.length; ++nRuleItr) {
+			sCurrentRule = restrictedArray[nRuleItr];
+			TryAddRestriction(sCurrentRule, params);
+		}
+	}
+	else { // In a 'short' tour code, treat restricted moves as extra bans
+		for (nRuleItr = 0; nRuleItr < restrictedArray.length; ++nRuleItr) {
+			sCurrentRule = restrictedArray[nRuleItr];
+			TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
+		}
+	}
 }
 
 //#region eCommandParam
