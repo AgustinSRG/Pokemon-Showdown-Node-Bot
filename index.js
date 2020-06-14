@@ -84,6 +84,21 @@ global.SecurityLog = require('./security-log.js');
 global.ActiveMashupRecipes = {};
 global.MashupRecipesStatic = {};
 
+/* Virtual Formats */
+
+global.VirtualFormats = {};
+
+var VirtualFormatDetailsArray = require('./features/mashups/virtual-formats.js').Formats;
+for (var nVFDItr=0; nVFDItr<VirtualFormatDetailsArray.length; ++nVFDItr) {
+	//monitor(`DEBUG vfloop: ${nVFDItr}`);
+	if( !VirtualFormatDetailsArray[nVFDItr] ) continue;
+	var vf = VirtualFormatDetailsArray[nVFDItr];
+	//monitor(`DEBUG vf: ${vf}`);
+	if( !vf.name ) continue;
+	//monitor(`DEBUG vf.name: ${vf.name}`);
+	VirtualFormats[toId(vf.name)] = {name: vf.name, team: false, ladder: false, chall: false};
+}
+
 /* Commands */
 
 if (!AppOptions.testmode) CommandParser.loadCommands();

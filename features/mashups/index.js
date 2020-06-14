@@ -47,7 +47,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] STABmons Ubers'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] Camomons Little Cup', '[Gen 8] Camomons LC'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
@@ -874,7 +874,7 @@ var doesPokemonLearnMove = exports.doesPokemonLearnMove = function(sPokemonName,
 
 //#region Format
 
-var getFormatKey = exports.getFormatKey = function (sFormatAlias) {
+var getFormatKey = exports.getFormatKey = function (sFormatAlias, bAllowVirtualFormats=false) {
 	sFormatAlias = toId(sFormatAlias);
 
 	// Special cases aliases
@@ -915,10 +915,20 @@ var getFormatKey = exports.getFormatKey = function (sFormatAlias) {
 		}
 	}
 
+	// Check in virtual formats if allowed
+	if(bAllowVirtualFormats) {
+		for (var formatKey in VirtualFormats) {
+			if(MASHUPS_DEBUG_ON) monitor(`DEBUG formatKey: ${formatKey}`);
+			if(sFormatAlias === formatKey) {
+				return formatKey;
+			}
+		}
+	}
+
 	return null;
 };
 
-var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName) {
+var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName, bAllowVirtualFormats=false) {
 	sSearchFormatName = toId(sSearchFormatName);
 
 	// Search all format details for match by name => id
