@@ -47,7 +47,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] Camomons Little Cup', '[Gen 8] Camomons LC'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] Almost Any Ability Ubers', '[Gen 8] AAA Ubers'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
