@@ -375,9 +375,11 @@ var hasOwnProperty = exports.hasOwnProperty = function (obj, prop) {
 var CustomCallbackNamesArray = exports.CustomCallbackNamesArray = [
 	'checkLearnset',
 	'onAfterMega',
+	'onBeforeSwitchIn',
 	'onBegin',
 	'onChangeSet',
 	'onModifyTemplate',
+	'onSwitchIn',
 	'onTeamPreview',
 	'onValidateSet',
 	'onValidateTeam',
@@ -501,7 +503,7 @@ var officialTourNamesArray = exports.officialTourNamesArray = [
 	['[Gen 8] STABmons + Almost Any Ability', '[Gen 8] AAA STABmons', '[Gen 8] STAAABmons'],
 	['[Gen 8] Camomons + Almost Any Ability', '[Gen8] CAAAmomons'],
 	['[Gen 8] STABmons Mix and Mega', '[Gen 8] STAB n Mega', '[Gen 8] STAB and Mega'],
-	['[Gen 8] AAA Ubers'],
+	['[Gen 8] Almost Any Ability Ubers', '[Gen 8] AAA Ubers'],
 	['[Gen 8] STABmons Ubers'],
 
 	// Doubles Metagames​
