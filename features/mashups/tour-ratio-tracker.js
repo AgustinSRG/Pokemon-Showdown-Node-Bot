@@ -22,20 +22,40 @@ exports.onTournamentEnd = function (room, data) {
 	// Determine tour type
 	var eAuthType = Mashups.MashupAuthType.Other;
 	var sIdentifiedDerivedFromTourName = '';
+	var bIsExactMatch = false;
 
 	// Prioritise spotlight if spotlight is official
 	if( Mashups.MashupAuthType.Other === eAuthType ) {
-		for (var nAliasItr=0; nAliasItr<Mashups.spotlightTourNameGenericIdArray.length; ++nAliasItr) {
-			//Bot.say(room, `spotlightTourNameGenericId: ${Mashups.spotlightTourNameGenericIdArray[nAliasItr]}`);
-			if( Mashups.spotlightTourNameGenericIdArray[nAliasItr] === sGenericFormatIdHardTiered ) {
+		for (var nAliasItr=0; nAliasItr<Mashups.spotlightTourNameArray.length; ++nAliasItr) {
+			//Bot.say(room, `spotlightTourNameGenericId: ${Mashups.spotlightTourNameArray[nAliasItr]}`);
+			if( Mashups.spotlightTourNameArray[nAliasItr] === sFormatId ) {
 				eAuthType = Mashups.MashupAuthType.Spotlight;
 				sIdentifiedDerivedFromTourName = Mashups.spotlightTourNameArray[nAliasItr];
+				bIsExactMatch = true;
+				break;
 			}
 		}
 	}
 
-	// Compare to list data
-	var sOfficialFormat;
+	// Compare to official list data (prioritise exact match check)
+	if( Mashups.MashupAuthType.Other === eAuthType ) {
+		if( Mashups.officialTourNamesArray ) {
+			for (var nOfficial=0; nOfficial<Mashups.officialTourNamesArray.length; ++nOfficial) {
+				for (var nAliasItr=0; nAliasItr<Mashups.officialTourNamesArray[nOfficial].length; ++nAliasItr) {
+					//Bot.say(room, `official: ${Mashups.officialTourNamesGenericIdArray[nOfficial][nAliasItr]}`);
+					if( Mashups.officialTourNamesArray[nOfficial][nAliasItr] === sFormatId ) {
+						eAuthType = Mashups.MashupAuthType.Official;
+						sIdentifiedDerivedFromTourName = Mashups.officialTourNamesArray[nOfficial][nAliasItr];
+						bIsExactMatch = true;
+						break;
+					}
+				}
+				if( Mashups.MashupAuthType.Other !== eAuthType ) break;
+			}
+		}
+	}
+
+	// Compare to official list data (fallback to generic match check)
 	if( Mashups.MashupAuthType.Other === eAuthType ) {
 		if( Mashups.officialTourNamesArray ) {
 			for (var nOfficial=0; nOfficial<Mashups.officialTourNamesArray.length; ++nOfficial) {
@@ -44,8 +64,10 @@ exports.onTournamentEnd = function (room, data) {
 					if( Mashups.officialTourNamesGenericIdArray[nOfficial][nAliasItr] === sGenericFormatId ) {
 						eAuthType = Mashups.MashupAuthType.Official;
 						sIdentifiedDerivedFromTourName = Mashups.officialTourNamesArray[nOfficial][nAliasItr];
+						break;
 					}
 				}
+				if( Mashups.MashupAuthType.Other !== eAuthType ) break;
 			}
 		}
 	}
@@ -73,7 +95,12 @@ exports.onTournamentEnd = function (room, data) {
 	var sAuthTypeName = Mashups.string_of_enum(Mashups.MashupAuthType, eAuthType);
 	var sDeterminationJustification = '';
 	if(Mashups.MashupAuthType.Other !== eAuthType) {
-		sDeterminationJustification += `Identified successfully ended tour as a derivative of ${sIdentifiedDerivedFromTourName}`;
+		if(bIsExactMatch) {
+			sDeterminationJustification += `Identified successfully ended tour as ${sIdentifiedDerivedFromTourName}`;
+		}
+		else {
+			sDeterminationJustification += `Identified successfully ended tour as a derivative of ${sIdentifiedDerivedFromTourName}`;
+		}
 	}
 	else {
 		sDeterminationJustification += `Could not identify successfully ended tour`;
