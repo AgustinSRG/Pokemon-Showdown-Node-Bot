@@ -93,3 +93,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.txt
+*.tour

@@ -18,6 +18,8 @@ var LearnsetsArray = exports.LearnsetsArray = require('./../../data/learnsets.js
 
 var TourRatioTracker = exports.TourRatioTracker = require('./tour-ratio-tracker.js');
 
+var TourCodeManager = exports.TourCodeManager = require('./tour-code-manager.js');
+
 // Save data
 const mashupsDataFile = AppOptions.data + 'mashups.json';
 
@@ -30,6 +32,14 @@ try {
 } catch (e) {
 	errlog(e.stack);
 	error("Could not import mashups data: " + sys.inspect(e));
+}
+
+// Tour code cache
+try {
+	TourCodeManager.refreshTourCodeCache();
+} catch (e) {
+	errlog(e.stack);
+	error("Could not initiate tour codes cache: " + sys.inspect(e));
 }
 
 var save = exports.save = function () {

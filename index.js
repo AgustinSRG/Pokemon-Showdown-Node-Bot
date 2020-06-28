@@ -6,6 +6,7 @@
 
 try {
 	require('sugar');
+	require('list-github-dir-content');
 
 	global.colors = require('colors');
 	global.sys = require('sys');
