@@ -53,9 +53,7 @@ var downloadFilePromise = exports.downloadFilePromise = function (url, file)
             function (s, err) {
                 info('url: ' + url);
                 info('dl completed');
-                bOfficialListDLCompleted = true;
                 if (s) {
-                    bOfficialListDLSucceeded = true;
                     return resolve(file);
                 }
                 error("Data download failed: " + file + "\n" + err.message);
