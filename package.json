@@ -47,6 +47,7 @@
   "dependencies": {
     "all": "0.0.0",
     "colors": "1.0.3",
+    "list-github-dir-content": "2.0.0",
     "promise.allsettled": "1.0.2",
     "sugar": "1.4.1",
     "websocket": "1.0.28"
