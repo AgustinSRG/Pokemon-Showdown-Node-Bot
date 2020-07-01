@@ -611,6 +611,10 @@ exports.commands = {
 		}
 		baseFormatDetails = Mashups.findFormatDetails(params.baseFormat);
 		if(Mashups.MASHUPS_DEBUG_ON) this.reply(`DEBUG baseFormatDetails: ${JSON.stringify(baseFormatDetails)}`);
+		if(null === baseFormatDetails) {
+			this.reply(`Could not find format details for ${params.baseFormat}! format.js may not be updated yet.`);
+			return;
+		}
 		nBaseGen = Mashups.determineFormatGen(baseFormatDetails);
 		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG nBaseGen: ${nBaseGen}`);
 		var nBaseFormatTierId = Mashups.determineFormatBasisTierId(baseFormatDetails, nBaseGen);

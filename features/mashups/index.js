@@ -213,6 +213,8 @@ var determineFormatBasisTierId = exports.determineFormatBasisTierId = function (
 
 var findTierFormatDetails = exports.findTierFormatDetails = function (nTierId, nGen=c_nCurrentGen) {
 	if(MASHUPS_DEBUG_ON) monitor(`nTierId: ` + nTierId);
+	if(nTierId < 0) return Tier.OU;
+
 	var sTierName = tierDataArray[nTierId].name;
 	if(MASHUPS_DEBUG_ON) monitor(`sTierName: ` + sTierName);
 
