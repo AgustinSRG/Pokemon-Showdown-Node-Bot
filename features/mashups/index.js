@@ -57,7 +57,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] Almost Any Ability Ubers', '[Gen 8] AAA Ubers', 'Gen 8 Almost Any Ability Ubers'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] Camomons + Almost Any Ability', '[Gen 8] CAAAmomons'];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
@@ -513,7 +513,7 @@ var officialTourNamesArray = exports.officialTourNamesArray = [
 	// OM Mashups​
 	['[Gen 8] Camomons BH', '[Gen 8] Camomons Balanced Hackmons'],
 	['[Gen 8] STABmons + Almost Any Ability', '[Gen 8] AAA STABmons', '[Gen 8] STAAABmons'],
-	['[Gen 8] Camomons + Almost Any Ability', '[Gen8] CAAAmomons'],
+	['[Gen 8] Camomons + Almost Any Ability', '[Gen 8] CAAAmomons'],
 	['[Gen 8] STABmons Mix and Mega', '[Gen 8] STAB n Mega', '[Gen 8] STAB and Mega'],
 	['[Gen 8] Almost Any Ability Ubers', '[Gen 8] AAA Ubers'],
 	['[Gen 8] STABmons Ubers'],
