@@ -390,7 +390,7 @@ var CustomCallbackNamesArray = exports.CustomCallbackNamesArray = [
 	'onBeforeSwitchIn',
 	'onBegin',
 	'onChangeSet',
-	'onModifyTemplate',
+	'onModifySpecies',
 	'onSwitchIn',
 	'onTeamPreview',
 	'onValidateSet',

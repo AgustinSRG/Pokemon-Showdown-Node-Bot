@@ -6,7 +6,7 @@ var datenow = Date.now();
 
 var data = exports.data = [
 	{
-		url: "https://play.pokemonshowdown.com/data/formats.js?" + datenow,
+		url: "https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/metadata/formats.js?" + datenow,
 		file: "formats.js"
 	},
 	{

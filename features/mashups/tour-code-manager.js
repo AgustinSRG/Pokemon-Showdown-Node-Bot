@@ -9,7 +9,7 @@ var DataDownloader = exports.DataDownloader = require('./../../data-downloader.j
 
 var allSettled = require('promise.allsettled');
 
-const TourCodesURLRoot = 'https://raw.githubusercontent.com/WeWuzNidokangz/OperationTourCode/master/';
+const TourCodesURLRoot = 'https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/';
 const OfficialPathExtension = 'official/';
 const OtherPathExtension = 'other/';
 const MetadataPathExtension = 'metadata/';

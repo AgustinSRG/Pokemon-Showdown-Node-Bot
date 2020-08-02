@@ -220,6 +220,17 @@ var TryAddRestriction = function(sCurrentRule, params)
 {
 	var bIgnoreRule = false;
 
+	// Ignore restrictions that are already in the base format
+	if(baseFormatDetails.restricted) {
+		for (nExistingRuleItr = 0; nExistingRuleItr < baseFormatDetails.restricted.length; ++nExistingRuleItr) {
+			if (baseFormatDetails.restricted[nExistingRuleItr] === sCurrentRule) {
+				bIgnoreRule = true;
+				break;
+			}
+			if (bIgnoreRule) return;
+		}
+	}
+
 	if (params.additionalRestrictions) { // Ignore restrictions that are redundant because they have already been added in params
 		for (nExistingRuleItr = 0; nExistingRuleItr < params.additionalRestrictions.length; ++nExistingRuleItr) {
 			if (params.additionalRestrictions[nExistingRuleItr] === sCurrentRule) {
@@ -239,6 +250,8 @@ var TryAddRestriction = function(sCurrentRule, params)
 		}
 		if (bIgnoreRule) return;
 	}
+
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG restriction survived culling: ${sCurrentRule}`);
 
 	// Add relevant restrictiom
 	extractedRestrictionArray[nExtractedRestrictionCount] = sCurrentRule;
@@ -360,23 +373,25 @@ var ExtractFormatRules = function(formatDetails, params, bTierCheck=false)
 		}
 	}
 
+	// 20/08/02 restrictions should work now
+	if (formatDetails.restricted) {
+		if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG restricted`);
+		for (nRuleItr = 0; nRuleItr < formatDetails.restricted.length; ++nRuleItr) {
+			sCurrentRule = formatDetails.restricted[nRuleItr];
+
+			TryAddRestriction(sCurrentRule, params);
+		}
+	}
+
 	// Special cases
 	var sGenericMetaName = Mashups.genericiseMetaName(formatDetails.name);
+	if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG sGenericMetaName: ${sGenericMetaName}`);
 	switch(sGenericMetaName) {
-		case 'almostanyability':
-			// For AAA, we can't restrict abilties properly due to tour code length limits, so treat restrictedAbilities as extra bans
-			if (formatDetails.restrictedAbilities) {
-				for (nRuleItr = 0; nRuleItr < formatDetails.restrictedAbilities.length; ++nRuleItr) {
-					sCurrentRule = formatDetails.restrictedAbilities[nRuleItr];
-					TryAddBan(sCurrentRule, params, nFormatBasisTier, bTierCheck);
-				}
-			}
-			break;
-		case 'stabmons':
+		// 20/08/02: New restrictions system
+		/*case 'stabmons':
 			ExtractStabmonsRestricted(formatDetails.restrictedMoves, params, bTierCheck, nFormatBasisTier);
 			ExtractStabmonsRestricted(formatDetails.restricted, params, bTierCheck, nFormatBasisTier);
-			break;
-		// FIXME: Other special cases: Mix and Mega?
+			break;*/
 	}
 }
 
@@ -384,7 +399,7 @@ var ExtractStabmonsRestricted = function(restrictedArray, params, bTierCheck, nF
 {
 	if (!restrictedArray) return;
 
-	if(params.useComplexBansForRestrictions) { // Create restrictions
+	if(params.useRestrictions) { // Create restrictions
 		for (nRuleItr = 0; nRuleItr < restrictedArray.length; ++nRuleItr) {
 			sCurrentRule = restrictedArray[nRuleItr];
 			TryAddRestriction(sCurrentRule, params);
@@ -404,7 +419,7 @@ var eCommandParam = {
 	'BaseFormat':0,
 	'AddOnFormats':1,
 	'LaunchTour':2,
-	'UseComplexBansForRestrictions':3,
+	'useRestrictions':3,
 	'AdditionalBans':4,
 	'AdditionalUnbans':5,
 	'AdditionalRules':6,
@@ -449,7 +464,7 @@ exports.commands = {
 			autodq: null,
 			type: 'elimination',
 			useCompression: true,
-			useComplexBansForRestrictions: false,
+			useRestrictions: true,
 		};
 		for (var i = 0; i < args.length; i++) {
 			args[i] = args[i].trim();
@@ -495,9 +510,9 @@ exports.commands = {
 
 				}
 				break;
-				case eCommandParam.UseComplexBansForRestrictions: {
+				case eCommandParam.useRestrictions: {
 					var sUseComplexBansString = args[i];
-					params.useComplexBansForRestrictions = 'true' === toId(sUseComplexBansString) ? true : false;
+					params.useRestrictions = 'true' === toId(sUseComplexBansString) ? true : false;
 				}
 				break;
 				case eCommandParam.AdditionalBans: { // additionalBans
@@ -603,6 +618,8 @@ exports.commands = {
 		nExtractedBanCount = 0;
 		extractedUnbanArray = [];
 		nExtractedUnbanCount = 0;
+		extractedRestrictionArray = [];
+		nExtractedRestrictionCount = 0;
 
 		// Determine format name and base format
 		var sFormatName = Formats[params.baseFormat].name;
@@ -1032,8 +1049,51 @@ exports.commands = {
 				nExtractedUnbanCount = extractedUnbanArray.length;
 			}
 
+			// Special cases
+			var sGenericMetaName = Mashups.genericiseMetaName(sFormatName);
+			if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG sGenericMetaName: ${sGenericMetaName}`);
+			switch(sGenericMetaName) {
+				case 'mixandmega': {
+						var restrictedArray = [];
+						if (baseFormatDetails.restricted) restrictedArray = restrictedArray.concat(baseFormatDetails.restricted);
+						if (params.additionalRestrictions) restrictedArray = restrictedArray.concat(params.additionalRestrictions);
+						if (extractedRestrictionArray) restrictedArray = restrictedArray.concat(extractedRestrictionArray);
+						if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG restrictedArray: ${restrictedArray.length}`);
+						var unrestrictedArray = [];
+						var unrestrictedCount = 0;
+						for (nRuleItr = 0; nRuleItr < restrictedArray.length; ++nRuleItr) {
+							var goAsPokemon = Mashups.getGameObjectAsPokemon(restrictedArray[nRuleItr]);
+							if (!goAsPokemon) continue;
+							if (extractedUnbanArray && extractedUnbanArray.includes(restrictedArray[nRuleItr]) ) {
+								unrestrictedArray[unrestrictedCount++] = restrictedArray[nRuleItr];
+							}
+							else if (params.additionalUnbans && params.additionalUnbans.includes(restrictedArray[nRuleItr]) ) {
+								unrestrictedArray[unrestrictedCount++] = restrictedArray[nRuleItr];
+							}
+						}
+						if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG unrestrictedCount: ${unrestrictedCount}`);
+						if (unrestrictedCount > 0) {
+							var megaStoneArray = [];
+							for (const itemValue of Object.values(Mashups.ItemsArray)) {
+								if (!itemValue) continue;
+								if (!itemValue.megaStone) continue;
+								megaStoneArray.push(itemValue.name);
+							}
+							if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG megaStoneArray: ${megaStoneArray}`);
+							var itemItr;
+							for (nRuleItr = 0; nRuleItr < unrestrictedArray.length; ++nRuleItr) {
+								for (itemItr = 0; itemItr < megaStoneArray.length; ++itemItr) {
+									extractedBanArray[nExtractedBanCount++] = unrestrictedArray[nRuleItr] + ' + ' + megaStoneArray[itemItr];
+								}
+							}
+						}
+					}
+					break;
+			}
+
+			// 20/08/02: New restrictions system
 			// Convert restrictions to complex bans
-			if(params.useComplexBansForRestrictions && (nExtractedRestrictionCount > 0) ) {
+			/*if(params.useRestrictions && (nExtractedRestrictionCount > 0) ) {
 				var pokedexKeys = Object.keys(Mashups.PokedexArray);
 				var nPokeItr;
 				var sPokeName;
@@ -1066,7 +1126,7 @@ exports.commands = {
 						}
 					}
 				}
-			}
+			}*/
 
 			// Generate warning list
 			var warningArray = [];
@@ -1132,7 +1192,7 @@ exports.commands = {
 				}
 			}
 
-			// Lock bans/unbans at this point and concatenate '+'/'-'
+			// Lock bans/unbans/restrictions at this point and concatenate '+'/'-'/'*'
 			if(extractedBanArray) { // Inherent bans
 				for (nRuleItr = 0; nRuleItr < extractedBanArray.length; ++nRuleItr) {
 					extractedBanArray[nRuleItr] = '-' + extractedBanArray[nRuleItr];
@@ -1153,6 +1213,16 @@ exports.commands = {
 					params.additionalUnbans[nRuleItr] = '+' + params.additionalUnbans[nRuleItr];
 				}
 			}
+			if(extractedRestrictionArray) { // Inherent restrictions
+				for (nRuleItr = 0; nRuleItr < extractedRestrictionArray.length; ++nRuleItr) {
+					extractedRestrictionArray[nRuleItr] = '*' + extractedRestrictionArray[nRuleItr];
+				}
+			}
+			if(params.additionalRestrictions) { // Added param restrictions
+				for (nRuleItr = 0; nRuleItr < params.additionalRestrictions.length; ++nRuleItr) {
+					params.additionalRestrictions[nRuleItr] = '*' + params.additionalRestrictions[nRuleItr];
+				}
+			}
 
 			// Construct final rules array from concatenated content
 			if (extractedRuleArray) { // Put inherent rules in first
@@ -1160,6 +1230,12 @@ exports.commands = {
 			}
 			if (params.additionalRules) { // Then added param rules
 				tourRulesArray = tourRulesArray.concat(params.additionalRules);
+			}
+			if(extractedRestrictionArray) { // Inherent restrictions
+				tourRulesArray = tourRulesArray.concat(extractedRestrictionArray);
+			}
+			if(params.additionalRestrictions) { // Added param restrictions
+				tourRulesArray = tourRulesArray.concat(params.additionalRestrictions);
 			}
 			if(extractedBanArray) { // Inherent bans
 				tourRulesArray = tourRulesArray.concat(extractedBanArray);
