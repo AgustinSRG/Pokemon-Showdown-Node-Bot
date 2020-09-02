@@ -99,6 +99,13 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function ()
                 }
             }
 
+            // Spotlight Names
+            var spotlightNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + SpotlightNamesFName).toString();
+            if( NotFoundErrorText !== spotlightNames ) {
+                SpotlightNamesArray = spotlightNames.split(',');
+            }
+            Mashups.setSpotlightTourNameArray(SpotlightNamesArray);
+
             // Others
             var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();
             var otherPromises = [];

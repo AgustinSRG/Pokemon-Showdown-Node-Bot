@@ -57,7 +57,7 @@ var tourMetaData = exports.tourMetaData = {};
 
 var completedTourAuthTypeArray = exports.completedTourAuthTypeArray = [];
 
-var spotlightTourNameArray = exports.spotlightTourNameArray = ['[Gen 8] Camomons + Almost Any Ability', '[Gen 8] CAAAmomons'];
+var spotlightTourNameArray = exports.spotlightTourNameArray = [];
 var spotlightTourNameIdArray = exports.spotlightTourNameIdArray = [];
 var spotlightTourNameGenericIdArray = exports.spotlightTourNameGenericIdArray = [];
 
@@ -658,14 +658,12 @@ var setSpotlightTourNameArray = exports.setSpotlightTourNameArray = function (sS
 		spotlightTourNameGenericIdArray[nAliasItr] = tourNameToAuthTypeGenericId(sSpotlightNameArray[nAliasItr], false);
 	}
 
-	Object.freeze(spotlightTourNameArray);
-	Object.freeze(spotlightTourNameIdArray);
-	Object.freeze(spotlightTourNameGenericIdArray);
+	// We can no longer freeze spotlightTourNameArray, etc because they can be dynamically updated from OperationTourCode
 
-	//for (var nAliasItr=0; nAliasItr<Mashups.spotlightTourNameGenericIdArray.length; ++nAliasItr) {
-	//console.log(`spotlightTourName: ${spotlightTourName}`);
-	//console.log(`spotlightTourNameId: ${spotlightTourNameId}`);
-	//console.log(`spotlightTourNameGenericId: ${spotlightTourNameGenericId}`);
+	//for (var nAliasItr=0; nAliasItr<spotlightTourNameGenericIdArray.length; ++nAliasItr) {
+	//console.log(`spotlightTourNameArray: ${spotlightTourNameArray}`);
+	//console.log(`spotlightTourNameIdArray: ${spotlightTourNameIdArray}`);
+	//console.log(`spotlightTourNameGenericIdArray: ${spotlightTourNameGenericIdArray}`);
 	//}
 };
 
@@ -964,8 +962,7 @@ var findFormatDetails = exports.findFormatDetails = function (sSearchFormatName,
 //#endregion
 
 exports.init = function () {
-	// Set up spotlight data
-	setSpotlightTourNameArray(spotlightTourNameArray);
+	// Spotlight name data is now set from OperationTourCode; see tour-code-manager.js
 
 	// Set up officials data
 	for (var nOfficial=0; nOfficial<officialTourNamesArray.length; ++nOfficial) {
