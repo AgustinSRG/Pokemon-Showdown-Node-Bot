@@ -198,8 +198,27 @@ var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
 
 var startTour = exports.startTour = function (sTourName)
 {
+    if('spotlight' === toId(sTourName)) {
+        // Spotlight special case: search for tour code name in SpotlightNamesArray
+        for(let name of SpotlightNamesArray) {
+            //console.log(name);
+            if(!AllTourCodesDictionary.hasOwnProperty(toId(name))) continue;
+            sTourName = toId(name);
+            break;
+        }
+    }
+
     if(!AllTourCodesDictionary.hasOwnProperty(sTourName)) {
-        return null;
+        // Try to automatically recognize current-gen tour names without the gen explicitly specified
+        if('gen' !== sTourName.substring(0, 3)) {
+            sTourName = Mashups.getCurrentGenName() + sTourName;
+            if(!AllTourCodesDictionary.hasOwnProperty(sTourName)) {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
     }
 
     return AllTourCodesDictionary[sTourName];

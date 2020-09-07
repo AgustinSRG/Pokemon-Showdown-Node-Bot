@@ -71,7 +71,12 @@ exports.commands = {
 
         var result = TourCodeManager.startTour(arg);
         if(!result) {
-            this.reply(`Could not find tour code data for format: ` + arg);
+            if('spotlight' === toId(sTourName)) {
+                this.reply(`Could not find tour code matching spotlight names metadata.`);
+            }
+            else {
+                this.reply(`Could not find tour code data for format: ` + arg);
+            }
             return;
         }
 
