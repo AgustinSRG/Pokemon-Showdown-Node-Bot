@@ -18,13 +18,13 @@
 			'param': 'Parameter',
 			'paramhelp': 'nicht gefunden, gelten parameter'
 		},
-		official: {
+		daily: {
 			'not': 'Listen ist nicht für die Raum aktiviert',
 			'notour': 'Es gibt kein Turnier in diesem Raum',
 			'already': 'Das Turnier war bereits offiziell',
 			'already-not': 'Das Turnier war bereits inoffizielle',
-			'official': 'Dieses Turnier ist jetzt offiziell und wird für den Bestenlisten zu zählen',
-			'unofficial': 'Dieses Turnier ist nicht mehr offizielle'
+			'daily': 'Dieses Turnier ist jetzt offiziell und wird für den Bestenlisten zu zählen',
+			'notdaily': 'Dieses Turnier ist nicht mehr offizielle'
 		},
 		leaderboard: {
 			'usage': 'Usage',

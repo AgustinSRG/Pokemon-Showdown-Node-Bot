@@ -18,13 +18,13 @@
 			'param': 'Parametro',
 			'paramhelp': 'non trovato, parametro valido sono'
 		},
-		official: {
+		daily: {
 			'not': 'Classifiche non è abilitato per la room',
 			'notour': 'Nessun torneo nella room',
 			'already': 'Il torneo era già ufficiale',
 			'already-not': 'Il torneo era già ufficioso',
-			'official': 'Questo torneo è ormai ufficiale e conterà per le classifiche',
-			'unofficial': 'Questo torneo non è ufficiale'
+			'daily': 'Questo torneo è ormai ufficiale e conterà per le classifiche',
+			'notdaily': 'Questo torneo non è ufficiale'
 		},
 		leaderboard: {
 			'usage': 'Usage',

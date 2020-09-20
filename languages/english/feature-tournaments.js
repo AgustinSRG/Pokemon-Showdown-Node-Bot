@@ -18,13 +18,13 @@ exports.translations = {
 			'param': 'Parameter',
 			'paramhelp': 'not found, valid parameter are'
 		},
-		official: {
+		daily: {
 			'not': 'Leaderboards are not enabled for room',
 			'notour': 'There is no tournament in this room',
-			'already': 'The tournament is already official',
-			'already-not': 'The tournament is already unofficial',
-			'official': 'This tournament is now official and will count for the leaderboards',
-			'unofficial': 'This tournament is no longer official'
+			'already': 'The tournament is already daily',
+			'already-not': 'The tournament is already notdaily',
+			'daily': 'This tournament is now daily and will count for the leaderboards',
+			'notdaily': 'This tournament is no longer daily'
 		},
 		leaderboard: {
 			'usage': 'Usage',

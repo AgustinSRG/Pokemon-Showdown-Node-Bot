@@ -46,7 +46,7 @@ var filterTier = exports.filterTier = function (tier, filter) {
 var getConfig = exports.getConfig = function (room) {
 	var res = {
 		tierFilter: null,
-		onlyOfficial: false,
+		onlyDaily: false,
 		winnerPoints: 5,
 		finalistPoints: 3,
 		semiFinalistPoints: 1,
@@ -58,13 +58,13 @@ var getConfig = exports.getConfig = function (room) {
 		res.semiFinalistPoints = parseInt(Config.leaderboards[room].semiFinalistPoints) || 0;
 		res.battlePoints = parseInt(Config.leaderboards[room].battlePoints) || 0;
 		res.tierFilter = Config.leaderboards[room].tierFilter;
-		res.onlyOfficial = Config.leaderboards[room].onlyOfficial || false;
+		res.onlyDaily = Config.leaderboards[room].onlyDaily || false;
 	} else if (Settings.settings.leaderboards && Settings.settings.leaderboards[room]) {
 		res.winnerPoints = parseInt(Settings.settings.leaderboards[room].winnerPoints) || 0;
 		res.finalistPoints = parseInt(Settings.settings.leaderboards[room].finalistPoints) || 0;
 		res.semiFinalistPoints = parseInt(Settings.settings.leaderboards[room].semiFinalistPoints) || 0;
 		res.battlePoints = parseInt(Settings.settings.leaderboards[room].battlePoints) || 0;
-		res.onlyOfficial = Settings.settings.leaderboards[room].onlyOfficial || false;
+		res.onlyDaily = Settings.settings.leaderboards[room].onlyDaily || false;
 	}
 	return res;
 };
@@ -230,10 +230,10 @@ var writeResults = exports.writeResults = function (room, results) {
 
 exports.onTournamentEnd = function (room, data) {
 	if (!isConfigured(room)) return;
-	if (!data.isOfficialTour) {
+	if (!data.isDailyTour) {
 		//debug(JSON.stringify(getConfig(room)));
-		if (getConfig(room).onlyOfficial) {
-			debug("Discarded tour because it is not official. Tier: " + data.format + " | Room: " + room);
+		if (getConfig(room).onlyDaily) {
+			debug("Discarded tour because it is not daily. Tier: " + data.format + " | Room: " + room);
 			return;
 		}
 		var filter = getConfig(room).tierFilter;

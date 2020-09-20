@@ -2,7 +2,7 @@
 	Tournaments Commands
 */
 
-Settings.addPermissions(['tournament', 'rank', 'official']);
+Settings.addPermissions(['tournament', 'rank', 'daily']);
 
 function tryGetRoomName (room) {
 	if (!Bot.rooms[room]) return room;
@@ -165,19 +165,19 @@ exports.commands = {
 		}.bind(this), 2500);
 	},
 
-	unofficial: 'official',
-	official: function (arg, by, room, cmd) {
-		if (!this.can("official")) return;
+	notdaily: 'daily',
+	daily: function (arg, by, room, cmd) {
+		if (!this.can("daily")) return;
 		if (!Features['tours'].Leaderboards.isConfigured(room)) return this.reply(this.trad('not') + " " + room);
 		if (!Features['tours'].tourData[room]) return this.reply(this.trad("notour"));
-		if (cmd === "unofficial") {
-			if (!Features['tours'].tourData[room].isOfficialTour) return this.reply(this.trad("already-not"));
-			Features['tours'].tourData[room].isOfficialTour = false;
-			this.reply(this.trad("unofficial"));
+		if (cmd === "notdaily") {
+			if (!Features['tours'].tourData[room].isDailyTour) return this.reply(this.trad("already-not"));
+			Features['tours'].tourData[room].isDailyTour = false;
+			this.reply(this.trad("notdaily"));
 		} else {
-			if (Features['tours'].tourData[room].isOfficialTour) return this.reply(this.trad("already"));
-			Features['tours'].tourData[room].isOfficialTour = true;
-			this.reply(this.trad("official"));
+			if (Features['tours'].tourData[room].isDailyTour) return this.reply(this.trad("already"));
+			Features['tours'].tourData[room].isDailyTour = true;
+			this.reply(this.trad("daily"));
 		}
 	},
 
@@ -264,12 +264,12 @@ exports.commands = {
 					this.reply("Room: " + tarRoom + " | ``config.js`` - static | " +
 							   "W: " + rConf.winnerPoints + ", F: " + rConf.finalistPoints +
 							   ", SF: " + rConf.semiFinalistPoints + ", B: " + rConf.battlePoints +
-							   (rConf.onlyOfficial ? " | Only official tours" : ""));
+							   (rConf.onlyDaily ? " | Only daily tours" : ""));
 				} else if (Settings.settings.leaderboards && Settings.settings.leaderboards[tarRoom]) {
 					this.reply("Room: " + tarRoom + " | " +
 							   "W: " + rConf.winnerPoints + ", F: " + rConf.finalistPoints +
 							   ", SF: " + rConf.semiFinalistPoints + ", B: " + rConf.battlePoints +
-							   (rConf.onlyOfficial ? " | Only official tours" : ""));
+							   (rConf.onlyDaily ? " | Only daily tours" : ""));
 				} else {
 					this.reply(this.trad('not') + " " + tarRoom);
 				}
@@ -277,8 +277,8 @@ exports.commands = {
 			case "setconfig":
 				if (!this.isExcepted) return false;
 				if (!Settings.settings.leaderboards) Settings.settings.leaderboards = {};
-				if (args.length < 2 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [official/all]");
-				if (args[6] && toId(args[6]) !== "official" && toId(args[6]) !== "all") return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [official/all]");
+				if (args.length < 2 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [daily/all]");
+				if (args[6] && toId(args[6]) !== "daily" && toId(args[6]) !== "all") return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [daily/all]");
 				tarRoom = toRoomid(args[0]);
 				var enabled = toId(args[1]);
 				var rConfAux = Features['tours'].Leaderboards.getConfig(tarRoom);
@@ -289,11 +289,11 @@ exports.commands = {
 					if (args[5]) rConfAux.battlePoints = parseInt(args[5]);
 					if (args[6]) {
 						switch (toId(args[6])) {
-							case "official":
-								rConfAux.onlyOfficial = true;
+							case "daily":
+								rConfAux.onlyDaily = true;
 								break;
 							case "all":
-								rConfAux.onlyOfficial = false;
+								rConfAux.onlyDaily = false;
 								break;
 						}
 					}
@@ -311,7 +311,7 @@ exports.commands = {
 						this.reply(this.trad('alrdisabled') + " " + tarRoom);
 					}
 				} else {
-					return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [official/all]");
+					return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [daily/all]");
 				}
 				break;
 			default:

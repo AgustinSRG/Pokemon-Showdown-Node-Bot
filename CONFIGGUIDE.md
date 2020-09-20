@@ -184,7 +184,7 @@ exports.leaderboards['tournaments'] = {
 	finalistPoints: 3,
 	semiFinalistPoints: 1,
 	battlePoints: 0,
-	onlyOfficial: true // If true, only official tours (must use .official command) will be counted
+	onlyDaily: true // If true, only daily tours (must use ?daily command) will be counted
 };
 ```
 
