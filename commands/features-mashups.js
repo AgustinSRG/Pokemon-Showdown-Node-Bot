@@ -71,7 +71,7 @@ exports.commands = {
 
         var result = TourCodeManager.startTour(arg);
         if(!result) {
-            if('spotlight' === toId(sTourName)) {
+            if(sTourName && ('spotlight' === toId(sTourName))) {
                 this.reply(`Could not find tour code matching spotlight names metadata.`);
             }
             else {
