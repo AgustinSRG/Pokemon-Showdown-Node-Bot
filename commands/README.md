@@ -215,6 +215,10 @@ Commands for leaderboards system
  - `leaderboards setconfig, [room], off` - Disable leaderboards system.
  - `leaderboards viewconfig, [room]` - View leaderboards configuration
  - `leaderboards reset, [room]` - Reset leaderboards data
+ (Mashups additional commands:-)
+ - `forceaddleaderboardwinner [user]` - Forcibly add a userboard win for [user]
+ - `forceaddleaderboardfinalist [user]` - Forcibly add a userboard finalist finish for [user]
+ - `forceaddleaderboardsemifinalist [user]` - Forcibly add a userboard semi-finalist finish for [user]
 
 Games
 ------------

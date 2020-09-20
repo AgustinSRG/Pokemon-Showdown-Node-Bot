@@ -44,7 +44,7 @@
 			'table': 'Tavolo classifiche',
 			'err': 'Errore caricamento di tabella classifiche per Hastebin',
 			'use': 'Utilizzare',
-			'confirm': 'per confermare resettare i dati leaderboars per room',
+			'confirm': 'per confermare resettare i dati leaderboards per room',
 			'invhash': 'Codice hash non valido',
 			'data': 'Dati leaderboard per la room',
 			'del': 'è stato resettato',

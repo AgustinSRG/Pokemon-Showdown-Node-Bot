@@ -16,6 +16,7 @@ exports.commands = {
 
 	tourstart: 'tourend',
 	tourend: function (arg, by, room, cmd) {
+		if (!this.isRanked(Tools.getGroup('driver'))) return false;
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
 		if (!Features['tours'].tourData[room]) return this.reply(this.trad('err'));
 		if (cmd === 'tourstart' && Features['tours'].tourData[room].isStarted) return this.reply(this.trad('err2'));
@@ -26,6 +27,7 @@ exports.commands = {
 	newtour: 'tournament',
 	tour: 'tournament',
 	tournament: function (arg, by, room, cmd) {
+		if (!this.isRanked(Tools.getGroup('driver'))) return false;
 		if (this.roomType !== 'chat' || !this.can('tournament')) return;
 		if (Features['tours'].tourData[room]) {
 			if (toId(arg) === 'end') return this.parse(this.cmdToken + 'tourend');
@@ -239,7 +241,7 @@ exports.commands = {
 				}.bind(this));
 				break;
 			case "reset":
-				if (!this.isExcepted) return false;
+				if (!this.isRanked(Tools.getGroup('moderator'))) return false;
 				if (args.length < 1 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
 				tarRoom = toRoomid(args[0]);
 				var code = Features['tours'].Leaderboards.getResetHashCode(tarRoom);
@@ -247,7 +249,7 @@ exports.commands = {
 				this.reply(this.trad('use') + " ``" + this.cmdToken + this.handler + " confirmreset, " + code + "`` " + this.trad('confirm') + " " + room);
 				break;
 			case "confirmreset":
-				if (!this.isExcepted) return false;
+				if (!this.isRanked(Tools.getGroup('moderator'))) return false;
 				if (args.length < 1 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [hashcode]");
 				var _code = args[0].trim();
 				var r =  Features['tours'].Leaderboards.execResetHashCode(_code);
@@ -256,7 +258,7 @@ exports.commands = {
 				this.reply(this.trad('data') + " __" + r + "__ " + this.trad('del'));
 				break;
 			case "viewconfig":
-				if (!this.isExcepted) return false;
+				if (!this.isRanked(Tools.getGroup('moderator'))) return false;
 				if (args.length < 1 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
 				tarRoom = toRoomid(args[0]);
 				var rConf = Features['tours'].Leaderboards.getConfig(tarRoom);
@@ -275,7 +277,7 @@ exports.commands = {
 				}
 				break;
 			case "setconfig":
-				if (!this.isExcepted) return false;
+				if (!this.isRanked(Tools.getGroup('moderator'))) return false;
 				if (!Settings.settings.leaderboards) Settings.settings.leaderboards = {};
 				if (args.length < 2 || !toId(args[0])) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [daily/all]");
 				if (args[6] && toId(args[6]) !== "daily" && toId(args[6]) !== "all") return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [on/off], [W], [F], [SF], [B], [daily/all]");
@@ -317,5 +319,23 @@ exports.commands = {
 			default:
 				this.restrictReply(this.trad('unknown') + ". " + this.trad('usage') + ": " + this.cmdToken + this.handler + " [rank/top/table/reset/setconfig/viewconfig]", "rank");
 		}
-	}
+	},
+
+	forceaddleaderboardwinner: function (arg, by, room, cmd) {
+		if (!this.isRanked(Tools.getGroup('moderator'))) return false;
+		if (!Features['tours'].Leaderboards.isConfigured(room)) return this.reply(this.trad('not') + " " + room);
+		Features['tours'].Leaderboards.forceAddLeaderboardWinner(room, arg);
+	},
+
+	forceaddleaderboardfinalist: function (arg, by, room, cmd) {
+		if (!this.isRanked(Tools.getGroup('moderator'))) return false;
+		if (!Features['tours'].Leaderboards.isConfigured(room)) return this.reply(this.trad('not') + " " + room);
+		Features['tours'].Leaderboards.forceAddLeaderboardFinalist(room, arg);
+	},
+
+	forceaddleaderboardsemifinalist: function (arg, by, room, cmd) {
+		if (!this.isRanked(Tools.getGroup('moderator'))) return false;
+		if (!Features['tours'].Leaderboards.isConfigured(room)) return this.reply(this.trad('not') + " " + room);
+		Features['tours'].Leaderboards.forceAddLeaderboardSemifinalist(room, arg);
+	},
 };

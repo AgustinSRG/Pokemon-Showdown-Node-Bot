@@ -46,7 +46,7 @@ exports.translations = {
 			'use': 'Usa',
 			'confirm': 'para confirmar el borrado de los datos de leaderboards en la sala',
 			'invhash': 'Código no válido',
-			'data': 'Datos del Leaderboars de la sala',
+			'data': 'Datos del Leaderboards de la sala',
 			'del': 'borrados',
 			'wasset': 'La configuracion del sistema de Leaderboards ha sido establecida para la sala',
 			'wasdisabled': 'La funcion Leaderboards ha sido desactivada para la sala',

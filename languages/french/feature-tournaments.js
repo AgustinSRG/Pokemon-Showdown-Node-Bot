@@ -44,7 +44,7 @@
 			'table': 'Table Leaderboards',
 			'err': 'Erreur téléchargement table classements à Hastebin',
 			'use': 'Utilisez',
-			'confirm': 'pour confirmer les données de leaderboars réinitialisés salle',
+			'confirm': 'pour confirmer les données de leaderboards réinitialisés salle',
 			'invhash': 'Code de hachage non valide',
 			'data': 'Données Leaderboard pour la salle',
 			'del': 'a été remis à zéro',

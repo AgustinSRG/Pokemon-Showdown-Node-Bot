@@ -221,11 +221,17 @@ var addUser = exports.addUser = function (room, user, type, auxData) {
 
 var writeResults = exports.writeResults = function (room, results) {
 	if (!results) return;
-	for (var i = 0; i < results.players.length; i++) addUser(room, results.players[i], 'A');
+	if (results.players) {
+		for (var i = 0; i < results.players.length; i++) addUser(room, results.players[i], 'A');
+	}
 	if (results.winner) addUser(room, results.winner, 'W');
 	if (results.finalist) addUser(room, results.finalist, 'F');
-	for (var i = 0; i < results.semiFinalists.length; i++) addUser(room, results.semiFinalists[i], 'S');
-	for (var user in results.general) addUser(room, user, 'B', results.general[user]);
+	if (results.semiFinalists) {
+		for (var i = 0; i < results.semiFinalists.length; i++) addUser(room, results.semiFinalists[i], 'S');
+	}
+	if (results.general) {
+		for (var user in results.general) addUser(room, user, 'B', results.general[user]);
+	}
 };
 
 exports.onTournamentEnd = function (room, data) {
@@ -257,6 +263,41 @@ exports.onTournamentEnd = function (room, data) {
 		Bot.say(room, "Leaderboard updated but could not generate results table.");
 	}
 	debug("Leaderboard updated. " + Tools.getDateString());
+};
+
+var refreshLeaderboardResults = exports.refreshLeaderboardResults = function (room, results) {
+	if (!results) return;
+	debug("Updating leaderboard...");
+	writeResults(room, results);
+	save();
+	// 20/09/20: Make bot print out results when leaderboard is updated
+	var sTable = getTable(room, 50);
+	if(sTable) {
+		Bot.say(room, "!code " + sTable);
+	}
+	else {
+		Bot.say(room, "Leaderboard updated but could not generate results table.");
+	}
+	debug("Leaderboard updated. " + Tools.getDateString());
+};
+
+var forceAddLeaderboardWinner = exports.forceAddLeaderboardWinner = function (room, username) {
+	var results = {};
+	results.winner = username;
+	refreshLeaderboardResults(room, results)
+};
+
+var forceAddLeaderboardFinalist = exports.forceAddLeaderboardFinalist = function (room, username) {
+	var results = {};
+	results.finalist = username;
+	refreshLeaderboardResults(room, results)
+};
+
+var forceAddLeaderboardSemifinalist = exports.forceAddLeaderboardSemifinalist = function (room, username) {
+	var results = {};
+	results.semiFinalists = [];
+	results.semiFinalists.push(username);
+	refreshLeaderboardResults(room, results)
 };
 
 var resetCodes = exports.resetCodes = {};
