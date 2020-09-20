@@ -329,7 +329,16 @@ exports.leaderboards['tournaments'] = {
 	battlePoints: 0,
 	onlyOfficial: true // If true, only official tours (must use .official command) will be counted
 };
-*/
+
+/* Mashups Daily Leaderboard:-*/
+
+exports.leaderboards['ommashups'] = {
+	winnerPoints: 3,
+	finalistPoints: 2,
+	semiFinalistPoints: 1,
+	battlePoints: 0,
+	onlyOfficial: true // If true, only official tours (must use ?official command) will be counted
+};
 
 /*
 * Youtube

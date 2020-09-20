@@ -248,6 +248,14 @@ exports.onTournamentEnd = function (room, data) {
 	debug("Updating leaderboard...");
 	writeResults(room, results);
 	save();
+	// 20/09/20: Make bot print out results when leaderboard is updated
+	var sTable = getTable(room, 50);
+	if(sTable) {
+		Bot.say(room, "!code " + sTable);
+	}
+	else {
+		Bot.say(room, "Leaderboard updated but could not generate results table.");
+	}
 	debug("Leaderboard updated. " + Tools.getDateString());
 };
 
