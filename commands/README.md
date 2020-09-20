@@ -207,15 +207,15 @@ Commands for leaderboards system
 
  - `rank (user)` - View users's ranking (points, wins, finals, semifinals, etc)
  - `top` - View the Top5 in the leaderboard
- - `official` - Make a tournament in progress official (to be counted, see config)
+ - `daily` - Make a tournament in progress daily (to be counted, see config)
  - `notdaily` - Make a tournament in progress notdaily
  - `leaderboards table, [room]` - Upload the leaderboard table to Hastebin
  - `leaderboards reset, [room]` - Reset leaderboards data
- - `leaderboards setconfig, [room], on, [Win points], [Finalist], [SemiFinalist], [Battle win points], [official/all]` - Activate and set leaderboards configuration
+ - `leaderboards setconfig, [room], on, [Win points], [Finalist], [SemiFinalist], [Battle win points], [daily/all]` - Activate and set leaderboards configuration
  - `leaderboards setconfig, [room], off` - Disable leaderboards system.
  - `leaderboards viewconfig, [room]` - View leaderboards configuration
  - `leaderboards reset, [room]` - Reset leaderboards data
- (Mashups additional commands:-)
+ - Mashups additional commands:-
  - `forceaddleaderboardwinner [user]` - Forcibly add a userboard win for [user]
  - `forceaddleaderboardfinalist [user]` - Forcibly add a userboard finalist finish for [user]
  - `forceaddleaderboardsemifinalist [user]` - Forcibly add a userboard semi-finalist finish for [user]
