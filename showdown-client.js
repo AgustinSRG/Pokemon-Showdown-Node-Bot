@@ -560,7 +560,8 @@ var Client = (function () {
 	Client.prototype.startConnectionTimeOut = function () {
 		var self = this;
 		this.stopConnectionTimeOut();
-		this.connectionTimeOutInterval = setInterval(function () {
+		// 20/09/26: Disable autodq (seems pointless and conflicts with how features like tournaments work)
+		/*this.connectionTimeOutInterval = setInterval(function () {
 			if (self.status.connected && self.lastMessage) {
 				var t = Date.now();
 				if (t - self.lastMessage > self.opts.connectionTimeout) {
@@ -568,7 +569,7 @@ var Client = (function () {
 					self.softDisconnect();
 				}
 			}
-		}, self.opts.connectionTimeout);
+		}, self.opts.connectionTimeout);*/
 	};
 
 	Client.prototype.stopConnectionTimeOut = function () {
