@@ -65,7 +65,7 @@ var downloadFilePromise = exports.downloadFilePromise = function (url, file)
     return promise;
 }
 
-var refreshTourCodeCache = exports.refreshTourCodeCache = async function ()
+var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
 {
     const listPromises = [
         downloadFilePromise(
@@ -160,6 +160,12 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function ()
                         }
                         AllTourCodesDictionary[OtherTourCodesNamesArray[nItr]] = sFileContent;
                     }
+
+                    // Test output
+                    if (room) {
+                        var sNames = nameCachedTourCodes();
+                        Bot.say(room, '!code Completed refresh.\n\n' + sNames);
+                    }
                 }
             );
 
@@ -180,9 +186,9 @@ var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
         sOutput += OfficialTourCodesNamesArray[nItr];
         bFirstLoop = false;
     }
-    
-    sOutput += '\n';
-    sOutput += 'Others:    ';
+
+    sOutput += '\n\n';
+    sOutput += 'Others: ';
     bFirstLoop = true;
     for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
         if(!(OtherTourCodesNamesArray[nItr] in AllTourCodesDictionary)) continue;
@@ -190,6 +196,17 @@ var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
             sOutput += ', ';
         }
         sOutput += OtherTourCodesNamesArray[nItr];
+        bFirstLoop = false;
+    }
+
+    sOutput += '\n\n';
+    sOutput += 'Spotlight names: ';
+    bFirstLoop = true;
+    for( var nItr=0; nItr<SpotlightNamesArray.length; ++nItr ) {
+        if(!bFirstLoop) {
+            sOutput += ', ';
+        }
+        sOutput += SpotlightNamesArray[nItr];
         bFirstLoop = false;
     }
     

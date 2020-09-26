@@ -57,7 +57,8 @@ exports.commands = {
 	refreshtourcodes: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
-        TourCodeManager.refreshTourCodeCache();
+        TourCodeManager.refreshTourCodeCache(room);
+        this.reply(`Attempting to refresh tour code cache...`);
     },
     checktourcodes: 'checkcachedtourcodes',
 	checkcachedtourcodes: function (arg, user, room, cmd) {
