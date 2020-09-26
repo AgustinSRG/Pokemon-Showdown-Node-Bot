@@ -6,7 +6,7 @@ exports.translations = {
 		tourhelp: {'h': 'tour (format), (seconds to start or off), (minutes autodq or off), (max Users or off), (elimination or roundrobin). All arguments are optional.'},
 		tourend: {'err': 'There is not a tournament in this room', 'err2': 'Error: Tournament has already started'},
 		tournament: {
-			'e1': 'requires moderator rank (@) or higher to create tornaments',
+			'e1': 'requires moderator rank (@) or higher to create tournaments',
 			'e2': 'There is already a tournament in this room',
 			'e31': 'Format',
 			'e32': 'is not valid for tournaments',
@@ -21,10 +21,10 @@ exports.translations = {
 		daily: {
 			'not': 'Leaderboards are not enabled for room',
 			'notour': 'There is no tournament in this room',
-			'already': 'The tournament is already daily',
-			'already-not': 'The tournament is already notdaily',
-			'daily': 'This tournament is now daily and will count for the leaderboards',
-			'notdaily': 'This tournament is no longer daily'
+			'already': 'Already in Daily Mode',
+			'already-not': 'Daily Mode is already off',
+			'daily': 'Now in Daily Mode: tournaments will count for the Daily leaderboard',
+			'notdaily': 'No longer in Daily Mode: tournaments will not count for the Daily leaderboard'
 		},
 		leaderboard: {
 			'usage': 'Usage',
@@ -47,7 +47,7 @@ exports.translations = {
 			'confirm': 'to confirm the leaderboards data reset for room',
 			'invhash': 'Invalid hashcode',
 			'data': 'Leaderboards data for room',
-			'del': 'was resetted',
+			'del': 'was reset',
 			'wasset': 'Leaderboards configuration was set for room',
 			'wasdisabled': 'Leaderboards was disabled for room',
 			'alrdisabled': 'Leaderboards is already disabled for room',

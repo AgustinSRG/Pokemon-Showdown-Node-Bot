@@ -2,6 +2,8 @@
 	Tournaments Commands
 */
 
+var Tournaments = exports.Tournaments = require('./../features/tournaments/index.js');
+
 Settings.addPermissions(['tournament', 'rank', 'daily']);
 
 function tryGetRoomName (room) {
@@ -171,14 +173,13 @@ exports.commands = {
 	daily: function (arg, by, room, cmd) {
 		if (!this.can("daily")) return;
 		if (!Features['tours'].Leaderboards.isConfigured(room)) return this.reply(this.trad('not') + " " + room);
-		if (!Features['tours'].tourData[room]) return this.reply(this.trad("notour"));
 		if (cmd === "notdaily") {
-			if (!Features['tours'].tourData[room].isDailyTour) return this.reply(this.trad("already-not"));
-			Features['tours'].tourData[room].isDailyTour = false;
+			if (!Tournaments.getDailyMode()) return this.reply(this.trad("already-not"));
+			Tournaments.setDailyMode(false);
 			this.reply(this.trad("notdaily"));
 		} else {
-			if (Features['tours'].tourData[room].isDailyTour) return this.reply(this.trad("already"));
-			Features['tours'].tourData[room].isDailyTour = true;
+			if (Tournaments.getDailyMode()) return this.reply(this.trad("already"));
+			Tournaments.setDailyMode(true);
 			this.reply(this.trad("daily"));
 		}
 	},

@@ -2,6 +2,8 @@
 * Tournaments points system
 */
 
+var Tournaments = exports.Tournaments = require('./index.js');
+
 const toursDataFile = AppOptions.data + 'leaderboards.json';
 
 var toursFFM = exports.toursFFM = new Settings.FlatFileManager(toursDataFile);
@@ -236,7 +238,7 @@ var writeResults = exports.writeResults = function (room, results) {
 
 exports.onTournamentEnd = function (room, data) {
 	if (!isConfigured(room)) return;
-	if (!data.isDailyTour) {
+	if (!Tournaments.getDailyMode()) {
 		//debug(JSON.stringify(getConfig(room)));
 		if (getConfig(room).onlyDaily) {
 			debug("Discarded tour because it is not daily. Tier: " + data.format + " | Room: " + room);
@@ -250,19 +252,7 @@ exports.onTournamentEnd = function (room, data) {
 	}
 	var results = parseTournamentResults(data);
 	//console.log(JSON.stringify(results));
-	if (!results) return;
-	debug("Updating leaderboard...");
-	writeResults(room, results);
-	save();
-	// 20/09/20: Make bot print out results when leaderboard is updated
-	var sTable = getTable(room, 50);
-	if(sTable) {
-		Bot.say(room, "!code " + sTable);
-	}
-	else {
-		Bot.say(room, "Leaderboard updated but could not generate results table.");
-	}
-	debug("Leaderboard updated. " + Tools.getDateString());
+	refreshLeaderboardResults(room, results);
 };
 
 var refreshLeaderboardResults = exports.refreshLeaderboardResults = function (room, results) {

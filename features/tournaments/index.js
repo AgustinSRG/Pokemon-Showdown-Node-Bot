@@ -10,6 +10,63 @@ var tourData = exports.tourData = {};
 
 var Leaderboards = exports.Leaderboards = require('./leaderboards.js');
 
+// Save data (only supports single room properly)
+const tournamentsDataFile = AppOptions.data + 'tournaments.json';
+const inDailyModeDataItem = 'inDailyMode';
+
+var tournamentsFFM = exports.tournamentsFFM = new Settings.FlatFileManager(tournamentsDataFile);
+
+var tournamentsSavedData = exports.tournamentsSavedData = {};
+
+try {
+	tournamentsSavedData = exports.tournamentsSavedData = tournamentsFFM.readObj();
+} catch (e) {
+	errlog(e.stack);
+	error("Could not import tournaments data: " + sys.inspect(e));
+}
+
+var save = exports.save = function () {
+	if (!tournamentsSavedData[inDailyModeDataItem]) {
+		tournamentsSavedData[inDailyModeDataItem] = false;
+	}
+
+	tournamentsFFM.writeObj(tournamentsSavedData);
+};
+
+var loadSaveData = exports.loadSaveData = function () {
+	if (!tournamentsSavedData[inDailyModeDataItem]) {
+		tournamentsSavedData[inDailyModeDataItem] = false;
+	}
+};
+
+var setDailyMode = exports.setDailyMode = function (bIsDailyMode) {
+	loadSaveData();
+	tournamentsSavedData[inDailyModeDataItem] = bIsDailyMode;
+	save();
+};
+
+var getDailyMode = exports.getDailyMode = function () {
+	loadSaveData();
+	return tournamentsSavedData[inDailyModeDataItem];
+};
+
+// Daily warning (only supports single room properly)
+const dailyWarningMinInterval = 30 * 1000;
+
+var lastDailyWarningTime = 0;
+
+var requestDailyWarning = exports.requestDailyWarning = function (room) {
+	var t = Date.now();
+
+	//debug("t: " + t.toString());
+	//debug("lastDailyWarningTime: " + lastDailyWarningTime.toString());
+
+	if ( (t - lastDailyWarningTime) > dailyWarningMinInterval) {
+		Bot.say(room, "Currently in Daily Mode. Use ?notdaily to disable if this is unintended.");
+		lastDailyWarningTime = t;
+	}
+}
+
 var Tournament = exports.Tournament = (function () {
 	function Tournament (room, details) {
 		this.format = details.format || 'randombattle';
@@ -74,6 +131,12 @@ exports.init = function () {
 
 exports.parse = function (room, message, isIntro, spl) {
 	if (spl[0] !== 'tournament') return;
+	switch (spl[1]) { // Daily left on warning
+		case 'create':
+			if (!getDailyMode()) break;
+			requestDailyWarning(room);
+			break;
+	}
 	if (isIntro) return;
 	if (!tourData[room]) tourData[room] = {};
 	switch (spl[1]) {
