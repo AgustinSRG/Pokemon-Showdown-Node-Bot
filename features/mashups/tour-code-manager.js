@@ -122,7 +122,7 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             }
             DailyRawContent = fs.readFileSync(sDailyRawContentFName).toString();
             exports.DailyRawContent = DailyRawContent; // Reassignment necessary due to being reference type(?)
-            console.log('DailyRawContent: ' + DailyRawContent);
+            //console.log('DailyRawContent: ' + DailyRawContent);
 
             // Others
             var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();

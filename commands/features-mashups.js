@@ -97,7 +97,7 @@ exports.commands = {
             splitArray = sDayContent.split(':');
             sTimeSlot = splitArray[0];
             if(splitArray.length > 1) {
-                sFormatGroup = splitArray[1].replace(/ +(?= )/g,'');
+                sFormatGroup = splitArray[1].trim();
                 if('spotlight' === toId(sFormatGroup)) {
                     sFormatGroup = `Spotlight (${TourCodeManager.SpotlightNamesArray[0]})`;
                 }
@@ -114,7 +114,7 @@ exports.commands = {
                 sFormatGroup = '';
             }
             timeSplitArray = sDayContent.split(',');
-            sDay = timeSplitArray[0].replace(/ +(?= )/g,'');
+            sDay = timeSplitArray[0].trim();
             if(timeSplitArray.length > 1) {
                 dHour = TourCodeManager.parseTime(timeSplitArray[1]);
             }
@@ -158,26 +158,27 @@ exports.commands = {
             nHours = nHours-(nDays*24);
             nMinutes = nMinutes-(nDays*24*60)-(nHours*60);
 
-            sOutput += `Next daily: <b>${dayDictionary[sSoonestDailyKey].formatgroup}</b> in `;
+            sOutput += `!code Next daily: ${dayDictionary[sSoonestDailyKey].formatgroup} in `;
             if(nHours > 0) {
                 sOutput += `${nHours} hours, `;
             }
             sOutput += `${nMinutes} minutes.`;
         }
 
-        sOutput += '<br><br>This is the OM Mashups daily tour schedule:-';
-        sOutput += '<br><div class="infobox">';
+        sOutput += '\n\nThis is the OM Mashups daily tour schedule:-\n';
+        //sOutput += '<br><div class="infobox">';
         var bFirstLoop = true;
         for (let key in dayDictionary) {
             //console.log(key + ' is ' + dayDictionary[key]);
             if(!bFirstLoop) {
-                sOutput += '<br>';
+                sOutput += '\n';
             }
-            sOutput += `${key}: ${dayDictionary[key].formatgroup}`;
+            sOutput += key+': '+dayDictionary[key].formatgroup;
             bFirstLoop = false;
         }
-        sOutput += '</div>';
+        //sOutput += '</div>';
 
-        this.reply('/addhtmlbox ' + sOutput);
+        //this.reply('/addhtmlbox ' + sOutput);
+        this.reply(sOutput);
     }
 };
