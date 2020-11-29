@@ -15,11 +15,13 @@ const OtherPathExtension = 'other/';
 const MetadataPathExtension = 'metadata/';
 const ListFName = 'list.txt';
 const SpotlightNamesFName = 'spotlightnames.txt';
+const DailyRawContentFName = 'dailyschedule.txt';
 const TourExt = '.tour';
 
 const MashupsURLRoot = TourCodesURLRoot + 'mashups/';
 const MashupsMetadataURLRoot = MashupsURLRoot + MetadataPathExtension;
 const SpotlightNamesURL = MashupsMetadataURLRoot + SpotlightNamesFName;
+const DailyRawContentURL = MashupsMetadataURLRoot + DailyRawContentFName;
 const OfficialURLRoot = MashupsURLRoot + OfficialPathExtension;
 const OfficialMetadataURLRoot = OfficialURLRoot + MetadataPathExtension;
 const OfficialListURL = OfficialMetadataURLRoot + ListFName;
@@ -43,6 +45,8 @@ var AllTourCodesNamesArray = exports.AllTourCodesNamesArray = [];
 var AllTourCodesDictionary = exports.AllTourCodesDictionary = {};
 
 var SpotlightNamesArray = exports.SpotlightNamesArray = [];
+
+var DailyRawContent = exports.DailyRawContent = 'Uninit';
 
 var downloadFilePromise = exports.downloadFilePromise = function (url, file)
 {
@@ -77,6 +81,9 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
         downloadFilePromise(
             SpotlightNamesURL,
             LocalOTCMetadataPath + SpotlightNamesFName),
+        downloadFilePromise(
+            DailyRawContentURL,
+            LocalOTCMetadataPath + DailyRawContentFName),
     ];
 
     allSettled(listPromises).
@@ -103,8 +110,19 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             var spotlightNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + SpotlightNamesFName).toString();
             if( NotFoundErrorText !== spotlightNames ) {
                 SpotlightNamesArray = spotlightNames.split(',');
+                exports.SpotlightNamesArray = SpotlightNamesArray;
             }
             Mashups.setSpotlightTourNameArray(SpotlightNamesArray);
+
+            // Daily Content
+            var sDailyRawContentFName = './data/' + LocalOTCMetadataPath + DailyRawContentFName;
+            var bExists = fs.existsSync(sDailyRawContentFName);
+            if(!bExists) {
+                console.log('Daily content missing: ' + sDailyRawContentFName);
+            }
+            DailyRawContent = fs.readFileSync(sDailyRawContentFName).toString();
+            exports.DailyRawContent = DailyRawContent; // Reassignment necessary due to being reference type(?)
+            console.log('DailyRawContent: ' + DailyRawContent);
 
             // Others
             var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();
@@ -239,4 +257,56 @@ var startTour = exports.startTour = function (sTourName)
     }
 
     return AllTourCodesDictionary[sTourName];
+}
+
+var parseTime = exports.parseTime = function (timeString) {	
+	if (timeString == '') return null;
+	
+	var time = timeString.match(/(\d+)(:(\d\d))?\s*(p?)/i);	
+	if (time == null) return null;
+	
+	var hours = parseInt(time[1],10);	 
+	if (hours == 12 && !time[4]) {
+		  hours = 0;
+	}
+	else {
+		hours += (hours < 12 && time[4])? 12 : 0;
+	}	
+	var d = new Date();    	    	
+	d.setHours(hours);
+	d.setMinutes(parseInt(time[3],10) || 0);
+	d.setSeconds(0, 0);	 
+	return d;
+}
+
+var parseDay = exports.parseDay = function (sDayString) {
+	if (sDayString == '') return -1;
+    
+    var nDay = -1;
+    switch(sDayString) {
+        case 'Sunday': nDay = 0; break;
+        case 'Monday': nDay = 1; break;
+        case 'Tuesday': nDay = 2; break;
+        case 'Wednesday': nDay = 3; break;
+        case 'Thursday': nDay = 4; break;
+        case 'Friday': nDay = 5; break;
+        case 'Saturday': nDay = 6; break;
+    }
+    return nDay;
+}
+
+var addDays = exports.addDays = function (dDate, nDeltaDays) {
+    var result = new Date(dDate);
+    result.setDate(result.getDate() + nDeltaDays);
+    return result;
+}
+
+var convertDateToUTC = exports.convertDateToUTC = function (dDate) {
+    return new Date(
+        dDate.getUTCFullYear(),
+        dDate.getUTCMonth(),
+        dDate.getUTCDate(),
+        dDate.getUTCHours(),
+        dDate.getUTCMinutes(),
+        dDate.getUTCSeconds());
 }

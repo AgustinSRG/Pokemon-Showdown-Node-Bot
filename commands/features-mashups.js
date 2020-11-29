@@ -48,7 +48,7 @@ exports.commands = {
     },
     analysetours: 'analysetourratio',
 	analysetourratio: function (arg, user, room, cmd) {
-        if (!this.isRanked(Tools.getGroup('driver'))) return false;
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
 
         var sAnalysisStatement = Mashups.analyseTourAuthTypeCountStatement();
 	    if (sAnalysisStatement) Bot.say(room, sAnalysisStatement);
@@ -62,7 +62,7 @@ exports.commands = {
     },
     checktourcodes: 'checkcachedtourcodes',
 	checkcachedtourcodes: function (arg, user, room, cmd) {
-        if (!this.isRanked(Tools.getGroup('driver'))) return false;
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
 
         var sNames = TourCodeManager.nameCachedTourCodes();
         this.reply('!code ' + sNames);
@@ -82,5 +82,102 @@ exports.commands = {
         }
 
         this.reply(result);
+    },
+    schedule: 'dailyschedule',
+    dailyschedule: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
+
+        var sDailyRawContent = TourCodeManager.DailyRawContent;
+        var rawContentPerDayArray = sDailyRawContent.split('\n');
+        var dayDictionary = {};
+        var splitArray, timeSplitArray, sTimeSlot, sDay, dHour, dTime, nDay, sFormatGroup;
+        for(let sDayContent of rawContentPerDayArray) {
+            sDayContent = sDayContent.replace(/ +(?= )/g,''); // Ensure the line of text is single-spaced
+            //console.log(sDayContent);
+            splitArray = sDayContent.split(':');
+            sTimeSlot = splitArray[0];
+            if(splitArray.length > 1) {
+                sFormatGroup = splitArray[1].replace(/ +(?= )/g,'');
+                if('spotlight' === toId(sFormatGroup)) {
+                    sFormatGroup = `Spotlight (${TourCodeManager.SpotlightNamesArray[0]})`;
+                }
+                else {
+                    for(let name of TourCodeManager.SpotlightNamesArray) {
+                        //console.log(name);
+                        if(toId(sFormatGroup) !== toId(name)) continue;
+                        sFormatGroup = `Free (would be ${name} if it wasn't spotlight)`;
+                        break;
+                    }
+                }
+            }
+            else {
+                sFormatGroup = '';
+            }
+            timeSplitArray = sDayContent.split(',');
+            sDay = timeSplitArray[0].replace(/ +(?= )/g,'');
+            if(timeSplitArray.length > 1) {
+                dHour = TourCodeManager.parseTime(timeSplitArray[1]);
+            }
+            else {
+                dHour = new Date();
+            }
+
+            dayDictionary[sDay] = {
+                hour: dHour.getUTCHours(),
+                day: TourCodeManager.parseDay(sDay),
+                formatgroup: sFormatGroup
+            };
+        }
+
+        var sOutput = '';
+
+        var dNow = TourCodeManager.convertDateToUTC(new Date(Date.now()));
+        var nCurrentDay = dNow.getUTCDay();
+        
+        var sSoonestDailyKey = null, nSoonestDailyDeltaTime;
+        var dTestDate, nDeltaDays, nDeltaTime;
+        for (let key in dayDictionary) {
+            nDeltaDays = (dayDictionary[key].day < nCurrentDay) ? (6 - nCurrentDay) + dayDictionary[key].day : dayDictionary[key].day - nCurrentDay;
+            //console.log('nDeltaDays: ' + nDeltaDays);
+            dTestDate = TourCodeManager.addDays(dNow, nDeltaDays);
+            dTestDate.setUTCHours(dayDictionary[key].hour);
+            dTestDate.setUTCMinutes(0);
+            dTestDate.setUTCSeconds(0);
+            nDeltaTime = dTestDate - dNow;
+            if(!sSoonestDailyKey || (nSoonestDailyDeltaTime > nDeltaTime)) {
+                sSoonestDailyKey = key;
+                nSoonestDailyDeltaTime = nDeltaTime;
+            }
+        }
+        if(sSoonestDailyKey) {
+            var nSeconds = Math.floor(nSoonestDailyDeltaTime/1000);
+            var nMinutes = Math.floor(nSeconds/60);
+            var nHours = Math.floor(nMinutes/60);
+            var nDays = Math.floor(nHours/24);
+
+            nHours = nHours-(nDays*24);
+            nMinutes = nMinutes-(nDays*24*60)-(nHours*60);
+
+            sOutput += `Next daily: <b>${dayDictionary[sSoonestDailyKey].formatgroup}</b> in `;
+            if(nHours > 0) {
+                sOutput += `${nHours} hours, `;
+            }
+            sOutput += `${nMinutes} minutes.`;
+        }
+
+        sOutput += '<br><br>This is the OM Mashups daily tour schedule:-';
+        sOutput += '<br><div class="infobox">';
+        var bFirstLoop = true;
+        for (let key in dayDictionary) {
+            //console.log(key + ' is ' + dayDictionary[key]);
+            if(!bFirstLoop) {
+                sOutput += '<br>';
+            }
+            sOutput += `${key}: ${dayDictionary[key].formatgroup}`;
+            bFirstLoop = false;
+        }
+        sOutput += '</div>';
+
+        this.reply('/addhtmlbox ' + sOutput);
     }
 };
