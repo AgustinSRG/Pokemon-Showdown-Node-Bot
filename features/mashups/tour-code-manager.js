@@ -168,12 +168,12 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
                     nSubStringIdx = sLine.indexOf(':');
                     bIsSplitTokenPresent = (-1 !== nSubStringIdx);
                     if(bIsSplitTokenPresent) {
-                        sName = sLine.substring(0, nSubStringIdx);
-                        if(!AllTourCodesNamesArray.hasOwnProperty(sName)) {
+                        sName = toId(sLine.substring(0, nSubStringIdx));
+                        if(!AllTourCodesNamesArray.includes(sName)) {
                             console.log('Undefined format has description: ' + sName);
                         }
-                        console.log('Description key: ' + sName);
-                        console.log('Description value: ' + sLine.substring(nSubStringIdx + 1));
+                        //console.log('Description key: ' + sName);
+                        //console.log('Description value: ' + sLine.substring(nSubStringIdx + 1));
                         DynamicFormatDescriptionsDictionary[sName] = sLine.substring(nSubStringIdx + 1);
                     }
                 }
@@ -405,6 +405,49 @@ var formatRulesList = function (array) {
     return `'` + String.periodicJoin(array, `', '`, 8, `',\n\t\t\t'`) + `'`;
 }
 
+var standarizeGameObjectArrayContent = function (sourceArray) {
+    if(!sourceArray || (sourceArray.length < 2)) return sourceArray;
+
+    sourceArray  = [...new Set(sourceArray)]; // Remove any duplicates
+
+    var pokemonGOArray = [];
+    var abilitiesGOArray = [];
+    var itemsGOArray = [];
+    var movesGOArray = [];
+    var othersGOArray = [];
+    for(const sGO of sourceArray) {
+        if(Mashups.isGameObjectPokemon(sGO)) {
+            pokemonGOArray.push(sGO);
+            continue;
+        }
+        if(Mashups.isGameObjectAbility(sGO)) {
+            abilitiesGOArray.push(sGO);
+            continue;
+        }
+        if(Mashups.isGameObjectItem(sGO)) {
+            itemsGOArray.push(sGO);
+            continue;
+        }
+        if(Mashups.isGameObjectMove(sGO)) {
+            movesGOArray.push(sGO);
+            continue;
+        }
+        othersGOArray.push(sGO);
+    }
+
+    pokemonGOArray.sort();
+    abilitiesGOArray.sort();
+    itemsGOArray.sort();
+    movesGOArray.sort();
+    othersGOArray.sort();
+
+    return pokemonGOArray
+        .concat(abilitiesGOArray)
+        .concat(itemsGOArray)
+        .concat(movesGOArray)
+        .concat(othersGOArray);
+}
+
 var generateMashupFormats = exports.generateMashupFormats = function () {
     if(!fs.existsSync(CommentHeaderTemplatePath)) {
         console.log('File missing: ' + CommentHeaderTemplatePath);
@@ -506,6 +549,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     var sDescriptionOutput = DynamicFormatDescriptionsDictionary.hasOwnProperty(sTourCodeKey) ?
         DynamicFormatDescriptionsDictionary[sTourCodeKey] :
         TourDescriptionMissingFallback;
+    sDescriptionOutput = sDescriptionOutput.replace('Pokemon', 'Pok&eacute;mon'); // Format for html
 
     // threads
     let combinedThreadsArray = [];
@@ -588,7 +632,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     combinedUnrulesArray = combinedUnrulesArray.filter(function(value, index, arr) {
         return !deltaRulesetArray.includes(value);
     });
-    combinedRulesArray = combinedRulesArray.filter(function(value, index, arr){
+    combinedRulesArray = combinedRulesArray.filter(function(value, index, arr) {
         return !combinedUnrulesArray.includes(value);
     });
     // Re-format rules
@@ -606,6 +650,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     combinedBansArray = combinedBansArray.filter(function(value, index, arr) {
         return !deltaUnbansArray.includes(value) && !deltaRestrictedArray.includes(value);
     });
+    combinedBansArray = standarizeGameObjectArrayContent(combinedBansArray);
     var sBanlistOutput = formatRulesList(combinedBansArray);
 
     // unbanlist
@@ -618,6 +663,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     combinedUnbanList = combinedUnbanList.filter(function(value, index, arr) {
         return !deltaBansArray.includes(value) && !deltaRestrictedArray.includes(value);
     });
+    combinedUnbanList = standarizeGameObjectArrayContent(combinedUnbanList);
     var sUnbanListOutput = (combinedUnbanList.length > 0) ? formatRulesList(combinedUnbanList) : null;
 
     // restricted
@@ -630,6 +676,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     combinedRestrictedList = combinedRestrictedList.filter(function(value, index, arr) {
         return !deltaBansArray.includes(value) && !deltaUnbansArray.includes(value);
     });
+    combinedRestrictedList = standarizeGameObjectArrayContent(combinedRestrictedList);
     var sRestrictedListOutput = (combinedRestrictedList.length > 0) ? formatRulesList(combinedRestrictedList) : null;
 
     // Supplementary output

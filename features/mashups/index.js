@@ -703,6 +703,7 @@ var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
 //#region PokemonGO
 
 var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObject) {
+	sGameObject = sGameObject.replace('-Base', ''); // '-Base' formes aren't included in the Showdown dex file
 	sGameObject = toId(sGameObject);
 	if(MASHUPS_DEBUG_ON) monitor(`DEBUG sGameObject: ${sGameObject}`);
 
@@ -710,6 +711,10 @@ var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObje
 	if(MASHUPS_DEBUG_ON) monitor(`DEBUG nLength: ${nLength}`);
 
 	return PokedexArray[sGameObject];
+}
+
+var isGameObjectPokemon = exports.isGameObjectPokemon = function(sGameObject) {
+	return getGameObjectAsPokemon(sGameObject) ? true : false;
 }
 
 var calcPokemonTier = exports.calcPokemonTier = function(goPokemon) {
@@ -832,6 +837,10 @@ var getGameObjectAsMove = exports.getGameObjectAsMove = function(sGameObject) {
 	return MovesArray[sGameObject];
 }
 
+var isGameObjectMove = exports.isGameObjectMove = function(sGameObject) {
+	return getGameObjectAsMove(sGameObject) ? true : false;
+}
+
 //#endregion
 
 //#region AbilityGO
@@ -841,6 +850,10 @@ var getGameObjectAsAbility = exports.getGameObjectAsAbility = function(sGameObje
 	return AbilitiesArray[sGameObject];
 }
 
+var isGameObjectAbility = exports.isGameObjectAbility = function(sGameObject) {
+	return getGameObjectAsAbility(sGameObject) ? true : false;
+}
+
 //#endregion
 
 //#region ItemGO
@@ -848,6 +861,10 @@ var getGameObjectAsAbility = exports.getGameObjectAsAbility = function(sGameObje
 var getGameObjectAsItem = exports.getGameObjectAsItem = function(sGameObject) {
 	sGameObject = toId(sGameObject);
 	return ItemsArray[sGameObject];
+}
+
+var isGameObjectItem = exports.isGameObjectItem = function(sGameObject) {
+	return getGameObjectAsItem(sGameObject) ? true : false;
 }
 
 //#endregion
