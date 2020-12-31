@@ -14,9 +14,13 @@ const OfficialPathExtension = 'official/';
 const OtherPathExtension = 'other/';
 const MetadataPathExtension = 'metadata/';
 const ListFName = 'list.txt';
+const DynamicFormatDescriptionsFName = 'dynamicformatdescriptions.txt';
 const SpotlightNamesFName = 'spotlightnames.txt';
 const DailyRawContentFName = 'dailyschedule.txt';
 const TourExt = '.tour';
+
+const GeneralMetadataURLRoot = TourCodesURLRoot + MetadataPathExtension;
+const DynamicFormatDescriptionsURL = GeneralMetadataURLRoot + DynamicFormatDescriptionsFName;
 
 const MashupsURLRoot = TourCodesURLRoot + 'mashups/';
 const MashupsMetadataURLRoot = MashupsURLRoot + MetadataPathExtension;
@@ -57,6 +61,7 @@ const TourBaseFormatLinePrefix = '/tour new ';
 const TourBaseFormatMissingFallback = '[Gen 8] OU';
 const TourBaseFormatModMissingFallback = 'gen8';
 const TourDeltaRulesLinePrefix = '/tour rules ';
+const TourDescriptionMissingFallback = '(No Description)';
 
 const GenericResourcesLink = 'https://www.smogon.com/forums/threads/om-mashup-megathread.3657159/#post-8299984';
 
@@ -65,6 +70,7 @@ var OtherTourCodesNamesArray = exports.OtherTourCodesNamesArray = [];
 var AllTourCodesNamesArray = exports.AllTourCodesNamesArray = [];
 
 var AllTourCodesDictionary = exports.AllTourCodesDictionary = {};
+var DynamicFormatDescriptionsDictionary = {};
 
 var SpotlightNamesArray = exports.SpotlightNamesArray = [];
 
@@ -101,6 +107,9 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             OtherListURL,
             LocalOTCOtherMetadataPath + ListFName),
         downloadFilePromise(
+            DynamicFormatDescriptionsURL,
+            LocalOTCMetadataPath + DynamicFormatDescriptionsFName),
+        downloadFilePromise(
             SpotlightNamesURL,
             LocalOTCMetadataPath + SpotlightNamesFName),
         downloadFilePromise(
@@ -128,24 +137,6 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
                 }
             }
 
-            // Spotlight Names
-            var spotlightNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + SpotlightNamesFName).toString();
-            if( NotFoundErrorText !== spotlightNames ) {
-                SpotlightNamesArray = spotlightNames.split(',');
-                exports.SpotlightNamesArray = SpotlightNamesArray;
-            }
-            Mashups.setSpotlightTourNameArray(SpotlightNamesArray);
-
-            // Daily Content
-            var sDailyRawContentFName = './data/' + LocalOTCMetadataPath + DailyRawContentFName;
-            var bExists = fs.existsSync(sDailyRawContentFName);
-            if(!bExists) {
-                console.log('Daily content missing: ' + sDailyRawContentFName);
-            }
-            DailyRawContent = fs.readFileSync(sDailyRawContentFName).toString();
-            exports.DailyRawContent = DailyRawContent; // Reassignment necessary due to being reference type(?)
-            //console.log('DailyRawContent: ' + DailyRawContent);
-
             // Others
             var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();
             var otherPromises = [];
@@ -164,6 +155,47 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             // Combined
             AllTourCodesNamesArray = OfficialTourCodesNamesArray.concat(OtherTourCodesNamesArray);
             var totalPromises = officialPromises.concat(otherPromises);
+
+            // Dynamic Format Descriptions
+            var dynamicFormatDescriptions = fs.readFileSync('./data/' + LocalOTCMetadataPath + DynamicFormatDescriptionsFName).toString();
+            if( NotFoundErrorText !== dynamicFormatDescriptions ) {
+                let contentArray = dynamicFormatDescriptions.split('\n');
+                var nSubStringIdx;
+                var bIsSplitTokenPresent;
+                var sName;
+                for(const sLine of contentArray) {
+                    if('' === sLine) continue;
+                    nSubStringIdx = sLine.indexOf(':');
+                    bIsSplitTokenPresent = (-1 !== nSubStringIdx);
+                    if(bIsSplitTokenPresent) {
+                        sName = sLine.substring(0, nSubStringIdx);
+                        if(!AllTourCodesNamesArray.hasOwnProperty(sName)) {
+                            console.log('Undefined format has description: ' + sName);
+                        }
+                        console.log('Description key: ' + sName);
+                        console.log('Description value: ' + sLine.substring(nSubStringIdx + 1));
+                        DynamicFormatDescriptionsDictionary[sName] = sLine.substring(nSubStringIdx + 1);
+                    }
+                }
+            }
+
+            // Spotlight Names
+            var spotlightNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + SpotlightNamesFName).toString();
+            if( NotFoundErrorText !== spotlightNames ) {
+                SpotlightNamesArray = spotlightNames.split(',');
+                exports.SpotlightNamesArray = SpotlightNamesArray;
+            }
+            Mashups.setSpotlightTourNameArray(SpotlightNamesArray);
+
+            // Daily Content
+            var sDailyRawContentFName = './data/' + LocalOTCMetadataPath + DailyRawContentFName;
+            var bExists = fs.existsSync(sDailyRawContentFName);
+            if(!bExists) {
+                console.log('Daily content missing: ' + sDailyRawContentFName);
+            }
+            DailyRawContent = fs.readFileSync(sDailyRawContentFName).toString();
+            exports.DailyRawContent = DailyRawContent; // Reassignment necessary due to being reference type(?)
+            //console.log('DailyRawContent: ' + DailyRawContent);
 
             allSettled(totalPromises).then(
                 (tourResults) => {
@@ -414,7 +446,8 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     var sRawOutput = '';
 
     let sTestTourCodeName = 'gen8staaabmons';
-    let sTourCode = AllTourCodesDictionary[sTestTourCodeName];
+    let sTourCodeKey = sTestTourCodeName;
+    let sTourCode = AllTourCodesDictionary[sTourCodeKey];
 
     // Determine format name, base format, etc from tour code
     let lineArray = sTourCode.split('\n');
@@ -470,7 +503,9 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         return false;
     }
 
-    var sDescriptionOutput = 'FIXME: Description Content';
+    var sDescriptionOutput = DynamicFormatDescriptionsDictionary.hasOwnProperty(sTourCodeKey) ?
+        DynamicFormatDescriptionsDictionary[sTourCodeKey] :
+        TourDescriptionMissingFallback;
 
     // threads
     let combinedThreadsArray = [];
