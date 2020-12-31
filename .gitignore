@@ -95,3 +95,4 @@ $RECYCLE.BIN/
 *.lnk
 *.txt
 *.tour
+data/genmashupformats/output/generatedmashupformats.ts

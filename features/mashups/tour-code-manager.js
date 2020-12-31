@@ -38,6 +38,28 @@ const LocalOTCOtherMetadataPath = LocalOTCOtherPath + MetadataPathExtension;
 
 const NotFoundErrorText = '404: Not Found';
 
+const LocalDataRoot = './data/';
+const GenMashupFormatsRoot = LocalDataRoot + 'genmashupformats/';
+const GenMashupFormatsTemplatesRoot = GenMashupFormatsRoot + 'templates/';
+const CommentHeaderTemplatePath = GenMashupFormatsTemplatesRoot + 'commentheader.tmp';
+const FormatTemplatePath = GenMashupFormatsTemplatesRoot + 'format.tmp';
+const FormatListTemplatePath = GenMashupFormatsTemplatesRoot + 'formatlist.tmp';
+const RestrictedTemplatePath = GenMashupFormatsTemplatesRoot + 'restricted.tmp';
+const SectionHeaderTemplatePath = GenMashupFormatsTemplatesRoot + 'sectionheader.tmp';
+const UnbanListTemplatePath = GenMashupFormatsTemplatesRoot + 'unbanlist.tmp';
+const ThreadTemplatePath = GenMashupFormatsTemplatesRoot + 'thread.tmp';
+const GenMashupFormatsOutputRoot = GenMashupFormatsRoot + 'output/';
+const MashupFormatsOutputPath = GenMashupFormatsOutputRoot + 'generatedmashupformats.ts';
+
+const TourNameLinePrefix = '/tour name ';
+const TourNameMissingFallback = 'Unknown Format';
+const TourBaseFormatLinePrefix = '/tour new ';
+const TourBaseFormatMissingFallback = '[Gen 8] OU';
+const TourBaseFormatModMissingFallback = 'gen8';
+const TourDeltaRulesLinePrefix = '/tour rules ';
+
+const GenericResourcesLink = 'https://www.smogon.com/forums/threads/om-mashup-megathread.3657159/#post-8299984';
+
 var OfficialTourCodesNamesArray = exports.OfficialTourCodesNamesArray = [];
 var OtherTourCodesNamesArray = exports.OtherTourCodesNamesArray = [];
 var AllTourCodesNamesArray = exports.AllTourCodesNamesArray = [];
@@ -310,3 +332,302 @@ var convertDateToUTC = exports.convertDateToUTC = function (dDate) {
         dDate.getUTCMinutes(),
         dDate.getUTCSeconds());
 }
+
+//#region generateMashupFormats
+if (!String.format) {
+    String.format = function(format) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return format.replace(/{(\d+)}/g, function(match, number) { 
+        return typeof args[number] != 'undefined'
+            ? args[number] 
+            : match
+        ;
+        });
+    };
+}
+
+if (!String.periodicJoin) {
+    String.periodicJoin = function(array, regularSeparator, period, periodicSeparator) {
+        var sOutput = '';
+        if(!array || (0 == array.length)) return sOutput;
+        var nPeriodicCounter = 1;
+        var sSeparator;
+        for(var nItr=0; nItr<array.length-1; ++nItr) {
+            if(nPeriodicCounter >= period) {
+                sSeparator = periodicSeparator;
+                nPeriodicCounter = 0;
+            }
+            else {
+                sSeparator = regularSeparator;
+            }
+            ++nPeriodicCounter;
+            sOutput += array[nItr] + sSeparator;
+        }
+        sOutput += array[array.length-1];
+        return sOutput;
+    };
+}
+
+var formatRulesList = function (array) {
+    array = array.map(sItem => sItem.replace(`'`, `\\'`));
+    return `'` + String.periodicJoin(array, `', '`, 8, `',\n\t\t\t'`) + `'`;
+}
+
+var generateMashupFormats = exports.generateMashupFormats = function () {
+    if(!fs.existsSync(CommentHeaderTemplatePath)) {
+        console.log('File missing: ' + CommentHeaderTemplatePath);
+        return false;
+    }
+    var sCommentHeaderTemplate = fs.readFileSync(CommentHeaderTemplatePath).toString();
+    if(!fs.existsSync(FormatTemplatePath)) {
+        console.log('File missing: ' + FormatTemplatePath);
+        return false;
+    }
+    var sFormatTemplate = fs.readFileSync(FormatTemplatePath).toString();
+    if(!fs.existsSync(FormatListTemplatePath)) {
+        console.log('File missing: ' + FormatListTemplatePath);
+        return false;
+    }
+    var sFormatListTemplate = fs.readFileSync(FormatListTemplatePath).toString();
+    if(!fs.existsSync(RestrictedTemplatePath)) {
+        console.log('File missing: ' + RestrictedTemplatePath);
+        return false;
+    }
+    var sRestrictedTemplate = fs.readFileSync(RestrictedTemplatePath).toString();
+    if(!fs.existsSync(SectionHeaderTemplatePath)) {
+        console.log('File missing: ' + SectionHeaderTemplatePath);
+        return false;
+    }
+    var sSectionHeaderTemplate = fs.readFileSync(SectionHeaderTemplatePath).toString();
+    if(!fs.existsSync(ThreadTemplatePath)) {
+        console.log('File missing: ' + ThreadTemplatePath);
+        return false;
+    }
+    var sThreadTemplate = fs.readFileSync(ThreadTemplatePath).toString();
+    if(!fs.existsSync(UnbanListTemplatePath)) {
+        console.log('File missing: ' + UnbanListTemplatePath);
+        return false;
+    }
+    var sUnbanListTemplate = fs.readFileSync(UnbanListTemplatePath).toString();
+
+    var nRuleItr;
+    var sRawOutput = '';
+
+    let sTestTourCodeName = 'gen8staaabmons';
+    let sTourCode = AllTourCodesDictionary[sTestTourCodeName];
+
+    // Determine format name, base format, etc from tour code
+    let lineArray = sTourCode.split('\n');
+    let sTourNameLine = null;
+    let sBaseFormatLine = null;
+    let sDeltaRulesLine = null;
+    lineArray.forEach(function(sLine) {
+        if(!sLine) return;
+        sLine = sLine.replace(/ +(?= )/g,''); // Ensure the line of text is single-spaced
+        //console.log(sLine);
+        if(!sTourNameLine && sLine.startsWith(TourNameLinePrefix)) {
+            sTourNameLine = sLine;
+        }
+        if(!sBaseFormatLine && sLine.startsWith(TourBaseFormatLinePrefix)) {
+            sBaseFormatLine = sLine;
+        }
+        if(!sDeltaRulesLine && sLine.startsWith(TourDeltaRulesLinePrefix)) {
+            sDeltaRulesLine = sLine;
+        }
+    });
+
+    let sTourName = '';
+    if(!sTourNameLine) { // Fallback in case name is missing
+        sTourName = TourNameMissingFallback;
+        console.log('Tour name missing!');
+    }
+    else { // Accurate name
+        sTourName = sTourNameLine.substr(TourNameLinePrefix.length);
+    }
+
+    let sBaseFormatName = '';
+    if(!sBaseFormatLine) { // Fallback in case base format is missing
+        sBaseFormatName = TourBaseFormatMissingFallback;
+        console.log('Tour base format missing!');
+    }
+    else { // Accurate base format name
+        sBaseFormatName = sBaseFormatLine.substr(TourBaseFormatLinePrefix.length);
+        sBaseFormatName = sBaseFormatName.split(',')[0];
+    }
+
+    let deltaRulesArray = [];
+    if(sDeltaRulesLine) { // We don't necessarily expect rule changes
+        let sDeltaRules = sDeltaRulesLine.substr(TourDeltaRulesLinePrefix.length);;
+        deltaRulesArray = sDeltaRules.split(',');
+        for(nRuleItr=0; nRuleItr<deltaRulesArray.length; ++nRuleItr) {
+            deltaRulesArray[nRuleItr] = deltaRulesArray[nRuleItr].replace(/^\s+|\s+$/g, ''); // Remove any trailing/leading spaces from every rule
+        }
+    }
+
+    let baseFormatDetails = Mashups.findFormatDetails(sBaseFormatName);
+    if(!baseFormatDetails) {
+        console.log('Could not retrieve details for format: ' + sBaseFormatName);
+        return false;
+    }
+
+    var sDescriptionOutput = 'FIXME: Description Content';
+
+    // threads
+    let combinedThreadsArray = [];
+    if(baseFormatDetails.threads) {
+        // Base format vanilla threads
+        combinedThreadsArray = combinedThreadsArray.concat(baseFormatDetails.threads);
+        combinedThreadsArray = combinedThreadsArray.map(sItem => sItem.replace(`">`, `">Vanilla `));
+    }
+    // Mashup generic resources
+    let sGenericThread = String.format(sThreadTemplate,
+        GenericResourcesLink, // {0}
+        sTourName+" Resources" // {1}
+    );
+    combinedThreadsArray.unshift(sGenericThread);
+    // Combined threads
+    var sThreadOutput = '`' + combinedThreadsArray.join('`,\n\t\t\t`') + '`';
+
+    // mod
+    var sModOutput = '';
+    if(!baseFormatDetails.mod) {
+        sModOutput = TourBaseFormatModMissingFallback;
+        console.log('Tour base format has no mod specified!');
+    }
+    else {
+        sModOutput = baseFormatDetails.mod;
+    }
+
+    // Rule modifications
+    var deltaRulesetArray = [];
+    var deltaUnrulesetArray = [];
+    var deltaBansArray = [];
+    var deltaUnbansArray = [];
+    var deltaRestrictedArray = [];
+    for(nRuleItr=0; nRuleItr<deltaRulesArray.length; ++nRuleItr) {
+        let sDeltaRule = deltaRulesArray[nRuleItr];
+        let sLeadingChar = sDeltaRule.substr(0, 1);
+        let sRemainingChars = sDeltaRule.substr(1);
+        switch(sLeadingChar) {
+            case '+':
+                deltaUnbansArray.push(sRemainingChars);
+                break;
+            case '-':
+                deltaBansArray.push(sRemainingChars);
+                break;
+            case '!':
+                deltaUnrulesetArray.push(sRemainingChars);
+                break;
+            case '*':
+                deltaRestrictedArray.push(sRemainingChars);
+                break;
+            default:
+                deltaRulesetArray.push(sDeltaRule);
+                break;
+        }
+    }
+
+    // ruleset
+    var combinedRulesArray = [];
+    var combinedUnrulesArray = [];
+    var baseFormatRulesArray = [];
+    var baseFormatUnrulesArray = [];
+    if(baseFormatDetails.ruleset) {
+        let baseFormatRuleset = baseFormatDetails.ruleset;
+        for(nRuleItr=0; nRuleItr<baseFormatRuleset.length; ++nRuleItr) {
+            let sDeltaRule = baseFormatRuleset[nRuleItr];
+            let sLeadingChar = sDeltaRule.substr(0, 1);
+            let sRemainingChars = sDeltaRule.substr(1);
+            switch(sLeadingChar) {
+                case '!':
+                    baseFormatUnrulesArray.push(sRemainingChars);
+                    break;
+                default:
+                    baseFormatRulesArray.push(sDeltaRule);
+                    break;
+            }
+        }
+    }
+    combinedRulesArray = baseFormatRulesArray.concat(deltaRulesetArray);
+    combinedUnrulesArray = baseFormatUnrulesArray.concat(deltaUnrulesetArray);
+    combinedUnrulesArray = combinedUnrulesArray.filter(function(value, index, arr) {
+        return !deltaRulesetArray.includes(value);
+    });
+    combinedRulesArray = combinedRulesArray.filter(function(value, index, arr){
+        return !combinedUnrulesArray.includes(value);
+    });
+    // Re-format rules
+    combinedUnrulesArray = combinedUnrulesArray.map(sItem => '!' + sItem);
+    combinedRulesArray = combinedRulesArray.concat(combinedUnrulesArray);
+    var sRulesetOutput = formatRulesList(combinedRulesArray);
+
+    // banlist
+    var combinedBansArray = [];
+    var baseFormatBansArray = [];
+    if(baseFormatDetails.banlist) {
+        baseFormatBansArray = baseFormatDetails.banlist;
+    }
+    combinedBansArray = baseFormatBansArray.concat(deltaBansArray);
+    combinedBansArray = combinedBansArray.filter(function(value, index, arr) {
+        return !deltaUnbansArray.includes(value) && !deltaRestrictedArray.includes(value);
+    });
+    var sBanlistOutput = formatRulesList(combinedBansArray);
+
+    // unbanlist
+    var combinedUnbanList = [];
+    var baseFormatUnbanList = [];
+    if(baseFormatDetails.unbanlist) {
+        baseFormatUnbanList = baseFormatDetails.unbanlist;
+    }
+    combinedUnbanList = baseFormatUnbanList.concat(deltaUnbansArray);
+    combinedUnbanList = combinedUnbanList.filter(function(value, index, arr) {
+        return !deltaBansArray.includes(value) && !deltaRestrictedArray.includes(value);
+    });
+    var sUnbanListOutput = (combinedUnbanList.length > 0) ? formatRulesList(combinedUnbanList) : null;
+
+    // restricted
+    var combinedRestrictedList = [];
+    var baseFormatRestrictedList = [];
+    if(baseFormatDetails.restricted) {
+        baseFormatRestrictedList = baseFormatDetails.restricted;
+    }
+    combinedRestrictedList = baseFormatRestrictedList.concat(deltaRestrictedArray);
+    combinedRestrictedList = combinedRestrictedList.filter(function(value, index, arr) {
+        return !deltaBansArray.includes(value) && !deltaUnbansArray.includes(value);
+    });
+    var sRestrictedListOutput = (combinedRestrictedList.length > 0) ? formatRulesList(combinedRestrictedList) : null;
+
+    // Supplementary output
+    var sSupplementaryOutput = '';
+    if(sUnbanListOutput) {
+        sSupplementaryOutput += String.format(sUnbanListTemplate, sUnbanListOutput);
+        sSupplementaryOutput += String.format(sRestrictedTemplate, sRestrictedListOutput);
+    }
+
+    var sFormatOutput = String.format(sFormatTemplate,
+        sTourName, // {0}
+        sDescriptionOutput, // {1}
+        sThreadOutput, // {2}
+        sModOutput, // {3}
+        sRulesetOutput, // {4}
+        sBanlistOutput, // {5}
+        sSupplementaryOutput, // {6}
+    );
+
+    sRawOutput += sFormatOutput;
+
+    // Format into list
+    sRawOutput = String.format(sFormatListTemplate, sRawOutput);
+
+    var bFileWriteFailed = false;
+    fs.writeFile(MashupFormatsOutputPath, sRawOutput, function (err2) {
+        if (err2) {
+            console.log('Output failed: ' + MashupFormatsOutputPath);
+            bFileWriteFailed = true;
+        }
+    });
+    if(bFileWriteFailed) return false;
+
+    return true;
+}
+//#endregion generateMashupFormats

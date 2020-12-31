@@ -180,5 +180,18 @@ exports.commands = {
 
         //this.reply('/addhtmlbox ' + sOutput);
         this.reply(sOutput);
+    },
+    genmashupformats: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('admin'))) return false;
+
+        this.reply(`Attempting to generate mashups format data...`);
+
+        const bSucceeded = TourCodeManager.generateMashupFormats();
+        if(bSucceeded) {
+            this.reply(`Succeeded!`);
+        }
+        else {
+            this.reply(`Failed...`);
+        }
     }
 };
