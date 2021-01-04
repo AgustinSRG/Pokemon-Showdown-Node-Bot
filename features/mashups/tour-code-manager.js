@@ -792,7 +792,17 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         sModOutput = baseFormatDetails.mod;
     }
 
-    // Analyze base format data
+    // Pre-rules supplementary output
+    var sSingleItemFormatPropertyTemplate = `\n\t\t{0}: '{1}',`;
+    var sPrerulesSupplementaryOutput = '';
+    if(baseFormatDetails.gameType) {
+        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'gameType', baseFormatDetails.gameType);
+    }
+    if(baseFormatDetails.maxLevel) {
+        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'maxLevel', baseFormatDetails.maxLevel.toString());
+    }
+
+    // Analyze base format rules
     var baseFormatRulesArray = [];
     var baseFormatRepealsArray = [];
     if(baseFormatDetails.ruleset) {
@@ -941,13 +951,13 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     combinedRestrictedList = standarizeGameObjectArrayContent(combinedRestrictedList);
     var sRestrictedListOutput = (combinedRestrictedList.length > 0) ? formatRulesList(combinedRestrictedList) : null;
 
-    // Supplementary output
-    var sSupplementaryOutput = '';
+    // Late supplementary output
+    var sLateSupplementaryOutput = '';
     if(sUnbanListOutput) {
-        sSupplementaryOutput += String.format(sUnbanListTemplate, sUnbanListOutput);
+        sLateSupplementaryOutput += String.format(sUnbanListTemplate, sUnbanListOutput);
     }
     if(sRestrictedListOutput) {
-        sSupplementaryOutput += String.format(sRestrictedTemplate, sRestrictedListOutput);
+        sLateSupplementaryOutput += String.format(sRestrictedTemplate, sRestrictedListOutput);
     }
 
     var sFormatOutput = String.format(sFormatTemplate,
@@ -955,9 +965,10 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         sDescriptionOutput, // {1}
         sThreadOutput, // {2}
         sModOutput, // {3}
-        sRulesetOutput, // {4}
-        sBanlistOutput, // {5}
-        sSupplementaryOutput, // {6}
+        sPrerulesSupplementaryOutput, // {4}
+        sRulesetOutput, // {5}
+        sBanlistOutput, // {6}
+        sLateSupplementaryOutput, // {7}
     );
 
     sRawOutput += sFormatOutput;
