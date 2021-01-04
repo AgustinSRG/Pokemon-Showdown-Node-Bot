@@ -400,6 +400,27 @@ if (!String.periodicJoin) {
     };
 }
 
+var addTrashChannelRulesForFormat = function (rulesArray, formatName) {
+    formatName = Mashups.getFormatKey(formatName);
+    if(null === formatName) return rulesArray;
+
+    formatName = Mashups.genStripName(formatName);
+
+    switch(formatName) {
+        case 'camomons':
+            rulesArray.push('Camomons Rule');
+            break;
+        case 'mixandmega':
+            rulesArray.push('Mix and Mega Standard Package');
+            break;
+        case 'tiershift':
+            rulesArray.push('Tier Shift Rule');
+            break;
+    }
+
+    return rulesArray;
+}
+
 var formatRulesList = function (array) {
     array = array.map(sItem => sItem.replace(`'`, `\\'`));
     return `'` + String.periodicJoin(array, `', '`, 8, `',\n\t\t\t'`) + `'`;
@@ -639,7 +660,8 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     var nRuleItr;
     var sRawOutput = '';
 
-    let sTestTourCodeName = 'gen8staaabmons';
+    //let sTestTourCodeName = 'gen8staaabmons';
+    let sTestTourCodeName = 'gen8tsaaa';
     let sTourCodeKey = sTestTourCodeName;
     let sTourCode = AllTourCodesDictionary[sTourCodeKey];
 
@@ -747,6 +769,9 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
             }
         }
     }
+    // Add Trash Channel rules defining common methods for base format
+    baseFormatRulesArray = addTrashChannelRulesForFormat(baseFormatRulesArray, baseFormatDetails.name);
+
     var baseFormatBansArray = [];
     if(baseFormatDetails.banlist) {
         baseFormatBansArray = baseFormatDetails.banlist;
@@ -860,6 +885,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         if(!pokemonForme) return true;
 
         let nPokemonTier = Mashups.calcPokemonTier(pokemonForme);
+        //console.log("Checking unban of forme: "+value+" nPokemonTier: "+nPokemonTier.toString()+" nMinTierIncluded: "+nMinTierIncluded.toString());
         return nPokemonTier < nMinTierIncluded;
     });
     combinedUnbanList = standarizeGameObjectArrayContent(combinedUnbanList);
