@@ -48,9 +48,8 @@ const GenMashupFormatsTemplatesRoot = GenMashupFormatsRoot + 'templates/';
 const CommentHeaderTemplatePath = GenMashupFormatsTemplatesRoot + 'commentheader.tmp';
 const FormatTemplatePath = GenMashupFormatsTemplatesRoot + 'format.tmp';
 const FormatListTemplatePath = GenMashupFormatsTemplatesRoot + 'formatlist.tmp';
-const RestrictedTemplatePath = GenMashupFormatsTemplatesRoot + 'restricted.tmp';
+const ArrayTemplatePath = GenMashupFormatsTemplatesRoot + 'array.tmp';
 const SectionHeaderTemplatePath = GenMashupFormatsTemplatesRoot + 'sectionheader.tmp';
-const UnbanListTemplatePath = GenMashupFormatsTemplatesRoot + 'unbanlist.tmp';
 const ThreadTemplatePath = GenMashupFormatsTemplatesRoot + 'thread.tmp';
 const GenMashupFormatsOutputRoot = GenMashupFormatsRoot + 'output/';
 const MashupFormatsOutputPath = GenMashupFormatsOutputRoot + 'generatedmashupformats.ts';
@@ -620,50 +619,9 @@ var standarizeGameObjectArrayContent = function (sourceArray) {
         .concat(movesGOArray);
 }
 
-var generateMashupFormats = exports.generateMashupFormats = function () {
-    if(!fs.existsSync(CommentHeaderTemplatePath)) {
-        console.log('File missing: ' + CommentHeaderTemplatePath);
-        return false;
-    }
-    var sCommentHeaderTemplate = fs.readFileSync(CommentHeaderTemplatePath).toString();
-    if(!fs.existsSync(FormatTemplatePath)) {
-        console.log('File missing: ' + FormatTemplatePath);
-        return false;
-    }
-    var sFormatTemplate = fs.readFileSync(FormatTemplatePath).toString();
-    if(!fs.existsSync(FormatListTemplatePath)) {
-        console.log('File missing: ' + FormatListTemplatePath);
-        return false;
-    }
-    var sFormatListTemplate = fs.readFileSync(FormatListTemplatePath).toString();
-    if(!fs.existsSync(RestrictedTemplatePath)) {
-        console.log('File missing: ' + RestrictedTemplatePath);
-        return false;
-    }
-    var sRestrictedTemplate = fs.readFileSync(RestrictedTemplatePath).toString();
-    if(!fs.existsSync(SectionHeaderTemplatePath)) {
-        console.log('File missing: ' + SectionHeaderTemplatePath);
-        return false;
-    }
-    var sSectionHeaderTemplate = fs.readFileSync(SectionHeaderTemplatePath).toString();
-    if(!fs.existsSync(ThreadTemplatePath)) {
-        console.log('File missing: ' + ThreadTemplatePath);
-        return false;
-    }
-    var sThreadTemplate = fs.readFileSync(ThreadTemplatePath).toString();
-    if(!fs.existsSync(UnbanListTemplatePath)) {
-        console.log('File missing: ' + UnbanListTemplatePath);
-        return false;
-    }
-    var sUnbanListTemplate = fs.readFileSync(UnbanListTemplatePath).toString();
-
+var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTemplate, sThreadTemplate) {
     var nRuleItr;
-    var sRawOutput = '';
 
-    //let sTestTourCodeName = 'gen8staaabmons';
-    //let sTestTourCodeName = 'gen8tsaaa';
-    let sTestTourCodeName = 'gen8camomonsdoubles';
-    let sTourCodeKey = sTestTourCodeName;
     let sTourCode = AllTourCodesDictionary[sTourCodeKey];
 
     // Determine format name, base format, etc from tour code
@@ -954,11 +912,12 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     // Late supplementary output
     var sLateSupplementaryOutput = '';
     if(sUnbanListOutput) {
-        sLateSupplementaryOutput += String.format(sUnbanListTemplate, sUnbanListOutput);
+        sLateSupplementaryOutput += String.format(sArrayTemplate, 'unbanlist', sUnbanListOutput);
     }
     if(sRestrictedListOutput) {
-        sLateSupplementaryOutput += String.format(sRestrictedTemplate, sRestrictedListOutput);
+        sLateSupplementaryOutput += String.format(sArrayTemplate, 'restricted', sRestrictedListOutput);
     }
+    //
 
     var sFormatOutput = String.format(sFormatTemplate,
         sTourName, // {0}
@@ -971,7 +930,53 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         sLateSupplementaryOutput, // {7}
     );
 
-    sRawOutput += sFormatOutput;
+    return sFormatOutput;
+}
+
+var generateMashupFormats = exports.generateMashupFormats = function () {
+    if(!fs.existsSync(ArrayTemplatePath)) {
+        console.log('File missing: ' + ArrayTemplatePath);
+        return false;
+    }
+    var sArrayTemplate = fs.readFileSync(ArrayTemplatePath).toString();
+
+    if(!fs.existsSync(CommentHeaderTemplatePath)) {
+        console.log('File missing: ' + CommentHeaderTemplatePath);
+        return false;
+    }
+    var sCommentHeaderTemplate = fs.readFileSync(CommentHeaderTemplatePath).toString();
+
+    if(!fs.existsSync(FormatTemplatePath)) {
+        console.log('File missing: ' + FormatTemplatePath);
+        return false;
+    }
+    var sFormatTemplate = fs.readFileSync(FormatTemplatePath).toString();
+
+    if(!fs.existsSync(FormatListTemplatePath)) {
+        console.log('File missing: ' + FormatListTemplatePath);
+        return false;
+    }
+    var sFormatListTemplate = fs.readFileSync(FormatListTemplatePath).toString();
+
+    if(!fs.existsSync(SectionHeaderTemplatePath)) {
+        console.log('File missing: ' + SectionHeaderTemplatePath);
+        return false;
+    }
+    var sSectionHeaderTemplate = fs.readFileSync(SectionHeaderTemplatePath).toString();
+
+    if(!fs.existsSync(ThreadTemplatePath)) {
+        console.log('File missing: ' + ThreadTemplatePath);
+        return false;
+    }
+    var sThreadTemplate = fs.readFileSync(ThreadTemplatePath).toString();
+
+    var sRawOutput = '';
+
+    let sTestTourCodeName = 'gen8staaabmons';
+    //let sTestTourCodeName = 'gen8tsaaa';
+    //let sTestTourCodeName = 'gen8camomonsdoubles';
+
+    sRawOutput += generateDynamicFormat(sTestTourCodeName, sArrayTemplate, sFormatTemplate, sThreadTemplate);
 
     // Format into list
     sRawOutput = String.format(sFormatListTemplate, sRawOutput);
