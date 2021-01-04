@@ -60,9 +60,10 @@ const TourBaseFormatLinePrefix = '/tour new ';
 const TourBaseFormatMissingFallback = '[Gen 8] OU';
 const TourBaseFormatModMissingFallback = 'gen8';
 const TourDeltaRulesLinePrefix = '/tour rules ';
-const TourDescriptionMissingFallback = '(No Description)';
+const TourDescriptionMissingFallback = '(No description)';
 
 const GenericResourcesLink = 'https://www.smogon.com/forums/threads/om-mashup-megathread.3657159/#post-8299984';
+const MashupsGeneratedFormatsColumn = 1;
 
 var OfficialTourCodesNamesArray = exports.OfficialTourCodesNamesArray = [];
 var OtherTourCodesNamesArray = exports.OtherTourCodesNamesArray = [];
@@ -422,7 +423,8 @@ var addTrashChannelRulesForFormat = function (rulesArray, formatName) {
 
 var formatRulesList = function (array) {
     array = array.map(sItem => sItem.replace(`'`, `\\'`));
-    return `'` + String.periodicJoin(array, `', '`, 8, `',\n\t\t\t'`) + `'`;
+    // Human-generated format data rules by convention end with a trailing comma
+    return `'` + String.periodicJoin(array, `', '`, 8, `',\n\t\t\t'`) + `',`;
 }
 
 var unpackPokemonFormesInGOArray = function (sourceArray) {
@@ -917,7 +919,6 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     if(sRestrictedListOutput) {
         sLateSupplementaryOutput += String.format(sArrayTemplate, 'restricted', sRestrictedListOutput);
     }
-    //
 
     var sFormatOutput = String.format(sFormatTemplate,
         sTourName, // {0}
@@ -931,6 +932,20 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     );
 
     return sFormatOutput;
+}
+
+var generateFormatsFromArray = function(sHeaderName, formatsArray, sArrayTemplate, sFormatTemplate, sThreadTemplate, sSectionHeaderTemplate) {
+    var sRawOutput = '';
+    if(formatsArray.length > 0) {
+        formatsArray.sort();
+        sRawOutput += String.format(sSectionHeaderTemplate, sHeaderName, MashupsGeneratedFormatsColumn);
+        for(var sTourName of formatsArray) {
+            sRawOutput += generateDynamicFormat(sTourName, sArrayTemplate, sFormatTemplate, sThreadTemplate);
+            sRawOutput += '\n';
+        }
+    }
+
+    return sRawOutput;
 }
 
 var generateMashupFormats = exports.generateMashupFormats = function () {
@@ -972,11 +987,52 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
 
     var sRawOutput = '';
 
-    let sTestTourCodeName = 'gen8staaabmons';
+    // Place spotlight first in list, if it is well-defined
+    var sSpotlightKeyName = null;
+    for(const name of SpotlightNamesArray) {
+        if(!AllTourCodesDictionary.hasOwnProperty(toId(name))) continue;
+        sSpotlightKeyName = toId(name);
+        break;
+    }
+    if(sSpotlightKeyName) {
+        sRawOutput += String.format(sCommentHeaderTemplate, 'Mashups Spotlight');
+        sRawOutput += String.format(sSectionHeaderTemplate, 'Mashups Spotlight', MashupsGeneratedFormatsColumn);
+        sRawOutput += generateDynamicFormat(sSpotlightKeyName, sArrayTemplate, sFormatTemplate, sThreadTemplate);
+        sRawOutput += '\n';
+    }
+
+    // Official mashup formats
+    var nonSpotlightOfficialsArray = OfficialTourCodesNamesArray.filter(function(value, index, arr) {
+        return (value !== sSpotlightKeyName);
+    });
+    var doublesOfficialsArray = nonSpotlightOfficialsArray.filter(function(value, index, arr) {
+        return value.includes('doubles');
+    });
+    var littleCupOfficialsArray = nonSpotlightOfficialsArray.filter(function(value, index, arr) {
+        return value.includes('littlecup');
+    });
+    var singlesOfficialsArray = nonSpotlightOfficialsArray.filter(function(value, index, arr) {
+        return !doublesOfficialsArray.includes(value) && !littleCupOfficialsArray.includes(value);
+    });
+
+    // Officials comment header
+    sRawOutput += String.format(sCommentHeaderTemplate, 'Official OM Mashups');
+
+    // Officials format lists
+    sRawOutput += generateFormatsFromArray('Official OM Mashups (Singles)', singlesOfficialsArray, sArrayTemplate, sFormatTemplate, sThreadTemplate, sSectionHeaderTemplate);
+    sRawOutput += generateFormatsFromArray('Official OM Mashups (Doubles)', doublesOfficialsArray, sArrayTemplate, sFormatTemplate, sThreadTemplate, sSectionHeaderTemplate);
+    sRawOutput += generateFormatsFromArray('Official OM Mashups (Little Cup)', littleCupOfficialsArray, sArrayTemplate, sFormatTemplate, sThreadTemplate, sSectionHeaderTemplate);
+
+    // Section to test specific tour codes
+    /*let sTestTourCodeName = 'gen8staaabmons';
     //let sTestTourCodeName = 'gen8tsaaa';
     //let sTestTourCodeName = 'gen8camomonsdoubles';
 
     sRawOutput += generateDynamicFormat(sTestTourCodeName, sArrayTemplate, sFormatTemplate, sThreadTemplate);
+    sRawOutput += '\n';*/
+
+    // Remove trailing line return
+    sRawOutput = sRawOutput.replace(/\n$/, "")
 
     // Format into list
     sRawOutput = String.format(sFormatListTemplate, sRawOutput);
