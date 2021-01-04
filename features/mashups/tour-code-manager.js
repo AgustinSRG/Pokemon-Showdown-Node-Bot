@@ -613,11 +613,11 @@ var standarizeGameObjectArrayContent = function (sourceArray) {
     movesGOArray.sort();
     othersGOArray.sort();
 
-    return pokemonGOArray
+    return othersGOArray
+        .concat(pokemonGOArray)
         .concat(abilitiesGOArray)
         .concat(itemsGOArray)
-        .concat(movesGOArray)
-        .concat(othersGOArray);
+        .concat(movesGOArray);
 }
 
 var generateMashupFormats = exports.generateMashupFormats = function () {
@@ -661,7 +661,8 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     var sRawOutput = '';
 
     //let sTestTourCodeName = 'gen8staaabmons';
-    let sTestTourCodeName = 'gen8tsaaa';
+    //let sTestTourCodeName = 'gen8tsaaa';
+    let sTestTourCodeName = 'gen8camomonsdoubles';
     let sTourCodeKey = sTestTourCodeName;
     let sTourCode = AllTourCodesDictionary[sTourCodeKey];
 
@@ -704,6 +705,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         sBaseFormatName = sBaseFormatName.split(',')[0];
     }
 
+    // Acquire delta rules
     let deltaRulesArray = [];
     if(sDeltaRulesLine) { // We don't necessarily expect rule changes
         let sDeltaRules = sDeltaRulesLine.substr(TourDeltaRulesLinePrefix.length);;
@@ -713,6 +715,46 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         }
     }
 
+    // Unpack any format-stacking rules
+    var filterOutFormatStackingDeltaRules = new Set();
+    var unpackedFormatStackingDeltaRules = new Set();
+    for(const sRule of deltaRulesArray) {
+        let format = Mashups.findFormatDetails(sRule);
+        if(!format) continue; // Not format-stacking
+
+        // Allow format-stacking for tier-defining formats
+        if(Mashups.isFormatTierDefinition(sRule)) continue;
+
+        if(format.banlist) {
+            format.banlist.forEach(function callback(value) {  
+                unpackedFormatStackingDeltaRules.add('-'+value);
+            });
+        }
+
+        if(format.unbanlist) {
+            format.unbanlist.forEach(function callback(value) {  
+                unpackedFormatStackingDeltaRules.add('+'+value);
+            });
+        }
+
+        if(format.restricted) {
+            format.restricted.forEach(function callback(value) {  
+                unpackedFormatStackingDeltaRules.add('*'+value);
+            });
+        }
+
+        filterOutFormatStackingDeltaRules.add(sRule);
+    }
+    deltaRulesArray = deltaRulesArray.filter(function(value, index, arr) {
+        return !filterOutFormatStackingDeltaRules.has(value);
+    });
+    deltaRulesArray = deltaRulesArray.concat(...unpackedFormatStackingDeltaRules);
+    // Add Trash Channel rules defining common methods for stacked formats
+    for(const sStackedFormat of filterOutFormatStackingDeltaRules) {
+        deltaRulesArray = addTrashChannelRulesForFormat(deltaRulesArray, sStackedFormat);
+    }
+
+    // Acquire base format data
     let baseFormatDetails = Mashups.findFormatDetails(sBaseFormatName);
     if(!baseFormatDetails) {
         console.log('Could not retrieve details for format: ' + sBaseFormatName);
@@ -750,7 +792,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         sModOutput = baseFormatDetails.mod;
     }
 
-    // Base format data
+    // Analyze base format data
     var baseFormatRulesArray = [];
     var baseFormatRepealsArray = [];
     if(baseFormatDetails.ruleset) {
