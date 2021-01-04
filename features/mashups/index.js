@@ -119,7 +119,12 @@ Object.freeze(tierDataArray);
 
 // This determines only if a format actually defines a tier, not what its basis tier is
 // E.g. [Gen 8] Underused will be UU, but [Gen 8] Mix and Mega is Undefined, not Ubers
-var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = function (sFormatName, nGen) {
+var determineFormatDefinitionTierId = exports.determineFormatDefinitionTierId = function (sFormatName, nGen=null) {
+	if(null === nGen) {
+		var formatDetails = findFormatDetails(sFormatName);
+		nGen = determineFormatGen(formatDetails);
+	}
+
 	sFormatName = toId(sFormatName);
 
 	var sLoopTierName;
@@ -703,14 +708,41 @@ var getGameObjectKey = exports.getGameObjectKey = function (sGameObjectAlias) {
 //#region PokemonGO
 
 var getGameObjectAsPokemon = exports.getGameObjectAsPokemon = function(sGameObject) {
-	sGameObject = sGameObject.replace('-Base', ''); // '-Base' formes aren't included in the Showdown dex file
-	sGameObject = toId(sGameObject);
 	if(MASHUPS_DEBUG_ON) monitor(`DEBUG sGameObject: ${sGameObject}`);
 
-	var nLength = Object.keys(PokedexArray).length;
-	if(MASHUPS_DEBUG_ON) monitor(`DEBUG nLength: ${nLength}`);
+	sGameObject = getPokemonKey(sGameObject);
+	if(MASHUPS_DEBUG_ON) monitor(`DEBUG aliased sGameObject: ${sGameObject}`);
+	if(!sGameObject) return null;
+
+	//var nLength = Object.keys(PokedexArray).length;
+	//if(MASHUPS_DEBUG_ON) monitor(`DEBUG nLength: ${nLength}`);
 
 	return PokedexArray[sGameObject];
+}
+
+var getGameObjectAsPokemonRaw = exports.getGameObjectAsPokemonRaw = function(sGameObject) {
+	sGameObject = toId(sGameObject);
+	return PokedexArray[sGameObject];
+}
+
+var getGameObjectAsPokemonBaseForme = exports.getGameObjectAsPokemonBaseForme = function(sGameObject) {
+	var pokemonGO = getGameObjectAsPokemon(sGameObject);
+	if(!pokemonGO) return null;
+
+	if(pokemonGO.baseSpecies) {
+		pokemonGO = getGameObjectAsPokemon(pokemonGO.baseSpecies);
+	}
+
+	return pokemonGO;
+}
+
+var getAllPokemonFormesArray = exports.getAllPokemonFormesArray = function(sGameObject) {
+	var basePokemonGO = getGameObjectAsPokemonBaseForme(sGameObject);
+	if(!basePokemonGO) return null;
+
+	var allFormesArray = basePokemonGO.otherFormes || [];
+	allFormesArray.unshift(basePokemonGO.name + '-Base');
+	return allFormesArray;
 }
 
 var isGameObjectPokemon = exports.isGameObjectPokemon = function(sGameObject) {
@@ -735,6 +767,7 @@ var calcPokemonTier = exports.calcPokemonTier = function(goPokemon) {
 }
 
 var getPokemonKey = exports.getPokemonKey = function (sPokemonAlias) {
+	sPokemonAlias = sPokemonAlias.replace('-Base', ''); // '-Base' formes aren't keys in the Showdown dex dictionary
 	sPokemonAlias = toId(sPokemonAlias);
 
 	// Convert from standard alias if this is one

@@ -405,10 +405,161 @@ var formatRulesList = function (array) {
     return `'` + String.periodicJoin(array, `', '`, 8, `',\n\t\t\t'`) + `'`;
 }
 
+var unpackPokemonFormesInGOArray = function (sourceArray) {
+    if(!sourceArray || (sourceArray.length < 1)) return sourceArray;
+
+    sourceArray = [...new Set(sourceArray)]; // Remove any duplicates
+
+    var priorityDict = {};
+
+    var filterOutFormes = new Set();
+    var correctedInFormes = new Set();
+    var nPriority;
+    var sCorrectedName;
+    for(const sGO of sourceArray) {
+        let pokemonGO = Mashups.getGameObjectAsPokemon(sGO);
+        if(!pokemonGO) continue;
+
+        let bIsBaseForme = !(pokemonGO.baseSpecies);
+        let bReferencesAllFormes = bIsBaseForme && (Mashups.getGameObjectAsPokemonRaw(sGO) === pokemonGO);
+        if(bReferencesAllFormes) {
+            //console.log("Ref all formes: " + sGO);
+            nPriority = 1;
+            if(pokemonGO.otherFormes) {
+                for(const sForme of pokemonGO.otherFormes) {
+                    sCorrectedName = sForme;
+                    correctedInFormes.add(sForme);
+                    if(priorityDict && 
+                        (!(sCorrectedName in priorityDict) 
+                            || (priorityDict[sCorrectedName] > nPriority))) {
+                        priorityDict[sCorrectedName] = nPriority;
+                    }
+                }
+                sCorrectedName = pokemonGO.name + '-Base';
+                correctedInFormes.add(sCorrectedName);
+                if(priorityDict && 
+                    (!(sCorrectedName in priorityDict) 
+                        || (priorityDict[sCorrectedName] > nPriority))) {
+                    priorityDict[sCorrectedName] = nPriority;
+                }
+            }
+            else {
+                sCorrectedName = pokemonGO.name.toString();
+                correctedInFormes.add(sCorrectedName);
+                if(priorityDict) {
+                    priorityDict[sCorrectedName] = nPriority;
+                }
+            }
+        }
+        else {
+            //console.log("Ref specific forme: " + sGO);
+            nPriority = 0;
+            if(bIsBaseForme) {
+                sCorrectedName = pokemonGO.name + '-Base';
+            }
+            else {
+                sCorrectedName = pokemonGO.name;
+            }
+            correctedInFormes.add(sCorrectedName);
+            if(priorityDict) {
+                priorityDict[sCorrectedName] = nPriority;
+            }
+        }
+
+        filterOutFormes.add(sGO);
+    }
+
+    sourceArray = sourceArray.filter(function(value, index, arr) {
+        return !filterOutFormes.has(value);
+    });
+
+    /*console.log("filterOutFormes:");
+    console.log(filterOutFormes);
+
+    console.log("correctedInFormes:");
+    console.log(correctedInFormes);
+
+    console.log("priorityDict:");
+    console.log(priorityDict);*/
+
+    return { array: sourceArray.concat(...correctedInFormes), dict: priorityDict };
+}
+
+var filterPokemonFormeArrayByPriority = function (targetArray, targetPriorityDict, ...filterPriorityDictArray) {
+    return targetArray.filter(function(value, index, arr) {
+        if(Mashups.isGameObjectPokemon(value) && !(value in targetPriorityDict)) { // Should be impossible
+            console.log("Key missing from priority dict: " + value);
+            return false;
+        }
+
+        for(const filterDict of filterPriorityDictArray) {
+            if(value in filterDict) {
+                if(filterDict[value] < targetPriorityDict[value]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    });
+}
+
+var packPokemonFormesInGOArray = function (sourceArray) {
+    if(!sourceArray || (sourceArray.length < 1)) return sourceArray;
+
+    sourceArray = [...new Set(sourceArray)]; // Remove any duplicates
+
+    var filterOutFormes = new Set();
+    var correctedInFormes = new Set();
+    var bAllFormesInArray;
+    for(const sGO of sourceArray) {
+        let goAllFormesArray = Mashups.getAllPokemonFormesArray(sGO);
+        if(!goAllFormesArray) continue;
+
+        bAllFormesInArray = true;
+        for(const forme of goAllFormesArray) {
+            let pokemonForme = Mashups.getGameObjectAsPokemon(forme);
+            if(!pokemonForme) continue;
+
+            if(!pokemonForme.baseSpecies) {
+                if(sourceArray.includes(pokemonForme.name + '-Base')) continue;
+            }
+            else {
+                if(sourceArray.includes(pokemonForme.name)) continue;
+            }
+            bAllFormesInArray = false;
+        }
+
+        if(bAllFormesInArray) {
+            goAllFormesArray.forEach(function callback(value) {  
+                filterOutFormes.add(value);
+            });
+            let basePokemonGO = Mashups.getGameObjectAsPokemonBaseForme(sGO);
+            if(basePokemonGO) {
+                correctedInFormes.add(basePokemonGO.name);
+            }
+        }
+    }
+
+    /*console.log("filterOutFormes 2:");
+    console.log(filterOutFormes);
+
+    console.log("correctedInFormes 2:");
+    console.log(correctedInFormes);*/
+
+    sourceArray = sourceArray.filter(function(value, index, arr) {
+        return !filterOutFormes.has(value);
+    });
+
+    return sourceArray.concat(...correctedInFormes);
+}
+
 var standarizeGameObjectArrayContent = function (sourceArray) {
+    sourceArray = packPokemonFormesInGOArray(sourceArray);
+
     if(!sourceArray || (sourceArray.length < 2)) return sourceArray;
 
-    sourceArray  = [...new Set(sourceArray)]; // Remove any duplicates
+    sourceArray = [...new Set(sourceArray)]; // Remove any duplicates
 
     var pokemonGOArray = [];
     var abilitiesGOArray = [];
@@ -577,9 +728,44 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         sModOutput = baseFormatDetails.mod;
     }
 
+    // Base format data
+    var baseFormatRulesArray = [];
+    var baseFormatRepealsArray = [];
+    if(baseFormatDetails.ruleset) {
+        let baseFormatRuleset = baseFormatDetails.ruleset;
+        for(nRuleItr=0; nRuleItr<baseFormatRuleset.length; ++nRuleItr) {
+            let sDeltaRule = baseFormatRuleset[nRuleItr];
+            let sLeadingChar = sDeltaRule.substr(0, 1);
+            let sRemainingChars = sDeltaRule.substr(1);
+            switch(sLeadingChar) {
+                case '!':
+                    baseFormatRepealsArray.push(sRemainingChars);
+                    break;
+                default:
+                    baseFormatRulesArray.push(sDeltaRule);
+                    break;
+            }
+        }
+    }
+    var baseFormatBansArray = [];
+    if(baseFormatDetails.banlist) {
+        baseFormatBansArray = baseFormatDetails.banlist;
+    }
+    var baseFormatUnbanList = [];
+    if(baseFormatDetails.unbanlist) {
+        baseFormatUnbanList = baseFormatDetails.unbanlist;
+    }
+    var baseFormatRestrictedList = [];
+    if(baseFormatDetails.restricted) {
+        baseFormatRestrictedList = baseFormatDetails.restricted;
+    }
+    baseFormatBansArray = unpackPokemonFormesInGOArray(baseFormatBansArray).array || [];
+    baseFormatUnbanList = unpackPokemonFormesInGOArray(baseFormatUnbanList).array || [];
+    baseFormatRestrictedList = unpackPokemonFormesInGOArray(baseFormatRestrictedList).array || [];
+
     // Rule modifications
     var deltaRulesetArray = [];
-    var deltaUnrulesetArray = [];
+    var deltaRepealsArray = [];
     var deltaBansArray = [];
     var deltaUnbansArray = [];
     var deltaRestrictedArray = [];
@@ -595,7 +781,7 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
                 deltaBansArray.push(sRemainingChars);
                 break;
             case '!':
-                deltaUnrulesetArray.push(sRemainingChars);
+                deltaRepealsArray.push(sRemainingChars);
                 break;
             case '*':
                 deltaRestrictedArray.push(sRemainingChars);
@@ -605,48 +791,57 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
                 break;
         }
     }
+    var deltaBansRes = unpackPokemonFormesInGOArray(deltaBansArray);
+    deltaBansArray = deltaBansRes.array || [];
+    var deltaBansPriorityDict = deltaBansRes.dict || {};
+    var deltaUnbansRes = unpackPokemonFormesInGOArray(deltaUnbansArray);
+    deltaUnbansArray = deltaUnbansRes.array || [];
+    var deltaUnbansPriorityDict = deltaUnbansRes.dict || {};
+    var deltaRestrictedRes = unpackPokemonFormesInGOArray(deltaRestrictedArray);
+    deltaRestrictedArray = deltaRestrictedRes.array || [];
+    var deltaRestrictionsPriorityDict = deltaRestrictedRes.dict || {};
+
+    deltaBansArray = filterPokemonFormeArrayByPriority(
+        deltaBansArray,
+        deltaBansPriorityDict,
+        deltaUnbansPriorityDict,
+        deltaRestrictionsPriorityDict);
+    deltaUnbansArray = filterPokemonFormeArrayByPriority(
+        deltaUnbansArray,
+        deltaUnbansPriorityDict,
+        deltaBansPriorityDict,
+        deltaRestrictionsPriorityDict);
+    deltaRestrictedArray = filterPokemonFormeArrayByPriority(
+        deltaRestrictedArray,
+        deltaRestrictionsPriorityDict,
+        deltaBansPriorityDict,
+        deltaUnbansPriorityDict);
 
     // ruleset
-    var combinedRulesArray = [];
-    var combinedUnrulesArray = [];
-    var baseFormatRulesArray = [];
-    var baseFormatUnrulesArray = [];
-    if(baseFormatDetails.ruleset) {
-        let baseFormatRuleset = baseFormatDetails.ruleset;
-        for(nRuleItr=0; nRuleItr<baseFormatRuleset.length; ++nRuleItr) {
-            let sDeltaRule = baseFormatRuleset[nRuleItr];
-            let sLeadingChar = sDeltaRule.substr(0, 1);
-            let sRemainingChars = sDeltaRule.substr(1);
-            switch(sLeadingChar) {
-                case '!':
-                    baseFormatUnrulesArray.push(sRemainingChars);
-                    break;
-                default:
-                    baseFormatRulesArray.push(sDeltaRule);
-                    break;
-            }
-        }
-    }
-    combinedRulesArray = baseFormatRulesArray.concat(deltaRulesetArray);
-    combinedUnrulesArray = baseFormatUnrulesArray.concat(deltaUnrulesetArray);
-    combinedUnrulesArray = combinedUnrulesArray.filter(function(value, index, arr) {
+    var combinedRulesArray = baseFormatRulesArray.concat(deltaRulesetArray);
+    var combinedRepealsArray = baseFormatRepealsArray.concat(deltaRepealsArray);
+    combinedRepealsArray = combinedRepealsArray.filter(function(value, index, arr) {
         return !deltaRulesetArray.includes(value);
     });
     combinedRulesArray = combinedRulesArray.filter(function(value, index, arr) {
-        return !combinedUnrulesArray.includes(value);
+        return !combinedRepealsArray.includes(value);
     });
     // Re-format rules
-    combinedUnrulesArray = combinedUnrulesArray.map(sItem => '!' + sItem);
-    combinedRulesArray = combinedRulesArray.concat(combinedUnrulesArray);
+    combinedRepealsArray = combinedRepealsArray.map(sItem => '!' + sItem);
+    combinedRulesArray = combinedRulesArray.concat(combinedRepealsArray);
     var sRulesetOutput = formatRulesList(combinedRulesArray);
 
-    // banlist
-    var combinedBansArray = [];
-    var baseFormatBansArray = [];
-    if(baseFormatDetails.banlist) {
-        baseFormatBansArray = baseFormatDetails.banlist;
+    // Determine tier basis for unbans
+    var nMinTierIncluded = Mashups.Tier.Undefined;
+    for(const sRule of combinedRulesArray) {
+        let nRuleTierId = Mashups.determineFormatDefinitionTierId(sRule);
+        if(nRuleTierId > nMinTierIncluded) {
+            nMinTierIncluded = nRuleTierId;
+        }
     }
-    combinedBansArray = baseFormatBansArray.concat(deltaBansArray);
+
+    // banlist
+    var combinedBansArray = baseFormatBansArray.concat(deltaBansArray);
     combinedBansArray = combinedBansArray.filter(function(value, index, arr) {
         return !deltaUnbansArray.includes(value) && !deltaRestrictedArray.includes(value);
     });
@@ -654,25 +849,24 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     var sBanlistOutput = formatRulesList(combinedBansArray);
 
     // unbanlist
-    var combinedUnbanList = [];
-    var baseFormatUnbanList = [];
-    if(baseFormatDetails.unbanlist) {
-        baseFormatUnbanList = baseFormatDetails.unbanlist;
-    }
-    combinedUnbanList = baseFormatUnbanList.concat(deltaUnbansArray);
+    var combinedUnbanList = baseFormatUnbanList.concat(deltaUnbansArray);
     combinedUnbanList = combinedUnbanList.filter(function(value, index, arr) {
         return !deltaBansArray.includes(value) && !deltaRestrictedArray.includes(value);
+    });
+    // Filter out unbans that are redundant due to not being included through a tiered format
+    // Do before standardization so the formes are split (may be tiered separately)
+    combinedUnbanList = combinedUnbanList.filter(function(value, index, arr) {
+        let pokemonForme = Mashups.getGameObjectAsPokemon(value);
+        if(!pokemonForme) return true;
+
+        let nPokemonTier = Mashups.calcPokemonTier(pokemonForme);
+        return nPokemonTier < nMinTierIncluded;
     });
     combinedUnbanList = standarizeGameObjectArrayContent(combinedUnbanList);
     var sUnbanListOutput = (combinedUnbanList.length > 0) ? formatRulesList(combinedUnbanList) : null;
 
     // restricted
-    var combinedRestrictedList = [];
-    var baseFormatRestrictedList = [];
-    if(baseFormatDetails.restricted) {
-        baseFormatRestrictedList = baseFormatDetails.restricted;
-    }
-    combinedRestrictedList = baseFormatRestrictedList.concat(deltaRestrictedArray);
+    var combinedRestrictedList = baseFormatRestrictedList.concat(deltaRestrictedArray);
     combinedRestrictedList = combinedRestrictedList.filter(function(value, index, arr) {
         return !deltaBansArray.includes(value) && !deltaUnbansArray.includes(value);
     });
@@ -683,6 +877,8 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     var sSupplementaryOutput = '';
     if(sUnbanListOutput) {
         sSupplementaryOutput += String.format(sUnbanListTemplate, sUnbanListOutput);
+    }
+    if(sRestrictedListOutput) {
         sSupplementaryOutput += String.format(sRestrictedTemplate, sRestrictedListOutput);
     }
 
