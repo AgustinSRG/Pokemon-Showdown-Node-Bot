@@ -672,8 +672,13 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
         deltaRulesArray = sDeltaRules.split(',');
         for(nRuleItr=0; nRuleItr<deltaRulesArray.length; ++nRuleItr) {
             deltaRulesArray[nRuleItr] = deltaRulesArray[nRuleItr].replace(/^\s+|\s+$/g, ''); // Remove any trailing/leading spaces from every rule
+            deltaRulesArray[nRuleItr] = deltaRulesArray[nRuleItr].replace('-base', '-Base'); // Deal with poorly-represented bans
         }
     }
+    // Filter out empty rules (trailing comma, etc)
+    deltaRulesArray = deltaRulesArray.filter(function(value, index, arr) {
+        return ('' !== value);
+    });
 
     // Unpack any format-stacking rules
     var filterOutFormatStackingDeltaRules = new Set();
