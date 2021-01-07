@@ -758,10 +758,10 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     }
 
     // Pre-rules supplementary output
-    var sSingleItemFormatPropertyTemplate = `\n\t\t{0}: '{1}',`;
+    var sSingleItemFormatPropertyTemplate = `\n\t\t{0}: {1},`;
     var sPrerulesSupplementaryOutput = '';
     if(baseFormatDetails.gameType) {
-        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'gameType', baseFormatDetails.gameType);
+        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'gameType', `'` + baseFormatDetails.gameType + `'`);
     }
     if(baseFormatDetails.maxLevel) {
         sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'maxLevel', baseFormatDetails.maxLevel.toString());
