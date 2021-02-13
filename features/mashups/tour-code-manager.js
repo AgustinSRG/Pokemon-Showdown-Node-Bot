@@ -285,23 +285,32 @@ var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
     return sOutput;
 }
 
-var startTour = exports.startTour = function (sTourName)
+var toDynamicFormatKey = exports.toDynamicFormatKey = function (sSearch)
 {
-    if('spotlight' === toId(sTourName)) {
+    sSearch = sSearch.replace(' ', '');
+    sSearch = toId(sSearch);
+    return sSearch;
+}
+
+var searchTourCode = exports.searchTourCode = function (sSearch)
+{
+    sSearch = toDynamicFormatKey(sSearch);
+
+    if('spotlight' === sSearch) {
         // Spotlight special case: search for tour code name in SpotlightNamesArray
         for(let name of SpotlightNamesArray) {
             //console.log(name);
-            if(!AllTourCodesDictionary.hasOwnProperty(toId(name))) continue;
-            sTourName = toId(name);
+            if(!AllTourCodesDictionary.hasOwnProperty(toDynamicFormatKey(name))) continue;
+            sSearch = toDynamicFormatKey(name);
             break;
         }
     }
 
-    if(!AllTourCodesDictionary.hasOwnProperty(sTourName)) {
+    if(!AllTourCodesDictionary.hasOwnProperty(sSearch)) {
         // Try to automatically recognize current-gen tour names without the gen explicitly specified
-        if('gen' !== sTourName.substring(0, 3)) {
-            sTourName = Mashups.getCurrentGenName() + sTourName;
-            if(!AllTourCodesDictionary.hasOwnProperty(sTourName)) {
+        if('gen' !== sSearch.substring(0, 3)) {
+            sSearch = Mashups.getCurrentGenName() + sSearch;
+            if(!AllTourCodesDictionary.hasOwnProperty(sSearch)) {
                 return null;
             }
         }
@@ -310,7 +319,12 @@ var startTour = exports.startTour = function (sTourName)
         }
     }
 
-    return AllTourCodesDictionary[sTourName];
+    return AllTourCodesDictionary[sSearch];
+}
+
+var startTour = exports.startTour = function (sTourName)
+{
+    return searchTourCode(sTourName);
 }
 
 var parseTime = exports.parseTime = function (timeString) {	
