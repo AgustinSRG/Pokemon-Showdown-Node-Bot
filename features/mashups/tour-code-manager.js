@@ -688,7 +688,8 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
         if(!format) continue; // Not format-stacking
 
         // Allow format-stacking for tier-defining formats
-        if(Mashups.isFormatTierDefinition(sRule)) continue;
+        // 21/02/13: Seems like we need to unpack these as well
+        //if(Mashups.isFormatTierDefinition(sRule)) continue;
 
         if(format.banlist) {
             format.banlist.forEach(function callback(value) {  
@@ -705,6 +706,12 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
         if(format.restricted) {
             format.restricted.forEach(function callback(value) {  
                 unpackedFormatStackingDeltaRules.add('*'+value);
+            });
+        }
+
+        if(format.ruleset) { // FIXME: Probably need to clean up after
+            format.ruleset.forEach(function callback(value) {  
+                unpackedFormatStackingDeltaRules.add(value);
             });
         }
 
@@ -868,10 +875,34 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     combinedRulesArray = combinedRulesArray.filter(function(value, index, arr) {
         return !combinedRepealsArray.includes(value);
     });
+    // Remove any duplicates
+    combinedRulesArray = [...new Set(combinedRulesArray)];
+    combinedRepealsArray = [...new Set(combinedRepealsArray)];
     // Re-format rules
     combinedRepealsArray = combinedRepealsArray.map(sItem => '!' + sItem);
     combinedRulesArray = combinedRulesArray.concat(combinedRepealsArray);
     var sRulesetOutput = formatRulesList(combinedRulesArray);
+
+    // Determine implicit bans and restrictions (those included inside rules)
+    // If an implicit ban also exists in the banlist, it will crash the validator, so we need to filter these out
+    var implicitBansArray = [];
+    var implicitUnbansArray = [];
+    var implicitRestrictedArray = [];
+    for(const sRule of combinedRulesArray) {
+        let format = Mashups.findFormatDetails(sRule);
+        if(format) { // FIXME: This logic is too simple and can't account for rebans, etc but for now...
+            if (format.banlist) {
+                implicitBansArray = implicitBansArray.concat(format.banlist);
+            }
+            if (format.unbanlist) {
+                implicitUnbansArray = implicitUnbansArray.concat(format.unbanlist);
+            }
+            if (format.restricted) {
+                implicitRestrictedArray = implicitRestrictedArray.concat(format.restricted);
+            }
+        }
+        // FIXME: For complete coverage, we also need to look at rules as these can also include bans, etc but there seems to be no good way to access these yet
+    }
 
     // Determine tier basis for unbans
     var nMinTierIncluded = Mashups.Tier.Undefined;
@@ -885,7 +916,9 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     // banlist
     var combinedBansArray = baseFormatBansArray.concat(deltaBansArray);
     combinedBansArray = combinedBansArray.filter(function(value, index, arr) {
-        return !deltaUnbansArray.includes(value) && !deltaRestrictedArray.includes(value);
+        return !deltaUnbansArray.includes(value)
+            && !deltaRestrictedArray.includes(value)
+            && !implicitBansArray.includes(value);
     });
     combinedBansArray = standarizeGameObjectArrayContent(combinedBansArray);
     var sBanlistOutput = formatRulesList(combinedBansArray);
@@ -893,7 +926,9 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     // unbanlist
     var combinedUnbanList = baseFormatUnbanList.concat(deltaUnbansArray);
     combinedUnbanList = combinedUnbanList.filter(function(value, index, arr) {
-        return !deltaBansArray.includes(value) && !deltaRestrictedArray.includes(value);
+        return !deltaBansArray.includes(value)
+            && !deltaRestrictedArray.includes(value)
+            && !implicitUnbansArray.includes(value);
     });
     // Filter out unbans that are redundant due to not being included through a tiered format
     // Do before standardization so the formes are split (may be tiered separately)
@@ -911,7 +946,9 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     // restricted
     var combinedRestrictedList = baseFormatRestrictedList.concat(deltaRestrictedArray);
     combinedRestrictedList = combinedRestrictedList.filter(function(value, index, arr) {
-        return !deltaBansArray.includes(value) && !deltaUnbansArray.includes(value);
+        return !deltaBansArray.includes(value)
+            && !deltaUnbansArray.includes(value)
+            && !implicitRestrictedArray.includes(value);
     });
     combinedRestrictedList = standarizeGameObjectArrayContent(combinedRestrictedList);
     var sRestrictedListOutput = (combinedRestrictedList.length > 0) ? formatRulesList(combinedRestrictedList) : null;
