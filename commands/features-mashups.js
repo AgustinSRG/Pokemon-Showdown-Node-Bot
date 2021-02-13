@@ -70,18 +70,19 @@ exports.commands = {
 	starttour: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
-        var result = TourCodeManager.startTour(arg);
-        if(!result) {
-            if('spotlight' === toId(arg)) {
-                this.reply(`Could not find tour code matching spotlight names metadata.`);
-            }
-            else {
-                this.reply(`Could not find tour code data for format: ` + arg);
-            }
-            return;
-        }
+        var result = TourCodeManager.replyToTourCodeSearchCommon(this, arg);
+        if(!result) return;
 
         this.reply(result);
+    },
+    preview: 'previewtour',
+	previewtour: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
+
+        var result = TourCodeManager.replyToTourCodeSearchCommon(this, arg);
+        if(!result) return;
+
+        this.reply('!code ' + result);
     },
     schedule: 'dailyschedule',
     dailyschedule: function (arg, user, room, cmd) {

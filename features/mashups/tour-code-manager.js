@@ -322,9 +322,19 @@ var searchTourCode = exports.searchTourCode = function (sSearch)
     return AllTourCodesDictionary[sSearch];
 }
 
-var startTour = exports.startTour = function (sTourName)
+var replyToTourCodeSearchCommon = exports.replyToTourCodeSearchCommon = function (commandContext, sSearch)
 {
-    return searchTourCode(sTourName);
+    var result = searchTourCode(sSearch);
+    if(!result) {
+        if('spotlight' === toId(sSearch)) {
+            commandContext.reply(`Could not find tour code matching spotlight names metadata.`);
+        }
+        else {
+            commandContext.reply(`Could not find tour code data for format: ` + sSearch);
+        }
+        return null;
+    }
+    return result;
 }
 
 var parseTime = exports.parseTime = function (timeString) {	
