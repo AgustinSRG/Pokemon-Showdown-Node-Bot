@@ -345,7 +345,7 @@ var parseTime = exports.parseTime = function (timeString) {
 	
 	var hours = parseInt(time[1],10);	 
 	if (hours == 12 && !time[4]) {
-		  hours = 0;
+		hours = 0;
 	}
 	else {
 		hours += (hours < 12 && time[4])? 12 : 0;
