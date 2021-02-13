@@ -645,7 +645,7 @@ var standarizeGameObjectArrayContent = function (sourceArray) {
         .concat(movesGOArray);
 }
 
-var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTemplate, sThreadTemplate) {
+var generateDynamicFormatRaw = function(sTourCodeKey) {
     var nRuleItr;
 
     let sTourCode = AllTourCodesDictionary[sTourCodeKey];
@@ -757,46 +757,9 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
         return false;
     }
 
-    var sDescriptionOutput = DynamicFormatDescriptionsDictionary.hasOwnProperty(sTourCodeKey) ?
+    var sDescription = DynamicFormatDescriptionsDictionary.hasOwnProperty(sTourCodeKey) ?
         DynamicFormatDescriptionsDictionary[sTourCodeKey] :
-        TourDescriptionMissingFallback;
-    sDescriptionOutput = sDescriptionOutput.replace('Pokemon', 'Pok&eacute;mon'); // Format for html
-
-    // threads
-    let combinedThreadsArray = [];
-    if(baseFormatDetails.threads) {
-        // Base format vanilla threads
-        combinedThreadsArray = combinedThreadsArray.concat(baseFormatDetails.threads);
-        combinedThreadsArray = combinedThreadsArray.map(sItem => sItem.replace(`">`, `">Vanilla `));
-    }
-    // Mashup generic resources
-    let sGenericThread = String.format(sThreadTemplate,
-        GenericResourcesLink, // {0}
-        sTourName+" Resources" // {1}
-    );
-    combinedThreadsArray.unshift(sGenericThread);
-    // Combined threads
-    var sThreadOutput = '`' + combinedThreadsArray.join('`,\n\t\t\t`') + '`';
-
-    // mod
-    var sModOutput = '';
-    if(!baseFormatDetails.mod) {
-        sModOutput = TourBaseFormatModMissingFallback;
-        console.log('Tour base format has no mod specified!');
-    }
-    else {
-        sModOutput = baseFormatDetails.mod;
-    }
-
-    // Pre-rules supplementary output
-    var sSingleItemFormatPropertyTemplate = `\n\t\t{0}: {1},`;
-    var sPrerulesSupplementaryOutput = '';
-    if(baseFormatDetails.gameType) {
-        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'gameType', `'` + baseFormatDetails.gameType + `'`);
-    }
-    if(baseFormatDetails.maxLevel) {
-        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'maxLevel', baseFormatDetails.maxLevel.toString());
-    }
+        null;
 
     // Analyze base format rules
     var baseFormatRulesArray = [];
@@ -905,7 +868,6 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     // Re-format rules
     combinedRepealsArray = combinedRepealsArray.map(sItem => '!' + sItem);
     combinedRulesArray = combinedRulesArray.concat(combinedRepealsArray);
-    var sRulesetOutput = formatRulesList(combinedRulesArray);
 
     // Determine implicit bans and restrictions (those included inside rules)
     // If an implicit ban also exists in the banlist, it will crash the validator, so we need to filter these out
@@ -945,7 +907,6 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
             && !implicitBansArray.includes(value);
     });
     combinedBansArray = standarizeGameObjectArrayContent(combinedBansArray);
-    var sBanlistOutput = formatRulesList(combinedBansArray);
 
     // unbanlist
     var combinedUnbanList = baseFormatUnbanList.concat(deltaUnbansArray);
@@ -965,7 +926,6 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
         return nPokemonTier < nMinTierIncluded;
     });
     combinedUnbanList = standarizeGameObjectArrayContent(combinedUnbanList);
-    var sUnbanListOutput = (combinedUnbanList.length > 0) ? formatRulesList(combinedUnbanList) : null;
 
     // restricted
     var combinedRestrictedList = baseFormatRestrictedList.concat(deltaRestrictedArray);
@@ -975,7 +935,83 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
             && !implicitRestrictedArray.includes(value);
     });
     combinedRestrictedList = standarizeGameObjectArrayContent(combinedRestrictedList);
-    var sRestrictedListOutput = (combinedRestrictedList.length > 0) ? formatRulesList(combinedRestrictedList) : null;
+
+    return {
+        name: sTourName,
+        baseFormatDetails: baseFormatDetails,
+        description: sDescription,
+        rulesArray: combinedRulesArray,
+        bansArray: combinedBansArray,
+        unbansArray: combinedUnbanList,
+        restrictedArray: combinedRestrictedList,
+    };
+}
+
+var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTemplate, sThreadTemplate) {
+    var formatRaw = generateDynamicFormatRaw(sTourCodeKey);
+    if (!formatRaw) {
+        console.log('Could not retrieve formatRaw for sTourCodeKey: ' + sTourCodeKey);
+        return false;
+    }
+
+    // format name
+    var sFormatName = formatRaw.name;
+
+    var baseFormatDetails = formatRaw.baseFormatDetails;
+
+    // description
+    var sDescriptionOutput = formatRaw.description ?
+        formatRaw.description :
+        TourDescriptionMissingFallback;
+    sDescriptionOutput = sDescriptionOutput.replace('Pokemon', 'Pok&eacute;mon'); // Format for html
+
+    // threads
+    let combinedThreadsArray = [];
+    if(baseFormatDetails.threads) {
+        // Base format vanilla threads
+        combinedThreadsArray = combinedThreadsArray.concat(baseFormatDetails.threads);
+        combinedThreadsArray = combinedThreadsArray.map(sItem => sItem.replace(`">`, `">Vanilla `));
+    }
+    // Mashup generic resources
+    let sGenericThread = String.format(sThreadTemplate,
+        GenericResourcesLink, // {0}
+        sFormatName+" Resources" // {1}
+    );
+    combinedThreadsArray.unshift(sGenericThread);
+    // Combined threads
+    var sThreadOutput = '`' + combinedThreadsArray.join('`,\n\t\t\t`') + '`';
+
+    // mod
+    var sModOutput = '';
+    if(!baseFormatDetails.mod) {
+        sModOutput = TourBaseFormatModMissingFallback;
+        console.log('Tour base format has no mod specified!');
+    }
+    else {
+        sModOutput = baseFormatDetails.mod;
+    }
+
+    // Pre-rules supplementary output
+    var sSingleItemFormatPropertyTemplate = `\n\t\t{0}: {1},`;
+    var sPrerulesSupplementaryOutput = '';
+    if(baseFormatDetails.gameType) {
+        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'gameType', `'` + baseFormatDetails.gameType + `'`);
+    }
+    if(baseFormatDetails.maxLevel) {
+        sPrerulesSupplementaryOutput += String.format(sSingleItemFormatPropertyTemplate, 'maxLevel', baseFormatDetails.maxLevel.toString());
+    }
+
+    // ruleset
+    var sRulesetOutput = formatRulesList(formatRaw.rulesArray);
+
+    // banlist
+    var sBanlistOutput = formatRulesList(formatRaw.bansArray);
+
+    // unbanlist
+    var sUnbanListOutput = (formatRaw.unbansArray.length > 0) ? formatRulesList(formatRaw.unbansArray) : null;
+
+    // restricted
+    var sRestrictedListOutput = (formatRaw.restrictedArray.length > 0) ? formatRulesList(formatRaw.restrictedArray) : null;
 
     // Late supplementary output
     var sLateSupplementaryOutput = '';
@@ -987,7 +1023,7 @@ var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTempla
     }
 
     var sFormatOutput = String.format(sFormatTemplate,
-        sTourName, // {0}
+        sFormatName, // {0}
         sDescriptionOutput, // {1}
         sThreadOutput, // {2}
         sModOutput, // {3}
