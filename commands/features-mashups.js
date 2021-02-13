@@ -70,19 +70,102 @@ exports.commands = {
 	starttour: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
-        var result = TourCodeManager.replyToTourCodeSearchCommon(this, arg);
-        if(!result) return;
+        const validFormatKey = TourCodeManager.replyToSearchValidDynamicFormatKey(this, arg);
+        if(!validFormatKey) return;
 
-        this.reply(result);
+        this.reply(TourCodeManager.searchTourCode(validFormatKey));
     },
     preview: 'previewtour',
 	previewtour: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('voice'))) return false;
 
-        var result = TourCodeManager.replyToTourCodeSearchCommon(this, arg);
-        if(!result) return;
+        const validFormatKey = TourCodeManager.replyToSearchValidDynamicFormatKey(this, arg);
+        if(!validFormatKey) return;
 
-        this.reply('!code ' + result);
+        this.reply('!code ' + TourCodeManager.searchTourCode(validFormatKey));
+    },
+    mashup: 'mashup',
+    om: 'om',
+    tier: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
+
+        const validFormatKey = TourCodeManager.replyToSearchValidDynamicFormatKey(this, arg);
+        if(!validFormatKey) return;
+
+        const formatRaw = TourCodeManager.generateDynamicFormatRaw(validFormatKey);
+        if(!formatRaw) {
+            this.reply(`generateDynamicFormatRaw failed for format: ` + arg);
+            return;
+        }
+
+        var sOutput = '!code ';
+
+        // Name
+        sOutput += formatRaw.name;
+
+        // Description
+        if (formatRaw.description) {
+            sOutput += '\n';
+            sOutput += formatRaw.description;
+        }
+
+        // Resource threads
+        // 20/02/13: Seems pointless unless we can output in HTML
+        /*const baseFormatDetails = formatRaw.baseFormatDetails;
+        if (baseFormatDetails) {
+            let combinedThreadsArray = [];
+            if(baseFormatDetails.threads) {
+                // Base format vanilla threads
+                combinedThreadsArray = combinedThreadsArray.concat(baseFormatDetails.threads);
+                combinedThreadsArray = combinedThreadsArray.map(sItem => sItem.replace(`">`, `">Vanilla `));
+            }
+            // Mashup generic resources
+            let sGenericThread = 'Resources: '+TourCodeManager.GenericResourcesLink;
+            combinedThreadsArray.unshift(sGenericThread);
+            sOutput += '\n';
+            sOutput += combinedThreadsArray.join('\n');
+        }*/
+
+        // Ruleset
+        var rulesArray = formatRaw.rulesArray;
+        if (rulesArray && rulesArray.length > 0) {
+            sOutput += '\n\n';
+            sOutput += 'Ruleset: ';
+            sOutput += TourCodeManager.formatRulesArrayForDispay(rulesArray);
+        }
+
+        // Bans
+        var bansArray = formatRaw.bansArray;
+        if (bansArray && bansArray.length > 0) {
+            sOutput += '\n\n';
+            sOutput += 'Bans: ';
+            sOutput += TourCodeManager.formatRulesArrayForDispay(bansArray);
+        }
+
+        // Unbans
+        var unbansArray = formatRaw.unbansArray;
+        if (unbansArray && unbansArray.length > 0) {
+            sOutput += '\n\n';
+            sOutput += 'Unbans: ';
+            sOutput += TourCodeManager.formatRulesArrayForDispay(unbansArray);
+        }
+
+        // Restricted
+        var restrictedArray = formatRaw.restrictedArray;
+        if (restrictedArray && restrictedArray.length > 0) {
+            sOutput += '\n\n';
+            sOutput += 'Restricted: ';
+            sOutput += TourCodeManager.formatRulesArrayForDispay(restrictedArray);
+        }
+
+        // Tour Code URL
+        const sURL = TourCodeManager.searchTourCodeURL(validFormatKey);
+        if (sURL) {
+            sOutput += '\n\n';
+            sOutput += 'Tour Code URL: '+sURL;
+        }
+
+        this.reply(sOutput);
     },
     schedule: 'dailyschedule',
     dailyschedule: function (arg, user, room, cmd) {

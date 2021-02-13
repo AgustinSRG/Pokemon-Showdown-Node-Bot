@@ -62,7 +62,7 @@ const TourBaseFormatModMissingFallback = 'gen8';
 const TourDeltaRulesLinePrefix = '/tour rules ';
 const TourDescriptionMissingFallback = '(No description)';
 
-const GenericResourcesLink = 'https://www.smogon.com/forums/threads/om-mashup-megathread.3657159/#post-8299984';
+const GenericResourcesLink = exports.GenericResourcesLink = 'https://www.smogon.com/forums/threads/om-mashup-megathread.3657159/#post-8299984';
 const MashupsGeneratedFormatsColumn = 1;
 
 var OfficialTourCodesNamesArray = exports.OfficialTourCodesNamesArray = [];
@@ -70,6 +70,7 @@ var OtherTourCodesNamesArray = exports.OtherTourCodesNamesArray = [];
 var AllTourCodesNamesArray = exports.AllTourCodesNamesArray = [];
 
 var AllTourCodesDictionary = exports.AllTourCodesDictionary = {};
+var TourCodeURLsDictionary = {};
 var DynamicFormatDescriptionsDictionary = {};
 
 var SpotlightNamesArray = exports.SpotlightNamesArray = [];
@@ -129,9 +130,10 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
                 OfficialTourCodesNamesArray = officialNames.split(',');
                 for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
                     OfficialTourCodesNamesArray[nItr] = toId(OfficialTourCodesNamesArray[nItr]);
+                    TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]] = OfficialURLRoot + OfficialTourCodesNamesArray[nItr] + TourExt;
                     officialPromises.push(
                         downloadFilePromise(
-                            OfficialURLRoot + OfficialTourCodesNamesArray[nItr] + TourExt,
+                            TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]],
                             LocalOTCOfficialPath + OfficialTourCodesNamesArray[nItr] + TourExt)
                     );
                 }
@@ -144,9 +146,10 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
                 OtherTourCodesNamesArray = otherNames.split(',');
                 for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
                     OtherTourCodesNamesArray[nItr] = toId(OtherTourCodesNamesArray[nItr]);
+                    TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]] = OtherURLRoot + OtherTourCodesNamesArray[nItr] + TourExt;
                     otherPromises.push(
                         downloadFilePromise(
-                            OtherURLRoot + OtherTourCodesNamesArray[nItr] + TourExt,
+                            TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]],
                             LocalOTCOtherPath + OtherTourCodesNamesArray[nItr] + TourExt)
                     );
                 }
@@ -292,7 +295,7 @@ var toDynamicFormatKey = exports.toDynamicFormatKey = function (sSearch)
     return sSearch;
 }
 
-var searchTourCode = exports.searchTourCode = function (sSearch)
+var searchValidDynamicFormatKey = exports.searchValidDynamicFormatKey = function (sSearch)
 {
     sSearch = toDynamicFormatKey(sSearch);
 
@@ -319,12 +322,21 @@ var searchTourCode = exports.searchTourCode = function (sSearch)
         }
     }
 
+    return sSearch;
+}
+
+var searchTourCode = exports.searchTourCode = function (sSearch)
+{
+    sSearch = searchValidDynamicFormatKey(sSearch);
+    if (!sSearch) return null;
+
     return AllTourCodesDictionary[sSearch];
 }
 
-var replyToTourCodeSearchCommon = exports.replyToTourCodeSearchCommon = function (commandContext, sSearch)
+var replyToSearchValidDynamicFormatKey = exports.replyToSearchValidDynamicFormatKey = function (commandContext, sSearch)
 {
-    var result = searchTourCode(sSearch);
+    var result = searchValidDynamicFormatKey(sSearch);
+    //commandContext.reply(`result: ` + result);
     if(!result) {
         if('spotlight' === toId(sSearch)) {
             commandContext.reply(`Could not find tour code matching spotlight names metadata.`);
@@ -335,6 +347,15 @@ var replyToTourCodeSearchCommon = exports.replyToTourCodeSearchCommon = function
         return null;
     }
     return result;
+}
+
+var searchTourCodeURL = exports.searchTourCodeURL = function(sSearch)
+{
+    sSearch = searchValidDynamicFormatKey(sSearch);
+    if (!sSearch) return null;
+
+    if (!TourCodeURLsDictionary.hasOwnProperty(sSearch)) return null;
+    return TourCodeURLsDictionary[sSearch];
 }
 
 var parseTime = exports.parseTime = function (timeString) {	
@@ -449,6 +470,10 @@ var formatRulesList = function (array) {
     array = array.map(sItem => sItem.replace(`'`, `\\'`));
     // Human-generated format data rules by convention end with a trailing comma
     return `'` + String.periodicJoin(array, `', '`, 8, `',\n\t\t\t'`) + `',`;
+}
+
+var formatRulesArrayForDispay = exports.formatRulesArrayForDispay = function (array) {
+    return array.join(`, `);
 }
 
 var unpackPokemonFormesInGOArray = function (sourceArray) {
@@ -645,7 +670,9 @@ var standarizeGameObjectArrayContent = function (sourceArray) {
         .concat(movesGOArray);
 }
 
-var generateDynamicFormatRaw = function(sTourCodeKey) {
+var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTourCodeKey) {
+    if(!AllTourCodesDictionary.hasOwnProperty(toId(sTourCodeKey))) return false;
+
     var nRuleItr;
 
     let sTourCode = AllTourCodesDictionary[sTourCodeKey];
@@ -787,17 +814,17 @@ var generateDynamicFormatRaw = function(sTourCodeKey) {
     if(baseFormatDetails.banlist) {
         baseFormatBansArray = baseFormatDetails.banlist;
     }
-    var baseFormatUnbanList = [];
+    var baseFormatUnbansArray = [];
     if(baseFormatDetails.unbanlist) {
-        baseFormatUnbanList = baseFormatDetails.unbanlist;
+        baseFormatUnbansArray = baseFormatDetails.unbanlist;
     }
-    var baseFormatRestrictedList = [];
+    var baseFormatRestrictedArray = [];
     if(baseFormatDetails.restricted) {
-        baseFormatRestrictedList = baseFormatDetails.restricted;
+        baseFormatRestrictedArray = baseFormatDetails.restricted;
     }
     baseFormatBansArray = unpackPokemonFormesInGOArray(baseFormatBansArray).array || [];
-    baseFormatUnbanList = unpackPokemonFormesInGOArray(baseFormatUnbanList).array || [];
-    baseFormatRestrictedList = unpackPokemonFormesInGOArray(baseFormatRestrictedList).array || [];
+    baseFormatUnbansArray = unpackPokemonFormesInGOArray(baseFormatUnbansArray).array || [];
+    baseFormatRestrictedArray = unpackPokemonFormesInGOArray(baseFormatRestrictedArray).array || [];
 
     // Rule modifications
     var deltaRulesetArray = [];
@@ -909,15 +936,15 @@ var generateDynamicFormatRaw = function(sTourCodeKey) {
     combinedBansArray = standarizeGameObjectArrayContent(combinedBansArray);
 
     // unbanlist
-    var combinedUnbanList = baseFormatUnbanList.concat(deltaUnbansArray);
-    combinedUnbanList = combinedUnbanList.filter(function(value, index, arr) {
+    var combinedUnbansArray = baseFormatUnbansArray.concat(deltaUnbansArray);
+    combinedUnbansArray = combinedUnbansArray.filter(function(value, index, arr) {
         return !deltaBansArray.includes(value)
             && !deltaRestrictedArray.includes(value)
             && !implicitUnbansArray.includes(value);
     });
     // Filter out unbans that are redundant due to not being included through a tiered format
     // Do before standardization so the formes are split (may be tiered separately)
-    combinedUnbanList = combinedUnbanList.filter(function(value, index, arr) {
+    combinedUnbansArray = combinedUnbansArray.filter(function(value, index, arr) {
         let pokemonForme = Mashups.getGameObjectAsPokemon(value);
         if(!pokemonForme) return true;
 
@@ -925,16 +952,16 @@ var generateDynamicFormatRaw = function(sTourCodeKey) {
         //console.log("Checking unban of forme: "+value+" nPokemonTier: "+nPokemonTier.toString()+" nMinTierIncluded: "+nMinTierIncluded.toString());
         return nPokemonTier < nMinTierIncluded;
     });
-    combinedUnbanList = standarizeGameObjectArrayContent(combinedUnbanList);
+    combinedUnbansArray = standarizeGameObjectArrayContent(combinedUnbansArray);
 
     // restricted
-    var combinedRestrictedList = baseFormatRestrictedList.concat(deltaRestrictedArray);
-    combinedRestrictedList = combinedRestrictedList.filter(function(value, index, arr) {
+    var combinedRestrictedArray = baseFormatRestrictedArray.concat(deltaRestrictedArray);
+    combinedRestrictedArray = combinedRestrictedArray.filter(function(value, index, arr) {
         return !deltaBansArray.includes(value)
             && !deltaUnbansArray.includes(value)
             && !implicitRestrictedArray.includes(value);
     });
-    combinedRestrictedList = standarizeGameObjectArrayContent(combinedRestrictedList);
+    combinedRestrictedArray = standarizeGameObjectArrayContent(combinedRestrictedArray);
 
     return {
         name: sTourName,
@@ -942,8 +969,8 @@ var generateDynamicFormatRaw = function(sTourCodeKey) {
         description: sDescription,
         rulesArray: combinedRulesArray,
         bansArray: combinedBansArray,
-        unbansArray: combinedUnbanList,
-        restrictedArray: combinedRestrictedList,
+        unbansArray: combinedUnbansArray,
+        restrictedArray: combinedRestrictedArray,
     };
 }
 
