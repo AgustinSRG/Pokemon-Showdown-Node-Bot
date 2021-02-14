@@ -84,8 +84,8 @@ exports.commands = {
 
         this.reply('!code ' + TourCodeManager.searchTourCode(validFormatKey));
     },
-    mashup: 'mashup',
-    om: 'om',
+    mashup: 'tier',
+    om: 'tier',
     tier: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('voice'))) return false;
 
