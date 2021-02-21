@@ -15,12 +15,14 @@ const OtherPathExtension = 'other/';
 const MetadataPathExtension = 'metadata/';
 const ListFName = 'list.txt';
 const DynamicFormatDescriptionsFName = 'dynamicformatdescriptions.txt';
+const AliasesFName = 'aliases.txt';
 const SpotlightNamesFName = 'spotlightnames.txt';
 const DailyRawContentFName = 'dailyschedule.txt';
 const TourExt = '.tour';
 
 const GeneralMetadataURLRoot = TourCodesURLRoot + MetadataPathExtension;
 const DynamicFormatDescriptionsURL = GeneralMetadataURLRoot + DynamicFormatDescriptionsFName;
+const AliasesURL = GeneralMetadataURLRoot + AliasesFName;
 
 const MashupsURLRoot = TourCodesURLRoot + 'mashups/';
 const MashupsMetadataURLRoot = MashupsURLRoot + MetadataPathExtension;
@@ -72,6 +74,7 @@ var AllTourCodesNamesArray = exports.AllTourCodesNamesArray = [];
 var AllTourCodesDictionary = exports.AllTourCodesDictionary = {};
 var TourCodeURLsDictionary = {};
 var DynamicFormatDescriptionsDictionary = {};
+var AliasesDictionary = {};
 
 var SpotlightNamesArray = exports.SpotlightNamesArray = [];
 
@@ -110,6 +113,9 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
         downloadFilePromise(
             DynamicFormatDescriptionsURL,
             LocalOTCMetadataPath + DynamicFormatDescriptionsFName),
+        downloadFilePromise(
+            AliasesURL,
+            LocalOTCMetadataPath + AliasesFName),
         downloadFilePromise(
             SpotlightNamesURL,
             LocalOTCMetadataPath + SpotlightNamesFName),
@@ -177,7 +183,29 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
                         }
                         //console.log('Description key: ' + sName);
                         //console.log('Description value: ' + sLine.substring(nSubStringIdx + 1));
-                        DynamicFormatDescriptionsDictionary[sName] = sLine.substring(nSubStringIdx + 1);
+                        DynamicFormatDescriptionsDictionary[sName] = sLine.substring(nSubStringIdx + 1).replace(/^\s+|\s+$/g, '');
+                    }
+                }
+            }
+
+            // Aliases
+            var aliasesRaw = fs.readFileSync('./data/' + LocalOTCMetadataPath + AliasesFName).toString();
+            if( NotFoundErrorText !== aliasesRaw ) {
+                const contentArray = aliasesRaw.split('\n');
+                var nSubStringIdx;
+                var sValue;
+                var sKey;
+                for(const sLine of contentArray) {
+                    if('' === sLine) continue;
+                    nSubStringIdx = sLine.indexOf(':');
+                    if(-1 !== nSubStringIdx) {
+                        sValue = toId(sLine.substring(0, nSubStringIdx)).replace(/^\s+|\s+$/g, '');
+                        //console.log('Alias value: ' + sValue);
+                        const keyContentArray = sLine.substring(nSubStringIdx + 1).split(',');
+                        keyContentArray.forEach( (alias) => {
+                            AliasesDictionary[alias.replace(/^\s+|\s+$/g, '')] = sValue;
+                            //console.log('Alias value: ' + alias);
+                        });
                     }
                 }
             }
@@ -288,14 +316,14 @@ var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
     return sOutput;
 }
 
-var toDynamicFormatKey = exports.toDynamicFormatKey = function (sSearch)
+var toDynamicFormatKey = function (sSearch)
 {
     sSearch = sSearch.replace(' ', '');
     sSearch = toId(sSearch);
     return sSearch;
 }
 
-var searchValidDynamicFormatKey = exports.searchValidDynamicFormatKey = function (sSearch)
+var searchValidDynamicFormatKeyInternal = function (sSearch)
 {
     sSearch = toDynamicFormatKey(sSearch);
 
@@ -323,6 +351,27 @@ var searchValidDynamicFormatKey = exports.searchValidDynamicFormatKey = function
     }
 
     return sSearch;
+}
+
+var searchValidDynamicFormatKey = function (sSearch)
+{
+    // Prefer using the raw value over alias searching if we can
+    const sRawSearch = searchValidDynamicFormatKeyInternal(sSearch);
+    if(sRawSearch) return sRawSearch;
+
+    // Aliased search
+    const sAliasedSearch = resolveAlias(sSearch);
+    if(sAliasedSearch === sSearch) return null; // No point in repeating internal seach if alias doesn't change anything
+    return searchValidDynamicFormatKeyInternal(sAliasedSearch);
+}
+
+var resolveAlias = exports.resolveAlias = function (sSearch)
+{
+    if(!AliasesDictionary.hasOwnProperty(sSearch)) {
+        return sSearch;
+    }
+
+    return AliasesDictionary[sSearch];
 }
 
 var searchTourCode = exports.searchTourCode = function (sSearch)
