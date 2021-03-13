@@ -84,7 +84,7 @@ var downloadFilePromise = exports.downloadFilePromise = function (url, file)
 {
     let promise = new Promise(function(resolve, reject) {
         DataDownloader.downloadFile(
-            url,
+            url + "?" + Date.now(),
             file,
             function (s, err) {
                 info('url: ' + url);
