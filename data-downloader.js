@@ -10,6 +10,10 @@ var data = exports.data = [
 		file: "formats.js"
 	},
 	{
+		url: "https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/metadata/rulesets.js?" + datenow,
+		file: "rulesets.js"
+	},
+	{
 		url: "https://play.pokemonshowdown.com/data/formats-data.js?" + datenow,
 		file: "formats-data.js"
 	},
@@ -114,6 +118,10 @@ exports.getAliases = function () {
 
 exports.getFormats = function () {
 	return require("./data/formats.js").Formats;
+};
+
+exports.getRulesets = function () {
+	return require("./data/rulesets.js").Formats; // "Formats" is correct here
 };
 
 exports.getFormatsData = function () {
