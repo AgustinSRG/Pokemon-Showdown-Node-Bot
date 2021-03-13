@@ -367,11 +367,20 @@ var searchValidDynamicFormatKey = function (sSearch)
 
 var resolveAlias = exports.resolveAlias = function (sSearch)
 {
-    if(!AliasesDictionary.hasOwnProperty(sSearch)) {
-        return sSearch;
+    // Direct alias reference case
+    if(AliasesDictionary.hasOwnProperty(sSearch)) {
+        return AliasesDictionary[sSearch];
     }
 
-    return AliasesDictionary[sSearch];
+    // Try to find valid alias by stripping away potentially anomalous current-gen prefixes
+    if(Mashups.getCurrentGenName() === sSearch.substring(0, 4)) {
+        const sGenStrippedSearch = sSearch.substring(4);
+        if(AliasesDictionary.hasOwnProperty(sGenStrippedSearch)) {
+            return AliasesDictionary[sGenStrippedSearch];
+        }
+    }
+
+    return sSearch;
 }
 
 var searchTourCode = exports.searchTourCode = function (sSearch)
