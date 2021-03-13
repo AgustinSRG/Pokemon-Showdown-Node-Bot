@@ -134,6 +134,8 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             var officialPromises = [];
             if( NotFoundErrorText !== officialNames ) {
                 OfficialTourCodesNamesArray = officialNames.split(',');
+                OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
+                OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.sort(); // Make alphabetical
                 for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
                     OfficialTourCodesNamesArray[nItr] = toId(OfficialTourCodesNamesArray[nItr]);
                     TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]] = OfficialURLRoot + OfficialTourCodesNamesArray[nItr] + TourExt;
@@ -150,6 +152,8 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             var otherPromises = [];
             if( NotFoundErrorText !== otherNames ) {
                 OtherTourCodesNamesArray = otherNames.split(',');
+                OtherTourCodesNamesArray = OtherTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
+                OtherTourCodesNamesArray = OtherTourCodesNamesArray.sort(); // Make alphabetical
                 for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
                     OtherTourCodesNamesArray[nItr] = toId(OtherTourCodesNamesArray[nItr]);
                     TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]] = OtherURLRoot + OtherTourCodesNamesArray[nItr] + TourExt;
