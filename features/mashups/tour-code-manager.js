@@ -1202,12 +1202,14 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     sRawOutput += generateFormatsFromArray('Official OM Mashups (Little Cup)', littleCupOfficialsArray, sArrayTemplate, sFormatTemplate, sThreadTemplate, sSectionHeaderTemplate);
 
     // Section to test specific tour codes
-    /*let sTestTourCodeName = 'gen8staaabmons';
+    /*
+    let sTestTourCodeName = 'gen8staaabmons';
     //let sTestTourCodeName = 'gen8tsaaa';
     //let sTestTourCodeName = 'gen8camomonsdoubles';
 
     sRawOutput += generateDynamicFormat(sTestTourCodeName, sArrayTemplate, sFormatTemplate, sThreadTemplate);
-    sRawOutput += '\n';*/
+    sRawOutput += '\n';
+    */
 
     // Remove trailing line return
     sRawOutput = sRawOutput.replace(/\n$/, "")
