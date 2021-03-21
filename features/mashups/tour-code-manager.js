@@ -54,7 +54,8 @@ const ArrayTemplatePath = GenMashupFormatsTemplatesRoot + 'array.tmp';
 const SectionHeaderTemplatePath = GenMashupFormatsTemplatesRoot + 'sectionheader.tmp';
 const ThreadTemplatePath = GenMashupFormatsTemplatesRoot + 'thread.tmp';
 const GenMashupFormatsOutputRoot = GenMashupFormatsRoot + 'output/';
-const MashupFormatsOutputPath = GenMashupFormatsOutputRoot + 'generatedmashupformats.ts';
+const GenMashupFormatsFName = 'generated-mashup-formats.ts';
+const MashupFormatsOutputPath = GenMashupFormatsOutputRoot + GenMashupFormatsFName;
 
 const TourNameLinePrefix = '/tour name ';
 const TourNameMissingFallback = 'Unknown Format';
@@ -1230,10 +1231,14 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
     // Format into list
     sRawOutput = String.format(sFormatListTemplate, sRawOutput);
 
+    var outputFPath = Config.overrideGeneratedMashupsFormatsOutputDirectory ?
+        Config.overrideGeneratedMashupsFormatsOutputDirectory + GenMashupFormatsFName :
+        MashupFormatsOutputPath;
+
     var bFileWriteFailed = false;
-    fs.writeFile(MashupFormatsOutputPath, sRawOutput, function (err2) {
+    fs.writeFile(outputFPath, sRawOutput, function (err2) {
         if (err2) {
-            console.log('Output failed: ' + MashupFormatsOutputPath);
+            console.log('Output failed: ' + outputFPath);
             bFileWriteFailed = true;
         }
     });
