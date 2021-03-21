@@ -1193,8 +1193,17 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         sRawOutput += '\n';
     }
 
+    // Formats removed from output entirely (test, temporary or gimmick metas, etc)
+    const ignoredFormatsArray = [
+        'gen8dppstaaab',
+        'gen8staaabbl',
+        'gen8staaabtiers',
+        'gen8staaabtrial'
+    ];
+
     // Official mashup formats
     var nonSpotlightOfficialsArray = OfficialTourCodesNamesArray.filter(function(value, index, arr) {
+        if (ignoredFormatsArray.includes(value)) return false;
         return (value !== sSpotlightKeyName);
     });
     var doublesOfficialsArray = nonSpotlightOfficialsArray.filter(function(value, index, arr) {
