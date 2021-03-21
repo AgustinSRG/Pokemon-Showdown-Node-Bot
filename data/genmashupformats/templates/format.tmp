@@ -1,15 +1,15 @@
-    {
-        name: "{0}",
-        desc: `{1}`,
-        threads: [
-            {2}
-        ],
+	{
+		name: "{0}",
+		desc: `{1}`,
+		threads: [
+			{2}
+		],
 
-        mod: '{3}',{4}
-        ruleset: [
-            {5}
-        ],
-        banlist: [
-            {6}
-        ],{7}
-    },
+		mod: '{3}',{4}
+		ruleset: [
+			{5}
+		],
+		banlist: [
+			{6}
+		],{7}
+	},
