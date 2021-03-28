@@ -738,7 +738,8 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
 
     var nRuleItr;
 
-    let sTourCode = AllTourCodesDictionary[sTourCodeKey];
+    let sTourCode = searchTourCode(sTourCodeKey);
+    if(!sTourCode) return false;
 
     // Determine format name, base format, etc from tour code
     let lineArray = sTourCode.split('\n');
