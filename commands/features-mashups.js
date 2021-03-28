@@ -4,6 +4,7 @@
 
 var Mashups = exports.Mashups = require('./../features/mashups/index.js');
 var TourCodeManager = exports.Mashups = require('./../features/mashups/tour-code-manager.js');
+var Tournaments = exports.Tournaments = require('./../features/tournaments/index.js');
 
 exports.commands = {
 	resettours: 'resettourratio',
@@ -277,5 +278,21 @@ exports.commands = {
         else {
             this.reply(`Failed...`);
         }
-    }
+    },
+    nottrickmode: 'trickmode',
+	trickmode: function (arg, user, room, cmd) {
+        if (('thenumberman' !== toId(user)) &&
+            ('pokapk' !== toId(user)) &&
+            ('cringemeta' !== toId(user)) ) return false;
+
+		if (cmd === "nottrickmode") {
+			if (!Tournaments.getTrickMode()) return this.reply("Already not in Trick Mode!");
+			Tournaments.setTrickMode(false);
+			this.reply("Trick Mode turned off!");
+		} else {
+			if (Tournaments.getTrickMode()) return this.reply("Already in Trick Mode!");
+			Tournaments.setTrickMode(true);
+			this.reply("Trick Mode turned on!");
+		}
+	},
 };
