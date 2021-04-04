@@ -67,6 +67,13 @@ var requestDailyWarning = exports.requestDailyWarning = function (room) {
 	}
 }
 
+var autoDisableDaily = exports.autoDisableDaily = function (room) {
+    if (getDailyMode()) {
+        setDailyMode(false);
+        Bot.say(room, "Automatically disabled Daily Mode on starting new tour. Use ?daily to re-enable if this tour is meant to be daily.");
+    }
+}
+
 var Tournament = exports.Tournament = (function () {
 	function Tournament (room, details) {
 		this.format = details.format || 'randombattle';
@@ -133,8 +140,7 @@ exports.parse = function (room, message, isIntro, spl) {
 	if (spl[0] !== 'tournament') return;
 	switch (spl[1]) { // Daily left on warning
 		case 'create':
-			if (!getDailyMode()) break;
-			requestDailyWarning(room);
+            autoDisableDaily(room);
 			break;
 	}
 	if (isIntro) return;
