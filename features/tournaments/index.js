@@ -13,7 +13,6 @@ var Leaderboards = exports.Leaderboards = require('./leaderboards.js');
 // Save data (only supports single room properly)
 const tournamentsDataFile = AppOptions.data + 'tournaments.json';
 const inDailyModeDataItem = 'inDailyMode';
-const inTrickModeDataItem = 'inTrickMode';
 
 var tournamentsFFM = exports.tournamentsFFM = new Settings.FlatFileManager(tournamentsDataFile);
 
@@ -30,9 +29,6 @@ var save = exports.save = function () {
 	if (!tournamentsSavedData[inDailyModeDataItem]) {
 		tournamentsSavedData[inDailyModeDataItem] = false;
 	}
-	if (!tournamentsSavedData[inTrickModeDataItem]) {
-		tournamentsSavedData[inTrickModeDataItem] = false;
-	}
 
 	tournamentsFFM.writeObj(tournamentsSavedData);
 };
@@ -40,9 +36,6 @@ var save = exports.save = function () {
 var loadSaveData = exports.loadSaveData = function () {
 	if (!tournamentsSavedData[inDailyModeDataItem]) {
 		tournamentsSavedData[inDailyModeDataItem] = false;
-	}
-	if (!tournamentsSavedData[inTrickModeDataItem]) {
-		tournamentsSavedData[inTrickModeDataItem] = false;
 	}
 };
 
@@ -55,17 +48,6 @@ var setDailyMode = exports.setDailyMode = function (bIsDailyMode) {
 var getDailyMode = exports.getDailyMode = function () {
 	loadSaveData();
 	return tournamentsSavedData[inDailyModeDataItem];
-};
-
-var getTrickMode = exports.getTrickMode = function () {
-	loadSaveData();
-	return tournamentsSavedData[inTrickModeDataItem];
-};
-
-var setTrickMode = exports.setTrickMode = function (bIsTrickMode) {
-	loadSaveData();
-	tournamentsSavedData[inTrickModeDataItem] = bIsTrickMode;
-	save();
 };
 
 // Daily warning (only supports single room properly)

@@ -7,10 +7,6 @@ var fs = require('fs');
 var Mashups = exports.Mashups = require('./index.js');
 var DataDownloader = exports.DataDownloader = require('./../../data-downloader.js');
 
-//#region TrickMode
-var Tournaments = exports.Tournaments = require('./../tournaments/index.js');
-//#endregion TrickMode
-
 var allSettled = require('promise.allsettled');
 
 const TourCodesURLRoot = 'https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/';
@@ -397,23 +393,7 @@ var searchTourCode = exports.searchTourCode = function (sSearch)
     sSearch = searchValidDynamicFormatKey(sSearch);
     if (!sSearch) return null;
 
-    var sTourCode = AllTourCodesDictionary[sSearch];
-
-    if (Tournaments.getTrickMode()) {
-        // Determine format name, base format, etc from tour code
-        let lineArray = sTourCode.split('\n');
-        let sFilteredArray = [];
-        lineArray.forEach(function(sLine) {
-            if(!sLine) return;
-            sLine = sLine.replace(/ +(?= )/g,''); // Ensure the line of text is single-spaced
-            if(!sLine.startsWith(TourDeltaRulesLinePrefix)) {
-                sFilteredArray.push(sLine);
-            }
-        });
-        sTourCode = sFilteredArray.join('\n');
-    }
-
-    return sTourCode;
+    return AllTourCodesDictionary[sSearch];
 }
 
 var replyToSearchValidDynamicFormatKey = exports.replyToSearchValidDynamicFormatKey = function (commandContext, sSearch)
