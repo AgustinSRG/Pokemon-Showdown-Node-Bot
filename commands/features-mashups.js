@@ -95,7 +95,7 @@ exports.commands = {
     },
     previewrandtour: 'previewrandomtour',
     previewrandomtour: function (arg, user, room, cmd) {
-        if (!this.isRanked(Tools.getGroup('driver'))) return false;
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
 
         const sResult = TourCodeManager.tryGetRandomTourCodeForCategory(this, arg);
         if (!sResult) return;
