@@ -84,6 +84,24 @@ exports.commands = {
 
         this.reply('!code ' + TourCodeManager.searchTourCode(validFormatKey));
     },
+    randtour: 'randomtour',
+    randomtour: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('driver'))) return false;
+
+        const sResult = TourCodeManager.tryGetRandomTourCodeForCategory(this, arg);
+        if (!sResult) return;
+
+        this.reply(sResult);
+    },
+    previewrandtour: 'previewrandomtour',
+    previewrandomtour: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('driver'))) return false;
+
+        const sResult = TourCodeManager.tryGetRandomTourCodeForCategory(this, arg);
+        if (!sResult) return;
+
+        this.reply('!code ' + sResult);
+    },
     mashup: 'tier',
     om: 'tier',
     tier: function (arg, user, room, cmd) {

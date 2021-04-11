@@ -18,6 +18,7 @@ const DynamicFormatDescriptionsFName = 'dynamicformatdescriptions.txt';
 const AliasesFName = 'aliases.txt';
 const SpotlightNamesFName = 'spotlightnames.txt';
 const DailyRawContentFName = 'dailyschedule.txt';
+const MashupsPopularRandomFormatsFName = 'popularrandomformats.txt';
 const TourExt = '.tour';
 
 const GeneralMetadataURLRoot = TourCodesURLRoot + MetadataPathExtension;
@@ -28,6 +29,7 @@ const MashupsURLRoot = TourCodesURLRoot + 'mashups/';
 const MashupsMetadataURLRoot = MashupsURLRoot + MetadataPathExtension;
 const SpotlightNamesURL = MashupsMetadataURLRoot + SpotlightNamesFName;
 const DailyRawContentURL = MashupsMetadataURLRoot + DailyRawContentFName;
+const MashupsPopularRandomFormatsURL = MashupsMetadataURLRoot + MashupsPopularRandomFormatsFName;
 const OfficialURLRoot = MashupsURLRoot + OfficialPathExtension;
 const OfficialMetadataURLRoot = OfficialURLRoot + MetadataPathExtension;
 const OfficialListURL = OfficialMetadataURLRoot + ListFName;
@@ -76,10 +78,95 @@ var AllTourCodesDictionary = exports.AllTourCodesDictionary = {};
 var TourCodeURLsDictionary = {};
 var DynamicFormatDescriptionsDictionary = {};
 var AliasesDictionary = {};
+var MashupsPopularRandomFormatsWeightsDictionary = {};
 
 var SpotlightNamesArray = exports.SpotlightNamesArray = [];
 
 var DailyRawContent = exports.DailyRawContent = 'Uninit';
+
+//#region Random Tour
+
+const RandomTourCategory = exports.RandomTourCategory = Object.freeze({
+	'Any':      'any',
+	'Official': 'official',
+	'Other':    'other',
+	'Popular':  'popular',
+});
+
+var tryGetRandomTourCodeForCategory = exports.tryGetRandomTourCodeForCategory = function (commandContext, sCategoryName)
+{
+    if ('' === sCategoryName) {
+        sCategoryName = RandomTourCategory.Any;
+    }
+    sCategoryName = toId(sCategoryName);
+
+    if (!Object.values(RandomTourCategory).includes(sCategoryName)) {
+        const sParamNames = Object.values(RandomTourCategory).join(', ');
+        commandContext.reply(`Invalid category: ${sCategoryName}! Valid categories: ${sParamNames} (or leave blank for any tour).`);
+        return null;
+    }
+
+    var sTourCodeName = null;
+    switch(sCategoryName) {
+        case RandomTourCategory.Any:
+            sTourCodeName = AllTourCodesNamesArray[Math.floor(Math.random() * AllTourCodesNamesArray.length)];
+            break;
+        case RandomTourCategory.Official:
+            sTourCodeName = OfficialTourCodesNamesArray[Math.floor(Math.random() * OfficialTourCodesNamesArray.length)];
+            break;
+        case RandomTourCategory.Other:
+            sTourCodeName = OtherTourCodesNamesArray[Math.floor(Math.random() * OtherTourCodesNamesArray.length)];
+            break;
+        case RandomTourCategory.Popular: {
+                const weightsValues = Object.values(MashupsPopularRandomFormatsWeightsDictionary);
+                const fWeightsSum = weightsValues.reduce((a, b) => a + b, 0);
+                //console.log(`fWeightsSum: ${fWeightsSum}`);
+                const fWeightThreshold = Math.random() * fWeightsSum;
+                //console.log(`fWeightThreshold: ${fWeightThreshold}`);
+                var fDeltaWeight = 0;
+                var workDictionary = {...MashupsPopularRandomFormatsWeightsDictionary};
+                while(true) {
+                    //console.log(`fDeltaWeight: ${fDeltaWeight}`);
+                    var keyArray = Object.keys(workDictionary);
+                    //console.log(`keyArray: ${keyArray}`);
+                    if(0 === keyArray.length) {
+                        //console.log(`Stopped because dictionary was empty!`);
+                        break;
+                    }
+                    if(1 === keyArray.length) {
+                        sTourCodeName = keyArray[0];
+                        //console.log(`Stopped with 1 left.`);
+                        break;
+                    }
+                    var sPickKey = keyArray[Math.floor(Math.random() * keyArray.length)];
+                    fDeltaWeight += workDictionary[sPickKey];
+                    if(fDeltaWeight >= fWeightThreshold) {
+                        sTourCodeName = sPickKey;
+                        //console.log(`Stopped with multiple left.`);
+                        break;
+                    }
+                    delete workDictionary[sPickKey];
+                }
+            }
+            break;
+    }
+    //console.log(`sTourCodeName: ${sTourCodeName}`);
+
+    if (!sTourCodeName) {
+        commandContext.reply(`Failed to retrive a valid tour code name for category: ${sCategoryName}!`);
+        return null;
+    }
+
+    const sValidDynamicFormatKey = replyToSearchValidDynamicFormatKey(commandContext, sTourCodeName);
+    if (!sValidDynamicFormatKey) {
+        commandContext.reply(`Selected invalid tour code name: ${sTourCode}!`);
+        return null;
+    }
+
+    return searchTourCode(sValidDynamicFormatKey);
+}
+
+//#endregion
 
 var downloadFilePromise = exports.downloadFilePromise = function (url, file)
 {
@@ -123,6 +210,9 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
         downloadFilePromise(
             DailyRawContentURL,
             LocalOTCMetadataPath + DailyRawContentFName),
+        downloadFilePromise(
+            MashupsPopularRandomFormatsURL,
+            LocalOTCMetadataPath + MashupsPopularRandomFormatsFName),
     ];
 
     allSettled(listPromises).
@@ -233,6 +323,13 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             exports.DailyRawContent = DailyRawContent; // Reassignment necessary due to being reference type(?)
             //console.log('DailyRawContent: ' + DailyRawContent);
 
+            // Mashups Popular Random Formats
+            var sMashupsPopularRandomFormatsFName = './data/' + LocalOTCMetadataPath + MashupsPopularRandomFormatsFName;
+            bExists = fs.existsSync(sMashupsPopularRandomFormatsFName);
+            if(!bExists) {
+                console.log('Mashups Popular Random Formats metadata missing: ' + sMashupsPopularRandomFormatsFName);
+            }
+
             allSettled(totalPromises).then(
                 (tourResults) => {
                     //tourResults.forEach( (tourResult) => { console.log(tourResult.status); });
@@ -269,11 +366,47 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
                         AllTourCodesDictionary[OtherTourCodesNamesArray[nItr]] = sFileContent;
                     }
 
+                    // Mashups Popular Random Formats (generate weights)
+                    var sMashupsPopularRandomFormatsRawContent = fs.readFileSync(sMashupsPopularRandomFormatsFName).toString();
+                    //console.log('sMashupsPopularRandomFormatsRawContent: ' + sMashupsPopularRandomFormatsRawContent);
+                    if( NotFoundErrorText !== sMashupsPopularRandomFormatsRawContent ) {
+                        MashupsPopularRandomFormatsWeightsDictionary = {};
+                        const contentArray = sMashupsPopularRandomFormatsRawContent.split('\n');
+                        var nSubStringIdx;
+                        var sValue;
+                        var sKey;
+                        for(const sLine of contentArray) {
+                            if('' === sLine) continue;
+
+                            nSubStringIdx = sLine.indexOf(':');
+                            if(-1 !== nSubStringIdx) {
+                                sKey = toId(sLine.substring(0, nSubStringIdx));
+                                sValue = Number(sLine.substring(nSubStringIdx + 1).split(','));
+                                if(0 === sValue) {
+                                    sValue = 1;
+                                }
+                            }
+                            else {
+                                sKey = sLine;
+                                sValue = 1;
+                            }
+                            sKey = sKey.replace(/^\s+|\s+$/g, '');
+
+                            if(!AllTourCodesNamesArray.includes(sKey) && ('spotlight' !== sKey)) {
+                                console.log('MashupsPopularRandomFormats had unrecognized format (ignored): ' + sKey);
+                                continue;
+                            }
+
+                            MashupsPopularRandomFormatsWeightsDictionary[sKey] = sValue;
+                        }
+                    }
+
                     // Test output
                     if (room) {
                         var sNames = nameCachedTourCodes();
                         Bot.say(room, '!code Completed refresh.\n\n' + sNames);
                     }
+                    console.log('ALL DOWNLOADS COMPLETE');
                 }
             );
 
