@@ -227,19 +227,20 @@ exports.commands = {
 				this.restrictReply("**" + Tools.toName(tryGetRoomName(tarRoom)) + "** | " + topResults.join(", "), "rank");
 				break;
 			case "table":
-				if (!this.isRanked('roomowner')) return false;
+				if (!this.isRanked('voice')) return false;
 				if (args.length > 0) tarRoom = toRoomid(args[0]);
 				if (!tarRoom && this.roomType === "chat") tarRoom = room;
 				if (!tarRoom) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room]");
 				if (!Features['tours'].Leaderboards.isConfigured(tarRoom)) return this.reply(this.trad('not') + " " + tarRoom);
-				var size = args[1] ? parseInt(args[1]) : 100;
+				var size = args[1] ? parseInt(args[1]) : 50;
 				if (!size || size < 0) return this.reply(this.trad('usage') + ": " + this.cmdToken + cmd + " [room], [size]");
 				var table = Features['tours'].Leaderboards.getTable(tarRoom, size);
 				if (!table) return this.reply(this.trad('empty') + " " + tarRoom);
-				Tools.uploadToHastebin(table, function (r, link) {
+				/*Tools.uploadToHastebin(table, function (r, link) {
 					if (r) return this.pmReply(this.trad('table') + " ("  + tarRoom + '): ' + link);
 					else this.pmReply(this.trad('err'));
-				}.bind(this));
+				}.bind(this));*/
+                this.reply("!code " + table);
 				break;
 			case "reset":
 				if (!this.isRanked(Tools.getGroup('moderator'))) return false;
