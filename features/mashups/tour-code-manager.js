@@ -66,6 +66,7 @@ const TourBaseFormatMissingFallback = '[Gen 8] OU';
 const TourBaseFormatModMissingFallback = 'gen8';
 const TourDeltaRulesLinePrefix = '/tour rules ';
 const TourDescriptionMissingFallback = '(No description)';
+const TourInlineNameSeparator = ',,,';
 
 const GenericResourcesLink = exports.GenericResourcesLink = 'https://www.smogon.com/forums/threads/om-mashup-megathread.3657159/#post-8299984';
 const MashupsGeneratedFormatsColumn = 1;
@@ -879,6 +880,8 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
     let sTourNameLine = null;
     let sBaseFormatLine = null;
     let sDeltaRulesLine = null;
+    let baseFormatLineArray = null;
+    let sInlineTourName = null;
     lineArray.forEach(function(sLine) {
         if(!sLine) return;
         sLine = sLine.replace(/ +(?= )/g,''); // Ensure the line of text is single-spaced
@@ -887,7 +890,14 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
             sTourNameLine = sLine;
         }
         if(!sBaseFormatLine && sLine.startsWith(TourBaseFormatLinePrefix)) {
-            sBaseFormatLine = sLine;
+            if(sLine.includes(TourInlineNameSeparator)) {
+                baseFormatLineArray = sLine.split(TourInlineNameSeparator);
+                sBaseFormatLine = baseFormatLineArray[0].replace(/^\s+|\s+$/g, '');
+                sInlineTourName = baseFormatLineArray[1].replace(/^\s+|\s+$/g, '');
+            }
+            else {
+                sBaseFormatLine = sLine;
+            }
         }
         if(!sDeltaRulesLine && sLine.startsWith(TourDeltaRulesLinePrefix)) {
             sDeltaRulesLine = sLine;
@@ -895,12 +905,15 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
     });
 
     let sTourName = '';
-    if(!sTourNameLine) { // Fallback in case name is missing
+    if(sTourNameLine) { // Prioritize name from dedicated line
+        sTourName = sTourNameLine.substr(TourNameLinePrefix.length);
+    }
+    else if(sInlineTourName) { // Support inline names
+        sTourName = sInlineTourName;
+    }
+    else { // Fallback in case name is missing
         sTourName = TourNameMissingFallback;
         console.log('Tour name missing!');
-    }
-    else { // Accurate name
-        sTourName = sTourNameLine.substr(TourNameLinePrefix.length);
     }
 
     let sBaseFormatName = '';
