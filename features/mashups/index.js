@@ -34,14 +34,6 @@ try {
 	error("Could not import mashups data: " + sys.inspect(e));
 }
 
-// Tour code cache
-try {
-	TourCodeManager.initTourCodeCache();
-} catch (e) {
-	errlog(e.stack);
-	error("Could not initiate tour codes cache: " + sys.inspect(e));
-}
-
 var save = exports.save = function () {
 	if (!mashupsSavedData['authType']) {
 		mashupsSavedData['authType'] = {};
@@ -331,7 +323,7 @@ var isLegalGen = exports.isLegalGen = function(nGen) {
 
 var determineFormatGen = exports.determineFormatGen = function (formatDetails) {
 	if(!formatDetails || !formatDetails.name) {
-		monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
+		if(MASHUPS_DEBUG_ON) monitor(`formatDetails undefined! May have been erroneously passed a format name.`);
 		return -1;
 	}
 
@@ -1063,3 +1055,11 @@ exports.parse = function (room, message, isIntro, spl) {
 exports.destroy = function () {
 	if (Features[exports.id]) delete Features[exports.id];
 };
+
+// Tour code cache (init after defining mashups core)
+try {
+	TourCodeManager.initTourCodeCache();
+} catch (e) {
+	errlog(e.stack);
+	error("Could not initiate tour codes cache: " + sys.inspect(e));
+}

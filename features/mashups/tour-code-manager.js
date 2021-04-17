@@ -61,7 +61,9 @@ const MashupFormatsOutputPath = GenMashupFormatsOutputRoot + GenMashupFormatsFNa
 
 const TourNameLinePrefix = '/tour name ';
 const TourNameMissingFallback = 'Unknown Format';
-const TourBaseFormatLinePrefix = '/tour new ';
+const TourBaseFormatNewLinePrefix = '/tour new ';
+const TourBaseFormatCreateLinePrefix = '/tour create ';
+const TourBaseFormatStartTourLinePrefix = '/starttour ';
 const TourBaseFormatMissingFallback = '[Gen 8] OU';
 const TourBaseFormatModMissingFallback = 'gen8';
 const TourDeltaRulesLinePrefix = '/tour rules ';
@@ -80,6 +82,7 @@ var TourCodeURLsDictionary = {};
 var DynamicFormatDescriptionsDictionary = {};
 var AliasesDictionary = {};
 var MashupsPopularRandomFormatsWeightsDictionary = {};
+var DynamicFormatsRawDictionary = {};
 
 var SpotlightNamesArray = exports.SpotlightNamesArray = [];
 
@@ -313,7 +316,6 @@ var tourCodeCacheSecondPhaseInit = function(room)
         AllTourCodesDictionary[OtherTourCodesNamesArray[nItr]] = sFileContent;
     }
 
-
     // Mashups Popular Random Formats
     var sMashupsPopularRandomFormatsFName = './data/' + LocalOTCMetadataPath + MashupsPopularRandomFormatsFName;
     bExists = fs.existsSync(sMashupsPopularRandomFormatsFName);
@@ -354,7 +356,18 @@ var tourCodeCacheSecondPhaseInit = function(room)
         }
     }
 
-    // Test output
+    // Intermediate update
+    if (room) {
+        Bot.say(room, 'Download complete, rebuilding derived data...');
+    }
+
+    // Rebuild dynamic formats raw cache
+    DynamicFormatsRawDictionary = {};
+    for (const [sKey, value] of Object.entries(AllTourCodesDictionary)) {
+        DynamicFormatsRawDictionary[sKey] = generateDynamicFormatRaw(sKey);
+    }
+
+    // Output result
     if (room) {
         var sNames = nameCachedTourCodes();
         Bot.say(room, '!code Completed refresh.\n\n' + sNames);
@@ -383,8 +396,14 @@ var downloadFilePromise = exports.downloadFilePromise = function (url, file)
     return promise;
 }
 
+var bIsDoingRefresh = false;
+
 var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
 {
+    if(bIsDoingRefresh) return;
+
+    bIsDoingRefresh = true;
+
     const listPromises = [
         downloadFilePromise(
             OfficialListURL,
@@ -441,7 +460,9 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             allSettled(totalPromises).then(
                 (tourResults) => {
                     //tourResults.forEach( (tourResult) => { console.log(tourResult.status); });
-                    tourCodeCacheSecondPhaseInit();
+                    tourCodeCacheSecondPhaseInit(room);
+
+                    bIsDoingRefresh = false;
                 }
             );
 
@@ -925,7 +946,10 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
         if(!sTourNameLine && sLine.startsWith(TourNameLinePrefix)) {
             sTourNameLine = sLine;
         }
-        if(!sBaseFormatLine && sLine.startsWith(TourBaseFormatLinePrefix)) {
+        if(!sBaseFormatLine && 
+            (sLine.startsWith(TourBaseFormatNewLinePrefix) ||
+            sLine.startsWith(TourBaseFormatCreateLinePrefix) ||
+            sLine.startsWith(TourBaseFormatStartTourLinePrefix))) {
             if(sLine.includes(TourInlineNameSeparator)) {
                 baseFormatLineArray = sLine.split(TourInlineNameSeparator);
                 sBaseFormatLine = baseFormatLineArray[0].replace(/^\s+|\s+$/g, '');
@@ -949,16 +973,24 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
     }
     else { // Fallback in case name is missing
         sTourName = TourNameMissingFallback;
-        console.log('Tour name missing!');
+        console.log(`sTourCodeKey: ${sTourCodeKey}: Tour name missing!`);
     }
 
     let sBaseFormatName = '';
     if(!sBaseFormatLine) { // Fallback in case base format is missing
         sBaseFormatName = TourBaseFormatMissingFallback;
-        console.log('Tour base format missing!');
+        console.log(`sTourCodeKey: ${sTourCodeKey}: Tour base format missing!`);
     }
     else { // Accurate base format name
-        sBaseFormatName = sBaseFormatLine.substr(TourBaseFormatLinePrefix.length);
+        if(sBaseFormatLine.includes(TourBaseFormatNewLinePrefix)) {
+            sBaseFormatName = sBaseFormatLine.substr(TourBaseFormatNewLinePrefix.length);
+        }
+        else if(sBaseFormatLine.includes(TourBaseFormatCreateLinePrefix)) {
+            sBaseFormatName = sBaseFormatLine.substr(TourBaseFormatCreateLinePrefix.length);
+        }
+        else if(sBaseFormatLine.includes(TourBaseFormatStartTourLinePrefix)) {
+            sBaseFormatName = sBaseFormatLine.substr(TourBaseFormatStartTourLinePrefix.length);
+        }
         sBaseFormatName = sBaseFormatName.split(',')[0];
     }
 
@@ -1026,7 +1058,7 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
     // Acquire base format data
     let baseFormatDetails = Mashups.findFormatDetails(sBaseFormatName);
     if(!baseFormatDetails) {
-        console.log('Could not retrieve details for format: ' + sBaseFormatName);
+        console.log(`sTourCodeKey: ${sTourCodeKey}: Could not retrieve details for format: ${sBaseFormatName}`);
         return false;
     }
 
