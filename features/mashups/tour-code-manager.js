@@ -169,6 +169,199 @@ var tryGetRandomTourCodeForCategory = exports.tryGetRandomTourCodeForCategory = 
 
 //#endregion
 
+//#region Initialization
+
+const INIT_FROM_CACHE = false;
+
+var initTourCodeCache = exports.initTourCodeCache = function (room)
+{
+    if(INIT_FROM_CACHE) {
+        tourCodeCacheFirstPhaseInit();
+        tourCodeCacheSecondPhaseInit(room);
+    }
+    else {
+        refreshTourCodeCache(room);
+    }
+}
+
+var tourCodeCacheFirstPhaseInit = function()
+{
+    // Officials
+    var officialNames = fs.readFileSync('./data/' + LocalOTCOfficialMetadataPath + ListFName).toString();
+    if( NotFoundErrorText !== officialNames ) {
+        OfficialTourCodesNamesArray = officialNames.split(',');
+        OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
+        OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.sort(); // Make alphabetical
+        for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
+            OfficialTourCodesNamesArray[nItr] = toId(OfficialTourCodesNamesArray[nItr]);
+            TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]] = OfficialURLRoot + OfficialTourCodesNamesArray[nItr] + TourExt;
+        }
+    }
+
+    // Others
+    var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();
+    if( NotFoundErrorText !== otherNames ) {
+        OtherTourCodesNamesArray = otherNames.split(',');
+        OtherTourCodesNamesArray = OtherTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
+        OtherTourCodesNamesArray = OtherTourCodesNamesArray.sort(); // Make alphabetical
+        for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
+            OtherTourCodesNamesArray[nItr] = toId(OtherTourCodesNamesArray[nItr]);
+            TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]] = OtherURLRoot + OtherTourCodesNamesArray[nItr] + TourExt;
+        }
+    }
+
+    // Combined
+    AllTourCodesNamesArray = OfficialTourCodesNamesArray.concat(OtherTourCodesNamesArray);
+
+    // Dynamic Format Descriptions
+    var dynamicFormatDescriptions = fs.readFileSync('./data/' + LocalOTCMetadataPath + DynamicFormatDescriptionsFName).toString();
+    if( NotFoundErrorText !== dynamicFormatDescriptions ) {
+        let contentArray = dynamicFormatDescriptions.split('\n');
+        var nSubStringIdx;
+        var bIsSplitTokenPresent;
+        var sName;
+        for(const sLine of contentArray) {
+            if('' === sLine) continue;
+            nSubStringIdx = sLine.indexOf(':');
+            bIsSplitTokenPresent = (-1 !== nSubStringIdx);
+            if(bIsSplitTokenPresent) {
+                sName = toId(sLine.substring(0, nSubStringIdx));
+                if(!AllTourCodesNamesArray.includes(sName)) {
+                    console.log('Undefined format has description: ' + sName);
+                }
+                //console.log('Description key: ' + sName);
+                //console.log('Description value: ' + sLine.substring(nSubStringIdx + 1));
+                DynamicFormatDescriptionsDictionary[sName] = sLine.substring(nSubStringIdx + 1).replace(/^\s+|\s+$/g, '');
+            }
+        }
+    }
+
+    // Aliases
+    var aliasesRaw = fs.readFileSync('./data/' + LocalOTCMetadataPath + AliasesFName).toString();
+    if( NotFoundErrorText !== aliasesRaw ) {
+        const contentArray = aliasesRaw.split('\n');
+        var nSubStringIdx;
+        var sValue;
+        var sKey;
+        for(const sLine of contentArray) {
+            if('' === sLine) continue;
+            nSubStringIdx = sLine.indexOf(':');
+            if(-1 !== nSubStringIdx) {
+                sValue = toId(sLine.substring(0, nSubStringIdx)).replace(/^\s+|\s+$/g, '');
+                //console.log('Alias value: ' + sValue);
+                const keyContentArray = sLine.substring(nSubStringIdx + 1).split(',');
+                keyContentArray.forEach( (alias) => {
+                    AliasesDictionary[alias.replace(/^\s+|\s+$/g, '')] = sValue;
+                    //console.log('Alias value: ' + alias);
+                });
+            }
+        }
+    }
+
+    // Spotlight Names
+    var spotlightNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + SpotlightNamesFName).toString();
+    if( NotFoundErrorText !== spotlightNames ) {
+        SpotlightNamesArray = spotlightNames.split(',');
+        exports.SpotlightNamesArray = SpotlightNamesArray;
+    }
+    if (Mashups.setSpotlightTourNameArray) {
+        Mashups.setSpotlightTourNameArray(SpotlightNamesArray);
+    }
+
+    // Daily Content
+    var sDailyRawContentFName = './data/' + LocalOTCMetadataPath + DailyRawContentFName;
+    var bExists = fs.existsSync(sDailyRawContentFName);
+    if(!bExists) {
+        console.log('Daily content missing: ' + sDailyRawContentFName);
+    }
+    DailyRawContent = fs.readFileSync(sDailyRawContentFName).toString();
+    exports.DailyRawContent = DailyRawContent; // Reassignment necessary due to being reference type(?)
+    //console.log('DailyRawContent: ' + DailyRawContent);
+}
+
+var tourCodeCacheSecondPhaseInit = function(room)
+{
+    // Officials
+    for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
+        var sLocalFName = './data/' + LocalOTCOfficialPath + OfficialTourCodesNamesArray[nItr] + TourExt;
+        var bExists = fs.existsSync(sLocalFName);
+        if(!bExists) {
+            console.log('File missing: ' + sLocalFName);
+            continue;
+        }
+        var sFileContent = fs.readFileSync(sLocalFName).toString();
+        if( NotFoundErrorText === sFileContent ) {
+            console.log('File 404: ' + sLocalFName);
+            continue;
+        }
+        AllTourCodesDictionary[OfficialTourCodesNamesArray[nItr]] = sFileContent;
+    }
+
+    // Others
+    for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
+        var sLocalFName = './data/' + LocalOTCOtherPath + OtherTourCodesNamesArray[nItr] + TourExt;
+        var bExists = fs.existsSync(sLocalFName);
+        if(!bExists) {
+            console.log('File missing: ' + sLocalFName);
+            continue;
+        }
+        var sFileContent = fs.readFileSync(sLocalFName).toString();
+        if( NotFoundErrorText === sFileContent ) {
+            console.log('File 404: ' + sLocalFName);
+            continue;
+        }
+        AllTourCodesDictionary[OtherTourCodesNamesArray[nItr]] = sFileContent;
+    }
+
+
+    // Mashups Popular Random Formats
+    var sMashupsPopularRandomFormatsFName = './data/' + LocalOTCMetadataPath + MashupsPopularRandomFormatsFName;
+    bExists = fs.existsSync(sMashupsPopularRandomFormatsFName);
+    if(!bExists) {
+        console.log('Mashups Popular Random Formats metadata missing: ' + sMashupsPopularRandomFormatsFName);
+    }
+    var sMashupsPopularRandomFormatsRawContent = fs.readFileSync(sMashupsPopularRandomFormatsFName).toString();
+    //console.log('sMashupsPopularRandomFormatsRawContent: ' + sMashupsPopularRandomFormatsRawContent);
+    if( NotFoundErrorText !== sMashupsPopularRandomFormatsRawContent ) {
+        MashupsPopularRandomFormatsWeightsDictionary = {};
+        const contentArray = sMashupsPopularRandomFormatsRawContent.split('\n');
+        var nSubStringIdx;
+        var sValue;
+        var sKey;
+        for(const sLine of contentArray) {
+            if('' === sLine) continue;
+
+            nSubStringIdx = sLine.indexOf(':');
+            if(-1 !== nSubStringIdx) {
+                sKey = toId(sLine.substring(0, nSubStringIdx));
+                sValue = Number(sLine.substring(nSubStringIdx + 1).split(','));
+                if(0 === sValue) {
+                    sValue = 1;
+                }
+            }
+            else {
+                sKey = sLine;
+                sValue = 1;
+            }
+            sKey = sKey.replace(/^\s+|\s+$/g, '');
+
+            if(!AllTourCodesNamesArray.includes(sKey) && ('spotlight' !== sKey)) {
+                console.log('MashupsPopularRandomFormats had unrecognized format (ignored): ' + sKey);
+                continue;
+            }
+
+            MashupsPopularRandomFormatsWeightsDictionary[sKey] = sValue;
+        }
+    }
+
+    // Test output
+    if (room) {
+        var sNames = nameCachedTourCodes();
+        Bot.say(room, '!code Completed refresh.\n\n' + sNames);
+    }
+    console.log('TOUR CODE DATA READY');
+}
+
 var downloadFilePromise = exports.downloadFilePromise = function (url, file)
 {
     let promise = new Promise(function(resolve, reject) {
@@ -220,194 +413,35 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
     then(
         (results) => {
             //results.forEach((result) => console.log(result.status));
+            tourCodeCacheFirstPhaseInit();
 
             // Officials
-            var officialNames = fs.readFileSync('./data/' + LocalOTCOfficialMetadataPath + ListFName).toString();
             var officialPromises = [];
-            if( NotFoundErrorText !== officialNames ) {
-                OfficialTourCodesNamesArray = officialNames.split(',');
-                OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
-                OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.sort(); // Make alphabetical
-                for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
-                    OfficialTourCodesNamesArray[nItr] = toId(OfficialTourCodesNamesArray[nItr]);
-                    TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]] = OfficialURLRoot + OfficialTourCodesNamesArray[nItr] + TourExt;
-                    officialPromises.push(
-                        downloadFilePromise(
-                            TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]],
-                            LocalOTCOfficialPath + OfficialTourCodesNamesArray[nItr] + TourExt)
-                    );
-                }
+            for(let nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr) {
+                officialPromises.push(
+                    downloadFilePromise(
+                        TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]],
+                        LocalOTCOfficialPath + OfficialTourCodesNamesArray[nItr] + TourExt)
+                );
             }
 
             // Others
-            var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();
             var otherPromises = [];
-            if( NotFoundErrorText !== otherNames ) {
-                OtherTourCodesNamesArray = otherNames.split(',');
-                OtherTourCodesNamesArray = OtherTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
-                OtherTourCodesNamesArray = OtherTourCodesNamesArray.sort(); // Make alphabetical
-                for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
-                    OtherTourCodesNamesArray[nItr] = toId(OtherTourCodesNamesArray[nItr]);
-                    TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]] = OtherURLRoot + OtherTourCodesNamesArray[nItr] + TourExt;
-                    otherPromises.push(
-                        downloadFilePromise(
-                            TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]],
-                            LocalOTCOtherPath + OtherTourCodesNamesArray[nItr] + TourExt)
-                    );
-                }
+            for(let nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr) {
+                otherPromises.push(
+                    downloadFilePromise(
+                        TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]],
+                        LocalOTCOtherPath + OtherTourCodesNamesArray[nItr] + TourExt)
+                );
             }
 
             // Combined
-            AllTourCodesNamesArray = OfficialTourCodesNamesArray.concat(OtherTourCodesNamesArray);
             var totalPromises = officialPromises.concat(otherPromises);
-
-            // Dynamic Format Descriptions
-            var dynamicFormatDescriptions = fs.readFileSync('./data/' + LocalOTCMetadataPath + DynamicFormatDescriptionsFName).toString();
-            if( NotFoundErrorText !== dynamicFormatDescriptions ) {
-                let contentArray = dynamicFormatDescriptions.split('\n');
-                var nSubStringIdx;
-                var bIsSplitTokenPresent;
-                var sName;
-                for(const sLine of contentArray) {
-                    if('' === sLine) continue;
-                    nSubStringIdx = sLine.indexOf(':');
-                    bIsSplitTokenPresent = (-1 !== nSubStringIdx);
-                    if(bIsSplitTokenPresent) {
-                        sName = toId(sLine.substring(0, nSubStringIdx));
-                        if(!AllTourCodesNamesArray.includes(sName)) {
-                            console.log('Undefined format has description: ' + sName);
-                        }
-                        //console.log('Description key: ' + sName);
-                        //console.log('Description value: ' + sLine.substring(nSubStringIdx + 1));
-                        DynamicFormatDescriptionsDictionary[sName] = sLine.substring(nSubStringIdx + 1).replace(/^\s+|\s+$/g, '');
-                    }
-                }
-            }
-
-            // Aliases
-            var aliasesRaw = fs.readFileSync('./data/' + LocalOTCMetadataPath + AliasesFName).toString();
-            if( NotFoundErrorText !== aliasesRaw ) {
-                const contentArray = aliasesRaw.split('\n');
-                var nSubStringIdx;
-                var sValue;
-                var sKey;
-                for(const sLine of contentArray) {
-                    if('' === sLine) continue;
-                    nSubStringIdx = sLine.indexOf(':');
-                    if(-1 !== nSubStringIdx) {
-                        sValue = toId(sLine.substring(0, nSubStringIdx)).replace(/^\s+|\s+$/g, '');
-                        //console.log('Alias value: ' + sValue);
-                        const keyContentArray = sLine.substring(nSubStringIdx + 1).split(',');
-                        keyContentArray.forEach( (alias) => {
-                            AliasesDictionary[alias.replace(/^\s+|\s+$/g, '')] = sValue;
-                            //console.log('Alias value: ' + alias);
-                        });
-                    }
-                }
-            }
-
-            // Spotlight Names
-            var spotlightNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + SpotlightNamesFName).toString();
-            if( NotFoundErrorText !== spotlightNames ) {
-                SpotlightNamesArray = spotlightNames.split(',');
-                exports.SpotlightNamesArray = SpotlightNamesArray;
-            }
-            Mashups.setSpotlightTourNameArray(SpotlightNamesArray);
-
-            // Daily Content
-            var sDailyRawContentFName = './data/' + LocalOTCMetadataPath + DailyRawContentFName;
-            var bExists = fs.existsSync(sDailyRawContentFName);
-            if(!bExists) {
-                console.log('Daily content missing: ' + sDailyRawContentFName);
-            }
-            DailyRawContent = fs.readFileSync(sDailyRawContentFName).toString();
-            exports.DailyRawContent = DailyRawContent; // Reassignment necessary due to being reference type(?)
-            //console.log('DailyRawContent: ' + DailyRawContent);
-
-            // Mashups Popular Random Formats
-            var sMashupsPopularRandomFormatsFName = './data/' + LocalOTCMetadataPath + MashupsPopularRandomFormatsFName;
-            bExists = fs.existsSync(sMashupsPopularRandomFormatsFName);
-            if(!bExists) {
-                console.log('Mashups Popular Random Formats metadata missing: ' + sMashupsPopularRandomFormatsFName);
-            }
 
             allSettled(totalPromises).then(
                 (tourResults) => {
                     //tourResults.forEach( (tourResult) => { console.log(tourResult.status); });
-
-                    // Officials
-                    for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
-                        var sLocalFName = './data/' + LocalOTCOfficialPath + OfficialTourCodesNamesArray[nItr] + TourExt;
-                        var bExists = fs.existsSync(sLocalFName);
-                        if(!bExists) {
-                            console.log('File missing: ' + sLocalFName);
-                            continue;
-                        }
-                        var sFileContent = fs.readFileSync(sLocalFName).toString();
-                        if( NotFoundErrorText === sFileContent ) {
-                            console.log('File 404: ' + sLocalFName);
-                            continue;
-                        }
-                        AllTourCodesDictionary[OfficialTourCodesNamesArray[nItr]] = sFileContent;
-                    }
-
-                    // Others
-                    for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
-                        var sLocalFName = './data/' + LocalOTCOtherPath + OtherTourCodesNamesArray[nItr] + TourExt;
-                        var bExists = fs.existsSync(sLocalFName);
-                        if(!bExists) {
-                            console.log('File missing: ' + sLocalFName);
-                            continue;
-                        }
-                        var sFileContent = fs.readFileSync(sLocalFName).toString();
-                        if( NotFoundErrorText === sFileContent ) {
-                            console.log('File 404: ' + sLocalFName);
-                            continue;
-                        }
-                        AllTourCodesDictionary[OtherTourCodesNamesArray[nItr]] = sFileContent;
-                    }
-
-                    // Mashups Popular Random Formats (generate weights)
-                    var sMashupsPopularRandomFormatsRawContent = fs.readFileSync(sMashupsPopularRandomFormatsFName).toString();
-                    //console.log('sMashupsPopularRandomFormatsRawContent: ' + sMashupsPopularRandomFormatsRawContent);
-                    if( NotFoundErrorText !== sMashupsPopularRandomFormatsRawContent ) {
-                        MashupsPopularRandomFormatsWeightsDictionary = {};
-                        const contentArray = sMashupsPopularRandomFormatsRawContent.split('\n');
-                        var nSubStringIdx;
-                        var sValue;
-                        var sKey;
-                        for(const sLine of contentArray) {
-                            if('' === sLine) continue;
-
-                            nSubStringIdx = sLine.indexOf(':');
-                            if(-1 !== nSubStringIdx) {
-                                sKey = toId(sLine.substring(0, nSubStringIdx));
-                                sValue = Number(sLine.substring(nSubStringIdx + 1).split(','));
-                                if(0 === sValue) {
-                                    sValue = 1;
-                                }
-                            }
-                            else {
-                                sKey = sLine;
-                                sValue = 1;
-                            }
-                            sKey = sKey.replace(/^\s+|\s+$/g, '');
-
-                            if(!AllTourCodesNamesArray.includes(sKey) && ('spotlight' !== sKey)) {
-                                console.log('MashupsPopularRandomFormats had unrecognized format (ignored): ' + sKey);
-                                continue;
-                            }
-
-                            MashupsPopularRandomFormatsWeightsDictionary[sKey] = sValue;
-                        }
-                    }
-
-                    // Test output
-                    if (room) {
-                        var sNames = nameCachedTourCodes();
-                        Bot.say(room, '!code Completed refresh.\n\n' + sNames);
-                    }
-                    console.log('ALL DOWNLOADS COMPLETE');
+                    tourCodeCacheSecondPhaseInit();
                 }
             );
 
@@ -415,6 +449,8 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
         }
     );
 }
+
+//#endregion
 
 var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
 {

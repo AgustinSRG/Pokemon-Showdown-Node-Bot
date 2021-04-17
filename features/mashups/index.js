@@ -36,7 +36,7 @@ try {
 
 // Tour code cache
 try {
-	TourCodeManager.refreshTourCodeCache();
+	TourCodeManager.initTourCodeCache();
 } catch (e) {
 	errlog(e.stack);
 	error("Could not initiate tour codes cache: " + sys.inspect(e));
