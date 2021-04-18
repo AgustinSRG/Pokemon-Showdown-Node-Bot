@@ -172,6 +172,135 @@ var tryGetRandomTourCodeForCategory = exports.tryGetRandomTourCodeForCategory = 
 
 //#endregion
 
+//#region Tour Code Search
+
+const SearchClauseSafetyLimit = 8;
+
+var tryTourCodeSearch = exports.tryTourCodeSearch = function (commandContext, sSearch)
+{
+    //console.log(`start sSearch: ${sSearch}`);
+
+    var intersectionsArray = sSearch.split(',');
+    if(intersectionsArray.length > SearchClauseSafetyLimit) {
+        commandContext.reply(`Too many clauses.`);
+        return null;
+    }
+
+    var unionsArray;
+    var nUnionItr;
+    var intersectionResults = Object.keys(AllTourCodesDictionary);
+    var unionResults;
+    for(let nIntersectionItr=0; nIntersectionItr<intersectionsArray.length; ++nIntersectionItr) {
+        unionsArray = intersectionsArray[nIntersectionItr].split('|');
+        if(unionsArray.length > SearchClauseSafetyLimit) {
+            commandContext.reply(`Too many clauses.`);
+            return null;
+        }
+
+        // Unions
+        unionResults = [];
+        for(nUnionItr=0; nUnionItr<unionsArray.length; ++nUnionItr) {
+            unionResults = unionResults.concat(trySearchTourCodeElement(commandContext, unionsArray[nUnionItr], unionResults, intersectionsArray));
+        }
+
+        // Intersections
+        intersectionResults = unionResults.filter(function(value) {
+            return intersectionResults.includes(value);
+        });
+    }
+
+    if (!intersectionResults || (0 === intersectionResults.length)) {
+        commandContext.reply('No matches.');
+        return;
+    }
+
+    return intersectionResults;
+}
+
+var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray, ignoredArray)
+{
+    sSearch = sSearch.replace(/^\s+|\s+$/g, '');
+    sSearch = toId(sSearch);
+    //console.log(`sSearch: ${sSearch}`);
+
+    var resultsArray = [];
+
+    for (const [sKey, value] of Object.entries(DynamicFormatsRawDictionary)) {
+        //console.log(`sKey: ${sKey}`);
+
+        if (unneededArray && unneededArray.includes(sKey)) continue;
+        if (ignoredArray && ignoredArray.includes(sKey)) continue;
+
+        // official/other
+        if ('official' == sSearch) {
+            if (OfficialTourCodesNamesArray.includes(sKey)) {
+                resultsArray.push(sKey);
+                continue;
+            }
+        }
+        if ('other' === sSearch) {
+            if (OtherTourCodesNamesArray.includes(sKey)) {
+                resultsArray.push(sKey);
+                continue;
+            }
+        }
+
+        let datum = value;
+        if (!datum) continue;
+
+        // base format
+        let baseFormatDetails = datum.baseFormatDetails;
+        if (baseFormatDetails) {
+            //console.log(`team: ${baseFormatDetails.team}`);
+            //console.log(`mod: ${baseFormatDetails.mod}`);
+            //console.log(`gameType: ${baseFormatDetails.gameType}`);
+
+            // Random formats
+            if (['random', 'randoms'].includes(sSearch)) {
+                if (baseFormatDetails.team) {
+                    resultsArray.push(sKey);
+                    continue;
+                }
+            }
+
+            // team
+            if (baseFormatDetails.team === sSearch) {
+                resultsArray.push(sKey);
+                continue;
+            }
+
+            // mod
+            if (baseFormatDetails.mod === sSearch) {
+                resultsArray.push(sKey);
+                continue;
+            }
+
+            // gameType
+            if (baseFormatDetails.gameType === sSearch) {
+                resultsArray.push(sKey);
+                continue;
+            }
+        }
+
+        // rulesArray
+        let rulesArray = datum.rulesArray;
+        if (rulesArray) {
+            for (let sRule of rulesArray) {
+                if (sRule && ('!' === sRule[0])) continue; // Ignore revokes
+
+                if (toId(sRule) === sSearch) {
+                    resultsArray.push(sKey);
+                    break;
+                }
+            }
+        }
+    }
+
+    return resultsArray;
+}
+
+//#endregion
+
 //#region Initialization
 
 const INIT_FROM_CACHE = false;

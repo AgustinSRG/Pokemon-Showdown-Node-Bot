@@ -102,6 +102,16 @@ exports.commands = {
 
         this.reply('!code ' + sResult);
     },
+    ts: 'tourcodesearch',
+    toursearch: 'tourcodesearch',
+    tourcodesearch: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
+
+        const sResult = TourCodeManager.tryTourCodeSearch(this, arg);
+        if (!sResult) return;
+
+        this.reply('!code ' + sResult.join(', '));
+    },
     mashup: 'tier',
     om: 'tier',
     tier: function (arg, user, room, cmd) {
