@@ -217,13 +217,21 @@ var tryTourCodeSearch = exports.tryTourCodeSearch = function (commandContext, sS
     return intersectionResults;
 }
 
+const RandomSearchKeywordsArray = ['random', 'randoms'];
+
 var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray, ignoredArray)
 {
     sSearch = sSearch.replace(/^\s+|\s+$/g, '');
+    var bSearchIsRevoke = (sSearch && ('!' === sSearch[0]));
     sSearch = toId(sSearch);
     //console.log(`sSearch: ${sSearch}`);
 
     var resultsArray = [];
+
+    var bSearchIsOfficial = ('official' == sSearch);
+    var bSearchIsOther = !bSearchIsOfficial && ('other' == sSearch);
+    var bSearchIsRandomKeyword = RandomSearchKeywordsArray.includes(sSearch);
+    var sSearchAsAliasedFormatId = toId(Tools.parseAliases(sSearch));
 
     for (const [sKey, value] of Object.entries(DynamicFormatsRawDictionary)) {
         //console.log(`sKey: ${sKey}`);
@@ -232,13 +240,13 @@ var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray,
         if (ignoredArray && ignoredArray.includes(sKey)) continue;
 
         // official/other
-        if ('official' == sSearch) {
+        if (bSearchIsOfficial) {
             if (OfficialTourCodesNamesArray.includes(sKey)) {
                 resultsArray.push(sKey);
                 continue;
             }
         }
-        if ('other' === sSearch) {
+        else if (bSearchIsOther) {
             if (OtherTourCodesNamesArray.includes(sKey)) {
                 resultsArray.push(sKey);
                 continue;
@@ -248,6 +256,26 @@ var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray,
         let datum = value;
         if (!datum) continue;
 
+        // rulesArray
+        let rulesArray = datum.rulesArray;
+        if (rulesArray) {
+            for (let sRule of rulesArray) {
+                if (bSearchIsRevoke) {
+                    if (sRule && ('!' === sRule[0])) { // Revoke comparison
+                        if (toId(sRule) === sSearch) {
+                            resultsArray.push(sKey);
+                            break;
+                        }
+                    }
+                }
+                else if (toId(sRule) === sSearch) {
+                    resultsArray.push(sKey);
+                    break;
+                }
+            }
+        }
+        if (bSearchIsRevoke) continue;
+
         // base format
         let baseFormatDetails = datum.baseFormatDetails;
         if (baseFormatDetails) {
@@ -256,7 +284,7 @@ var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray,
             //console.log(`gameType: ${baseFormatDetails.gameType}`);
 
             // Random formats
-            if (['random', 'randoms'].includes(sSearch)) {
+            if (bSearchIsRandomKeyword) {
                 if (baseFormatDetails.team) {
                     resultsArray.push(sKey);
                     continue;
@@ -280,15 +308,19 @@ var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray,
                 resultsArray.push(sKey);
                 continue;
             }
+
+            // Base format name
+            if (toId(baseFormatDetails.name) === sSearchAsAliasedFormatId) {
+                resultsArray.push(sKey);
+                continue;
+            }
         }
 
-        // rulesArray
-        let rulesArray = datum.rulesArray;
-        if (rulesArray) {
-            for (let sRule of rulesArray) {
-                if (sRule && ('!' === sRule[0])) continue; // Ignore revokes
-
-                if (toId(sRule) === sSearch) {
+        // Stacked format name
+        let stackedFormatNamesArray = datum.stackedFormatNamesArray;
+        if (stackedFormatNamesArray) {
+            for (let sFormatName of stackedFormatNamesArray) {
+                if (toId(sFormatName) === sSearchAsAliasedFormatId) {
                     resultsArray.push(sKey);
                     break;
                 }
@@ -1378,6 +1410,7 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
         bansArray: combinedBansArray,
         unbansArray: combinedUnbansArray,
         restrictedArray: combinedRestrictedArray,
+        stackedFormatNamesArray: filterOutFormatStackingDeltaRules,
     };
 }
 
