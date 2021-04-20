@@ -60,6 +60,7 @@ exports.commands = {
         TourCodeManager.refreshTourCodeCache(room);
         this.reply(`Attempting to refresh tour code cache...`);
     },
+    ctc: 'checkcachedtourcodes',
     checktourcodes: 'checkcachedtourcodes',
 	checkcachedtourcodes: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('voice'))) return false;
@@ -67,6 +68,7 @@ exports.commands = {
         var sNames = TourCodeManager.nameCachedTourCodes();
         this.reply('!code ' + sNames);
     },
+    start: 'starttour',
 	starttour: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
