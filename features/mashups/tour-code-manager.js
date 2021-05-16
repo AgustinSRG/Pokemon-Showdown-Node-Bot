@@ -519,7 +519,7 @@ var tourCodeCacheSecondPhaseInit = function(room)
 
     // Intermediate update
     if (room) {
-        Bot.say(room, 'Download complete, rebuilding derived data...');
+        Bot.say(room, 'Rebuilding...');
     }
 
     // Rebuild dynamic formats raw cache
@@ -636,6 +636,8 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
 
 var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
 {
+    const currentGenPrefixRegex = new RegExp('^' + Mashups.getCurrentGenName());
+
     var sOutput = 'Officials: ';
     var bFirstLoop = true;
     for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
@@ -643,7 +645,7 @@ var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
         if(!bFirstLoop) {
             sOutput += ', ';
         }
-        sOutput += OfficialTourCodesNamesArray[nItr];
+        sOutput += OfficialTourCodesNamesArray[nItr].replace(currentGenPrefixRegex, '');
         bFirstLoop = false;
     }
 
@@ -655,7 +657,7 @@ var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
         if(!bFirstLoop) {
             sOutput += ', ';
         }
-        sOutput += OtherTourCodesNamesArray[nItr];
+        sOutput += OtherTourCodesNamesArray[nItr].replace(currentGenPrefixRegex, '');
         bFirstLoop = false;
     }
 
