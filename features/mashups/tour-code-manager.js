@@ -14,6 +14,7 @@ const OfficialPathExtension = 'official/';
 const OtherPathExtension = 'other/';
 const MetadataPathExtension = 'metadata/';
 const ListFName = 'list.txt';
+const ListSeparator = '\n';
 const DynamicFormatDescriptionsFName = 'dynamicformatdescriptions.txt';
 const AliasesFName = 'aliases.txt';
 const SpotlightNamesFName = 'spotlightnames.txt';
@@ -353,9 +354,10 @@ var tourCodeCacheFirstPhaseInit = function()
     // Officials
     var officialNames = fs.readFileSync('./data/' + LocalOTCOfficialMetadataPath + ListFName).toString();
     if( NotFoundErrorText !== officialNames ) {
-        OfficialTourCodesNamesArray = officialNames.split(',');
+        OfficialTourCodesNamesArray = officialNames.split(ListSeparator);
         OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
         OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.sort(); // Make alphabetical
+        OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.filter((sName) => '' !== sName);
         for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
             OfficialTourCodesNamesArray[nItr] = toId(OfficialTourCodesNamesArray[nItr]);
             TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]] = OfficialURLRoot + OfficialTourCodesNamesArray[nItr] + TourExt;
@@ -365,9 +367,10 @@ var tourCodeCacheFirstPhaseInit = function()
     // Others
     var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();
     if( NotFoundErrorText !== otherNames ) {
-        OtherTourCodesNamesArray = otherNames.split(',');
+        OtherTourCodesNamesArray = otherNames.split(ListSeparator);
         OtherTourCodesNamesArray = OtherTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
         OtherTourCodesNamesArray = OtherTourCodesNamesArray.sort(); // Make alphabetical
+        OtherTourCodesNamesArray = OtherTourCodesNamesArray.filter((sName) => '' !== sName);
         for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
             OtherTourCodesNamesArray[nItr] = toId(OtherTourCodesNamesArray[nItr]);
             TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]] = OtherURLRoot + OtherTourCodesNamesArray[nItr] + TourExt;
