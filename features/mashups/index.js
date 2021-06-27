@@ -17,6 +17,7 @@ var ItemsArray = exports.ItemsArray = require('./../../data/items.js').BattleIte
 var LearnsetsArray = exports.LearnsetsArray = require('./../../data/learnsets.js').BattleLearnsets;
 
 var TourRatioTracker = exports.TourRatioTracker = require('./tour-ratio-tracker.js');
+var UsageTracker = exports.UsageTracker = require('./usage-tracker.js');
 
 var TourCodeManager = exports.TourCodeManager = require('./tour-code-manager.js');
 
@@ -1024,32 +1025,62 @@ exports.init = function () {
 };
 
 exports.parse = function (room, message, isIntro, spl) {
-	if (spl[0] !== 'tournament') return;
+    if (room.includes('battle-')) { // In-battle
+        switch (spl[0]) {
+            case 'poke': {
+                //console.log(spl[1]);
+                //console.log(spl[2]);
+                const nameArray = spl[2].split(',');
+                UsageTracker.logTeamMember(room, spl[1], nameArray[0]);
+            }
+            break;
+            case 'switch': {
+                //Bot.say(room, message);
+                Bot.say(room, '/leave');
+                UsageTracker.saveTeamLog(room);
+            }
+            break;
+        }
+        return;
+    }
 	if (isIntro) return;
-	if (!tourMetaData[room]) tourMetaData[room] = {};
-	switch (spl[1]) {
-		case 'update':
-			try {
-				var data = JSON.parse(spl[2]);
-				for (var i in data)
-                tourMetaData[room][i] = data[i];
-			} catch (e){}
-			break;
-		case 'end':
-			try {
-				var data = JSON.parse(spl[2]);
-				for (var i in data)
-                tourMetaData[room][i] = data[i];
-			} catch (e){}
-			TourRatioTracker.onTournamentEnd(room, tourMetaData[room]);
-			delete tourMetaData[room];
-			break;
-		case 'forceend':
-			// Debug
-			//TourRatioTracker.onTournamentEnd(room, tourMetaData[room]);
-			delete tourMetaData[room];
-			break;
-	}
+    switch (spl[0]) {
+        case 'tournament': {
+            if (!tourMetaData[room]) tourMetaData[room] = {};
+            switch (spl[1]) {
+                case 'update':
+                    try {
+                        var data = JSON.parse(spl[2]);
+                        for (var i in data)
+                        tourMetaData[room][i] = data[i];
+                        UsageTracker.onTournamentUpdate(room, tourMetaData[room]);
+                    } catch (e){}
+                    break;
+                case 'end':
+                    try {
+                        var data = JSON.parse(spl[2]);
+                        for (var i in data)
+                        tourMetaData[room][i] = data[i];
+                    } catch (e){}
+                    TourRatioTracker.onTournamentEnd(room, tourMetaData[room]);
+                    UsageTracker.onTournamentEnd(room, tourMetaData[room]);
+                    delete tourMetaData[room];
+                    break;
+                case 'forceend':
+                    // Debug
+                    //TourRatioTracker.onTournamentEnd(room, tourMetaData[room]);
+                    UsageTracker.onTournamentEnd(room, tourMetaData[room]);
+                    delete tourMetaData[room];
+                    break;
+            }
+        }
+        break;
+        case 'b': {
+            const battleName = spl[1];
+            Bot.say(room, '/join '+battleName);
+        }
+        break;
+    }
 };
 
 exports.destroy = function () {
