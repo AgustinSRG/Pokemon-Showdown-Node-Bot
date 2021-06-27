@@ -1050,7 +1050,7 @@ exports.parse = function (room, message, isIntro, spl) {
             switch (spl[1]) {
                 case 'battlestart':
                     const battleName = spl[4];
-                    console.log(battleName);
+                    //console.log(battleName);
                     Bot.say(room, '/join '+battleName);
                     break;
                 case 'update':
