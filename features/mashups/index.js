@@ -1048,6 +1048,11 @@ exports.parse = function (room, message, isIntro, spl) {
         case 'tournament': {
             if (!tourMetaData[room]) tourMetaData[room] = {};
             switch (spl[1]) {
+                case 'battlestart':
+                    const battleName = spl[4];
+                    console.log(battleName);
+                    Bot.say(room, '/join '+battleName);
+                    break;
                 case 'update':
                     try {
                         var data = JSON.parse(spl[2]);
