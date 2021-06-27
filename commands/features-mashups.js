@@ -4,6 +4,7 @@
 
 var Mashups = exports.Mashups = require('./../features/mashups/index.js');
 var TourCodeManager = exports.Mashups = require('./../features/mashups/tour-code-manager.js');
+var UsageTracker = exports.UsageTracker = require('./../features/mashups/usage-tracker.js');
 
 exports.commands = {
 	resettours: 'resettourratio',
@@ -307,5 +308,63 @@ exports.commands = {
         else {
             this.reply(`Failed...`);
         }
-    }
+    },
+    usage: 'checkusage',
+    checkusage: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('voice'))) return false;
+
+        const validFormatKey = TourCodeManager.replyToSearchValidDynamicFormatKey(this, arg);
+        if(!validFormatKey) return;
+
+        const dynamicFormatRaw = TourCodeManager.searchDynamicFormatRaw(validFormatKey);
+        if(!dynamicFormatRaw) return;
+        if(!dynamicFormatRaw.name) return;
+
+        const sTourName = dynamicFormatRaw.name;
+        const sTourNameId = toId(sTourName);
+
+        const formatLog = UsageTracker.getFormatLog(sTourNameId);
+        console.log(formatLog);
+        if (!formatLog || (0 === Object.keys(formatLog).length)) {
+            this.reply(`No usage data found for ${sTourName}!`);
+            return;
+        }
+
+        let perPokemonUsage = {};
+        let nSumUsageCount = 0;
+        for (const battle of Object.values(formatLog)) {
+            for (const side of Object.values(battle)) {
+                if (!Array.isArray(side)) continue;
+                for (const pokemon of side) {
+                    if(!perPokemonUsage.hasOwnProperty(pokemon)) {
+                        perPokemonUsage[pokemon] = 1;
+                    }
+                    else {
+                        perPokemonUsage[pokemon]++;
+                    }
+                    nSumUsageCount++;
+                }
+            }
+        }
+
+        if (0 === nSumUsageCount) {
+            this.reply(`Usage data is empty for ${sTourName}!`);
+            return;
+        }
+
+        const usageSortedPokemonKeyArray = Object.keys(perPokemonUsage).sort(
+            function(a,b) { return perPokemonUsage[b] - perPokemonUsage[a] });
+
+        const nMaxDisplayCount = 50;
+        var sOutput = `Usage for ${sTourName}:-`;
+        var nDisplayItr = 0;
+        for (const pokemon of usageSortedPokemonKeyArray) {
+            nDisplayItr++;
+            const fUsage = 100 * (perPokemonUsage[pokemon] / nSumUsageCount);
+            sOutput += `\n${nDisplayItr}. ${pokemon} (${parseFloat(fUsage.toFixed(3))}%)`;
+            if (nDisplayItr >= nMaxDisplayCount) break;
+        }
+
+        this.reply('!code ' + sOutput);
+    },
 };

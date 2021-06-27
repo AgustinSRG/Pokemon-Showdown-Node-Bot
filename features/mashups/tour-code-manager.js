@@ -753,6 +753,14 @@ var searchTourCode = exports.searchTourCode = function (sSearch)
     return AllTourCodesDictionary[sSearch];
 }
 
+var searchDynamicFormatRaw = exports.searchDynamicFormatRaw = function (sSearch)
+{
+    sSearch = searchValidDynamicFormatKey(sSearch);
+    if (!sSearch) return null;
+
+    return DynamicFormatsRawDictionary[sSearch];
+}
+
 var replyToSearchValidDynamicFormatKey = exports.replyToSearchValidDynamicFormatKey = function (commandContext, sSearch)
 {
     var result = searchValidDynamicFormatKey(sSearch);

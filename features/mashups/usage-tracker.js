@@ -37,16 +37,33 @@ exports.saveTeamLog = function (room) {
     if (!sFormatId) return;
     if (!LogData.hasOwnProperty(room)) return;
 
-    var formatFFM = new Settings.FlatFileManager(UsageDataRoot + sFormatId + '.json');
-    var formatSavedData = {};
-    try {
-        formatSavedData = formatFFM.readObj();
+    const formatFFM = openFormatFFM(sFormatId);
+    var formatSavedData = readFormatSavedData(formatFFM);
+
+    if (formatSavedData) {
         formatSavedData[room] = LogData[room];
         formatFFM.writeObj(formatSavedData);
-    } catch (e) {
-        errlog(e.stack);
-        error("Could not read formatSavedData: " + sys.inspect(e));
     }
 
     delete LogData[room];
 };
+
+exports.getFormatLog = function (sFormatId) {
+    const formatFFM = openFormatFFM(sFormatId);
+    return readFormatSavedData(formatFFM);
+};
+
+openFormatFFM = function (sFormatId) {
+    return new Settings.FlatFileManager(UsageDataRoot + sFormatId + '.json');
+}
+
+readFormatSavedData = function (formatFFM) {
+    var formatSavedData = null;
+    try {
+        formatSavedData = formatFFM.readObj();
+    } catch (e) {
+        errlog(e.stack);
+        error("Could not read formatSavedData: " + sys.inspect(e));
+    }
+    return formatSavedData;
+}
