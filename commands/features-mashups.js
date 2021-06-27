@@ -324,7 +324,7 @@ exports.commands = {
         const sTourNameId = toId(sTourName);
 
         const formatLog = UsageTracker.getFormatLog(sTourNameId);
-        console.log(formatLog);
+        //console.log(formatLog);
         if (!formatLog || (0 === Object.keys(formatLog).length)) {
             this.reply(`No usage data found for ${sTourName}!`);
             return;
