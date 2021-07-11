@@ -1588,7 +1588,11 @@ var generateMashupFormats = exports.generateMashupFormats = function () {
         'gen8dppstaaab',
         'gen8staaabbl',
         'gen8staaabtiers',
-        'gen8staaabtrial'
+        'gen8staaabtrial',
+        'gen8staaabru',
+        'gen8staaabpredlc',
+        'gen8staaabubers',
+        'gen8aaadoublestrial'
     ];
 
     // Official mashup formats
