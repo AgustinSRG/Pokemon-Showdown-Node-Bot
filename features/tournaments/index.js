@@ -140,7 +140,10 @@ exports.parse = function (room, message, isIntro, spl) {
 	if (spl[0] !== 'tournament') return;
 	switch (spl[1]) { // Daily left on warning
 		case 'create':
-            autoDisableDaily(room);
+            if (tourData[room]) { // Distinguish real new tours from seeing the same data after logging back in
+                autoDisableDaily(room);
+                //console.log("Believes new tour started: " + spl[2]);
+            }
 			break;
 	}
 	if (isIntro) return;
