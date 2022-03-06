@@ -880,14 +880,8 @@ var addTrashChannelRulesForFormat = function (rulesArray, formatName) {
     formatName = Mashups.genStripName(formatName);
 
     switch(formatName) {
-        case 'camomons':
-            rulesArray.push('Camomons Rule');
-            break;
         case 'mixandmega':
             rulesArray.push('Mix and Mega Standard Package');
-            break;
-        case 'tiershift':
-            rulesArray.push('Tier Shift Rule');
             break;
     }
 
