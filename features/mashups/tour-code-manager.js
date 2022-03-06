@@ -104,14 +104,23 @@ var tryGetRandomTourCodeForCategory = exports.tryGetRandomTourCodeForCategory = 
     }
     sCategoryName = toId(sCategoryName);
 
+    let searchTCArray = null;
     if (!Object.values(RandomTourCategory).includes(sCategoryName)) {
-        const sParamNames = Object.values(RandomTourCategory).join(', ');
-        commandContext.reply(`Invalid category: ${sCategoryName}! Valid categories: ${sParamNames} (or leave blank for any tour).`);
-        return null;
+        // Try to to use category term as a search value
+        searchTCArray = tryTourCodeSearch(commandContext, sCategoryName);
+        if (!searchTCArray || (0 == searchTCArray.length)) { // Invalid category error
+            const sParamNames = Object.values(RandomTourCategory).join(', ');
+            commandContext.reply(`Invalid category: ${sCategoryName}! Valid fixed categories: ${sParamNames} (or leave blank for any tour). Any other term will be used as a search value for tourcodesearch.`);
+            return null;
+        }
     }
 
     var sTourCodeName = null;
     switch(sCategoryName) {
+        default: // Search case
+            if (!searchTCArray) break;
+            sTourCodeName = searchTCArray[Math.floor(Math.random() * searchTCArray.length)];
+            break;
         case RandomTourCategory.Any:
             sTourCodeName = AllTourCodesNamesArray[Math.floor(Math.random() * AllTourCodesNamesArray.length)];
             break;
@@ -852,14 +861,8 @@ var addTrashChannelRulesForFormat = function (rulesArray, formatName) {
     formatName = Mashups.genStripName(formatName);
 
     switch(formatName) {
-        case 'camomons':
-            rulesArray.push('Camomons Rule');
-            break;
         case 'mixandmega':
             rulesArray.push('Mix and Mega Standard Package');
-            break;
-        case 'tiershift':
-            rulesArray.push('Tier Shift Rule');
             break;
     }
 
