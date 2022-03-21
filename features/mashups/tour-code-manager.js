@@ -346,6 +346,7 @@ var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray,
 //#region Initialization
 
 const INIT_FROM_CACHE = false;
+//const INIT_FROM_CACHE = true;
 
 var initTourCodeCache = exports.initTourCodeCache = function (room)
 {
@@ -640,6 +641,54 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             );
 
             info(OfficialTourCodesNamesArray);
+        }
+    );
+}
+
+var updateFormatEntryFromCachedFile = function (sKey, sLocalPath)
+{
+    const sLocalFName = './data/' + sLocalPath + sKey + TourExt;
+    const bExists = fs.existsSync(sLocalFName);
+    if (!bExists) {
+        console.log('File missing: ' + sLocalFName);
+        return;
+    }
+    const sFileContent = fs.readFileSync(sLocalFName).toString();
+    if (NotFoundErrorText === sFileContent) {
+        console.log('File 404: ' + sLocalFName);
+        return;
+    }
+    AllTourCodesDictionary[sKey] = sFileContent;
+}
+
+var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function (sSearchFormat, room)
+{
+    if(bIsDoingRefresh) return;
+
+    const sKey = searchValidDynamicFormatKey(sSearchFormat);
+    if (!sKey) return;
+
+    bIsDoingRefresh = true;
+
+    const bIsOfficial = (OfficialTourCodesNamesArray.includes(sKey));
+    const sLocalPath = bIsOfficial ? LocalOTCOfficialPath : LocalOTCOtherPath;
+    const refreshPromise = downloadFilePromise(
+        TourCodeURLsDictionary[sKey],
+        sLocalPath + sKey + TourExt);
+    refreshPromise.then(
+        (refreshResult) => {
+            console.log(refreshResult);
+
+            // Update cached data
+            updateFormatEntryFromCachedFile(sKey, sLocalPath);
+            DynamicFormatsRawDictionary[sKey] = generateDynamicFormatRaw(sKey);
+
+            // Output result
+            if (room) {
+                Bot.say(room, `!code Refreshed ${sKey}!\n${AllTourCodesDictionary[sKey]}`);
+            }
+
+            bIsDoingRefresh = false;
         }
     );
 }

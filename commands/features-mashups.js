@@ -58,8 +58,15 @@ exports.commands = {
 	refreshtourcodes: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
-        TourCodeManager.refreshTourCodeCache(room);
-        this.reply(`Attempting to refresh tour code cache...`);
+        if ('' === arg) {
+            TourCodeManager.refreshTourCodeCache(room);
+            this.reply(`Attempting to refresh tour code cache...`);
+        } else {
+            const validFormatKey = TourCodeManager.replyToSearchValidDynamicFormatKey(this, arg);
+            if(!validFormatKey) return;
+
+            TourCodeManager.refreshSingleFormatCache(validFormatKey, room);
+        }
     },
     ctc: 'checkcachedtourcodes',
     checktourcodes: 'checkcachedtourcodes',
