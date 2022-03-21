@@ -2,12 +2,16 @@
 * Tour code manager
 */
 
-var fs = require('fs');
+const fs = require('fs');
 
-var Mashups = exports.Mashups = require('./index.js');
-var DataDownloader = exports.DataDownloader = require('./../../data-downloader.js');
+const Mashups = exports.Mashups = require('./index.js');
+const DataDownloader = exports.DataDownloader = require('./../../data-downloader.js');
 
-var allSettled = require('promise.allsettled');
+const allSettled = require('promise.allsettled');
+
+// Needs: npm install @octokit/core octokit-plugin-create-pull-request
+const { Octokit } = require("@octokit/core");
+const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
 const TourCodesURLRoot = 'https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/';
 const OfficialPathExtension = 'official/';
@@ -695,6 +699,130 @@ var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function
 
 //#endregion
 
+//#region Octokit
+
+const MyOctokit = Octokit.plugin(createPullRequest);
+
+const octokit = new MyOctokit({
+  auth: Config.github.secret,
+});
+
+var requestWriteTourCode = exports.requestWriteTourCode = function (
+    commandContext,
+    arg,
+    user)
+{
+    if (bIsDoingRefresh) return;
+
+    var params = arg.split(',');
+    if (3 !== params.length) {
+        commandContext.reply(`Usage: ?write [key], [tour code], [comment]`);
+        return;
+    }
+
+    const sSearchKey = params[0];
+    const sKey = replyToSearchValidDynamicFormatKey(commandContext, sSearchKey);
+    if (!sKey) return;
+
+    const sComment = params[1].trim();
+    if ('' === sComment) {
+        commandContext.reply(`Comment cannot be empty!`);
+        return;
+    }
+
+    const sTourCode = params[2];
+    if ('' === sTourCode) {
+        commandContext.reply(`Tour code cannot be empty!`);
+        return;
+    }
+
+    // Validate tour code
+    const sBackupExistingTC = AllTourCodesDictionary[sKey];
+
+    var bTCValid = true;
+
+    AllTourCodesDictionary[sKey] = sTourCode;
+    const dynamicFormatRaw = generateDynamicFormatRaw(sKey);
+    if (!dynamicFormatRaw) {
+        bTCValid = false;
+        commandContext.reply(`Failed to validate tour code content!`);
+    }
+
+    if (!dynamicFormatRaw.name || (TourNameMissingFallback === dynamicFormatRaw.name)) {
+        bTCValid = false;
+        commandContext.reply(`Tour code has no name!`);
+    }
+
+    if (!bTCValid) {
+        AllTourCodesDictionary[sKey] = sBackupExistingTC;
+        return;
+    }
+
+    // Confirm local overwrite
+    DynamicFormatsRawDictionary[sKey] = dynamicFormatRaw;
+
+    //console.log(`name: ${dynamicFormatRaw.name}`);
+    //console.log(`baseFormatDetails: ${dynamicFormatRaw.baseFormatDetails}`);
+    //console.log(dynamicFormatRaw.baseFormatDetails);
+
+    try {
+        requestWriteTourCode(commandContext, sKey, sTourCode, sComment, user);
+    } catch (err) {
+        commandContext.reply(`Failed update: ${err}`);
+    }
+}
+
+var requestWriteTourCode = async function (
+    commandContext,
+    sKey,
+    sTourCode,
+    sComment,
+    user)
+{
+    const sUserId = toId(user);
+
+    const bIsOfficial = (OfficialTourCodesNamesArray.includes(sKey));
+    const sSubDirectory = bIsOfficial ? 'official' : 'other';
+    //const sRepositorySubDirectory = `mashups/${sSubDirectory}/${sKey}.${TourExt}`;
+    const sRepositorySubDirectory = 'index.html';
+
+    const nNowTimestamp = Date.now();
+    var dNow = new Date(nNowTimestamp);
+
+    const sBranchName = `${sUserId}-${sKey}-${nNowTimestamp}`;
+
+    octokit
+    .createPullRequest({
+        owner: `OperationTourCode`,
+        //repo: `OperationTourCode`,
+        repo: `OperationTourCode.github.io`,
+        title: `(${user}) ${sKey}: ${sComment}`,
+        body: `${user}: "${sComment}"\n\nCreated via Iolanthe on ${dNow.toUTCString()}.`,
+        base: `master` /* optional: defaults to default branch */,
+        head: sBranchName,
+        forceFork: true, /* optional: force creating fork even when user has write rights */
+        changes: [
+            {
+                /* optional: if `files` is not passed, an empty commit is created instead */
+                files: {
+                    [sRepositorySubDirectory]: sTourCode,
+                },
+                commit:
+                    sComment,
+            },
+        ],
+    })
+    .then((pr) => {
+        console.log(pr.data.number);
+        commandContext.reply(`Created PR: https://github.com/OperationTourCode/OperationTourCode.github.io/pull/${pr.data.number}`);
+    })
+    .catch((err) => {
+        commandContext.reply(`Failed update: ${err}`);
+    });
+}
+
+//#endregion
+
 var nameCachedTourCodes = exports.nameCachedTourCodes = function ()
 {
     const currentGenPrefixRegex = new RegExp('^' + Mashups.getCurrentGenName());
@@ -1150,7 +1278,7 @@ var standarizeGameObjectArrayContent = function (sourceArray) {
         .concat(movesGOArray);
 }
 
-var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTourCodeKey) {
+var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTourCodeKey, bWriteFallbacks=true) {
     if(!AllTourCodesDictionary.hasOwnProperty(toId(sTourCodeKey))) return false;
 
     var nRuleItr;
@@ -1198,13 +1326,17 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
         sTourName = sInlineTourName;
     }
     else { // Fallback in case name is missing
-        sTourName = TourNameMissingFallback;
+        if (bWriteFallbacks) {
+            sTourName = TourNameMissingFallback;
+        }
         console.log(`sTourCodeKey: ${sTourCodeKey}: Tour name missing!`);
     }
 
     let sBaseFormatName = '';
     if(!sBaseFormatLine) { // Fallback in case base format is missing
-        sBaseFormatName = TourBaseFormatMissingFallback;
+        if (bWriteFallbacks) {
+            sBaseFormatName = TourBaseFormatMissingFallback;
+        }
         console.log(`sTourCodeKey: ${sTourCodeKey}: Tour base format missing!`);
     }
     else { // Accurate base format name
@@ -1480,7 +1612,7 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
 }
 
 var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTemplate, sThreadTemplate) {
-    var formatRaw = generateDynamicFormatRaw(sTourCodeKey);
+    const formatRaw = generateDynamicFormatRaw(sTourCodeKey);
     if (!formatRaw) {
         console.log('Could not retrieve formatRaw for sTourCodeKey: ' + sTourCodeKey);
         return false;
