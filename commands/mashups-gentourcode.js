@@ -461,9 +461,9 @@ exports.commands = {
 			additionalUnrules: null,
 			customTitle: null,
 			timeToStart: 10,
-			autodq: null,
-			type: 'elimination',
-			useCompression: true,
+			autodq: 15,
+			type: 'Elimination',
+			useCompression: false,
 			useRestrictions: true,
 		};
 		for (var i = 0; i < args.length; i++) {
@@ -1255,8 +1255,7 @@ exports.commands = {
 
 		// Construct tour code string
 		let sTourCode = '';
-		sTourCode += `/tour new ${sFormatName}, ${params.type}, 32,1\n`;
-		sTourCode += `/tour autostart ${params.timeToStart}\n`;
+		sTourCode += `/tour new ${sFormatName}, ${params.type},,,${sTourName}\n`;
 		if (nTourRuleCount > 0) { // Constructed rules
 			sTourCode += `/tour rules `;
 			for (nRuleItr = 0; nRuleItr < tourRulesArray.length; ++nRuleItr) {
@@ -1267,7 +1266,8 @@ exports.commands = {
 			}
 			sTourCode += `\n`;
 		}
-		sTourCode += `/tour name ${sTourName}\n`;
+		sTourCode += `/tour autostart ${params.timeToStart}\n`;
+		sTourCode += `/tour autodq ${params.autodq}\n`;
 		let nTourCodeCharCount = sTourCode.length;
 
 		// Split !code outputs
@@ -1281,7 +1281,7 @@ exports.commands = {
 
 			this.reply(`The generated tour code exceeded !code's ${c_nCodeBroadcastCharacterLimit.toString()} character limit, and had to be split into ${nCodeBlocksNeeded} blocks.`);
 		}
-		else {// Print out as !code
+		else { // Print out as !code
 			let sStatement = '!code ' + sTourCode;
 			if (sStatement) this.reply(sStatement);
 		}
