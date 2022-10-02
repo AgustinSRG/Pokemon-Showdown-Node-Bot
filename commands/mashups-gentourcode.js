@@ -460,8 +460,8 @@ exports.commands = {
 			additionalRules: null,
 			additionalUnrules: null,
 			customTitle: null,
-			timeToStart: 10,
-			autodq: 15,
+			timeToStart: null,
+			autodq: null,
 			type: 'Elimination',
 			useCompression: false,
 			useRestrictions: true,
@@ -1251,6 +1251,15 @@ exports.commands = {
 			}
 
 			nTourRuleCount = tourRulesArray.length;
+		}
+
+		// Special-case default autostart/autodq for non-built formats
+		const bHasTeam = baseFormatDetails.team;
+		if (null === params.timeToStart) {
+			params.timeToStart = bHasTeam ? 5 : 10;
+		}
+		if (null === params.autodq) {
+			params.autodq = bHasTeam ? 2 : 15;
 		}
 
 		// Construct tour code string
