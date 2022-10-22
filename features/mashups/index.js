@@ -2,6 +2,8 @@
 	Mashups Room Feature
 */
 
+const { Rulesets } = require("./../../data/rulesets.js");
+
 exports.id = 'mashups';
 exports.desc = 'Tools to manage mashups room features';
 
@@ -9,6 +11,8 @@ var aliases = exports.aliases = require("./../../data/aliases.js").BattleAliases
 
 var FormatDetailsArray = exports.FormatDetailsArray = require('./../../data/formats.js').Formats;
 var VirtualFormatDetailsArray = exports.VirtualFormatDetailsArray = require('./virtual-formats.js').Formats;
+
+var RulesetDetailsDictionary = exports.RulesetDetailsDictionary = require('./../../data/rulesets.js').Rulesets;
 
 var PokedexArray = exports.PokedexArray = require('./../../data/pokedex.js').BattlePokedex;
 var MovesArray = exports.MovesArray = require('./../../data/moves.js').BattleMovedex;
@@ -459,10 +463,6 @@ var DisruptiveRuleArray = exports.DisruptiveRuleArray = [
 ];
 Object.freeze(DisruptiveRuleArray);
 
-//#endregion
-
-//#region Ruleset
-
 var MashupBaseRequirement = exports.MashupBaseRequirement = {
 	'NonStandardMod':0,
 	'SuppliesTeam':1,
@@ -484,6 +484,75 @@ var MashupBaseRequirementDataArray = exports.MashupBaseRequirementDataArray = [
 	{ isStrict: false }, // NonStandardProperties
 ];
 Object.freeze(MashupBaseRequirementDataArray);
+
+var getRulesetKey = exports.getRulesetKey = function (sRulesetAlias) {
+	sRulesetAlias = toId(sRulesetAlias);
+
+	// Convert from standard alias if this is one
+	try {
+		var aliases = DataDownloader.getAliases();
+		if (aliases[sRulesetAlias]) sRulesetAlias = toId(aliases[sRulesetAlias]);
+	} catch (e) {
+		debug(`Could not fetch aliases.`);
+		return null;
+	}
+
+	// Find ruleset that fits alias
+	for (var rulesetKey in Rulesets) {
+		if(sRulesetAlias === rulesetKey) {
+			return rulesetKey;
+		}
+	}
+
+	return null;
+};
+
+var getFormatOrRulesetKey = exports.getFormatOrRulesetKey = function (sAlias) {
+	const formatKey = getFormatKey(sAlias);
+	if (!!formatKey) return formatKey;
+
+	return getRulesetKey(sAlias);
+};
+
+var findRulesetDetails = exports.findRulesetDetails = function (sSearchRulesetName) {
+	sSearchRulesetName = toId(sSearchRulesetName);
+
+	// Search all ruleset details for match by name => id
+	if(MASHUPS_DEBUG_ON) monitor(`DEBUG RulesetDetailsDictionary.length: ${RulesetDetailsDictionary.length}`);
+	for (var key in RulesetDetailsDictionary) {
+		const value = RulesetDetailsDictionary[key];
+		if( !value ) continue;
+		if( !value.name ) continue;
+		if(MASHUPS_DEBUG_ON) monitor(`DEBUG ${key}]: ${value.name}`);
+
+		if( sSearchRulesetName == toId(value.name) ) {
+			return value;
+		}
+	}
+
+	if(MASHUPS_DEBUG_ON) monitor(`DEBUG returning null for sSearchRulesetName: ${sSearchRulesetName}`);
+	return null;
+};
+
+var findFormatOrRulesetAsFormatDetails = exports.findFormatOrRulesetAsFormatDetails = function (sSearchName) {
+	const formatDetails = findFormatDetails(sSearchName);
+	if (!!formatDetails) return formatDetails;
+
+	const rulesetDetails = findRulesetDetails(sSearchName);
+	if (!rulesetDetails) return null;
+
+	// Create dummy format from rule
+	const sRuleName = rulesetDetails.name;
+	var sNameAsFormat = sRuleName
+		.replace(' Mod', '')
+		.replace(' Rule', '');
+	return {
+		name: sNameAsFormat,
+		desc: `Dummy format description`,
+
+		ruleset: [sRuleName],
+	};
+};
 
 //#endregion
 

@@ -121,7 +121,7 @@ exports.getFormats = function () {
 };
 
 exports.getRulesets = function () {
-	return require("./data/rulesets.js").Formats; // "Formats" is correct here
+	return require("./data/rulesets.js").Rulesets;
 };
 
 exports.getFormatsData = function () {

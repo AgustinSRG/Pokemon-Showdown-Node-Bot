@@ -494,8 +494,8 @@ exports.commands = {
 						if (!addOnFormatsArray[nAddOn]) continue;
 						if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG addOnFormatsArray[${nAddOn}]: ${addOnFormatsArray[nAddOn]}`);
 						addOnFormatsArray[nAddOn].trim();
-						// Search add-on format as a server native format
-						sAddOnKey = Mashups.getFormatKey(addOnFormatsArray[nAddOn]);
+						// Search add-on format as a server native format or rule
+						sAddOnKey = Mashups.getFormatOrRulesetKey(addOnFormatsArray[nAddOn]);
 						// FIXME: Add support for common compound bases like PH
 						if (null === sAddOnKey) {
 							this.reply(`Add-on format: "${addOnFormatsArray[nAddOn]}" not found on this server!`);
@@ -654,7 +654,8 @@ exports.commands = {
 			var nSubAddOn;
 			var subAddOnFormat;
 			for (nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-				addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+				addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
+
 				if(!addOnFormat) {
 					this.reply(`Unknown add-on! : ${params.addOnFormats[nAddOn]}`);
 					return;
@@ -669,7 +670,7 @@ exports.commands = {
 				// Check same add-on is not included multiple times
 				for (nSubAddOn = nAddOn+1; nSubAddOn < params.addOnFormats.length; ++nSubAddOn) {
 					if(nAddOn === nSubAddOn) continue;
-					subAddOnFormat = Mashups.findFormatDetails(params.addOnFormats[nSubAddOn]);
+					subAddOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nSubAddOn]);
 					if(addOnFormat.name === subAddOnFormat.name) {
 						this.reply(`An add-on format appeared multiple times! : ${addOnFormat.name}`);
 						return;
@@ -683,7 +684,7 @@ exports.commands = {
 		var metaDetailsArray = [baseFormatDetails];
 		for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 			sMetaArray[nAddOn+1] = params.addOnFormats[nAddOn];
-			metaDetailsArray[nAddOn+1] = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+			metaDetailsArray[nAddOn+1] = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 		}
 
 		// Determine tier
@@ -696,7 +697,7 @@ exports.commands = {
 		var nLoopTierId;
 		if (params.addOnFormats) {
 			for (nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-				addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+				addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 				if(!addOnFormat) continue;
 				if(!addOnFormat.name) continue;
 
@@ -966,7 +967,7 @@ exports.commands = {
 
 				// Add rules created through format-stacking
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 					if(!Mashups.doesFormatHaveKeyCustomCallbacks(addOnFormat)) continue;
 
 					// Format has custom callbacks and must be stacked to make them effective
@@ -982,7 +983,7 @@ exports.commands = {
 				var sCurrentRule;
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 					//addOnFormat = Formats[params.addOnFormats[nAddOn]];
-					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 					if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG addOnFormats[${nAddOn}]: ${JSON.stringify(addOnFormat)}`);
 
 					// Don't do anything here with a tier add-on, as that should be handled above
@@ -1031,7 +1032,7 @@ exports.commands = {
 
 					if (params.addOnFormats) { // Nullify unbans that are banned by any add-on
 						for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-							addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+							addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 							if(!addOnFormat) continue;
 
 							if(!addOnFormat.unbanlist || !addOnFormat.unbanlist.includes(extractedUnbanArray[nRuleItr])) {
@@ -1138,7 +1139,7 @@ exports.commands = {
 				var sGenericMetaName;
 				var sGOKey;
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 					if(!addOnFormat) continue;
 
 					// Mod conflict check - this is almost certain to be a fatal problem
