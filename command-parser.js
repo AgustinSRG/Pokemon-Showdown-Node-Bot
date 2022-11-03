@@ -288,9 +288,17 @@ var Context = exports.Context = (function () {
 })();
 
 var parse = exports.parse = function (room, by, msg) {
+	//console.log(`room: ${room}, by: ${by}, msg: ${msg}`);
+
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
 	}
+
+	// Parse the inside of !code messages
+	if ((Bot.status.nickName !== by) && (msg.substr(0, 3) === '```')) {
+		msg = msg.replace(/^```(.+(?=```$))```$/, '$1');
+	}
+
 	if (msg.substr(0, 8) === '/invite ' && Tools.equalOrHigherRank(by, '%')) {
 		Bot.say('', '/join ' +  msg.substr(8));
 		SecurityLog.log("User " + by + " used /invite " + msg.substr(8));
