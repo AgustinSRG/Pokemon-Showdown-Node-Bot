@@ -98,7 +98,7 @@ exports.commands = {
     writetour: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('moderator'))) return false;
 
-        TourCodeManager.requestWriteTourCode(this, arg, user);
+        TourCodeManager.requestWriteTourCode(this, arg, user, room);
     },
     randtour: 'randomtour',
     randomtour: function (arg, user, room, cmd) {

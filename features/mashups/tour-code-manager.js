@@ -700,6 +700,12 @@ var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function
 
 //#region Octokit
 
+const TEST_OCTOKIT_NO_PR = false;
+//const TEST_OCTOKIT_NO_PR = true;
+
+//const TEST_OCTOKIT_SIDE_REPO = false;
+const TEST_OCTOKIT_SIDE_REPO = true;
+
 const MyOctokit = Octokit.plugin(createPullRequest);
 
 const octokit = new MyOctokit({
@@ -709,13 +715,14 @@ const octokit = new MyOctokit({
 var requestWriteTourCode = exports.requestWriteTourCode = function (
     commandContext,
     arg,
-    user)
+    user,
+    room)
 {
     if (bIsDoingRefresh) return;
 
-    var params = arg.split(',');
+    var params = arg.split('|');
     if (3 !== params.length) {
-        commandContext.reply(`Usage: ?write [key], [tour code], [comment]`);
+        commandContext.reply(`Usage: ?write [key]|[comment]|[tour code]`);
         return;
     }
 
@@ -758,14 +765,16 @@ var requestWriteTourCode = exports.requestWriteTourCode = function (
     }
 
     // Confirm local overwrite
-    DynamicFormatsRawDictionary[sKey] = dynamicFormatRaw;
+    if (!TEST_OCTOKIT_NO_PR) {
+        DynamicFormatsRawDictionary[sKey] = dynamicFormatRaw;
+    }
 
     //console.log(`name: ${dynamicFormatRaw.name}`);
     //console.log(`baseFormatDetails: ${dynamicFormatRaw.baseFormatDetails}`);
     //console.log(dynamicFormatRaw.baseFormatDetails);
 
     try {
-        requestWriteTourCode(commandContext, sKey, sTourCode, sComment, user);
+        requestWriteTourCode(commandContext, sKey, sTourCode, sComment, user, room);
     } catch (err) {
         commandContext.reply(`Failed update: ${err}`);
     }
@@ -776,25 +785,35 @@ var requestWriteTourCode = async function (
     sKey,
     sTourCode,
     sComment,
-    user)
+    user,
+    room)
 {
     const sUserId = toId(user);
 
     const bIsOfficial = (OfficialTourCodesNamesArray.includes(sKey));
     const sSubDirectory = bIsOfficial ? 'official' : 'other';
-    //const sRepositorySubDirectory = `mashups/${sSubDirectory}/${sKey}.${TourExt}`;
-    const sRepositorySubDirectory = 'index.html';
+    const sRepositorySubDirectory = TEST_OCTOKIT_SIDE_REPO ? 'index.html' : `mashups/${sSubDirectory}/${sKey}.${TourExt}`;
 
     const nNowTimestamp = Date.now();
     var dNow = new Date(nNowTimestamp);
 
     const sBranchName = `${sUserId}-${sKey}-${nNowTimestamp}`;
 
+    const sRepo = TEST_OCTOKIT_SIDE_REPO ? `OperationTourCode.github.io` : `OperationTourCode`;
+
+    if (TEST_OCTOKIT_NO_PR) {
+        Bot.say(room, `!code Skipped creating PR at : https://github.com/OperationTourCode/${sRepo}/pull/(Number)
+
+Comment: ${sComment}
+
+TourCode: ${sTourCode}`);
+        return;
+    }
+
     octokit
     .createPullRequest({
         owner: `OperationTourCode`,
-        //repo: `OperationTourCode`,
-        repo: `OperationTourCode.github.io`,
+        repo: sRepo,
         title: `(${user}) ${sKey}: ${sComment}`,
         body: `${user}: "${sComment}"\n\nCreated via Iolanthe on ${dNow.toUTCString()}.`,
         base: `master` /* optional: defaults to default branch */,
@@ -813,7 +832,7 @@ var requestWriteTourCode = async function (
     })
     .then((pr) => {
         console.log(pr.data.number);
-        commandContext.reply(`Created PR: https://github.com/OperationTourCode/OperationTourCode.github.io/pull/${pr.data.number}`);
+        commandContext.reply(`Created PR: https://github.com/OperationTourCode/${sRepo}/pull/${pr.data.number}`);
     })
     .catch((err) => {
         commandContext.reply(`Failed update: ${err}`);
