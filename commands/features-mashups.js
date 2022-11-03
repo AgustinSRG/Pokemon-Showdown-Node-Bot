@@ -260,18 +260,23 @@ exports.commands = {
         var sOutput = '';
 
         var dNow = TourCodeManager.convertDateToUTC(new Date(Date.now()));
+        // Test
+        //dNow = TourCodeManager.convertDateToUTC(new Date(Date.now() + (1000*60*60*(4+4*24))));
         var nCurrentDay = dNow.getUTCDay();
         
         var sSoonestDailyKey = null, nSoonestDailyDeltaTime;
         var dTestDate, nDeltaDays, nDeltaTime;
         for (let key in dayDictionary) {
-            nDeltaDays = (dayDictionary[key].day < nCurrentDay) ? (6 - nCurrentDay) + dayDictionary[key].day : dayDictionary[key].day - nCurrentDay;
-            //console.log('nDeltaDays: ' + nDeltaDays);
+            nDeltaDays = (dayDictionary[key].day < nCurrentDay) ? (7 - nCurrentDay) + dayDictionary[key].day : dayDictionary[key].day - nCurrentDay;
             dTestDate = TourCodeManager.addDays(dNow, nDeltaDays);
             dTestDate.setUTCHours(dayDictionary[key].hour);
             dTestDate.setUTCMinutes(0);
             dTestDate.setUTCSeconds(0);
             nDeltaTime = dTestDate - dNow;
+
+            let bIsDeltaTimePositive = (nDeltaTime > 0);
+            if (!bIsDeltaTimePositive) continue;
+
             if(!sSoonestDailyKey || (nSoonestDailyDeltaTime > nDeltaTime)) {
                 sSoonestDailyKey = key;
                 nSoonestDailyDeltaTime = nDeltaTime;

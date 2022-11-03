@@ -423,7 +423,6 @@ var tourCodeCacheFirstPhaseInit = function()
         const contentArray = aliasesRaw.split('\n');
         var nSubStringIdx;
         var sValue;
-        var sKey;
         for(const sLine of contentArray) {
             if('' === sLine) continue;
             nSubStringIdx = sLine.indexOf(':');
@@ -432,7 +431,7 @@ var tourCodeCacheFirstPhaseInit = function()
                 //console.log('Alias value: ' + sValue);
                 const keyContentArray = sLine.substring(nSubStringIdx + 1).split(',');
                 keyContentArray.forEach( (alias) => {
-                    AliasesDictionary[alias.replace(/^\s+|\s+$/g, '')] = sValue;
+                    AliasesDictionary[toId(alias)] = sValue;
                     //console.log('Alias value: ' + alias);
                 });
             }
@@ -915,6 +914,9 @@ var searchValidDynamicFormatKey = function (sSearch)
 
 var resolveAlias = exports.resolveAlias = function (sSearch)
 {
+    // Alias search should be case-insensitive, etc
+    sSearch = toId(sSearch);
+
     // Direct alias reference case
     if(AliasesDictionary.hasOwnProperty(sSearch)) {
         return AliasesDictionary[sSearch];
