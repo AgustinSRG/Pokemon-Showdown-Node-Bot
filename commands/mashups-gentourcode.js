@@ -460,10 +460,10 @@ exports.commands = {
 			additionalRules: null,
 			additionalUnrules: null,
 			customTitle: null,
-			timeToStart: 10,
+			timeToStart: null,
 			autodq: null,
-			type: 'elimination',
-			useCompression: true,
+			type: 'Elimination',
+			useCompression: false,
 			useRestrictions: true,
 		};
 		for (var i = 0; i < args.length; i++) {
@@ -494,8 +494,8 @@ exports.commands = {
 						if (!addOnFormatsArray[nAddOn]) continue;
 						if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG addOnFormatsArray[${nAddOn}]: ${addOnFormatsArray[nAddOn]}`);
 						addOnFormatsArray[nAddOn].trim();
-						// Search add-on format as a server native format
-						sAddOnKey = Mashups.getFormatKey(addOnFormatsArray[nAddOn]);
+						// Search add-on format as a server native format or rule
+						sAddOnKey = Mashups.getFormatOrRulesetKey(addOnFormatsArray[nAddOn]);
 						// FIXME: Add support for common compound bases like PH
 						if (null === sAddOnKey) {
 							this.reply(`Add-on format: "${addOnFormatsArray[nAddOn]}" not found on this server!`);
@@ -654,7 +654,8 @@ exports.commands = {
 			var nSubAddOn;
 			var subAddOnFormat;
 			for (nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-				addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+				addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
+
 				if(!addOnFormat) {
 					this.reply(`Unknown add-on! : ${params.addOnFormats[nAddOn]}`);
 					return;
@@ -669,7 +670,7 @@ exports.commands = {
 				// Check same add-on is not included multiple times
 				for (nSubAddOn = nAddOn+1; nSubAddOn < params.addOnFormats.length; ++nSubAddOn) {
 					if(nAddOn === nSubAddOn) continue;
-					subAddOnFormat = Mashups.findFormatDetails(params.addOnFormats[nSubAddOn]);
+					subAddOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nSubAddOn]);
 					if(addOnFormat.name === subAddOnFormat.name) {
 						this.reply(`An add-on format appeared multiple times! : ${addOnFormat.name}`);
 						return;
@@ -683,7 +684,7 @@ exports.commands = {
 		var metaDetailsArray = [baseFormatDetails];
 		for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 			sMetaArray[nAddOn+1] = params.addOnFormats[nAddOn];
-			metaDetailsArray[nAddOn+1] = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+			metaDetailsArray[nAddOn+1] = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 		}
 
 		// Determine tier
@@ -696,7 +697,7 @@ exports.commands = {
 		var nLoopTierId;
 		if (params.addOnFormats) {
 			for (nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-				addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+				addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 				if(!addOnFormat) continue;
 				if(!addOnFormat.name) continue;
 
@@ -966,7 +967,7 @@ exports.commands = {
 
 				// Add rules created through format-stacking
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 					if(!Mashups.doesFormatHaveKeyCustomCallbacks(addOnFormat)) continue;
 
 					// Format has custom callbacks and must be stacked to make them effective
@@ -982,7 +983,7 @@ exports.commands = {
 				var sCurrentRule;
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
 					//addOnFormat = Formats[params.addOnFormats[nAddOn]];
-					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 					if(Mashups.MASHUPS_DEBUG_ON) monitor(`DEBUG addOnFormats[${nAddOn}]: ${JSON.stringify(addOnFormat)}`);
 
 					// Don't do anything here with a tier add-on, as that should be handled above
@@ -1031,7 +1032,7 @@ exports.commands = {
 
 					if (params.addOnFormats) { // Nullify unbans that are banned by any add-on
 						for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-							addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+							addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 							if(!addOnFormat) continue;
 
 							if(!addOnFormat.unbanlist || !addOnFormat.unbanlist.includes(extractedUnbanArray[nRuleItr])) {
@@ -1138,7 +1139,7 @@ exports.commands = {
 				var sGenericMetaName;
 				var sGOKey;
 				for ( nAddOn = 0; nAddOn < params.addOnFormats.length; ++nAddOn) {
-					addOnFormat = Mashups.findFormatDetails(params.addOnFormats[nAddOn]);
+					addOnFormat = Mashups.findFormatOrRulesetAsFormatDetails(params.addOnFormats[nAddOn]);
 					if(!addOnFormat) continue;
 
 					// Mod conflict check - this is almost certain to be a fatal problem
@@ -1253,10 +1254,18 @@ exports.commands = {
 			nTourRuleCount = tourRulesArray.length;
 		}
 
+		// Special-case default autostart/autodq for non-built formats
+		const bHasTeam = baseFormatDetails.team;
+		if (null === params.timeToStart) {
+			params.timeToStart = bHasTeam ? 5 : 10;
+		}
+		if (null === params.autodq) {
+			params.autodq = bHasTeam ? 2 : 15;
+		}
+
 		// Construct tour code string
 		let sTourCode = '';
-		sTourCode += `/tour new ${sFormatName}, ${params.type}, 32,1\n`;
-		sTourCode += `/tour autostart ${params.timeToStart}\n`;
+		sTourCode += `/tour new ${sFormatName}, ${params.type},,,${sTourName}\n`;
 		if (nTourRuleCount > 0) { // Constructed rules
 			sTourCode += `/tour rules `;
 			for (nRuleItr = 0; nRuleItr < tourRulesArray.length; ++nRuleItr) {
@@ -1267,7 +1276,8 @@ exports.commands = {
 			}
 			sTourCode += `\n`;
 		}
-		sTourCode += `/tour name ${sTourName}\n`;
+		sTourCode += `/tour autostart ${params.timeToStart}\n`;
+		sTourCode += `/tour autodq ${params.autodq}\n`;
 		let nTourCodeCharCount = sTourCode.length;
 
 		// Split !code outputs
@@ -1281,7 +1291,7 @@ exports.commands = {
 
 			this.reply(`The generated tour code exceeded !code's ${c_nCodeBroadcastCharacterLimit.toString()} character limit, and had to be split into ${nCodeBlocksNeeded} blocks.`);
 		}
-		else {// Print out as !code
+		else { // Print out as !code
 			let sStatement = '!code ' + sTourCode;
 			if (sStatement) this.reply(sStatement);
 		}

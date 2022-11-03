@@ -58,8 +58,15 @@ exports.commands = {
 	refreshtourcodes: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
 
-        TourCodeManager.refreshTourCodeCache(room);
-        this.reply(`Attempting to refresh tour code cache...`);
+        if ('' === arg) {
+            TourCodeManager.refreshTourCodeCache(room);
+            this.reply(`Attempting to refresh tour code cache...`);
+        } else {
+            const validFormatKey = TourCodeManager.replyToSearchValidDynamicFormatKey(this, arg);
+            if(!validFormatKey) return;
+
+            TourCodeManager.refreshSingleFormatCache(validFormatKey, room);
+        }
     },
     ctc: 'checkcachedtourcodes',
     checktourcodes: 'checkcachedtourcodes',
@@ -247,18 +254,23 @@ exports.commands = {
         var sOutput = '';
 
         var dNow = TourCodeManager.convertDateToUTC(new Date(Date.now()));
+        // Test
+        //dNow = TourCodeManager.convertDateToUTC(new Date(Date.now() + (1000*60*60*(4+4*24))));
         var nCurrentDay = dNow.getUTCDay();
         
         var sSoonestDailyKey = null, nSoonestDailyDeltaTime;
         var dTestDate, nDeltaDays, nDeltaTime;
         for (let key in dayDictionary) {
-            nDeltaDays = (dayDictionary[key].day < nCurrentDay) ? (6 - nCurrentDay) + dayDictionary[key].day : dayDictionary[key].day - nCurrentDay;
-            //console.log('nDeltaDays: ' + nDeltaDays);
+            nDeltaDays = (dayDictionary[key].day < nCurrentDay) ? (7 - nCurrentDay) + dayDictionary[key].day : dayDictionary[key].day - nCurrentDay;
             dTestDate = TourCodeManager.addDays(dNow, nDeltaDays);
             dTestDate.setUTCHours(dayDictionary[key].hour);
             dTestDate.setUTCMinutes(0);
             dTestDate.setUTCSeconds(0);
             nDeltaTime = dTestDate - dNow;
+
+            let bIsDeltaTimePositive = (nDeltaTime > 0);
+            if (!bIsDeltaTimePositive) continue;
+
             if(!sSoonestDailyKey || (nSoonestDailyDeltaTime > nDeltaTime)) {
                 sSoonestDailyKey = key;
                 nSoonestDailyDeltaTime = nDeltaTime;
