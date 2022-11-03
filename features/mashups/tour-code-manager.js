@@ -756,21 +756,190 @@ var searchValidDynamicFormatKey = function (sSearch)
     return searchValidDynamicFormatKeyInternal(sAliasedSearch);
 }
 
+var sortByKeyLength = function (dict)
+{
+    var sortedKeyArray = Object.keys(dict);
+    sortedKeyArray.sort((a, b) => b.length - a.length);
+
+    var tempDict = {};
+    for (var nItr = 0; nItr < sortedKeyArray.length; nItr++) {
+        tempDict[sortedKeyArray[nItr]] = dict[sortedKeyArray[nItr]];
+    }
+
+    return tempDict;
+}
+
+const DirectFormatIDAliasDict = Object.freeze(sortByKeyLength({
+    '1v1':      [],
+    '350':      ['350cup'],
+	'aaa':      ['almostanyability'],
+    'abc':      ['alphabetcup'],
+    'ag':       ['anythinggoes'],
+    'bdsp':     [],
+    'bh':       ['balancedhackmons'],
+    'bt':       ['bonustype'],
+    'builtin':  ['lcotm'],
+    'camo':     ['camomons'],
+    'cap':      [],
+    'cc':       ['challengecup'],
+    'ce':       ['crossevolution'],
+    'chimera':  ['chimera1v1'],
+    'cs':       ['categoryswap'],
+    'doubles':  [],
+    'flipped':  [],
+    'gg':       ['godlygift'],
+    'inh':      ['inheritance'],
+    'linked':   [],
+    'lc':       ['littlecup'],
+    'lg':       ['losersgame'],
+    'mono':     ['monotype'],
+    'mnm':      ['mixandmega'],
+    'nd':       ['natdex', 'nationaldex'],
+    'nfe':      ['notfullyevolved'],
+    'ns':       ['natureswap'],
+    'nu':       ['neverused'],
+    'pic':      ['partnersincrime'],
+    'poke':     ['pokebilities'],
+    'ph':       ['purehackmons'],
+    'pu':       [],
+    'randbats': [],
+    'randbtas': ['randbatsmayhem', 'randbtasmayhem'],
+    'reevo':    ['reevolution'],
+    'rev':      ['revelation'],
+    'ru':       ['rarelyused'],
+    'scale':    ['scalemons'],
+    'sketch':   ['sketchmons'],
+    'sp':       ['sharedpower'],
+	'stab':     ['stabmons'],
+    'ssb':      ['superstaffbros'],
+    'ts':       ['tiershift'],
+    'ubers':    [],
+    'uu':       ['underused'],
+    'zu':       ['zeroused'],
+}));
+
+const CombinedFormatIDAliasDict = Object.freeze({
+	'caaamo':   ['aaa', 'camo'],
+    'snm':      ['mnm', 'stab'],
+	'staaab':   ['aaa', 'stab'],
+});
+
 var resolveAlias = exports.resolveAlias = function (sSearch)
 {
     // Alias search should be case-insensitive, etc
     sSearch = toId(sSearch);
 
     // Direct alias reference case
-    if(AliasesDictionary.hasOwnProperty(sSearch)) {
+    if (AliasesDictionary.hasOwnProperty(sSearch)) {
         return AliasesDictionary[sSearch];
     }
 
+    if (sSearch.length < 4) return sSearch; // Cannot check gen safely
+
     // Try to find valid alias by stripping away potentially anomalous current-gen prefixes
-    if(Mashups.getCurrentGenName() === sSearch.substring(0, 4)) {
+    if (Mashups.getCurrentGenName() === sSearch.substring(0, 4)) {
         const sGenStrippedSearch = sSearch.substring(4);
-        if(AliasesDictionary.hasOwnProperty(sGenStrippedSearch)) {
+        if (AliasesDictionary.hasOwnProperty(sGenStrippedSearch)) {
             return AliasesDictionary[sGenStrippedSearch];
+        }
+    }
+
+    if (sSearch.length > 30) return sSearch; // Too expensive for dynamic aliasing
+
+    // Try to dealias dynamically by testing different permutations of input
+    var sGenPrefix;
+    var sDynamicSearch;
+    if ('gen' === sSearch.substring(0, 3)) {
+        sGenPrefix = sSearch.substring(0, 4);
+        sDynamicSearch = sSearch.substring(4);
+    } else {
+        sGenPrefix = Mashups.getCurrentGenName();
+        sDynamicSearch = sSearch;
+    }
+
+    var sDynamicSearch = sSearch;
+    var bDynamicSearchSucceeded = false;
+
+    const targetFormatIDArray = [];
+
+    // TODO: Combined format dynamic aliasing
+    /*for (const sCombKey of Object.keys(CombinedFormatIDAliasDict)) {
+        console.log(sCombKey);
+
+        if (!sDynamicSearch.includes(sCombKey)) continue;
+        if (targetFormatIDArray.includes(sCombKey)) continue;
+
+        sDynamicSearch = sDynamicSearch.replace(sCombKey, '');
+        for (const sCombValue of CombinedFormatIDAliasDict[sCombKey]) {
+            targetFormatIDArray.push(sCombValue);
+        }
+
+        if (0 === sDynamicSearch.length) {
+            bDynamicSearchSucceeded = true;
+            break;
+        }
+    }*/
+
+    for (const sDirectKey of Object.keys(DirectFormatIDAliasDict)) {
+        // Search format ID aliases first (usually longer)
+        for (const sDirectValue of DirectFormatIDAliasDict[sDirectKey]) {
+            if (!sDynamicSearch.includes(sDirectValue)) continue;
+            if (targetFormatIDArray.includes(sDirectValue)) continue;
+
+            sDynamicSearch = sDynamicSearch.replace(sDirectValue, '');
+            targetFormatIDArray.push(sDirectValue);
+
+            if (0 === sDynamicSearch.length) {
+                bDynamicSearchSucceeded = true;
+                break;
+            }
+        }
+        if (bDynamicSearchSucceeded) break;
+
+        // Search format ID key
+        if (!sDynamicSearch.includes(sDirectKey)) continue;
+        if (targetFormatIDArray.includes(sDirectKey)) continue;
+
+        //console.log(`found sDirectKey: ${sDirectKey}`);
+        sDynamicSearch = sDynamicSearch.replace(sDirectKey, '');
+        targetFormatIDArray.push(sDirectKey);
+        //console.log(`sDynamicSearch: ${sDynamicSearch}`);
+
+        if (0 === sDynamicSearch.length) {
+            bDynamicSearchSucceeded = true;
+            break;
+        }
+    }
+    if (!bDynamicSearchSucceeded) return sSearch;
+
+    //console.log(`checking perms: ${targetFormatIDArray}`);
+
+    const sInitialJoin = sGenPrefix + targetFormatIDArray.join('');
+    //console.log(`sInitialJoin: ${sInitialJoin}`);
+    if (AllTourCodesDictionary.hasOwnProperty(sInitialJoin)) {
+        return sInitialJoin;
+    }
+
+    var nIDCount = targetFormatIDArray.length,
+    workIDArray = new Array(nIDCount).fill(0),
+    nIDItr = 1, nIDNextItr, sIDNext;
+
+    while (nIDItr < nIDCount) {
+        if (workIDArray[nIDItr] < nIDItr) {
+            nIDNextItr = nIDItr % 2 && workIDArray[nIDItr];
+            sIDNext = targetFormatIDArray[nIDItr];
+            targetFormatIDArray[nIDItr] = targetFormatIDArray[nIDNextItr];
+            targetFormatIDArray[nIDNextItr] = sIDNext;
+            ++workIDArray[nIDItr];
+            nIDItr = 1;
+            const sJoin = sGenPrefix + targetFormatIDArray.join('');
+            //console.log(`sJoin: ${sJoin}`);
+            if (AllTourCodesDictionary.hasOwnProperty(sJoin)) {
+                return sJoin;
+            }
+        } else {
+            workIDArray[nIDItr] = 0;
+            ++nIDItr;
         }
     }
 
