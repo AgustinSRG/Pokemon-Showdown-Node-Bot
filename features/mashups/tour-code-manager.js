@@ -92,6 +92,23 @@ var SpotlightNamesArray = exports.SpotlightNamesArray = [];
 
 var DailyRawContent = exports.DailyRawContent = 'Uninit';
 
+//#region Dictionary Utils
+
+var sortByKeyLength = function (dict)
+{
+    var sortedKeyArray = Object.keys(dict);
+    sortedKeyArray.sort((a, b) => b.length - a.length);
+
+    var tempDict = {};
+    for (var nItr = 0; nItr < sortedKeyArray.length; nItr++) {
+        tempDict[sortedKeyArray[nItr]] = dict[sortedKeyArray[nItr]];
+    }
+
+    return tempDict;
+}
+
+//#endregion
+
 //#region Random Tour
 
 const RandomTourCategory = exports.RandomTourCategory = Object.freeze({
@@ -598,7 +615,7 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
 
             // Formats
             var formatPromises = [];
-            for(let nItr=0; nItr<AllTourCodesNamesArray.length; ++nItr) {
+            for (let nItr=0; nItr<AllTourCodesNamesArray.length; ++nItr) {
                 formatPromises.push(
                     downloadFilePromise(
                         TourCodeURLsDictionary[AllTourCodesNamesArray[nItr]],
@@ -638,7 +655,7 @@ var updateFormatEntryFromCachedFile = function (sKey, sLocalPath)
 
 var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function (sSearchFormat, room)
 {
-    if(bIsDoingRefresh) return;
+    if (bIsDoingRefresh) return;
 
     const sKey = searchValidDynamicFormatKey(sSearchFormat);
     if (!sKey) return;
@@ -675,8 +692,8 @@ var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function
 const TEST_OCTOKIT_NO_PR = false;
 //const TEST_OCTOKIT_NO_PR = true;
 
-//const TEST_OCTOKIT_SIDE_REPO = false;
-const TEST_OCTOKIT_SIDE_REPO = true;
+//const TEST_OCTOKIT_SIDE_BRANCH = false;
+const TEST_OCTOKIT_SIDE_BRANCH = true;
 
 const MyOctokit = Octokit.plugin(createPullRequest);
 
@@ -690,17 +707,36 @@ var requestWriteTourCode = exports.requestWriteTourCode = function (
     user,
     room)
 {
+    if (bIsDoingRefresh) {
+        commandContext.reply(`Already waiting on update!`);
+        return;
+    }
+
+    requestWriteTourCodeAsync(commandContext, arg, user, room);
+}
+
+var requestWriteTourCodeAsync = async function (
+    commandContext,
+    arg,
+    user,
+    room)
+{
     if (bIsDoingRefresh) return;
 
-    var params = arg.split('|');
+    bIsDoingRefresh = true;
+
+    const params = arg.split('|');
     if (3 !== params.length) {
-        commandContext.reply(`Usage: ?write [key]|[comment]|[tour code]`);
+        commandContext.reply(`Usage: !code ?write [key]|[comment]|[tour code]`);
         return;
     }
 
     const sSearchKey = params[0];
-    const sKey = replyToSearchValidDynamicFormatKey(commandContext, sSearchKey);
-    if (!sKey) return;
+    var sKey = searchValidDynamicFormatKey(sSearchKey);
+    const bIsExistingTour = !!sKey;
+    if (!bIsExistingTour) {
+        sKey = sSearchKey;
+    }
 
     const sComment = params[1].trim();
     if ('' === sComment) {
@@ -713,9 +749,13 @@ var requestWriteTourCode = exports.requestWriteTourCode = function (
         commandContext.reply(`Tour code cannot be empty!`);
         return;
     }
+    if (!sTourCode.includes('\n')) {
+        commandContext.reply(`Tour code was only one line! (Missing !code prefix?)`);
+        return;
+    }
 
     // Validate tour code
-    const sBackupExistingTC = AllTourCodesDictionary[sKey];
+    const sBackupExistingTC = bIsExistingTour ? AllTourCodesDictionary[sKey] : null;
 
     var bTCValid = true;
 
@@ -723,21 +763,23 @@ var requestWriteTourCode = exports.requestWriteTourCode = function (
     const dynamicFormatRaw = generateDynamicFormatRaw(sKey);
     if (!dynamicFormatRaw) {
         bTCValid = false;
-        commandContext.reply(`Failed to validate tour code content!`);
-    }
-
-    if (!dynamicFormatRaw.name || (TourNameMissingFallback === dynamicFormatRaw.name)) {
+        commandContext.reply(`Failed to validate tour code content! (May involve non-existent formats, etc)`);
+    } else if (!dynamicFormatRaw.name || (TourNameMissingFallback === dynamicFormatRaw.name)) {
         bTCValid = false;
         commandContext.reply(`Tour code has no name!`);
     }
 
     if (!bTCValid) {
-        AllTourCodesDictionary[sKey] = sBackupExistingTC;
+        if (bIsExistingTour) {
+            AllTourCodesDictionary[sKey] = sBackupExistingTC;
+        } else {
+            delete AllTourCodesDictionary[sKey];
+        }
         return;
     }
 
     // Confirm local overwrite
-    if (!TEST_OCTOKIT_NO_PR) {
+    if (!INIT_FROM_CACHE) {
         DynamicFormatsRawDictionary[sKey] = dynamicFormatRaw;
     }
 
@@ -745,16 +787,29 @@ var requestWriteTourCode = exports.requestWriteTourCode = function (
     //console.log(`baseFormatDetails: ${dynamicFormatRaw.baseFormatDetails}`);
     //console.log(dynamicFormatRaw.baseFormatDetails);
 
+    var bPRRequestSucceeded = true;
     try {
-        requestWriteTourCode(commandContext, sKey, sTourCode, sComment, user, room);
+        await writeTourCodeCreatePRAsync(commandContext, sKey, bIsExistingTour, sTourCode, sComment, user, room);
     } catch (err) {
         commandContext.reply(`Failed update: ${err}`);
+        bPRRequestSucceeded = false;
     }
+
+    if (!bPRRequestSucceeded) {
+        if (bIsExistingTour) {
+            AllTourCodesDictionary[sKey] = sBackupExistingTC;
+        } else {
+            delete AllTourCodesDictionary[sKey];
+        }
+    }
+
+    bIsDoingRefresh = false;
 }
 
-var requestWriteTourCode = async function (
+var writeTourCodeCreatePRAsync = async function (
     commandContext,
     sKey,
+    bIsExistingTour,
     sTourCode,
     sComment,
     user,
@@ -762,23 +817,31 @@ var requestWriteTourCode = async function (
 {
     const sUserId = toId(user);
 
-    const bIsOfficial = (OfficialTourCodesNamesArray.includes(sKey));
-    const sSubDirectory = bIsOfficial ? 'official' : 'other';
-    const sRepositorySubDirectory = TEST_OCTOKIT_SIDE_REPO ? 'index.html' : `mashups/${sSubDirectory}/${sKey}.${TourExt}`;
-
     const nNowTimestamp = Date.now();
-    var dNow = new Date(nNowTimestamp);
+    const dNow = new Date(nNowTimestamp);
 
-    const sBranchName = `${sUserId}-${sKey}-${nNowTimestamp}`;
+    const sRepo = `OperationTourCode`;
+    const sBaseBranchName = TEST_OCTOKIT_SIDE_BRANCH ? `reorganize-structure` : `master`;
+    const sHeadBranchName = `${sUserId}-${sKey}-${nNowTimestamp}`;
+    const sTourCodePath = `formats/${sKey}${TourExt}`;
 
-    const sRepo = TEST_OCTOKIT_SIDE_REPO ? `OperationTourCode.github.io` : `OperationTourCode`;
+    const changedFilesDict = {};
+    changedFilesDict[sTourCodePath] = sTourCode;
+    if (!bIsExistingTour) {
+        const allTourCodesKeyArray = Object.keys(AllTourCodesDictionary).sort();
+        changedFilesDict[`metadata/list.txt`] = allTourCodesKeyArray.join('\n');
+    }
 
     if (TEST_OCTOKIT_NO_PR) {
         Bot.say(room, `!code Skipped creating PR at : https://github.com/OperationTourCode/${sRepo}/pull/(Number)
 
 Comment: ${sComment}
 
-TourCode: ${sTourCode}`);
+Path: ${sTourCodePath}
+
+TourCode: ${sTourCode}
+
+List: ${bIsExistingTour ? '(Unchanged)' : changedFilesDict[`metadata/list.txt`]}`);
         return;
     }
 
@@ -788,17 +851,14 @@ TourCode: ${sTourCode}`);
         repo: sRepo,
         title: `(${user}) ${sKey}: ${sComment}`,
         body: `${user}: "${sComment}"\n\nCreated via Iolanthe on ${dNow.toUTCString()}.`,
-        base: `master` /* optional: defaults to default branch */,
-        head: sBranchName,
+        base: sBaseBranchName, /* optional: defaults to default branch */
+        head: sHeadBranchName,
         forceFork: true, /* optional: force creating fork even when user has write rights */
         changes: [
             {
                 /* optional: if `files` is not passed, an empty commit is created instead */
-                files: {
-                    [sRepositorySubDirectory]: sTourCode,
-                },
-                commit:
-                    sComment,
+                files: changedFilesDict,
+                commit: sComment,
             },
         ],
     })
@@ -901,19 +961,6 @@ var searchValidDynamicFormatKey = function (sSearch)
     const sAliasedSearch = resolveAlias(sSearch);
     if(sAliasedSearch === sSearch) return null; // No point in repeating internal seach if alias doesn't change anything
     return searchValidDynamicFormatKeyInternal(sAliasedSearch);
-}
-
-var sortByKeyLength = function (dict)
-{
-    var sortedKeyArray = Object.keys(dict);
-    sortedKeyArray.sort((a, b) => b.length - a.length);
-
-    var tempDict = {};
-    for (var nItr = 0; nItr < sortedKeyArray.length; nItr++) {
-        tempDict[sortedKeyArray[nItr]] = dict[sortedKeyArray[nItr]];
-    }
-
-    return tempDict;
 }
 
 const DirectFormatIDAliasDict = Object.freeze(sortByKeyLength({
