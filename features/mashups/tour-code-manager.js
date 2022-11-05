@@ -13,41 +13,40 @@ const allSettled = require('promise.allsettled');
 const { Octokit } = require("@octokit/core");
 const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
-const TourCodesURLRoot = 'https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/';
-const OfficialPathExtension = 'official/';
-const OtherPathExtension = 'other/';
+const TourCodesURLRoot = 'https://raw.githubusercontent.com/OperationTourCode/OperationTourCode/reorganize-structure/';
+const FormatsPathExtension = 'formats/';
+const MashupsPathExtension = 'mashups/';
 const MetadataPathExtension = 'metadata/';
-const ListFName = 'list.txt';
-const ListSeparator = '\n';
-const DynamicFormatDescriptionsFName = 'dynamicformatdescriptions.txt';
-const AliasesFName = 'aliases.txt';
-const SpotlightNamesFName = 'spotlightnames.txt';
-const DailyRawContentFName = 'dailyschedule.txt';
-const MashupsPopularRandomFormatsFName = 'popularrandomformats.txt';
 const TourExt = '.tour';
+const TextExt = '.txt';
+const ListFName = 'list' + TextExt;
+const ListSeparator = '\n';
+
+const FormatsURLRoot = TourCodesURLRoot + FormatsPathExtension;
+
+const OfficialsFName = 'officialslist' + TextExt;
+const DailyRawContentFName = 'dailyschedule' + TextExt;
+const MashupsPopularRandomFormatsFName = 'popularrandomformats' + TextExt;
+const SpotlightNamesFName = 'spotlightnames' + TextExt;
+
+const MashupsURLRoot = TourCodesURLRoot + MashupsPathExtension;
+const DailyRawContentURL = MashupsURLRoot + DailyRawContentFName;
+const MashupsPopularRandomFormatsURL = MashupsURLRoot + MashupsPopularRandomFormatsFName;
+const SpotlightNamesURL = MashupsURLRoot + SpotlightNamesFName;
+const OfficialListURL = MashupsURLRoot + OfficialsFName;
+
+const AliasesFName = 'aliases' + TextExt;
+const DynamicFormatDescriptionsFName = 'dynamicformatdescriptions' + TextExt;
 
 const GeneralMetadataURLRoot = TourCodesURLRoot + MetadataPathExtension;
+const ListURL = GeneralMetadataURLRoot + ListFName;
 const DynamicFormatDescriptionsURL = GeneralMetadataURLRoot + DynamicFormatDescriptionsFName;
 const AliasesURL = GeneralMetadataURLRoot + AliasesFName;
 
-const MashupsURLRoot = TourCodesURLRoot + 'mashups/';
-const MashupsMetadataURLRoot = MashupsURLRoot + MetadataPathExtension;
-const SpotlightNamesURL = MashupsMetadataURLRoot + SpotlightNamesFName;
-const DailyRawContentURL = MashupsMetadataURLRoot + DailyRawContentFName;
-const MashupsPopularRandomFormatsURL = MashupsMetadataURLRoot + MashupsPopularRandomFormatsFName;
-const OfficialURLRoot = MashupsURLRoot + OfficialPathExtension;
-const OfficialMetadataURLRoot = OfficialURLRoot + MetadataPathExtension;
-const OfficialListURL = OfficialMetadataURLRoot + ListFName;
-const OtherURLRoot = MashupsURLRoot + OtherPathExtension;
-const OtherMetadataURLRoot = OtherURLRoot + MetadataPathExtension;
-const OtherListURL = OtherMetadataURLRoot + ListFName;
-
 const LocalOTCRoot = 'operationtourcode/';
+const LocalOTCFormatsPath = LocalOTCRoot + FormatsPathExtension;
+const LocalOTCMashupsPath = LocalOTCRoot + MashupsPathExtension;
 const LocalOTCMetadataPath = LocalOTCRoot + MetadataPathExtension;
-const LocalOTCOfficialPath = LocalOTCRoot + OfficialPathExtension;
-const LocalOTCOfficialMetadataPath = LocalOTCOfficialPath + MetadataPathExtension;
-const LocalOTCOtherPath = LocalOTCRoot + OtherPathExtension;
-const LocalOTCOtherMetadataPath = LocalOTCOtherPath + MetadataPathExtension;
 
 const NotFoundErrorText = '404: Not Found';
 
@@ -365,8 +364,21 @@ var initTourCodeCache = exports.initTourCodeCache = function (room)
 
 var tourCodeCacheFirstPhaseInit = function()
 {
+    // List
+    var listNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + ListFName).toString();
+    if( NotFoundErrorText !== listNames ) {
+        AllTourCodesNamesArray = listNames.split(ListSeparator);
+        AllTourCodesNamesArray = AllTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
+        AllTourCodesNamesArray = AllTourCodesNamesArray.sort(); // Make alphabetical
+        AllTourCodesNamesArray = AllTourCodesNamesArray.filter((sName) => '' !== sName);
+        for( var nItr=0; nItr<AllTourCodesNamesArray.length; ++nItr ) {
+            AllTourCodesNamesArray[nItr] = toId(AllTourCodesNamesArray[nItr]);
+            TourCodeURLsDictionary[AllTourCodesNamesArray[nItr]] = FormatsURLRoot + AllTourCodesNamesArray[nItr] + TourExt;
+        }
+    }
+
     // Officials
-    var officialNames = fs.readFileSync('./data/' + LocalOTCOfficialMetadataPath + ListFName).toString();
+    var officialNames = fs.readFileSync('./data/' + LocalOTCMashupsPath + OfficialsFName).toString();
     if( NotFoundErrorText !== officialNames ) {
         OfficialTourCodesNamesArray = officialNames.split(ListSeparator);
         OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
@@ -374,25 +386,12 @@ var tourCodeCacheFirstPhaseInit = function()
         OfficialTourCodesNamesArray = OfficialTourCodesNamesArray.filter((sName) => '' !== sName);
         for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
             OfficialTourCodesNamesArray[nItr] = toId(OfficialTourCodesNamesArray[nItr]);
-            TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]] = OfficialURLRoot + OfficialTourCodesNamesArray[nItr] + TourExt;
         }
     }
 
     // Others
-    var otherNames = fs.readFileSync('./data/' + LocalOTCOtherMetadataPath + ListFName).toString();
-    if( NotFoundErrorText !== otherNames ) {
-        OtherTourCodesNamesArray = otherNames.split(ListSeparator);
-        OtherTourCodesNamesArray = OtherTourCodesNamesArray.map(function (sTour) {return sTour.trim();}); // Remove spaces
-        OtherTourCodesNamesArray = OtherTourCodesNamesArray.sort(); // Make alphabetical
-        OtherTourCodesNamesArray = OtherTourCodesNamesArray.filter((sName) => '' !== sName);
-        for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
-            OtherTourCodesNamesArray[nItr] = toId(OtherTourCodesNamesArray[nItr]);
-            TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]] = OtherURLRoot + OtherTourCodesNamesArray[nItr] + TourExt;
-        }
-    }
-
-    // Combined
-    AllTourCodesNamesArray = OfficialTourCodesNamesArray.concat(OtherTourCodesNamesArray);
+    OtherTourCodesNamesArray = JSON.parse(JSON.stringify(AllTourCodesNamesArray));
+    OtherTourCodesNamesArray = OtherTourCodesNamesArray.filter((sName) => !OfficialTourCodesNamesArray.includes(sName));
 
     // Dynamic Format Descriptions
     var dynamicFormatDescriptions = fs.readFileSync('./data/' + LocalOTCMetadataPath + DynamicFormatDescriptionsFName).toString();
@@ -439,7 +438,7 @@ var tourCodeCacheFirstPhaseInit = function()
     }
 
     // Spotlight Names
-    var spotlightNames = fs.readFileSync('./data/' + LocalOTCMetadataPath + SpotlightNamesFName).toString();
+    var spotlightNames = fs.readFileSync('./data/' + LocalOTCMashupsPath + SpotlightNamesFName).toString();
     if( NotFoundErrorText !== spotlightNames ) {
         SpotlightNamesArray = spotlightNames.split(',');
         exports.SpotlightNamesArray = SpotlightNamesArray;
@@ -449,7 +448,7 @@ var tourCodeCacheFirstPhaseInit = function()
     }
 
     // Daily Content
-    var sDailyRawContentFName = './data/' + LocalOTCMetadataPath + DailyRawContentFName;
+    var sDailyRawContentFName = './data/' + LocalOTCMashupsPath + DailyRawContentFName;
     var bExists = fs.existsSync(sDailyRawContentFName);
     if(!bExists) {
         console.log('Daily content missing: ' + sDailyRawContentFName);
@@ -461,9 +460,9 @@ var tourCodeCacheFirstPhaseInit = function()
 
 var tourCodeCacheSecondPhaseInit = function(room)
 {
-    // Officials
-    for( var nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr ) {
-        var sLocalFName = './data/' + LocalOTCOfficialPath + OfficialTourCodesNamesArray[nItr] + TourExt;
+    // Formats
+    for( var nItr=0; nItr<AllTourCodesNamesArray.length; ++nItr ) {
+        var sLocalFName = './data/' + LocalOTCFormatsPath + AllTourCodesNamesArray[nItr] + TourExt;
         var bExists = fs.existsSync(sLocalFName);
         if(!bExists) {
             console.log('File missing: ' + sLocalFName);
@@ -474,27 +473,11 @@ var tourCodeCacheSecondPhaseInit = function(room)
             console.log('File 404: ' + sLocalFName);
             continue;
         }
-        AllTourCodesDictionary[OfficialTourCodesNamesArray[nItr]] = sFileContent;
-    }
-
-    // Others
-    for( var nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr ) {
-        var sLocalFName = './data/' + LocalOTCOtherPath + OtherTourCodesNamesArray[nItr] + TourExt;
-        var bExists = fs.existsSync(sLocalFName);
-        if(!bExists) {
-            console.log('File missing: ' + sLocalFName);
-            continue;
-        }
-        var sFileContent = fs.readFileSync(sLocalFName).toString();
-        if( NotFoundErrorText === sFileContent ) {
-            console.log('File 404: ' + sLocalFName);
-            continue;
-        }
-        AllTourCodesDictionary[OtherTourCodesNamesArray[nItr]] = sFileContent;
+        AllTourCodesDictionary[AllTourCodesNamesArray[nItr]] = sFileContent;
     }
 
     // Mashups Popular Random Formats
-    var sMashupsPopularRandomFormatsFName = './data/' + LocalOTCMetadataPath + MashupsPopularRandomFormatsFName;
+    var sMashupsPopularRandomFormatsFName = './data/' + LocalOTCMashupsPath + MashupsPopularRandomFormatsFName;
     bExists = fs.existsSync(sMashupsPopularRandomFormatsFName);
     if(!bExists) {
         console.log('Mashups Popular Random Formats metadata missing: ' + sMashupsPopularRandomFormatsFName);
@@ -582,27 +565,29 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
     bIsDoingRefresh = true;
 
     const listPromises = [
+        // Metadata
         downloadFilePromise(
-            OfficialListURL,
-            LocalOTCOfficialMetadataPath + ListFName),
-        downloadFilePromise(
-            OtherListURL,
-            LocalOTCOtherMetadataPath + ListFName),
+            ListURL,
+            LocalOTCMetadataPath + ListFName),
         downloadFilePromise(
             DynamicFormatDescriptionsURL,
             LocalOTCMetadataPath + DynamicFormatDescriptionsFName),
         downloadFilePromise(
             AliasesURL,
             LocalOTCMetadataPath + AliasesFName),
+        // Mashups
+        downloadFilePromise(
+            OfficialListURL,
+            LocalOTCMashupsPath + OfficialsFName),
         downloadFilePromise(
             SpotlightNamesURL,
-            LocalOTCMetadataPath + SpotlightNamesFName),
+            LocalOTCMashupsPath + SpotlightNamesFName),
         downloadFilePromise(
             DailyRawContentURL,
-            LocalOTCMetadataPath + DailyRawContentFName),
+            LocalOTCMashupsPath + DailyRawContentFName),
         downloadFilePromise(
             MashupsPopularRandomFormatsURL,
-            LocalOTCMetadataPath + MashupsPopularRandomFormatsFName),
+            LocalOTCMashupsPath + MashupsPopularRandomFormatsFName),
     ];
 
     allSettled(listPromises).
@@ -611,30 +596,17 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
             //results.forEach((result) => console.log(result.status));
             tourCodeCacheFirstPhaseInit();
 
-            // Officials
-            var officialPromises = [];
-            for(let nItr=0; nItr<OfficialTourCodesNamesArray.length; ++nItr) {
-                officialPromises.push(
+            // Formats
+            var formatPromises = [];
+            for(let nItr=0; nItr<AllTourCodesNamesArray.length; ++nItr) {
+                formatPromises.push(
                     downloadFilePromise(
-                        TourCodeURLsDictionary[OfficialTourCodesNamesArray[nItr]],
-                        LocalOTCOfficialPath + OfficialTourCodesNamesArray[nItr] + TourExt)
+                        TourCodeURLsDictionary[AllTourCodesNamesArray[nItr]],
+                        LocalOTCFormatsPath + AllTourCodesNamesArray[nItr] + TourExt)
                 );
             }
 
-            // Others
-            var otherPromises = [];
-            for(let nItr=0; nItr<OtherTourCodesNamesArray.length; ++nItr) {
-                otherPromises.push(
-                    downloadFilePromise(
-                        TourCodeURLsDictionary[OtherTourCodesNamesArray[nItr]],
-                        LocalOTCOtherPath + OtherTourCodesNamesArray[nItr] + TourExt)
-                );
-            }
-
-            // Combined
-            var totalPromises = officialPromises.concat(otherPromises);
-
-            allSettled(totalPromises).then(
+            allSettled(formatPromises).then(
                 (tourResults) => {
                     //tourResults.forEach( (tourResult) => { console.log(tourResult.status); });
                     tourCodeCacheSecondPhaseInit(room);
@@ -643,7 +615,7 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
                 }
             );
 
-            info(OfficialTourCodesNamesArray);
+            info(AllTourCodesNamesArray);
         }
     );
 }
@@ -931,21 +903,190 @@ var searchValidDynamicFormatKey = function (sSearch)
     return searchValidDynamicFormatKeyInternal(sAliasedSearch);
 }
 
+var sortByKeyLength = function (dict)
+{
+    var sortedKeyArray = Object.keys(dict);
+    sortedKeyArray.sort((a, b) => b.length - a.length);
+
+    var tempDict = {};
+    for (var nItr = 0; nItr < sortedKeyArray.length; nItr++) {
+        tempDict[sortedKeyArray[nItr]] = dict[sortedKeyArray[nItr]];
+    }
+
+    return tempDict;
+}
+
+const DirectFormatIDAliasDict = Object.freeze(sortByKeyLength({
+    '1v1':      [],
+    '350':      ['350cup'],
+	'aaa':      ['almostanyability'],
+    'abc':      ['alphabetcup'],
+    'ag':       ['anythinggoes'],
+    'bdsp':     [],
+    'bh':       ['balancedhackmons'],
+    'bt':       ['bonustype'],
+    'builtin':  ['lcotm'],
+    'camo':     ['camomons'],
+    'cap':      [],
+    'cc':       ['challengecup'],
+    'ce':       ['crossevolution'],
+    'chimera':  ['chimera1v1'],
+    'cs':       ['categoryswap'],
+    'doubles':  [],
+    'flipped':  [],
+    'gg':       ['godlygift'],
+    'inh':      ['inheritance'],
+    'linked':   [],
+    'lc':       ['littlecup'],
+    'lg':       ['losersgame'],
+    'mono':     ['monotype'],
+    'mnm':      ['mixandmega'],
+    'nd':       ['natdex', 'nationaldex'],
+    'nfe':      ['notfullyevolved'],
+    'ns':       ['natureswap'],
+    'nu':       ['neverused'],
+    'pic':      ['partnersincrime'],
+    'poke':     ['pokebilities'],
+    'ph':       ['purehackmons'],
+    'pu':       [],
+    'randbats': [],
+    'randbtas': ['randbatsmayhem', 'randbtasmayhem'],
+    'reevo':    ['reevolution'],
+    'rev':      ['revelation'],
+    'ru':       ['rarelyused'],
+    'scale':    ['scalemons'],
+    'sketch':   ['sketchmons'],
+    'sp':       ['sharedpower'],
+	'stab':     ['stabmons'],
+    'ssb':      ['superstaffbros'],
+    'ts':       ['tiershift'],
+    'ubers':    [],
+    'uu':       ['underused'],
+    'zu':       ['zeroused'],
+}));
+
+const CombinedFormatIDAliasDict = Object.freeze({
+	'caaamo':   ['aaa', 'camo'],
+    'snm':      ['mnm', 'stab'],
+	'staaab':   ['aaa', 'stab'],
+});
+
 var resolveAlias = exports.resolveAlias = function (sSearch)
 {
     // Alias search should be case-insensitive, etc
     sSearch = toId(sSearch);
 
     // Direct alias reference case
-    if(AliasesDictionary.hasOwnProperty(sSearch)) {
+    if (AliasesDictionary.hasOwnProperty(sSearch)) {
         return AliasesDictionary[sSearch];
     }
 
+    if (sSearch.length < 4) return sSearch; // Cannot check gen safely
+
     // Try to find valid alias by stripping away potentially anomalous current-gen prefixes
-    if(Mashups.getCurrentGenName() === sSearch.substring(0, 4)) {
+    if (Mashups.getCurrentGenName() === sSearch.substring(0, 4)) {
         const sGenStrippedSearch = sSearch.substring(4);
-        if(AliasesDictionary.hasOwnProperty(sGenStrippedSearch)) {
+        if (AliasesDictionary.hasOwnProperty(sGenStrippedSearch)) {
             return AliasesDictionary[sGenStrippedSearch];
+        }
+    }
+
+    if (sSearch.length > 30) return sSearch; // Too expensive for dynamic aliasing
+
+    // Try to dealias dynamically by testing different permutations of input
+    var sGenPrefix;
+    var sDynamicSearch;
+    if ('gen' === sSearch.substring(0, 3)) {
+        sGenPrefix = sSearch.substring(0, 4);
+        sDynamicSearch = sSearch.substring(4);
+    } else {
+        sGenPrefix = Mashups.getCurrentGenName();
+        sDynamicSearch = sSearch;
+    }
+
+    var sDynamicSearch = sSearch;
+    var bDynamicSearchSucceeded = false;
+
+    const targetFormatIDArray = [];
+
+    // TODO: Combined format dynamic aliasing
+    /*for (const sCombKey of Object.keys(CombinedFormatIDAliasDict)) {
+        console.log(sCombKey);
+
+        if (!sDynamicSearch.includes(sCombKey)) continue;
+        if (targetFormatIDArray.includes(sCombKey)) continue;
+
+        sDynamicSearch = sDynamicSearch.replace(sCombKey, '');
+        for (const sCombValue of CombinedFormatIDAliasDict[sCombKey]) {
+            targetFormatIDArray.push(sCombValue);
+        }
+
+        if (0 === sDynamicSearch.length) {
+            bDynamicSearchSucceeded = true;
+            break;
+        }
+    }*/
+
+    for (const sDirectKey of Object.keys(DirectFormatIDAliasDict)) {
+        // Search format ID aliases first (usually longer)
+        for (const sDirectValue of DirectFormatIDAliasDict[sDirectKey]) {
+            if (!sDynamicSearch.includes(sDirectValue)) continue;
+            if (targetFormatIDArray.includes(sDirectValue)) continue;
+
+            sDynamicSearch = sDynamicSearch.replace(sDirectValue, '');
+            targetFormatIDArray.push(sDirectValue);
+
+            if (0 === sDynamicSearch.length) {
+                bDynamicSearchSucceeded = true;
+                break;
+            }
+        }
+        if (bDynamicSearchSucceeded) break;
+
+        // Search format ID key
+        if (!sDynamicSearch.includes(sDirectKey)) continue;
+        if (targetFormatIDArray.includes(sDirectKey)) continue;
+
+        //console.log(`found sDirectKey: ${sDirectKey}`);
+        sDynamicSearch = sDynamicSearch.replace(sDirectKey, '');
+        targetFormatIDArray.push(sDirectKey);
+        //console.log(`sDynamicSearch: ${sDynamicSearch}`);
+
+        if (0 === sDynamicSearch.length) {
+            bDynamicSearchSucceeded = true;
+            break;
+        }
+    }
+    if (!bDynamicSearchSucceeded) return sSearch;
+
+    //console.log(`checking perms: ${targetFormatIDArray}`);
+
+    const sInitialJoin = sGenPrefix + targetFormatIDArray.join('');
+    //console.log(`sInitialJoin: ${sInitialJoin}`);
+    if (AllTourCodesDictionary.hasOwnProperty(sInitialJoin)) {
+        return sInitialJoin;
+    }
+
+    var nIDCount = targetFormatIDArray.length,
+    workIDArray = new Array(nIDCount).fill(0),
+    nIDItr = 1, nIDNextItr, sIDNext;
+
+    while (nIDItr < nIDCount) {
+        if (workIDArray[nIDItr] < nIDItr) {
+            nIDNextItr = nIDItr % 2 && workIDArray[nIDItr];
+            sIDNext = targetFormatIDArray[nIDItr];
+            targetFormatIDArray[nIDItr] = targetFormatIDArray[nIDNextItr];
+            targetFormatIDArray[nIDNextItr] = sIDNext;
+            ++workIDArray[nIDItr];
+            nIDItr = 1;
+            const sJoin = sGenPrefix + targetFormatIDArray.join('');
+            //console.log(`sJoin: ${sJoin}`);
+            if (AllTourCodesDictionary.hasOwnProperty(sJoin)) {
+                return sJoin;
+            }
+        } else {
+            workIDArray[nIDItr] = 0;
+            ++nIDItr;
         }
     }
 
