@@ -818,11 +818,14 @@ const DirectFormatIDAliasDict = Object.freeze(sortByKeyLength({
     'zu':       ['zeroused'],
 }));
 
-const CombinedFormatIDAliasDict = Object.freeze({
-	'caaamo':   ['aaa', 'camo'],
-    'snm':      ['mnm', 'stab'],
-	'staaab':   ['aaa', 'stab'],
-});
+const CombinedFormatIDAliasDict = Object.freeze(sortByKeyLength({
+    'caaamo':       ['aaa', 'camo'],
+    'caaamomons':   ['aaa', 'camo'],
+    'snm':          ['mnm', 'stab'],
+    'stabnmega':    ['mnm', 'stab'],
+    'staaab':       ['aaa', 'stab'],
+    'staaabmons':   ['aaa', 'stab'],
+}));
 
 var resolveAlias = exports.resolveAlias = function (sSearch)
 {
@@ -862,8 +865,8 @@ var resolveAlias = exports.resolveAlias = function (sSearch)
 
     const targetFormatIDArray = [];
 
-    // TODO: Combined format dynamic aliasing
-    /*for (const sCombKey of Object.keys(CombinedFormatIDAliasDict)) {
+    // Combined format dynamic aliasing
+    for (const sCombKey of Object.keys(CombinedFormatIDAliasDict)) {
         console.log(sCombKey);
 
         if (!sDynamicSearch.includes(sCombKey)) continue;
@@ -878,7 +881,7 @@ var resolveAlias = exports.resolveAlias = function (sSearch)
             bDynamicSearchSucceeded = true;
             break;
         }
-    }*/
+    }
 
     for (const sDirectKey of Object.keys(DirectFormatIDAliasDict)) {
         // Search format ID aliases first (usually longer)
