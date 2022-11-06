@@ -285,8 +285,17 @@ var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray,
         }
         if (bSearchIsRevoke) continue;
 
+        // tag
+        const tagsArray = datum.tagsArray;
+        if (tagsArray) {
+            if (tagsArray.includes(sSearch)) {
+                resultsArray.push(sKey);
+                continue;
+            }
+        }
+
         // base format
-        let baseFormatDetails = datum.baseFormatDetails;
+        const baseFormatDetails = datum.baseFormatDetails;
         if (baseFormatDetails) {
             //console.log(`team: ${baseFormatDetails.team}`);
             //console.log(`mod: ${baseFormatDetails.mod}`);
@@ -326,7 +335,7 @@ var trySearchTourCodeElement = function (commandContext, sSearch, unneededArray,
         }
 
         // Stacked format name
-        let stackedFormatNamesArray = datum.stackedFormatNamesArray;
+        const stackedFormatNamesArray = datum.stackedFormatNamesArray;
         if (stackedFormatNamesArray) {
             for (let sFormatName of stackedFormatNamesArray) {
                 if (toId(sFormatName) === sSearchAsAliasedFormatId) {
@@ -1613,6 +1622,29 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
     });
     combinedRestrictedArray = standarizeGameObjectArrayContent(combinedRestrictedArray);
 
+    // Create tags array
+    var tagsArray = [];
+    const formatIDKeysArray = Object.keys(DirectFormatIDAliasDict);
+    var sTagSearchRemainder = Mashups.genStripName(sTourCodeKey);
+    var bTagSearchComplete = false;
+    var bMadeTagSearchReplacementLoop = false;
+    do {
+        bMadeTagSearchReplacementLoop = false;
+        for (const sIDKey of formatIDKeysArray) {
+            if (tagsArray.includes(sIDKey)) continue;
+            if (!sTagSearchRemainder.startsWith(sIDKey)) continue;
+
+            tagsArray.push(sIDKey);
+            sTagSearchRemainder = sTagSearchRemainder.replace(sIDKey, '');
+
+            if (0 == sTagSearchRemainder.length) {
+                bTagSearchComplete = true;
+            }
+            bMadeTagSearchReplacementLoop = true;
+            break;
+        }
+    } while (bMadeTagSearchReplacementLoop && !bTagSearchComplete);
+
     return {
         name: sTourName,
         baseFormatDetails: baseFormatDetails,
@@ -1622,6 +1654,7 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
         unbansArray: combinedUnbansArray,
         restrictedArray: combinedRestrictedArray,
         stackedFormatNamesArray: filterOutFormatStackingDeltaRules,
+        tagsArray: tagsArray,
     };
 }
 
