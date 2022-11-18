@@ -13,7 +13,7 @@ const allSettled = require('promise.allsettled');
 const { Octokit } = require("@octokit/core");
 const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
-const TourCodesURLRoot = 'https://raw.githubusercontent.com/OperationTourCode/OperationTourCode/reorganize-structure/';
+const TourCodesURLRoot = 'https://raw.githubusercontent.com/OperationTourCode/OTC/master/';
 const FormatsPathExtension = 'formats/';
 const MashupsPathExtension = 'mashups/';
 const MetadataPathExtension = 'metadata/';
