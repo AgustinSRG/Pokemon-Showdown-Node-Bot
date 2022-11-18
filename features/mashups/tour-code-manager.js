@@ -9,7 +9,7 @@ var DataDownloader = exports.DataDownloader = require('./../../data-downloader.j
 
 var allSettled = require('promise.allsettled');
 
-const TourCodesURLRoot = 'https://raw.githubusercontent.com/OperationTourCode/OperationTourCode/reorganize-structure/';
+const TourCodesURLRoot = 'https://raw.githubusercontent.com/OperationTourCode/OTC/master/';
 const FormatsPathExtension = 'formats/';
 const MashupsPathExtension = 'mashups/';
 const MetadataPathExtension = 'metadata/';

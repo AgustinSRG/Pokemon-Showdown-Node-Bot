@@ -6,11 +6,11 @@ var datenow = Date.now();
 
 var data = exports.data = [
 	{
-		url: "https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/metadata/formats.js?" + datenow,
+		url: "https://raw.githubusercontent.com/OperationTourCode/OTC/master/metadata/formats.js?" + datenow,
 		file: "formats.js"
 	},
 	{
-		url: "https://raw.githubusercontent.com/TheNumberMan/OperationTourCode/master/metadata/rulesets.js?" + datenow,
+		url: "https://raw.githubusercontent.com/OperationTourCode/OTC/master/metadata/rulesets.js?" + datenow,
 		file: "rulesets.js"
 	},
 	{
