@@ -291,6 +291,26 @@ var parse = exports.parse = function (room, by, msg) {
 	if (!Tools.equalOrHigherRank(by, true)) {
 		if (resourceMonitor.isLocked(by)) return;
 	}
+
+	// Parse the inside of !code messages
+	if (Bot.status.nickName !== by) {
+		if (msg.substr(0, 3) === '```') {
+			msg = msg.replace(/^```(.+(?=```$))```$/, '$1');
+		}
+
+		if (msg.substr(0, 4) === '/raw') {
+			msg = msg.replace('/raw <div class="infobox"><details class="readmore code" style="white-space: pre-wrap; display: table; tab-size: 3">', '');
+			msg = msg.replace('<summary>', '');
+			msg = msg.replace('</summary>', '\n');
+			msg = msg.replace(/<wbr \/>/g, '');
+			msg = msg.replace(/&#x2f;/g, '/');
+			msg = msg.replace(/<br \/>/g, '\n');
+			msg = msg.replace('</details></div>', '');
+		}
+	}
+
+	//console.log(`room: ${room}, by: ${by}, msg: ${msg}`);
+
 	if (msg.substr(0, 8) === '/invite ' && Tools.equalOrHigherRank(by, '%')) {
 		Bot.say('', '/join ' +  msg.substr(8));
 		SecurityLog.log("User " + by + " used /invite " + msg.substr(8));

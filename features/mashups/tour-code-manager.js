@@ -2,12 +2,16 @@
 * Tour code manager
 */
 
-var fs = require('fs');
+const fs = require('fs');
 
-var Mashups = exports.Mashups = require('./index.js');
-var DataDownloader = exports.DataDownloader = require('./../../data-downloader.js');
+const Mashups = exports.Mashups = require('./index.js');
+const DataDownloader = exports.DataDownloader = require('./../../data-downloader.js');
 
-var allSettled = require('promise.allsettled');
+const allSettled = require('promise.allsettled');
+
+// Needs: npm install @octokit/core octokit-plugin-create-pull-request
+const { Octokit } = require("@octokit/core");
+const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
 const TourCodesURLRoot = 'https://raw.githubusercontent.com/OperationTourCode/OTC/master/';
 const FormatsPathExtension = 'formats/';
@@ -87,6 +91,23 @@ var DynamicFormatsRawDictionary = {};
 var SpotlightNamesArray = exports.SpotlightNamesArray = [];
 
 var DailyRawContent = exports.DailyRawContent = 'Uninit';
+
+//#region Dictionary Utils
+
+var sortByKeyLength = function (dict)
+{
+    var sortedKeyArray = Object.keys(dict);
+    sortedKeyArray.sort((a, b) => b.length - a.length);
+
+    var tempDict = {};
+    for (var nItr = 0; nItr < sortedKeyArray.length; nItr++) {
+        tempDict[sortedKeyArray[nItr]] = dict[sortedKeyArray[nItr]];
+    }
+
+    return tempDict;
+}
+
+//#endregion
 
 //#region Random Tour
 
@@ -603,7 +624,7 @@ var refreshTourCodeCache = exports.refreshTourCodeCache = async function (room)
 
             // Formats
             var formatPromises = [];
-            for(let nItr=0; nItr<AllTourCodesNamesArray.length; ++nItr) {
+            for (let nItr=0; nItr<AllTourCodesNamesArray.length; ++nItr) {
                 formatPromises.push(
                     downloadFilePromise(
                         TourCodeURLsDictionary[AllTourCodesNamesArray[nItr]],
@@ -643,7 +664,7 @@ var updateFormatEntryFromCachedFile = function (sKey, sLocalPath)
 
 var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function (sSearchFormat, room)
 {
-    if(bIsDoingRefresh) return;
+    if (bIsDoingRefresh) return;
 
     const sKey = searchValidDynamicFormatKey(sSearchFormat);
     if (!sKey) return;
@@ -671,6 +692,192 @@ var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function
             bIsDoingRefresh = false;
         }
     );
+}
+
+//#endregion
+
+//#region Octokit
+
+const TEST_OCTOKIT_NO_PR = false;
+//const TEST_OCTOKIT_NO_PR = true;
+
+const TEST_OCTOKIT_SIDE_BRANCH = false;
+//const TEST_OCTOKIT_SIDE_BRANCH = true;
+
+const MyOctokit = Octokit.plugin(createPullRequest);
+
+const octokit = new MyOctokit({
+  auth: Config.github.secret,
+});
+
+var requestWriteTourCode = exports.requestWriteTourCode = function (
+    commandContext,
+    arg,
+    user,
+    room)
+{
+    if (bIsDoingRefresh) {
+        commandContext.reply(`Already waiting on update!`);
+        return;
+    }
+
+    requestWriteTourCodeAsync(commandContext, arg, user, room);
+}
+
+var requestWriteTourCodeAsync = async function (
+    commandContext,
+    arg,
+    user,
+    room)
+{
+    if (bIsDoingRefresh) return;
+
+    bIsDoingRefresh = true;
+
+    const params = arg.split('|');
+    if (3 !== params.length) {
+        commandContext.reply(`Usage: !code ?write [key]|[comment]|[tour code]`);
+        return;
+    }
+
+    const sSearchKey = params[0];
+    var sKey = searchValidDynamicFormatKey(sSearchKey);
+    const bIsExistingTour = !!sKey;
+    if (!bIsExistingTour) {
+        sKey = sSearchKey;
+    }
+
+    const sComment = params[1].trim();
+    if ('' === sComment) {
+        commandContext.reply(`Comment cannot be empty!`);
+        return;
+    }
+
+    const sTourCode = params[2];
+    if ('' === sTourCode) {
+        commandContext.reply(`Tour code cannot be empty!`);
+        return;
+    }
+    if (!sTourCode.includes('\n')) {
+        commandContext.reply(`Tour code was only one line! (Missing !code prefix?)`);
+        return;
+    }
+
+    // Validate tour code
+    const sBackupExistingTC = bIsExistingTour ? AllTourCodesDictionary[sKey] : null;
+
+    var bTCValid = true;
+
+    AllTourCodesDictionary[sKey] = sTourCode;
+    const dynamicFormatRaw = generateDynamicFormatRaw(sKey);
+    if (!dynamicFormatRaw) {
+        bTCValid = false;
+        commandContext.reply(`Failed to validate tour code content! (May involve non-existent formats, etc)`);
+    } else if (!dynamicFormatRaw.name || (TourNameMissingFallback === dynamicFormatRaw.name)) {
+        bTCValid = false;
+        commandContext.reply(`Tour code has no name!`);
+    }
+
+    if (!bTCValid) {
+        if (bIsExistingTour) {
+            AllTourCodesDictionary[sKey] = sBackupExistingTC;
+        } else {
+            delete AllTourCodesDictionary[sKey];
+        }
+        return;
+    }
+
+    // Confirm local overwrite
+    if (!INIT_FROM_CACHE) {
+        DynamicFormatsRawDictionary[sKey] = dynamicFormatRaw;
+    }
+
+    //console.log(`name: ${dynamicFormatRaw.name}`);
+    //console.log(`baseFormatDetails: ${dynamicFormatRaw.baseFormatDetails}`);
+    //console.log(dynamicFormatRaw.baseFormatDetails);
+
+    var bPRRequestSucceeded = true;
+    try {
+        await writeTourCodeCreatePRAsync(commandContext, sKey, bIsExistingTour, sTourCode, sComment, user, room);
+    } catch (err) {
+        commandContext.reply(`Failed update: ${err}`);
+        bPRRequestSucceeded = false;
+    }
+
+    if (!bPRRequestSucceeded) {
+        if (bIsExistingTour) {
+            AllTourCodesDictionary[sKey] = sBackupExistingTC;
+        } else {
+            delete AllTourCodesDictionary[sKey];
+        }
+    }
+
+    bIsDoingRefresh = false;
+}
+
+var writeTourCodeCreatePRAsync = async function (
+    commandContext,
+    sKey,
+    bIsExistingTour,
+    sTourCode,
+    sComment,
+    user,
+    room)
+{
+    const sUserId = toId(user);
+
+    const nNowTimestamp = Date.now();
+    const dNow = new Date(nNowTimestamp);
+
+    const sRepo = `OTC`;
+    const sBaseBranchName = TEST_OCTOKIT_SIDE_BRANCH ? `reorganize-structure` : `master`;
+    const sHeadBranchName = `${sUserId}-${sKey}-${nNowTimestamp}`;
+    const sTourCodePath = `formats/${sKey}${TourExt}`;
+
+    const changedFilesDict = {};
+    changedFilesDict[sTourCodePath] = sTourCode;
+    if (!bIsExistingTour) {
+        const allTourCodesKeyArray = Object.keys(AllTourCodesDictionary).sort();
+        changedFilesDict[`metadata/list.txt`] = allTourCodesKeyArray.join('\n');
+    }
+
+    if (TEST_OCTOKIT_NO_PR) {
+        Bot.say(room, `!code Skipped creating PR at : https://github.com/OperationTourCode/${sRepo}/pull/(Number)
+
+Comment: ${sComment}
+
+Path: ${sTourCodePath}
+
+TourCode: ${sTourCode}
+
+List: ${bIsExistingTour ? '(Unchanged)' : changedFilesDict[`metadata/list.txt`]}`);
+        return;
+    }
+
+    octokit
+    .createPullRequest({
+        owner: `OperationTourCode`,
+        repo: sRepo,
+        title: `(${user}) ${sKey}: ${sComment}`,
+        body: `${user}: "${sComment}"\n\nCreated via Iolanthe on ${dNow.toUTCString()}.`,
+        base: sBaseBranchName, /* optional: defaults to default branch */
+        head: sHeadBranchName,
+        forceFork: true, /* optional: force creating fork even when user has write rights */
+        changes: [
+            {
+                /* optional: if `files` is not passed, an empty commit is created instead */
+                files: changedFilesDict,
+                commit: sComment,
+            },
+        ],
+    })
+    .then((pr) => {
+        console.log(pr.data.number);
+        commandContext.reply(`Created PR: https://github.com/OperationTourCode/${sRepo}/pull/${pr.data.number}`);
+    })
+    .catch((err) => {
+        commandContext.reply(`Failed update: ${err}`);
+    });
 }
 
 //#endregion
@@ -763,19 +970,6 @@ var searchValidDynamicFormatKey = function (sSearch)
     const sAliasedSearch = resolveAlias(sSearch);
     if(sAliasedSearch === sSearch) return null; // No point in repeating internal seach if alias doesn't change anything
     return searchValidDynamicFormatKeyInternal(sAliasedSearch);
-}
-
-var sortByKeyLength = function (dict)
-{
-    var sortedKeyArray = Object.keys(dict);
-    sortedKeyArray.sort((a, b) => b.length - a.length);
-
-    var tempDict = {};
-    for (var nItr = 0; nItr < sortedKeyArray.length; nItr++) {
-        tempDict[sortedKeyArray[nItr]] = dict[sortedKeyArray[nItr]];
-    }
-
-    return tempDict;
 }
 
 const DirectFormatIDAliasDict = Object.freeze(sortByKeyLength({
@@ -1305,7 +1499,7 @@ var standarizeGameObjectArrayContent = function (sourceArray) {
         .concat(movesGOArray);
 }
 
-var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTourCodeKey) {
+var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTourCodeKey, bWriteFallbacks=true) {
     if(!AllTourCodesDictionary.hasOwnProperty(toId(sTourCodeKey))) return false;
 
     var nRuleItr;
@@ -1353,13 +1547,17 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
         sTourName = sInlineTourName;
     }
     else { // Fallback in case name is missing
-        sTourName = TourNameMissingFallback;
+        if (bWriteFallbacks) {
+            sTourName = TourNameMissingFallback;
+        }
         console.log(`sTourCodeKey: ${sTourCodeKey}: Tour name missing!`);
     }
 
     let sBaseFormatName = '';
     if(!sBaseFormatLine) { // Fallback in case base format is missing
-        sBaseFormatName = TourBaseFormatMissingFallback;
+        if (bWriteFallbacks) {
+            sBaseFormatName = TourBaseFormatMissingFallback;
+        }
         console.log(`sTourCodeKey: ${sTourCodeKey}: Tour base format missing!`);
     }
     else { // Accurate base format name
@@ -1659,7 +1857,7 @@ var generateDynamicFormatRaw = exports.generateDynamicFormatRaw = function(sTour
 }
 
 var generateDynamicFormat = function(sTourCodeKey, sArrayTemplate, sFormatTemplate, sThreadTemplate) {
-    var formatRaw = generateDynamicFormatRaw(sTourCodeKey);
+    const formatRaw = generateDynamicFormatRaw(sTourCodeKey);
     if (!formatRaw) {
         console.log('Could not retrieve formatRaw for sTourCodeKey: ' + sTourCodeKey);
         return false;

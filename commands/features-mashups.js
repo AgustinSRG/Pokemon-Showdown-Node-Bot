@@ -94,6 +94,12 @@ exports.commands = {
 
         this.reply('!code ' + TourCodeManager.searchTourCode(validFormatKey));
     },
+    write: 'writetour',
+    writetour: function (arg, user, room, cmd) {
+        if (!this.isRanked(Tools.getGroup('moderator'))) return false;
+
+        TourCodeManager.requestWriteTourCode(this, arg, user, room);
+    },
     randtour: 'randomtour',
     randomtour: function (arg, user, room, cmd) {
         if (!this.isRanked(Tools.getGroup('driver'))) return false;
