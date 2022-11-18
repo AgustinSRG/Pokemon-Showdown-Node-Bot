@@ -829,7 +829,7 @@ var writeTourCodeCreatePRAsync = async function (
     const nNowTimestamp = Date.now();
     const dNow = new Date(nNowTimestamp);
 
-    const sRepo = `OperationTourCode`;
+    const sRepo = `OTC`;
     const sBaseBranchName = TEST_OCTOKIT_SIDE_BRANCH ? `reorganize-structure` : `master`;
     const sHeadBranchName = `${sUserId}-${sKey}-${nNowTimestamp}`;
     const sTourCodePath = `formats/${sKey}${TourExt}`;
