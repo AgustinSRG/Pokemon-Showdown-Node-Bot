@@ -701,8 +701,8 @@ var refreshSingleFormatCache = exports.refreshSingleFormatCache = async function
 const TEST_OCTOKIT_NO_PR = false;
 //const TEST_OCTOKIT_NO_PR = true;
 
-//const TEST_OCTOKIT_SIDE_BRANCH = false;
-const TEST_OCTOKIT_SIDE_BRANCH = true;
+const TEST_OCTOKIT_SIDE_BRANCH = false;
+//const TEST_OCTOKIT_SIDE_BRANCH = true;
 
 const MyOctokit = Octokit.plugin(createPullRequest);
 
