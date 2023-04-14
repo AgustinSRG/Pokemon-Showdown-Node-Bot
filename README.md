@@ -1,11 +1,19 @@
-﻿Pokemon Showdown Bot for Node
+Pokemon Showdown Bot for Node (Deprecated)
 ====================
 
-[![Build Status](https://travis-ci.org/Ecuacion/Pokemon-Showdown-Node-Bot.svg)](https://travis-ci.org/Ecuacion/Pokemon-Showdown-Node-Bot)
-[![Dependency Status](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot.svg)](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot)
-[![devDependency Status](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot/dev-status.svg)](https://david-dm.org/Ecuacion/Pokemon-Showdown-Node-Bot#info=devDependencies)
-[![Version](https://img.shields.io/badge/version-0.7.2-orange.svg)](https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot#pokemon-showdown-bot-for-node)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://opensource.org/licenses/MIT)
+**This project is deprecated and no longer maintained.** 
+
+This is the original bot project for the [Spanish room of Pokemon Showdown](https://play.pokemonshowdown.com/espanol), based on [TalkTakesTime's bot](https://github.com/TalkTakesTime/Pokemon-Showdown-Bot). However it was replaced in 2016 by a rework: [Showdown-ChatBot](https://github.com/AgustinSRG/Showdown-ChatBot).
+
+If you are still interested in a Pokemon Showdown Bot, you can try the following options:
+
+ - Use the rework of this bot, still being used for the Spanish room: [Showdown-ChatBot](https://github.com/AgustinSRG/Showdown-ChatBot).
+ - Try some of the [forks](https://github.com/Ecuacion/Pokemon-Showdown-Node-Bot/forks) of this project.
+ - [Search for other open source Pokemon Showdown Bots](https://github.com/search?q=Pokemon+showdown+bot)
+
+This repository is being archived.
+
+-----------------------------
 
 This is a [Pokemon Showdown](https://github.com/Zarel/Pokemon-Showdown) bot written in JavaScript for [Node](http://nodejs.org/)
 
